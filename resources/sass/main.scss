@@ -1,0 +1,171 @@
+@import 'app.scss';
+@import '~jquery-confirm/css/jquery-confirm.css';
+@import 'include/sidebar.scss';
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    //min-height: 100vh;
+
+    @include media-breakpoint-down(md) {
+        display: block;
+    }
+}
+
+.main-body {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+
+.top-bar {
+    display: block;
+
+    .navbar-brand {
+        font-size: $font-size-base;
+    }
+}
+
+.actual-content {
+    display: block;
+    flex-grow: 1;
+    padding-bottom: 1rem;
+}
+
+.content-main {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: $border-radius;
+}
+
+.secondary-title {
+    color: #818A91;
+}
+
+.profile-picture-256 {
+    width: 100%;
+}
+
+.invisible-file-input {
+	visibility: hidden;
+	height: 1px;
+	width: 1px;
+}
+
+.credit-card-brand-image {
+    height: 28px;
+}
+
+.member-permissions-column {
+    max-width: 200px;
+}
+
+.member-profile-picture-column {
+    width: 46px;
+}
+
+.member-profile-picture {
+    height: 36px;
+    width: 36px;
+}
+
+.gym-picture-column {
+    width: 46px;
+}
+
+.gym-picture {
+    height: 36px;
+    width: 36px;
+}
+
+.meet-picture-column {
+    width: 46px;
+}
+
+.meet-picture {
+    height: 36px;
+    width: 36px;
+}
+
+.html-tree {
+
+    .tree-dropdown-caret {
+        &::after {
+            content: '\f0d7'
+        }
+    }
+
+    .collapsed {
+        .tree-dropdown-caret {
+            &::after {
+                content: '\f0d9'
+            }
+        }
+    }
+}
+
+.column-split {
+    @include media-breakpoint-down(md) {
+        border-top: 1px dashed $secondary;
+    }
+
+    @include media-breakpoint-up(lg) {
+        border-left: 1px dashed $secondary;
+    }
+}
+
+.preserve-new-lines {
+    white-space: pre-line
+}
+
+.mso-logo {
+    height: 28px;
+}
+
+.vue-date-picker-fixer {
+    &:disabled {
+        background-color: #e9ecef;
+    }
+}
+
+.link-word-break-all {
+    word-break: break-all;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.custom-badge {
+    min-width: 16px;
+}
+
+.strikethrough {
+    text-decoration: line-through;
+}
+
+.search-field:focus {
+    box-shadow: none;
+}
+
+.custom-panel-body {
+    @extend .rounded-bottom;
+    border: 1px solid $secondary;
+    border-top: none;
+    transition: all 0.5s;
+}
+
+.custom-panel-body:hover {
+    background-color: $light;
+}
+
+.nobreak {
+    white-space: nowrap;
+}
+
+.summernote{
+    .note-editor{
+        background-color: white;
+    }
+}
