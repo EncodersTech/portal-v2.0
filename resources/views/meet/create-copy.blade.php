@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content-header')
-    <span class="fas fa-fw fa-calendar-check"></span> Create A Meet
+    <span class="fas fa-fw fa-calendar-check"></span><b> Add a Hosted Meet </b>
     <span class="small text-dark">
         {{ $_managed->isNotCurrentUser() ? '(on behalf of ' . $_managed->first_name .')' : ''}}
     </span>
@@ -154,10 +154,10 @@
                 <div class="card-group">
                     <div class="card">
                         <div class="card-header bg-primary text-light">
-                            <span class="fas fa-fw fa-file"></span> Start from scratch
+                            <span class="fas fa-fw fa-file"></span><b> Add a Hosted Meet </b>
                         </div>
                         <div class="card-body bg-white pb-0">
-                            Create a new meet from scratch.
+                            Add a new meet from scratch
                         </div>
                         <div class="card-footer text-right border-top-0 bg-white pt-0">
                             <a href="{{ route('gyms.meets.create.scratch', ['gym' => $gym]) }}" class="btn btn-primary">
@@ -169,11 +169,11 @@
                     @if ($gym->hasActiveMeets())
                         <div class="card">
                             <div class="card-header bg-dark text-light">
-                                <span class="fas fa-fw fa-copy"></span> Copy from an existing meet
+                                <span class="fas fa-fw fa-copy"></span> <b>Add A Meet By Copying Existing Meet</b>
                             </div>
                             <div class="card-body bg-white pb-0">
                                 <div>
-                                    Copy details from an existing meet
+                                    Add a new meet by copying details from an existing meet.
                                 </div>
                             </div>
                             <div class="card-footer text-right border-top-0 bg-white pt-0">
@@ -200,12 +200,12 @@
                     <div class="card-group">
                         <div class="card">
                             <div class="card-header bg-info text-light">
-                                <span class="fas fa-fw fa-undo-alt"></span> Or ... continue where you left off
+                                <span class="fas fa-fw fa-undo-alt"></span> Unfinished Meet Creation ...
                             </div>
                             <div class="card-body bg-white pb-0">
                                 <div>
-                                    Choose one of the entries below to continue where you left off.<br/>
-                                    Please note that these temporary entries are only stored for 30 days.
+                                    Complete an unfinished hosted meet you previously started.<br/>
+                                    Please note that these unfinished meets are temporary and are only stored for 30 days.
                                 </div>
                                 <div class="mt-1 mb-3">
                                     <select class="form-control form-control-sm" id="continue-select">

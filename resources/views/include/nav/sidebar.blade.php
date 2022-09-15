@@ -105,8 +105,8 @@
                         @if ($_managed->isCurrentUser() || $_managed->pivot->can_register_in_meet)
                         <div class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('gyms.meets.joined' , ['gym' => $gym])}}">
-                                <span class="far fa-fw fa-calendar-check" title="Joined Meets"></span>
-                                <span class="sidebar-item-text">Joined Meets</span>
+                                <span class="far fa-fw fa-calendar-check" title="Entered Meets"></span>
+                                <span class="sidebar-item-text">Entered Meets</span>
                             </a>
                         </div>
                         @endif
@@ -115,8 +115,8 @@
                         $_managed->pivot->can_edit_meet)
                         <div class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('gyms.meets.index' , ['gym' => $gym])}}">
-                                <span class="fas fa-fw fa-calendar-check" title="Hosted Meets"></span>
-                                <span class="sidebar-item-text">Hosted Meets</span>
+                                <span class="fas fa-fw fa-calendar-check" title="My Hosted Meets"></span>
+                                <span class="sidebar-item-text">My Hosted Meets</span>
                             </a>
                         </div>
                         @endif
@@ -124,8 +124,8 @@
                         @if ($_managed->isCurrentUser() || $_managed->pivot->can_create_meet)
                         <div class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('gyms.meets.create' , ['gym' => $gym])}}">
-                                <span class="fas fa-fw fa-calendar-plus" title="Create Meet"></span>
-                                <span class="sidebar-item-text">Create Meet</span>
+                                <span class="fas fa-fw fa-calendar-plus" title="Add Hosted Meet"></span>
+                                <span class="sidebar-item-text">Add Hosted Meet</span>
                             </a>
                         </div>
                         @endif
