@@ -3,6 +3,7 @@
 /public/storage
 /storage/*.key
 vendor
+laravel-echo-server.lock
 .env
 .phpunit.result.cache
 Homestead.json
