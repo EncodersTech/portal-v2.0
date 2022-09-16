@@ -44,7 +44,7 @@
                     
                     <div class="input-group-append">
                         <button class="btn btn-info" type="button" id="password-view-switch">
-                            <span class="fas fa-eye"></span>
+                            <span id="btn-eye" class="fas fa-eye"></span>
                         </button>
                     </div>
                 </div>
@@ -241,6 +241,7 @@
     }
     $('#password-view-switch').click(e => {
         let type = ($('#password').attr('type') == 'password' ? 'text' : 'password');
+        $('#btn-eye').toggleClass('fa-eye fa-eye-slash');
         $('#password').attr('type', type);
     });
   </script>
