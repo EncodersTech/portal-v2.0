@@ -110,7 +110,34 @@ class MeetController extends AppBaseController
         } catch (CustomBaseException $e) {
             return redirect(route('dashboard'))->with('error', $e->getMessage());
         }
-
+        // $m_levels = $levels["USAIGC"];
+        foreach ($levels as $k => $lbl) {
+            
+            foreach ($lbl["categories"] as $key => $levels) {
+                $m_levels[$k][$key]["fee"] = 0;
+                $m_levels[$k][$key]["has_change"] = false;
+                foreach ($levels["levels"] as $keys => $value) {
+                    if($m_levels[$k][$key]["fee"] == 0)
+                    {
+                        $m_levels[$k][$key]["fee"] = $value["pivot"]["registration_fee"];
+                        $m_levels[$k][$key]["registration_fee_first"] = $value["pivot"]["registration_fee_first"];
+                        $m_levels[$k][$key]["registration_fee_second"] = $value["pivot"]["registration_fee_second"];
+                        $m_levels[$k][$key]["registration_fee_third"] = $value["pivot"]["registration_fee_third"];
+                    }
+                    else if($m_levels[$k][$key]["fee"] !=  $value["pivot"]["registration_fee"])
+                    {
+                        $m_levels[$k][$key]["has_change"] = true;
+                        $m_levels[$k][$key]["fee"] = min($m_levels[$k][$key]["fee"], $value["pivot"]["registration_fee"]);
+                        $m_levels[$k][$key]["registration_fee_first"] = min($value["pivot"]["registration_fee_first"], $value["pivot"]["registration_fee_first"]);
+                        $m_levels[$k][$key]["registration_fee_second"] = min($value["pivot"]["registration_fee_second"],  $value["pivot"]["registration_fee_second"]);
+                        $m_levels[$k][$key]["registration_fee_third"] = min($value["pivot"]["registration_fee_third"],$value["pivot"]["registration_fee_third"] );
+                    }
+                    # code...
+                }
+            }
+        }
+        // print_r($m_levels);
+        // die();
         return view('meet.details', [
             'current_page' => ($is_own ? self::_get_page_name($gym) : 'browse-meets'),
             'owner' => $owner,
@@ -119,6 +146,7 @@ class MeetController extends AppBaseController
             'registrations' => $registrations,
             'allCategories' => $allCategories,
             'bodies' => $levels,
+            'mini_level' => $m_levels,
             'is_own' => $is_own,
             'today' => now()->setTime(0, 0) 
         ]);

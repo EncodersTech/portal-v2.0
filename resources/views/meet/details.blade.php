@@ -11,7 +11,7 @@
         margin: 5% 0%;
         border-radius: 2%;
     }
-</style>s
+</style>
 @section('content-main')
     @include('include.errors')
 

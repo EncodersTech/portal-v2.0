@@ -1,27 +1,72 @@
-
-<div class="row dd">
+<div class="row dd" style="font-size:10px;">
+    <div class="col-md-4">
+        <h4>General Entry</h4>
+        @foreach($mini_level as $key=>$value)
+            <div>{{ $key }}</div>
+            <ul>
+            @foreach($value as $k=>$v)
+                <div>{{ $k }}</div>
+                @if($v["has_change"])
+                    <div>Starts with: {{number_format($v["fee"],2) }}</div>
+                @else
+                <div>All Level: {{number_format($v["fee"],2) }}</div>
+                @endif
+            @endforeach
+            </ul>
+        @endforeach
+    </div>
     @if($meet->registration_first_discount_is_enable )
     <div class="col-md-4">
         <h4>Early Entry</h4>
-        <div>{{ json_encode($bodies) }}</div>
+        @foreach($mini_level as $key=>$value)
+            <div>{{ $key }}</div>
+            <ul>
+            @foreach($value as $k=>$v)
+                <div>{{ $k }}</div>
+                @if($v["has_change"])
+                    <div>Starts with: {{number_format($v["registration_fee_first"],2) }}</div>
+                @else
+                <div>All Level: {{number_format($v["registration_fee_first"],2) }}</div>
+                @endif
+            @endforeach
+            </ul>
+        @endforeach
     </div>
     @endif
     @if($meet->registration_second_discount_is_enable)
     <div class="col-md-4">
         <h4>Standard Entry</h4>
-        <div>SOME DATA</div>
+        @foreach($mini_level as $key=>$value)
+            <div>{{ $key }}</div>
+            <ul>
+            @foreach($value as $k=>$v)
+                <div>{{ $k }}</div>
+                @if($v["has_change"])
+                    <div>Starts with: {{number_format($v["registration_fee_second"],2) }}</div>
+                @else
+                <div>All Level: {{number_format($v["registration_fee_second"],2) }}</div>
+                @endif
+            @endforeach
+            </ul>
+        @endforeach
     </div>
     @endif
     @if($meet->registration_third_discount_is_enable )
     <div class="col-md-4">
         <h4>Standard 2 Entry</h4>
-        <div>SOME DATA</div>
-    </div>
-    @endif
-    @if($meet->allow_late_registration)
-    <div class="col-md-4">
-        <h4>Late Entry</h4>
-        <div></div>
+        @foreach($mini_level as $key=>$value)
+            <div>{{ $key }}</div>
+            <ul>
+            @foreach($value as $k=>$v)
+                <div>{{ $k }}</div>
+                @if($v["has_change"])
+                    <div>Starts with: {{number_format($v["registration_fee_third"],2) }}</div>
+                @else
+                <div>All Level: {{number_format($v["registration_fee_third"],2) }}</div>
+                @endif
+            @endforeach
+            </ul>
+        @endforeach
     </div>
     @endif
 </div>
