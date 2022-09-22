@@ -393,7 +393,7 @@ $(document).ready(function () {// setTimeout(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\host\meet\meet_summary.js */"./resources/js/host/meet/meet_summary.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\js\host\meet\meet_summary.js */"./resources/js/host/meet/meet_summary.js");
 
 
 /***/ })

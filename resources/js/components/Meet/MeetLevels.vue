@@ -1027,8 +1027,9 @@
         },
         methods: {
             hasSpecialist(body, category) {
-                return (body.id == this.constants.bodies.USAIGC)
-                    && (category.id == this.constants.categories.GYMNASTICS_WOMEN);
+                return ((body.id == this.constants.bodies.USAIGC)
+                    && (category.id == this.constants.categories.GYMNASTICS_WOMEN) 
+                    || body.id == this.constants.bodies.NGA);
             },
 
             numberFormat(n) {

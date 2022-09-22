@@ -75064,14 +75064,14 @@ window.Voca = __webpack_require__(/*! voca */ "./node_modules/voca/index.js");
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\app.js */"./resources/js/app.js");
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\sass\app.scss */"./resources/sass/app.scss");
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\sass\auth.scss */"./resources/sass/auth.scss");
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\sass\main.scss */"./resources/sass/main.scss");
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\admin\style\style.scss */"./resources/assets/admin/style/style.scss");
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\user\style\style.scss */"./resources/assets/user/style/style.scss");
-__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\admin\style\dashboard.scss */"./resources/assets/admin/style/dashboard.scss");
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\admin\style\usag.scss */"./resources/assets/admin/style/usag.scss");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\js\app.js */"./resources/js/app.js");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\sass\auth.scss */"./resources/sass/auth.scss");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\sass\main.scss */"./resources/sass/main.scss");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\admin\style\style.scss */"./resources/assets/admin/style/style.scss");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\user\style\style.scss */"./resources/assets/user/style/style.scss");
+__webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\admin\style\dashboard.scss */"./resources/assets/admin/style/dashboard.scss");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\admin\style\usag.scss */"./resources/assets/admin/style/usag.scss");
 
 
 /***/ }),

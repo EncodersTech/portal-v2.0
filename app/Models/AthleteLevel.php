@@ -147,8 +147,8 @@ class AthleteLevel extends Model
 
     public function hasSpecialist()
     {
-        return ($this->sanctioning_body->id == SanctioningBody::USAIGC) &&
-            ($this->level_category->id == LevelCategory::GYMNASTICS_WOMEN);
+        return (($this->sanctioning_body->id == SanctioningBody::USAIGC) &&
+            ($this->level_category->id == LevelCategory::GYMNASTICS_WOMEN) || $this->sanctioning_body->id == SanctioningBody::NGA);
     }
 
     public function levelMeets(): BelongsToMany
