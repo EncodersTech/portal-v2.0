@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
 @section('content-header')
-    <span class="fas fa-fw fa-tachometer-alt"></span> Hello, {{ Auth::user()->first_name }}
+    <span class="fas fa-fw fa-tachometer-alt"></span> Hello, {{ Auth::user()->first_name }} !
 @endsection
 <style>
     .small-box {
@@ -87,10 +87,10 @@
                 <div class="card-group">
                     <div class="card">
                         <div class="card-header bg-primary text-light">
-                            <span class="fas fa-calendar-alt"></span> Browse Meets
+                            <span class="fas fa-calendar-alt"></span> Browse and Register for Meets
                         </div>
                         <div class="card-body bg-white pb-0">
-                            Check out which meets your athletes can compete in.
+                            Search for upcoming meets that your athletes can compete in.
                         </div>
                         <div class="card-footer text-right border-top-0 bg-white pt-0">
                             <a href="{{ route('meets.browse') }}" class="btn btn-primary">
@@ -101,11 +101,13 @@
 
                     <div class="card">
                         <div class="card-header bg-primary text-light">
-                            <span class="fas fa-dumbbell"></span> Manage Your Gyms
+                            <span class="fas fa-dumbbell"></span> My Gym Information
                         </div>
                         <div class="card-body bg-white pb-0">
                             <p>
-                                View or modify your clubs' information.
+                                View and modify your gymnastics club(s) information. <br>
+                                Please note, you must add your
+                                club's information and number in order to register for competitions.
                             </p>
                         </div>
                         <div class="card-footer text-right border-top-0 bg-white pt-0">

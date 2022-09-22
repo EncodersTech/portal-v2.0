@@ -23,7 +23,7 @@
 </style>
 
 @section('content-header')
-    <span class="fas fa-fw fa-calendar-check"></span> Browse Meets
+    <span class="fas fa-fw fa-calendar-check"></span> Browse and Register for Meets
     <span class="small text-dark">
         {{ $_managed->isNotCurrentUser() ? '(on behalf of ' . $_managed->first_name .')' : ''}}
     </span>
