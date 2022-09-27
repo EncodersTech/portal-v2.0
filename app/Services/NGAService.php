@@ -63,7 +63,7 @@ class NGAService {
             return $result;
         } catch (\Throwable $e) {
             logger()->error(self::class . '::getClub() : ' . $e->getMessage());
-            throw new CustomBaseException('Something went wrong with the NGA server import.',-1);
+            throw new CustomBaseException('Something went wrong with the NGA server import. Please contact Admin.',-1);
             // throw new CustomBaseException( $result,-1);
         }
     }
@@ -90,7 +90,7 @@ class NGAService {
             return $result;
         } catch (\Throwable $e) {
             logger()->error(self::class . '::getCoach() : ' . $e->getMessage());
-            throw new CustomBaseException('Something went wrong with the NGA server import.',-1);
+            throw new CustomBaseException('Something went wrong with the NGA server import. Please contact Admin.',-1);
             // throw new CustomBaseException( $result,-1);
         }
     }
