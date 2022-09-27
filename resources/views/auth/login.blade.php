@@ -89,7 +89,9 @@
         </div>
         <div class="row">
             <div class="col mb-3">
-                <div class="alert alert-warning">Because the security of your information is paramount, we have incorporated this captcha
+                <div class="alert alert-warning">
+                    <span class="fas fa-fw fa-info-circle"></span>
+                    Because the security of your information is paramount, we have incorporated this captcha
                     to help protect our information.</div>
             </div>
         </div>
