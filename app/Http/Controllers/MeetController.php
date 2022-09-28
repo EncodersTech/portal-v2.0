@@ -110,9 +110,22 @@ class MeetController extends AppBaseController
         } catch (CustomBaseException $e) {
             return redirect(route('dashboard'))->with('error', $e->getMessage());
         }
-        // $m_levels = $levels["USAIGC"];
-        foreach ($levels as $k => $lbl) {
-            
+        return view('meet.details', [
+            'current_page' => ($is_own ? self::_get_page_name($gym) : 'browse-meets'),
+            'owner' => $owner,
+            'gym' => $gym,
+            'meet' => $meet,
+            'registrations' => $registrations,
+            'allCategories' => $allCategories,
+            'bodies' => $levels,
+            'mini_level' => $this->process_mini_levels($levels),
+            'is_own' => $is_own,
+            'today' => now()->setTime(0, 0) 
+        ]);
+    }
+    public function process_mini_levels($lbls)
+    {
+        foreach ($lbls as $k => $lbl) {
             foreach ($lbl["categories"] as $key => $levels) {
                 $m_levels[$k][$key]["fee"] = 0;
                 $m_levels[$k][$key]["has_change"] = false;
@@ -136,22 +149,8 @@ class MeetController extends AppBaseController
                 }
             }
         }
-        // print_r($m_levels);
-        // die();
-        return view('meet.details', [
-            'current_page' => ($is_own ? self::_get_page_name($gym) : 'browse-meets'),
-            'owner' => $owner,
-            'gym' => $gym,
-            'meet' => $meet,
-            'registrations' => $registrations,
-            'allCategories' => $allCategories,
-            'bodies' => $levels,
-            'mini_level' => $m_levels,
-            'is_own' => $is_own,
-            'today' => now()->setTime(0, 0) 
-        ]);
+        return $m_levels;
     }
-
     public function create(Request $request, string $gym)
     {
         $gym = $request->_managed_account->retrieveGym($gym); /** @var Gym $gym */

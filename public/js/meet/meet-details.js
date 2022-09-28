@@ -1992,7 +1992,11 @@ __webpack_require__.r(__webpack_exports__);
           USAG: 1,
           USAIGC: 2,
           AAU: 3,
-          NGA: 4
+          NGA: 4,
+          1: 'USAG',
+                    2: 'USAIGC',
+                    3: 'AAU',
+                    4: 'NGA',
         },
         categories: {
           GYMNASTICS_WOMEN: 1,
