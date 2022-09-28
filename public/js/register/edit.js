@@ -3144,7 +3144,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   watch: {},
   methods: {
     hasSpecialist: function hasSpecialist(body, category) {
-      return body.id == this.constants.bodies.USAIGC && category.id == this.constants.categories.GYMNASTICS_WOMEN;
+      return body.id == this.constants.bodies.USAIGC && (category.id == this.constants.categories.GYMNASTICS_WOMEN || body.id == this.constants.bodies.NGA);
     },
     numberFormat: function numberFormat(n) {
       try {
