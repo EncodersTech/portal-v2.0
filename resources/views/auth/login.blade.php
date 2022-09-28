@@ -74,6 +74,14 @@
         </div>
         <div class="row">
             <div class="col mb-3">
+                <div class="alert alert-warning">
+                    <span class="fas fa-fw fa-info-circle"></span>
+                    Because the security of your information is paramount, we have incorporated this captcha
+                    to help protect your information.</div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col mb-3">
                 <div class="form-check">
                 <div class="h-captcha" 
                 data-sitekey="{{env('HCAPTCHA_SITE_KEY')}}" 
@@ -87,14 +95,7 @@
                 <div id="recaptcha-error" class="text-danger" style="display:none;">CAPTCHA is not solved</div>
             </div>
         </div>
-        <div class="row">
-            <div class="col mb-3">
-                <div class="alert alert-warning">
-                    <span class="fas fa-fw fa-info-circle"></span>
-                    Because the security of your information is paramount, we have incorporated this captcha
-                    to help protect our information.</div>
-            </div>
-        </div>
+        
         
         <div class="row">
             <div class="col-lg text-right mb-3">
