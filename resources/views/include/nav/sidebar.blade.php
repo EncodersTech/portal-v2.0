@@ -187,7 +187,7 @@
                     <div class="sidebar-item">
                         <a class="sidebar-link" href="{{ route('account.profile') }}">
                             <span class="fas fa-fw fa-user" title="Visit Account"></span>
-                            <span class="sidebar-item-text">Account</span>
+                            <span class="sidebar-item-text">Profile</span>
                         </a>
                     </div>
 
