@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 64);
+/******/ 	return __webpack_require__(__webpack_require__.s = 63);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -197,7 +197,7 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 64:
+/***/ 63:
 /*!************************************************************************!*\
   !*** multi ./resources/assets/admin/js/usag_sanction/usag_sanction.js ***!
   \************************************************************************/

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 61);
+/******/ 	return __webpack_require__(__webpack_require__.s = 60);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -112,7 +112,7 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 61:
+/***/ 60:
 /*!************************************************************!*\
   !*** multi ./resources/assets/admin/js/setting/setting.js ***!
   \************************************************************/

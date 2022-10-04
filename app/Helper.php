@@ -134,7 +134,31 @@ class Helper {
             if ($body->initialism == 'NGA' && $level->name == 'Silver') {
                 $silverExists = true;
             }
-
+            $registration_updated_fee = null;
+            try{
+                if($meet != null)
+                {
+                    if($meet->registration_third_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_third_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) > 0)
+                            $registration_updated_fee = $level->pivot->registration_fee_third;
+                    }
+                    if($meet->registration_second_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_second_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) > 0)
+                            $registration_updated_fee =  $level->pivot->registration_fee_second;
+                    }
+                    if($meet->registration_first_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_first_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) > 0)
+                            $registration_updated_fee =  $level->pivot->registration_fee_first;
+                    }
+                    $level->pivot->registration_fee_update = $registration_updated_fee;
+                }
+                
+            }catch(Exception $e){}
+            
+            
             $result[$body->initialism]['categories'][$category->name]['levels'][] = $level;
         }
 

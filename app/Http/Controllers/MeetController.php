@@ -99,8 +99,6 @@ class MeetController extends AppBaseController
                 $allCategories[$body][] = $c->name;
                 // $allCategories[$body]["sanc"][] = $c->name;
             }
-            // print_r($allCategories ); 
-            // die();
 
             if ($meet->schedule != null) {
                 $meet->schedule = json_decode($meet->schedule);
@@ -118,14 +116,15 @@ class MeetController extends AppBaseController
             'registrations' => $registrations,
             'allCategories' => $allCategories,
             'bodies' => $levels,
-            'mini_level' => $this->process_mini_levels($levels),
+            'mini_level' => $this->getMiniLevel($levels),
             'is_own' => $is_own,
             'today' => now()->setTime(0, 0) 
         ]);
     }
-    public function process_mini_levels($lbls)
+    public function getMiniLevel($levels)
     {
-        foreach ($lbls as $k => $lbl) {
+        foreach ($levels as $k => $lbl) {
+            
             foreach ($lbl["categories"] as $key => $levels) {
                 $m_levels[$k][$key]["fee"] = 0;
                 $m_levels[$k][$key]["has_change"] = false;

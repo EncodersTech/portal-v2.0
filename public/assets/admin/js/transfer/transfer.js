@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 66);
+/******/ 	return __webpack_require__(__webpack_require__.s = 65);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -163,7 +163,7 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 66:
+/***/ 65:
 /*!**************************************************************!*\
   !*** multi ./resources/assets/admin/js/transfer/transfer.js ***!
   \**************************************************************/

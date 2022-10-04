@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 63);
+/******/ 	return __webpack_require__(__webpack_require__.s = 62);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -197,7 +197,7 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 63:
+/***/ 62:
 /*!******************************************************************************!*\
   !*** multi ./resources/assets/admin/js/usag_reservation/usag_reservation.js ***!
   \******************************************************************************/

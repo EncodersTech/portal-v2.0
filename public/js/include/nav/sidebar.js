@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 54);
+/******/ 	return __webpack_require__(__webpack_require__.s = 53);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -189,7 +189,7 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 54:
+/***/ 53:
 /*!***************************************************!*\
   !*** multi ./resources/js/include/nav/sidebar.js ***!
   \***************************************************/

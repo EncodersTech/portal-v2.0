@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 67);
+/******/ 	return __webpack_require__(__webpack_require__.s = 66);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -215,7 +215,7 @@ $('#transferStore').on('submit', function (e) {
 
 /***/ }),
 
-/***/ 67:
+/***/ 66:
 /*!*****************************************************************!*\
   !*** multi ./resources/assets/admin/js/transfer/create-edit.js ***!
   \*****************************************************************/

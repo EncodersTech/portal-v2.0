@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 59);
+/******/ 	return __webpack_require__(__webpack_require__.s = 58);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -236,7 +236,7 @@ $(document).on('submit', '#updateHandlingFee', function (e) {
 
 /***/ }),
 
-/***/ 59:
+/***/ 58:
 /*!***********************************************************!*\
   !*** multi ./resources/assets/admin/js/meet/dashboard.js ***!
   \***********************************************************/

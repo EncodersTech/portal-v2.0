@@ -197,7 +197,11 @@
 
                                             <div class="small mb-1">
                                                 <div>
-                                                    <div class="d-inline-block mr-1">
+                                                    <div class="d-inline-block mr-1" v-if="level.discount_fee">
+                                                        <strong>Discount fee:</strong>
+                                                        ${{ numberFormat(level.registration_fee)}}
+                                                    </div>
+                                                    <div class="d-inline-block mr-1" v-else>
                                                         <strong>Regular fee:</strong>
                                                         ${{ numberFormat(level.registration_fee)}}
                                                     </div>
@@ -1462,7 +1466,14 @@
 
                                                 level.male = level.pivot.allow_men;
                                                 level.female = level.pivot.allow_women;
-                                                level.registration_fee = Utils.toFloat(level.pivot.registration_fee);
+                                                if(typeof(level.pivot.registration_fee_update) != undefined)
+                                                {
+                                                    level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
+                                                    level.discount_fee = true;
+                                                }
+                                                else
+                                                    level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
+
                                                 level.late_registration_fee = Utils.toFloat(level.pivot.late_registration_fee);
                                                 level.allow_specialist = level.pivot.allow_specialist;
                                                 level.specialist_registration_fee = Utils.toFloat(level.pivot.specialist_registration_fee);
