@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 45);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -220,14 +220,14 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 46:
+/***/ 45:
 /*!********************************************************!*\
   !*** multi ./resources/js/host/meet/meet-dashboard.js ***!
   \********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\host\meet\meet-dashboard.js */"./resources/js/host/meet/meet-dashboard.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\js\host\meet\meet-dashboard.js */"./resources/js/host/meet/meet-dashboard.js");
 
 
 /***/ })

@@ -45,18 +45,18 @@ if (token) {
  * allows your team to easily build robust real-time web applications.
  */
 
-import Echo from 'laravel-echo'
-window.io = require('socket.io-client');
-window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: window.location.hostname + ':' + window.laravel_echo_port ,// this is laravel-echo-server host
-    authEndPoint: '/broadcasting/auth',
-    auth: {
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        },
-    },
-});
+// import Echo from 'laravel-echo'
+// window.io = require('socket.io-client');
+// window.Echo = new Echo({
+//     broadcaster: 'socket.io',
+//     host: window.location.hostname + ':' + window.laravel_echo_port ,// this is laravel-echo-server host
+//     authEndPoint: '/broadcasting/auth',
+//     auth: {
+//         headers: {
+//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+//         },
+//     },
+// });
 
 // window.Pusher = require('pusher-js');
 

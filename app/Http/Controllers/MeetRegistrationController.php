@@ -63,7 +63,6 @@ class MeetRegistrationController extends Controller
                 throw new CustomBaseException("All of your gyms have already registered for this meet.", -1);
 
             $levels = Helper::getStructuredLevelList($meet->activeLevels, $meet);
-
             $required_sanctions = [];
             foreach (SanctioningBody::all() as $body) /** @var SanctioningBody $body */
                 $required_sanctions[$body->id] = LevelCategory::requiresSanction($body->id);

@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 63);
+/******/ 	return __webpack_require__(__webpack_require__.s = 62);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -197,14 +197,14 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 63:
+/***/ 62:
 /*!******************************************************************************!*\
   !*** multi ./resources/assets/admin/js/usag_reservation/usag_reservation.js ***!
   \******************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\admin\js\usag_reservation\usag_reservation.js */"./resources/assets/admin/js/usag_reservation/usag_reservation.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\admin\js\usag_reservation\usag_reservation.js */"./resources/assets/admin/js/usag_reservation/usag_reservation.js");
 
 
 /***/ })

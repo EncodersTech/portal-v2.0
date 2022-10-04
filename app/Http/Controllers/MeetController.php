@@ -111,6 +111,24 @@ class MeetController extends AppBaseController
             return redirect(route('dashboard'))->with('error', $e->getMessage());
         }
         // $m_levels = $levels["USAIGC"];
+        
+        // print_r($m_levels);
+        // die();
+        return view('meet.details', [
+            'current_page' => ($is_own ? self::_get_page_name($gym) : 'browse-meets'),
+            'owner' => $owner,
+            'gym' => $gym,
+            'meet' => $meet,
+            'registrations' => $registrations,
+            'allCategories' => $allCategories,
+            'bodies' => $levels,
+            'mini_level' => $this->getMiniLevel($levels),
+            'is_own' => $is_own,
+            'today' => now()->setTime(0, 0) 
+        ]);
+    }
+    public function getMiniLevel($levels)
+    {
         foreach ($levels as $k => $lbl) {
             
             foreach ($lbl["categories"] as $key => $levels) {
@@ -136,20 +154,7 @@ class MeetController extends AppBaseController
                 }
             }
         }
-        // print_r($m_levels);
-        // die();
-        return view('meet.details', [
-            'current_page' => ($is_own ? self::_get_page_name($gym) : 'browse-meets'),
-            'owner' => $owner,
-            'gym' => $gym,
-            'meet' => $meet,
-            'registrations' => $registrations,
-            'allCategories' => $allCategories,
-            'bodies' => $levels,
-            'mini_level' => $m_levels,
-            'is_own' => $is_own,
-            'today' => now()->setTime(0, 0) 
-        ]);
+        return $m_levels;
     }
 
     public function create(Request $request, string $gym)

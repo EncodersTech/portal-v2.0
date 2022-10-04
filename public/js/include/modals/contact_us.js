@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 53);
+/******/ 	return __webpack_require__(__webpack_require__.s = 52);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -190,14 +190,14 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 53:
+/***/ 52:
 /*!*********************************************************!*\
   !*** multi ./resources/js/include/modals/contact_us.js ***!
   \*********************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\include\modals\contact_us.js */"./resources/js/include/modals/contact_us.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\js\include\modals\contact_us.js */"./resources/js/include/modals/contact_us.js");
 
 
 /***/ })

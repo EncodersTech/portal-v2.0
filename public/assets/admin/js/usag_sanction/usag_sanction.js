@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 64);
+/******/ 	return __webpack_require__(__webpack_require__.s = 63);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -197,14 +197,14 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 64:
+/***/ 63:
 /*!************************************************************************!*\
   !*** multi ./resources/assets/admin/js/usag_sanction/usag_sanction.js ***!
   \************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\admin\js\usag_sanction\usag_sanction.js */"./resources/assets/admin/js/usag_sanction/usag_sanction.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\admin\js\usag_sanction\usag_sanction.js */"./resources/assets/admin/js/usag_sanction/usag_sanction.js");
 
 
 /***/ })

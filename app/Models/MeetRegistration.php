@@ -402,7 +402,24 @@ class MeetRegistration extends Model
                         throw new CustomBaseException('Athletes cannot be registered in ' . $category->name . ' manually.', -1);
 
                     $team = $level->pivot->allow_teams && $l['team'];
-
+                    
+                    $registration_updated_fee = null;
+                    if($meet->registration_third_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_third_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                            $registration_updated_fee = $level->pivot->registration_fee_third;
+                    }
+                    if($meet->registration_second_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_second_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                            $registration_updated_fee =  $level->pivot->registration_fee_second;
+                    }
+                    if($meet->registration_first_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_first_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                            $registration_updated_fee =  $level->pivot->registration_fee_first;
+                    }
+                    $level->pivot->registration_fee = $registration_updated_fee == null ? $level->pivot->registration_fee : $registration_updated_fee;
                     $registrationLevel = $registration->levels()->attach($level->id, [
                         'allow_men' => $level->pivot->allow_men,
                         'allow_women' => $level->pivot->allow_women,
@@ -974,7 +991,6 @@ class MeetRegistration extends Model
 
                 $subtotal = $incurredFees['subtotal'];
                 $deposit_subtotal = $incurredFees['deposit_subtotal'];
-                
                 if($deposit)
                 {
                     if ($deposit_subtotal != $summary['subtotal'])
@@ -2330,6 +2346,24 @@ class MeetRegistration extends Model
                             if ($level == null)
                                 throw new CustomBaseException('No such level', -1);
 
+                            $registration_updated_fee = null;
+                            if($meet->registration_third_discount_is_enable)
+                            {
+                                if(strtotime($meet->registration_third_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                                    $registration_updated_fee = $level->pivot->registration_fee_third;
+                            }
+                            if($meet->registration_second_discount_is_enable)
+                            {
+                                if(strtotime($meet->registration_second_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                                    $registration_updated_fee =  $level->pivot->registration_fee_second;
+                            }
+                            if($meet->registration_first_discount_is_enable)
+                            {
+                                if(strtotime($meet->registration_first_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                                    $registration_updated_fee =  $level->pivot->registration_fee_first;
+                            }
+                            $level->pivot->registration_fee = $registration_updated_fee == null ? $level->pivot->registration_fee : $registration_updated_fee;
+                            
                             if (!in_array($level->sanctioning_body_id, $gym_membership_checked)) {
                                 $gym_membership = null;
                                 $gym_membership_body = '';
@@ -2340,7 +2374,7 @@ class MeetRegistration extends Model
                                         break;
 
                                     case SanctioningBody::USAIGC:
-                                        $gym_mem1bership = ($gym->usaigc_membership ? $gym->usaigc_membership : null);
+                                        $gym_membership = ($gym->usaigc_membership ? $gym->usaigc_membership : null);
                                         $gym_membership_body = 'USAIGC';
                                         break;
 
