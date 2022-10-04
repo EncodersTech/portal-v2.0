@@ -72821,11 +72821,6 @@ var render = function() {
                                                                                 ],
                                                                                 staticClass:
                                                                                   "form-control form-control-sm",
-                                                                                attrs: {
-                                                                                  disabled:
-                                                                                    athlete.tshirt_size_id !=
-                                                                                    null
-                                                                                },
                                                                                 on: {
                                                                                   change: function(
                                                                                     $event
@@ -72963,11 +72958,6 @@ var render = function() {
                                                                                         ],
                                                                                         staticClass:
                                                                                           "form-control form-control-sm",
-                                                                                        attrs: {
-                                                                                          disabled:
-                                                                                            athlete.leo_size_id !=
-                                                                                            null
-                                                                                        },
                                                                                         on: {
                                                                                           change: function(
                                                                                             $event

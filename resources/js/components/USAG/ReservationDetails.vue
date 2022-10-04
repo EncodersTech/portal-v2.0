@@ -485,7 +485,7 @@
                                                         </td>
 
                                                         <td v-if="meet.tshirt_chart != null" scope="col" class="align-middle">
-                                                            <select v-model="athlete.tshirt_size_id" class="form-control form-control-sm" :disabled="athlete.tshirt_size_id != null">
+                                                            <select v-model="athlete.tshirt_size_id" class="form-control form-control-sm">
                                                                 <option :value="null">
                                                                     (Choose ...)
                                                                 </option>
@@ -499,7 +499,7 @@
                                                         <td v-if="meet.leo_chart != null" scope="col" class="align-middle">
                                                             <div v-if="athlete.gender == 'male'">—</div>
                                                             <div v-else>
-                                                                <select v-model="athlete.leo_size_id" class="form-control form-control-sm" :disabled="athlete.leo_size_id != null">
+                                                                <select v-model="athlete.leo_size_id" class="form-control form-control-sm">
                                                                     <option :value="null">
                                                                         (Choose ...)
                                                                     </option>
