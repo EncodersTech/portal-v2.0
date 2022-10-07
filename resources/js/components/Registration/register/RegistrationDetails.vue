@@ -1472,7 +1472,7 @@
                                                     level.discount_fee = true;
                                                 }
                                                 else
-                                                    level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
+                                                    level.registration_fee = Utils.toFloat(level.pivot.registration_fee);
 
                                                 level.late_registration_fee = Utils.toFloat(level.pivot.late_registration_fee);
                                                 level.allow_specialist = level.pivot.allow_specialist;
