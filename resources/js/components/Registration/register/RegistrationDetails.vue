@@ -1466,7 +1466,8 @@
 
                                                 level.male = level.pivot.allow_men;
                                                 level.female = level.pivot.allow_women;
-                                                if(typeof(level.pivot.registration_fee_update) != undefined)
+                                                level.discount_fee = false;
+                                                if(typeof(level.pivot.registration_fee_update) != undefined && level.pivot.registration_fee_update != null)
                                                 {
                                                     level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
                                                     level.discount_fee = true;

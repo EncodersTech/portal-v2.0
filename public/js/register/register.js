@@ -3139,8 +3139,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                             var level = category.levels[k];
                             level.male = level.pivot.allow_men;
                             level.female = level.pivot.allow_women;
+                            level.discount_fee = false;
 
-                            if (_typeof(level.pivot.registration_fee_update) != undefined) {
+                            if (_typeof(level.pivot.registration_fee_update) != undefined && level.pivot.registration_fee_update != null) {
                               level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
                               level.discount_fee = true;
                             } else level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
