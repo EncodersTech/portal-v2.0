@@ -252,9 +252,11 @@
                                                         <tr>
                                                             <th scope="col" class="align-middle">
                                                                 <span v-if="level.has_specialist && level.allow_specialist">
+                                                                    <input @change="selectAllAthelete(level.uid)" type="checkbox">
                                                                     Event
                                                                 </span>
                                                                 <span v-else>
+                                                                    <input @change="selectAllAthelete(level.uid)" type="checkbox">
                                                                     Register
                                                                 </span>
                                                             </th>
@@ -753,6 +755,14 @@
             },
         },
         methods: {
+            selectAllAthelete: function selectAllAthelete(uid) {
+                let id = '[id^="'+ uid + '-athlete-"]';
+                for (let i of document.querySelectorAll(id)) {
+                    if (!i.id.match('-event-')) {
+                        i.click();
+                    }
+                }
+            },
             hasSpecialist(body, category) {
                 return ((body.id == this.constants.bodies.USAIGC)
                     && (category.id == this.constants.categories.GYMNASTICS_WOMEN)
