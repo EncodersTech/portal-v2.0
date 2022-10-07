@@ -3144,7 +3144,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                             if (_typeof(level.pivot.registration_fee_update) != undefined && level.pivot.registration_fee_update != null) {
                               level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
                               level.discount_fee = true;
-                            } else level.registration_fee = Utils.toFloat(level.pivot.registration_fee_update);
+                            } else level.registration_fee = Utils.toFloat(level.pivot.registration_fee);
 
                             level.late_registration_fee = Utils.toFloat(level.pivot.late_registration_fee);
                             level.allow_specialist = level.pivot.allow_specialist;
