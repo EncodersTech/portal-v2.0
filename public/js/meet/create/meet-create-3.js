@@ -83700,7 +83700,7 @@ $(document).ready(function (e) {
                 if (e.body_id != 1 && $.inArray(e.body_id, prev_record) == -1) {
                   prev_record.push(e.body_id);
                   var sv = $('#sanc-body-' + e.body_id).val();
-                  if (sv.trim().length > 0) sbn.push([e.body_id, sv]);else throw 'Please enter the sanction no of selected category to proceed';
+                  if (sv.trim().length > 0) sbn.push([e.body_id, sv]); // else throw 'Please enter the sanction no of selected category to proceed';
                 }
               });
               this.sanc_body_no = sbn;

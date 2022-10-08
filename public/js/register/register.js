@@ -2294,8 +2294,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationDetails',
   props: {
@@ -69085,7 +69083,7 @@ var render = function() {
                                                                                                     }
                                                                                                   ),
                                                                                                   _vm._v(
-                                                                                                    "\n                                                                Event \n                                                                "
+                                                                                                    "\n                                                                Event\n                                                            "
                                                                                                   )
                                                                                                 ]
                                                                                               )

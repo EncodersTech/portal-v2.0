@@ -84,7 +84,7 @@ $(document).ready(e => {
                                     var sv = $('#sanc-body-' + e.body_id).val();
                                     if (sv.trim().length > 0) 
                                         sbn.push([e.body_id,sv]);
-                                    else throw 'Please enter the sanction no of selected category to proceed';
+                                    // else throw 'Please enter the sanction no of selected category to proceed';
                                 }
                             });
                             this.sanc_body_no = sbn;

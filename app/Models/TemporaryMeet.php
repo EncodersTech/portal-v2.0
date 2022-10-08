@@ -94,7 +94,7 @@ class TemporaryMeet extends Model
         ],
         'team_format' => ['nullable', 'string'],
         'levels' => ['required', 'json'],
-        'sanction_body_no' => ['required'],
+        'sanction_body_no' => ['sometimes'],
     ];
 
     public const CREATE_STEP_4_RULES = [
