@@ -2787,6 +2787,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -71323,154 +71326,159 @@ var render = function() {
                                                                                         ]
                                                                                       )
                                                                                 ]
-                                                                              ),
-                                                                              _vm._v(
-                                                                                " "
-                                                                              ),
-                                                                              _vm
-                                                                                .permissions
-                                                                                .scratch
-                                                                                ? _c(
-                                                                                    "div",
-                                                                                    {
-                                                                                      staticClass:
-                                                                                        "btn-group dropdown"
-                                                                                    },
-                                                                                    [
-                                                                                      _vm._m(
-                                                                                        5,
-                                                                                        true
-                                                                                      ),
-                                                                                      _vm._v(
-                                                                                        " "
-                                                                                      ),
-                                                                                      _c(
-                                                                                        "div",
-                                                                                        {
-                                                                                          staticClass:
-                                                                                            "dropdown-menu dropdown-menu-right"
-                                                                                        },
-                                                                                        [
-                                                                                          !level
-                                                                                            .changes
-                                                                                            .team &&
-                                                                                          level.team
-                                                                                            ? _c(
-                                                                                                "button",
-                                                                                                {
-                                                                                                  staticClass:
-                                                                                                    "dropdown-item text-danger",
-                                                                                                  attrs: {
-                                                                                                    type:
-                                                                                                      "button"
-                                                                                                  },
-                                                                                                  on: {
-                                                                                                    click: function(
-                                                                                                      $event
-                                                                                                    ) {
-                                                                                                      return _vm.toggleTeam(
-                                                                                                        level,
-                                                                                                        false
-                                                                                                      )
-                                                                                                    }
-                                                                                                  }
-                                                                                                },
-                                                                                                [
-                                                                                                  _c(
-                                                                                                    "span",
-                                                                                                    {
-                                                                                                      staticClass:
-                                                                                                        "fas fa-fw fa-eraser"
-                                                                                                    }
-                                                                                                  ),
-                                                                                                  _vm._v(
-                                                                                                    " Scratch Team\n                                                        "
-                                                                                                  )
-                                                                                                ]
-                                                                                              )
-                                                                                            : !level
-                                                                                                .changes
-                                                                                                .team &&
-                                                                                              !level.team
-                                                                                            ? _c(
-                                                                                                "button",
-                                                                                                {
-                                                                                                  staticClass:
-                                                                                                    "dropdown-item text-success",
-                                                                                                  attrs: {
-                                                                                                    type:
-                                                                                                      "button"
-                                                                                                  },
-                                                                                                  on: {
-                                                                                                    click: function(
-                                                                                                      $event
-                                                                                                    ) {
-                                                                                                      return _vm.toggleTeam(
-                                                                                                        level,
-                                                                                                        true
-                                                                                                      )
-                                                                                                    }
-                                                                                                  }
-                                                                                                },
-                                                                                                [
-                                                                                                  _c(
-                                                                                                    "span",
-                                                                                                    {
-                                                                                                      staticClass:
-                                                                                                        "fas fa-fw fa-users"
-                                                                                                    }
-                                                                                                  ),
-                                                                                                  _vm._v(
-                                                                                                    " Register as Team\n                                                        "
-                                                                                                  )
-                                                                                                ]
-                                                                                              )
-                                                                                            : _c(
-                                                                                                "div",
-                                                                                                [
-                                                                                                  _c(
-                                                                                                    "button",
-                                                                                                    {
-                                                                                                      staticClass:
-                                                                                                        "dropdown-item",
-                                                                                                      attrs: {
-                                                                                                        type:
-                                                                                                          "button"
-                                                                                                      },
-                                                                                                      on: {
-                                                                                                        click: function(
-                                                                                                          $event
-                                                                                                        ) {
-                                                                                                          return _vm.revertChanges(
-                                                                                                            level,
-                                                                                                            "level"
-                                                                                                          )
-                                                                                                        }
-                                                                                                      }
-                                                                                                    },
-                                                                                                    [
-                                                                                                      _c(
-                                                                                                        "span",
-                                                                                                        {
-                                                                                                          staticClass:
-                                                                                                            "fa fa-fw fa-undo-alt"
-                                                                                                        }
-                                                                                                      ),
-                                                                                                      _vm._v(
-                                                                                                        " Revert Changes\n                                                            "
-                                                                                                      )
-                                                                                                    ]
-                                                                                                  )
-                                                                                                ]
-                                                                                              )
-                                                                                        ]
-                                                                                      )
-                                                                                    ]
-                                                                                  )
-                                                                                : _vm._e()
+                                                                              )
                                                                             ]
                                                                           )
                                                                         : _vm._e(),
+                                                                      _vm._v(
+                                                                        " "
+                                                                      ),
+                                                                      _c(
+                                                                        "div",
+                                                                        {
+                                                                          staticClass:
+                                                                            "small mb-1"
+                                                                        },
+                                                                        [
+                                                                          _vm
+                                                                            .permissions
+                                                                            .scratch
+                                                                            ? _c(
+                                                                                "div",
+                                                                                {
+                                                                                  staticClass:
+                                                                                    "btn-group"
+                                                                                },
+                                                                                [
+                                                                                  !level
+                                                                                    .changes
+                                                                                    .team &&
+                                                                                  level.team
+                                                                                    ? _c(
+                                                                                        "button",
+                                                                                        {
+                                                                                          staticClass:
+                                                                                            "dropdown-item text-danger",
+                                                                                          staticStyle: {
+                                                                                            border:
+                                                                                              "1px solid"
+                                                                                          },
+                                                                                          attrs: {
+                                                                                            type:
+                                                                                              "button"
+                                                                                          },
+                                                                                          on: {
+                                                                                            click: function(
+                                                                                              $event
+                                                                                            ) {
+                                                                                              return _vm.toggleTeam(
+                                                                                                level,
+                                                                                                false
+                                                                                              )
+                                                                                            }
+                                                                                          }
+                                                                                        },
+                                                                                        [
+                                                                                          _c(
+                                                                                            "span",
+                                                                                            {
+                                                                                              staticClass:
+                                                                                                "fas fa-fw fa-eraser"
+                                                                                            }
+                                                                                          ),
+                                                                                          _vm._v(
+                                                                                            " Scratch Team\n                                                        "
+                                                                                          )
+                                                                                        ]
+                                                                                      )
+                                                                                    : !level
+                                                                                        .changes
+                                                                                        .team &&
+                                                                                      !level.team
+                                                                                    ? _c(
+                                                                                        "button",
+                                                                                        {
+                                                                                          staticClass:
+                                                                                            "dropdown-item text-success",
+                                                                                          staticStyle: {
+                                                                                            border:
+                                                                                              "1px solid"
+                                                                                          },
+                                                                                          attrs: {
+                                                                                            type:
+                                                                                              "button"
+                                                                                          },
+                                                                                          on: {
+                                                                                            click: function(
+                                                                                              $event
+                                                                                            ) {
+                                                                                              return _vm.toggleTeam(
+                                                                                                level,
+                                                                                                true
+                                                                                              )
+                                                                                            }
+                                                                                          }
+                                                                                        },
+                                                                                        [
+                                                                                          _c(
+                                                                                            "span",
+                                                                                            {
+                                                                                              staticClass:
+                                                                                                "fas fa-fw fa-users"
+                                                                                            }
+                                                                                          ),
+                                                                                          _vm._v(
+                                                                                            " Register as Team\n                                                        "
+                                                                                          )
+                                                                                        ]
+                                                                                      )
+                                                                                    : _c(
+                                                                                        "div",
+                                                                                        [
+                                                                                          _c(
+                                                                                            "button",
+                                                                                            {
+                                                                                              staticClass:
+                                                                                                "dropdown-item",
+                                                                                              staticStyle: {
+                                                                                                border:
+                                                                                                  "1px solid"
+                                                                                              },
+                                                                                              attrs: {
+                                                                                                type:
+                                                                                                  "button"
+                                                                                              },
+                                                                                              on: {
+                                                                                                click: function(
+                                                                                                  $event
+                                                                                                ) {
+                                                                                                  return _vm.revertChanges(
+                                                                                                    level,
+                                                                                                    "level"
+                                                                                                  )
+                                                                                                }
+                                                                                              }
+                                                                                            },
+                                                                                            [
+                                                                                              _c(
+                                                                                                "span",
+                                                                                                {
+                                                                                                  staticClass:
+                                                                                                    "fa fa-fw fa-undo-alt"
+                                                                                                }
+                                                                                              ),
+                                                                                              _vm._v(
+                                                                                                " Revert Changes\n                                                            "
+                                                                                              )
+                                                                                            ]
+                                                                                          )
+                                                                                        ]
+                                                                                      )
+                                                                                ]
+                                                                              )
+                                                                            : _vm._e()
+                                                                        ]
+                                                                      ),
                                                                       _vm._v(
                                                                         " "
                                                                       ),
@@ -72230,7 +72238,7 @@ var render = function() {
                                                                                                                   },
                                                                                                                   [
                                                                                                                     _vm._m(
-                                                                                                                      6,
+                                                                                                                      5,
                                                                                                                       true
                                                                                                                     ),
                                                                                                                     _vm._v(
@@ -73527,7 +73535,7 @@ var render = function() {
                                                                                                                 "div",
                                                                                                                 [
                                                                                                                   _vm._m(
-                                                                                                                    7,
+                                                                                                                    6,
                                                                                                                     true
                                                                                                                   )
                                                                                                                 ]
@@ -73633,7 +73641,7 @@ var render = function() {
                                                                                                     },
                                                                                                     [
                                                                                                       _vm._m(
-                                                                                                        8,
+                                                                                                        7,
                                                                                                         true
                                                                                                       ),
                                                                                                       _vm._v(
@@ -73990,7 +73998,7 @@ var render = function() {
                                                                             "div",
                                                                             [
                                                                               _vm._m(
-                                                                                9,
+                                                                                8,
                                                                                 true
                                                                               ),
                                                                               _vm._v(
@@ -74229,7 +74237,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _vm._l(_vm.coaches, function(coach) {
                                   return _c("tr", { key: coach.id }, [
-                                    _vm._m(10, true),
+                                    _vm._m(9, true),
                                     _vm._v(" "),
                                     _c("td", { staticClass: "align-middle" }, [
                                       coach.editing.first_name
@@ -74675,7 +74683,7 @@ var render = function() {
                                                   "input-group input-group-sm"
                                               },
                                               [
-                                                _vm._m(11, true),
+                                                _vm._m(10, true),
                                                 _vm._v(" "),
                                                 _c("input", {
                                                   directives: [
@@ -74950,7 +74958,7 @@ var render = function() {
                                               : coach.status ==
                                                 _vm.constants.coaches.statuses
                                                   .Reserved
-                                              ? _c("div", [_vm._m(12, true)])
+                                              ? _c("div", [_vm._m(11, true)])
                                               : _c("div", [
                                                   _c(
                                                     "span",
@@ -75005,7 +75013,7 @@ var render = function() {
                                                   "btn-group dropdown"
                                               },
                                               [
-                                                _vm._m(13, true),
+                                                _vm._m(12, true),
                                                 _vm._v(" "),
                                                 _c(
                                                   "div",
@@ -75161,7 +75169,7 @@ var render = function() {
                   },
                   [
                     _c("div", { staticClass: "flex-grow-1 text-uppercase" }, [
-                      _vm._m(14),
+                      _vm._m(13),
                       _vm._v(" "),
                       _c(
                         "span",
@@ -75175,7 +75183,7 @@ var render = function() {
                           "div",
                           { staticClass: "flex-grow-1 text-uppercase" },
                           [
-                            _vm._m(15),
+                            _vm._m(14),
                             _vm._v(" "),
                             _c(
                               "span",
@@ -75342,24 +75350,6 @@ var staticRenderFns = [
         " To register or modify your registration for USAG you must first use USAG Meet Reservations at usagym.org.\n                    "
       )
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "btn btm-sm btn-link pt-0",
-        attrs: {
-          type: "button",
-          "data-toggle": "dropdown",
-          "aria-haspopup": "true",
-          "aria-expanded": "false"
-        }
-      },
-      [_c("span", { staticClass: "fas fa-fw fa-ellipsis-v" })]
-    )
   },
   function() {
     var _vm = this
