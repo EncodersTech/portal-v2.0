@@ -12,6 +12,11 @@
             <input type="checkbox" name="registerGym[]" class="form-group mr-2 gymCheck" id="sendMailable_{{$key}}"
                 value="{{$key}}"> {{$registerGym}}<br>
             @endforeach
+            <div><b>Pending: </b></div>
+            @foreach($registerGymsPending as $key => $registerGym)
+            <input type="checkbox" name="registerGym[]" class="form-group mr-2 gymCheck" id="sendMailable_{{$key}}"
+                value="{{$key}}"> {{$registerGym}}<br>
+            @endforeach
         </div>
 
         <div class="col-12 col-xs-12 col-sm-9 col-md-12 col-lg-9">

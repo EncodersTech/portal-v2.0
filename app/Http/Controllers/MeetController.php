@@ -713,9 +713,18 @@ class MeetController extends AppBaseController
             $meet = $gym->retrieveMeet($meet); /** @var Meet $meet */
 
             $registerGyms = [];
+            $registerGymsPending = [];
 
             foreach ($meet->registrations as  $registration) {
                 $registerGyms[$registration->gym->id] = $registration->gym->name;
+            }
+            foreach ($meet->usag_reservations as  $usagReservation) {
+                if($usagReservation->status == 1)
+                {
+                    $payload = $usagReservation->payload;
+                    $registerGymsPending[$usagReservation->gym->id] = $usagReservation->gym->name;
+                }
+                // dd(json_encode($usagReservation->gym));
             }
 
             if (!$meet->is_published)
@@ -734,6 +743,7 @@ class MeetController extends AppBaseController
             'meet' => $meet,
             'cc_fees' => $meet->cc_fee(),
             'registerGyms' =>  $registerGyms,
+            'registerGymsPending' =>  $registerGymsPending,
             'usagSanctions' => $usagSanctions,
             'summaryData' => $summaryData,
         ]);
