@@ -175,7 +175,7 @@ class StripeService {
     private static function _handleStripeException(Base $e, bool $throw = true) : array {
         $result = [
             'code' => ErrorCodeCategory::getCategoryBase('Stripe'),
-            'message' => 'Something went wrong with our payment processor.',
+            'message' => 'Something went wrong with our payment processor. Please try a different payment method ',
             'details' => null,
         ];
         
