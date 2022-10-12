@@ -168,8 +168,6 @@ class StripeService {
 
             // return Customer::create();
         } catch (Base $e) {
-            print_r($e->getMessage()); die();
-
             self::_handleStripeException($e);
         }
     }
