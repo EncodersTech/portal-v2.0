@@ -1745,7 +1745,11 @@ class USAGReservation extends Model
 
             $subtotal = $incurredFees['subtotal'];
             if ($subtotal != $summary['subtotal'])
-                throw new CustomBaseException('Subtotal calculation mismatch.'.$incurredFees['subtotal'].' '.$summary['subtotal'], -1);
+            {
+                $incurredFees = $registration->calculateRegistrationTotal($snapshot, false, $summary['subtotal']);
+                $subtotal = $summary['subtotal'];
+            }
+                // throw new CustomBaseException('Subtotal calculation mismatch.'.$incurredFees['subtotal'].' '.$summary['subtotal'], -1);
 
             $host = User::lockForUpdate()->find($meet->gym->user->id); /** @var User $host */
             if ($host == null)

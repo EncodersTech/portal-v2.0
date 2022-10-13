@@ -1483,7 +1483,7 @@ class MeetRegistration extends Model
         }
     }
 
-    public function calculateRegistrationTotal(array $snapshot, bool $is_scratch = false)
+    public function calculateRegistrationTotal(array $snapshot, bool $is_scratch = false,$usag_mismatch_fee = 0)
     {
         $meet = $this->meet; /** @var Meet $m */
         try {
@@ -1584,7 +1584,7 @@ class MeetRegistration extends Model
             $result = [
                 'level_team_fees' => $lTeamFee,
                 'registration_late_fee' => $mLateFee,
-                'subtotal' => $subtotal - $coupon,
+                'subtotal' => $subtotal - $coupon + $usag_mismatch_fee,
                 'deposit_subtotal' => $deposit ? ($subtotal * $meet->deposit_ratio) / 100 : 0,
                 'coupon' => $coupon
             ];
