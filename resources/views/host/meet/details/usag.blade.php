@@ -205,6 +205,8 @@
                                 <th scope="col">Type</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Last updated</th>
+                                <th scope="col">Details</th>
+                                <th scope="col">Mail</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -222,6 +224,15 @@
                                 <td class="{{\App\Models\USAGReservation::statusColor($usagReservation->status)}}">
                                     {{ $usagReservation->status_label }}</td>
                                 <td>{{ $usagReservation->timestamp }}</td>
+                                <td>
+                                    <a href="{{env('APP_URL')}}/gyms/{{$usagReservation->gym->id}}/sanctions/usag/{{$usagReservation->usag_sanction->number}}/reservation" class="btn btn-sm btn-success ml-1">View Details</a>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-info ml-1" title="Send email"
+                                        @click="sendEmailTo({{$usagReservation}})">
+                                        <span class="fas fa-fw fa-envelope"></span>
+                                </button>
+                                </td>
                                 @else
                                 <th colspan="7" class="text-center">No Records Found.</th>
                                 @endif
