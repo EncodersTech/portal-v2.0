@@ -81,8 +81,7 @@ class AuditEvent extends Model
             return $type->events()->create([
                 'performed_by' => $user->id,
                 'on_behalf_of' => $user->id,
-                'param_4' => $card->id,
-                'param_5' => $card->last4
+                // 'param_5' => $card->last4
             ]);
         });
     }

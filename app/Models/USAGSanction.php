@@ -164,7 +164,8 @@ class USAGSanction extends Model
             'id', 'profile_picture', 'name', 'start_date', 'end_date',
             'registration_start_date', 'registration_end_date', 'registration_scratch_end_date',
             'allow_late_registration', 'late_registration_start_date', 'late_registration_end_date',
-            'venue_name', 'venue_addr_1', 'venue_addr_2',
+            'venue_name', 'venue_addr_1', 'venue_addr_2','registration_first_discount_is_enable',
+            'registration_second_discount_is_enable', 'registration_third_discount_is_enable'
         ];
 
         $categoryData = [
@@ -642,6 +643,11 @@ class USAGSanction extends Model
                         if (!$level['has_registrations']) {
                             $levelMeet->update([
                                 'registration_fee' => $incomingLevels[$code]['registration_fee'],
+                                
+                                'registration_fee_first' => $incomingLevels[$code]['registration_fee_first'],
+                                'registration_fee_second' => $incomingLevels[$code]['registration_fee_second'],
+                                'registration_fee_third' => $incomingLevels[$code]['registration_fee_third'],
+
                                 'late_registration_fee' => $incomingLevels[$code]['late_registration_fee'],
                                 'allow_teams' => $incomingLevels[$code]['allow_teams'],
                                 'team_registration_fee' => $incomingLevels[$code]['team_registration_fee'],
@@ -660,6 +666,11 @@ class USAGSanction extends Model
                             'allow_men' => $category->male,
                             'allow_women'=> $category->female,
                             'registration_fee' => $incomingLevels[$code]['registration_fee'],
+
+                            'registration_fee_first' => $incomingLevels[$code]['registration_fee_first'],
+                            'registration_fee_second' => $incomingLevels[$code]['registration_fee_second'],
+                            'registration_fee_third' => $incomingLevels[$code]['registration_fee_third'],
+                            
                             'late_registration_fee' => $incomingLevels[$code]['late_registration_fee'],
                             'allow_specialist' => false,
                             'specialist_registration_fee' => 0,

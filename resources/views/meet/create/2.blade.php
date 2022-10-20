@@ -88,8 +88,8 @@
                     </span>
                     @enderror
                 </div>
-
-                <div class="col-lg mb-3">
+                <input type="hidden" name="registration_first_discount_amount" value="0">
+                <!-- <div class="col-lg mb-3">
                     <label for="registration_first_discount_amount_id" class="mb-1" ref="registration_first_discount_amount_id"
                         data-value="{{ $tm->oldOrValue('registration_first_discount_amount') }}">
                         <span class="fas fa-fw fa-calendar-alt"></span>
@@ -109,7 +109,7 @@
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
-                </div>
+                </div> -->
             </div>
             <!-- Second Payment Discount -->
             <div class="row">
@@ -148,8 +148,8 @@
                     </span>
                     @enderror
                 </div>
-
-                <div class="col-lg mb-3">
+                <input type="hidden" name="registration_second_discount_amount" value="0">    
+                <!-- <div class="col-lg mb-3">
                     <label for="registration_second_discount_amount_id" class="mb-1" ref="registration_second_discount_amount_id"
                         data-value="{{ $tm->oldOrValue('registration_second_discount_amount') }}">
                         <span class="fas fa-fw fa-calendar-alt"></span>
@@ -165,7 +165,7 @@
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
-                </div>
+                </div> -->
             </div>
             <!-- Third Payment Discount -->
             <div class="row">
@@ -203,8 +203,8 @@
                     </span>
                     @enderror
                 </div>
-
-                <div class="col-lg mb-3">
+                <input type="hidden" name="registration_third_discount_amount" value="0">                
+                <!-- <div class="col-lg mb-3">
                     <label for="registration_third_discount_amount_id" class="mb-1" ref="registration_third_discount_amount_id"
                         data-value="{{ $tm->oldOrValue('registration_third_discount_amount') }}">
                         <span class="fas fa-fw fa-calendar-alt"></span>
@@ -220,7 +220,7 @@
                         <strong>{{ $message }}</strong>
                     </span>
                     @enderror
-                </div>
+                </div> -->
             </div>
 
             
