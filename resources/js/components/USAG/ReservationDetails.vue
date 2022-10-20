@@ -1298,6 +1298,35 @@
                     if (meetCategory === undefined)
                         throw 'Something went wrong (can\'t find category)';
 
+                    let f_date =  Moment(meet.registration_first_discount_end_date, 'YYYY-MM-DD');
+                    let s_date =  Moment(meet.registration_second_discount_end_date, 'YYYY-MM-DD');
+                    let t_date =  Moment(meet.registration_third_discount_end_date, 'YYYY-MM-DD');
+                    let c_date = Moment(new Date(),"YYYY-MM-DD");
+
+                    let f_d = Moment(f_date.format("YYYY-MM-DD")).format('x');
+                    let s_d = Moment(s_date.format("YYYY-MM-DD")).format('x');
+                    let t_d = Moment(t_date.format("YYYY-MM-DD")).format('x');
+                    let c_d = Moment(c_date.format("YYYY-MM-DD")).format('x');    
+                    
+                    let registration_updated_fee = null;
+                    if(meet.registration_third_discount_is_enable)
+                    {
+                        if(t_d - c_d >= 0)
+                            registration_updated_fee = level.pivot.registration_fee_third;
+                    }
+                    if(meet.registration_second_discount_is_enable)
+                    {
+                        if(s_d - c_d >= 0)
+                            registration_updated_fee =  level.pivot.registration_fee_second;
+                    }
+                    if(meet.registration_first_discount_is_enable)
+                    {
+                        if(f_d - c_d >= 0)
+                            registration_updated_fee =  level.pivot.registration_fee_first;
+                    }
+                    level.pivot.registration_fee = registration_updated_fee == null ? level.pivot.registration_fee : registration_updated_fee;
+                
+
                     level = {
                         ... _.cloneDeep(level),
                         disabled: level.pivot.disabled,

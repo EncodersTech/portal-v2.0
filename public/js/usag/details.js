@@ -3002,6 +3002,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                     return c.pivot.sanctioning_body_id == _this.constants.bodies.USAG && c.id == level.level_category.id && c.pivot.officially_sanctioned && !c.pivot.frozen;
                   });
                   if (meetCategory === undefined) throw 'Something went wrong (can\'t find category)';
+                  var f_date = Moment(meet.registration_first_discount_end_date, 'YYYY-MM-DD');
+                  var s_date = Moment(meet.registration_second_discount_end_date, 'YYYY-MM-DD');
+                  var t_date = Moment(meet.registration_third_discount_end_date, 'YYYY-MM-DD');
+                  var c_date = Moment(new Date(), "YYYY-MM-DD");
+                  var f_d = Moment(f_date.format("YYYY-MM-DD")).format('x');
+                  var s_d = Moment(s_date.format("YYYY-MM-DD")).format('x');
+                  var t_d = Moment(t_date.format("YYYY-MM-DD")).format('x');
+                  var c_d = Moment(c_date.format("YYYY-MM-DD")).format('x');
+                  var registration_updated_fee = null;
+
+                  if (meet.registration_third_discount_is_enable) {
+                    if (t_d - c_d >= 0) registration_updated_fee = level.pivot.registration_fee_third;
+                  }
+
+                  if (meet.registration_second_discount_is_enable) {
+                    if (s_d - c_d >= 0) registration_updated_fee = level.pivot.registration_fee_second;
+                  }
+
+                  if (meet.registration_first_discount_is_enable) {
+                    if (f_d - c_d >= 0) registration_updated_fee = level.pivot.registration_fee_first;
+                  }
+
+                  level.pivot.registration_fee = registration_updated_fee == null ? level.pivot.registration_fee : registration_updated_fee;
                   level = _objectSpread(_objectSpread({}, _.cloneDeep(level)), {}, {
                     disabled: level.pivot.disabled,
                     male: level.pivot.allow_men,
@@ -5010,6 +5033,122 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'SanctionDetails',
@@ -5161,7 +5300,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (v.allow_late_registration) {
           this.meetDataSwitches.registration_end_date.text = 'Late Registration End Date';
           this.meetDataSwitches.registration_end_date.local_name = 'late_registration_end_date';
-        }
+        } // if(v.registration_first_discount_is_enable)
+        // {
+        //     this.meetDataSwitches
+        // }
+        // if(v.registration_second_discount_is_enable)
+        // {
+        // }
+        // if(v.registration_third_discount_is_enable)
+        // {
+        // }
+        //         'registration_first_discount_is_enable',
+        //         '',
+        //         ''
+
       }
     }
   },
@@ -5255,6 +5407,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.editedLevel = {
         can_edit: true,
         registration_fee: 0,
+        registration_fee_first: 0,
+        registration_fee_second: 0,
+        registration_fee_third: 0,
         late_registration_fee: 0,
         allow_teams: false,
         team_registration_fee: 0,
@@ -5284,6 +5439,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.editedLevel.late_registration_fee = fee.toFixed(2);
         } else {
           this.editedLevel.late_registration_fee = 0;
+        }
+
+        if (this.selectedMeet.registration_first_discount_is_enable) {
+          fee = Utils.toFloat(this.editedLevel.registration_fee_first);
+          if (fee === null || fee < 0) throw 'Please enter a valid first registration fee';
+          this.editedLevel.registration_fee_first = fee.toFixed(2);
+        } else {
+          this.editedLevel.registration_fee_first = 0;
+        }
+
+        if (this.selectedMeet.registration_second_discount_is_enable) {
+          fee = Utils.toFloat(this.editedLevel.registration_fee_second);
+          if (fee === null || fee < 0) throw 'Please enter a valid second registration fee';
+          this.editedLevel.registration_fee_second = fee.toFixed(2);
+        } else {
+          this.editedLevel.registration_fee_second = 0;
+        }
+
+        if (this.selectedMeet.registration_third_discount_is_enable) {
+          fee = Utils.toFloat(this.editedLevel.registration_fee_third);
+          if (fee === null || fee < 0) throw 'Please enter a valid third registration fee';
+          this.editedLevel.registration_fee_third = fee.toFixed(2);
+        } else {
+          this.editedLevel.registration_fee_third = 0;
         }
 
         if (this.editedLevel.allow_teams) {
@@ -5318,6 +5497,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
             if (level.can_edit) {
               level.registration_fee = this.editedLevel.registration_fee;
+              level.registration_fee_first = this.editedLevel.registration_fee_first;
+              level.registration_fee_second = this.editedLevel.registration_fee_second;
+              level.registration_fee_third = this.editedLevel.registration_fee_third;
               level.late_registration_fee = this.editedLevel.late_registration_fee;
               level.allow_teams = this.editedLevel.allow_teams;
               level.team_registration_fee = this.editedLevel.team_registration_fee;
@@ -5355,6 +5537,30 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.editedLevel.late_registration_fee = 0;
         }
 
+        if (this.selectedMeet.registration_first_discount_is_enable) {
+          fee = Utils.toFloat(this.editedLevel.registration_fee_first);
+          if (fee === null || fee < 0) throw 'Please enter a valid first registration fee';
+          this.editedLevel.registration_fee_first = fee.toFixed(2);
+        } else {
+          this.editedLevel.registration_fee_first = 0;
+        }
+
+        if (this.selectedMeet.registration_second_discount_is_enable) {
+          fee = Utils.toFloat(this.editedLevel.registration_fee_second);
+          if (fee === null || fee < 0) throw 'Please enter a valid second registration fee';
+          this.editedLevel.registration_fee_second = fee.toFixed(2);
+        } else {
+          this.editedLevel.registration_fee_second = 0;
+        }
+
+        if (this.selectedMeet.registration_third_discount_is_enable) {
+          fee = Utils.toFloat(this.editedLevel.registration_fee_third);
+          if (fee === null || fee < 0) throw 'Please enter a valid third registration fee';
+          this.editedLevel.registration_fee_third = fee.toFixed(2);
+        } else {
+          this.editedLevel.registration_fee_third = 0;
+        }
+
         if (this.editedLevel.allow_teams) {
           fee = Utils.toFloat(this.editedLevel.team_registration_fee);
           if (fee === null || fee < 0) throw 'Please enter a valid team registration fee';
@@ -5382,6 +5588,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
 
         this.state["final"][this.editedLevel.code].registration_fee = this.editedLevel.registration_fee;
+        this.state["final"][this.editedLevel.code].registration_fee_first = this.editedLevel.registration_fee_first;
+        this.state["final"][this.editedLevel.code].registration_fee_second = this.editedLevel.registration_fee_second;
+        this.state["final"][this.editedLevel.code].registration_fee_third = this.editedLevel.registration_fee_third;
         this.state["final"][this.editedLevel.code].late_registration_fee = this.editedLevel.late_registration_fee;
         this.state["final"][this.editedLevel.code].allow_teams = this.editedLevel.allow_teams;
         this.state["final"][this.editedLevel.code].team_registration_fee = this.editedLevel.team_registration_fee;
@@ -5507,7 +5716,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           (function () {
             var level = _final[code];
             level.can_edit = level.action == _this2.constants.sanctions.levels.actions.ADDED || level.action == _this2.constants.sanctions.levels.actions.ENABLED && !level.has_registrations;
-            ['registration_fee', 'late_registration_fee', 'team_registration_fee', 'team_late_registration_fee', 'athlete_limit'].forEach(function (field) {
+            ['registration_fee', 'late_registration_fee', 'team_registration_fee', 'team_late_registration_fee', 'athlete_limit', 'registration_fee_first', 'registration_fee_second', 'registration_fee_third'].forEach(function (field) {
               level[field] = level[field] === undefined ? 0 : level[field];
             });
             ['allow_teams', 'enable_athlete_limit'].forEach(function (field) {
@@ -75644,9 +75853,12 @@ var render = function() {
                                   })
                                 ]
                               )
-                            ]),
-                            _vm._v(" "),
-                            _vm.selectedMeet.allow_late_registration
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "row mb-2" }, [
+                            _vm.selectedMeet
+                              .registration_first_discount_is_enable
                               ? _c("div", { staticClass: "col-lg mb-2" }, [
                                   _vm._m(3),
                                   _vm._v(" "),
@@ -75657,6 +75869,175 @@ var render = function() {
                                     },
                                     [
                                       _vm._m(4),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.editedLevel
+                                                .registration_fee_first,
+                                            expression:
+                                              "editedLevel.registration_fee_first"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          id:
+                                            "edit-all-levels-team-late-registration-fee",
+                                          placeholder: "0.00",
+                                          autocomplete: "off",
+                                          type: "text"
+                                        },
+                                        domProps: {
+                                          value:
+                                            _vm.editedLevel
+                                              .registration_fee_first
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.editedLevel,
+                                              "registration_fee_first",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.selectedMeet
+                              .registration_second_discount_is_enable
+                              ? _c("div", { staticClass: "col-lg mb-2" }, [
+                                  _vm._m(5),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _vm._m(6),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.editedLevel
+                                                .registration_fee_second,
+                                            expression:
+                                              "editedLevel.registration_fee_second"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          id:
+                                            "edit-all-levels-team-late-registration-fee",
+                                          placeholder: "0.00",
+                                          autocomplete: "off",
+                                          type: "text"
+                                        },
+                                        domProps: {
+                                          value:
+                                            _vm.editedLevel
+                                              .registration_fee_second
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.editedLevel,
+                                              "registration_fee_second",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.selectedMeet
+                              .registration_third_discount_is_enable
+                              ? _c("div", { staticClass: "col-lg mb-2" }, [
+                                  _vm._m(7),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _vm._m(8),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.editedLevel
+                                                .registration_fee_third,
+                                            expression:
+                                              "editedLevel.registration_fee_third"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          id:
+                                            "edit-all-levels-team-late-registration-fee",
+                                          placeholder: "0.00",
+                                          autocomplete: "off",
+                                          type: "text"
+                                        },
+                                        domProps: {
+                                          value:
+                                            _vm.editedLevel
+                                              .registration_fee_third
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.editedLevel,
+                                              "registration_fee_third",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
+                                ])
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "row mb-2" }, [
+                            _vm.selectedMeet.allow_late_registration
+                              ? _c("div", { staticClass: "col-lg mb-2" }, [
+                                  _vm._m(9),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _vm._m(10),
                                       _vm._v(" "),
                                       _c("input", {
                                         directives: [
@@ -75780,13 +76161,13 @@ var render = function() {
                             _vm._v(" "),
                             _c("div", { staticClass: "row" }, [
                               _c("div", { staticClass: "col-lg mb-2" }, [
-                                _vm._m(5),
+                                _vm._m(11),
                                 _vm._v(" "),
                                 _c(
                                   "div",
                                   { staticClass: "input-group input-group-sm" },
                                   [
-                                    _vm._m(6),
+                                    _vm._m(12),
                                     _vm._v(" "),
                                     _c("input", {
                                       directives: [
@@ -75831,7 +76212,7 @@ var render = function() {
                               _vm._v(" "),
                               _vm.selectedMeet.allow_late_registration
                                 ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                    _vm._m(7),
+                                    _vm._m(13),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -75840,7 +76221,7 @@ var render = function() {
                                           "input-group input-group-sm"
                                       },
                                       [
-                                        _vm._m(8),
+                                        _vm._m(14),
                                         _vm._v(" "),
                                         _c("input", {
                                           directives: [
@@ -75944,7 +76325,7 @@ var render = function() {
                   ])
                 ])
               : _c("div", { staticClass: "modal-content" }, [
-                  _vm._m(9),
+                  _vm._m(15),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
                     _c("div", { staticClass: "row" }, [
@@ -75966,13 +76347,13 @@ var render = function() {
                         _c("div", [
                           _c("div", { staticClass: "row mb-2" }, [
                             _c("div", { staticClass: "col-lg mb-2" }, [
-                              _vm._m(10),
+                              _vm._m(16),
                               _vm._v(" "),
                               _c(
                                 "div",
                                 { staticClass: "input-group input-group-sm" },
                                 [
-                                  _vm._m(11),
+                                  _vm._m(17),
                                   _vm._v(" "),
                                   _c("input", {
                                     directives: [
@@ -76009,11 +76390,14 @@ var render = function() {
                                   })
                                 ]
                               )
-                            ]),
-                            _vm._v(" "),
-                            _vm.selectedMeet.allow_late_registration
+                            ])
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "row mb-2" }, [
+                            _vm.selectedMeet
+                              .registration_first_discount_is_enable
                               ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(12),
+                                  _vm._m(18),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -76021,7 +76405,176 @@ var render = function() {
                                       staticClass: "input-group input-group-sm"
                                     },
                                     [
-                                      _vm._m(13),
+                                      _vm._m(19),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.editedLevel
+                                                .registration_fee_first,
+                                            expression:
+                                              "editedLevel.registration_fee_first"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          id:
+                                            "add-level-specialist-registration-fee",
+                                          placeholder: "0.00",
+                                          autocomplete: "off",
+                                          type: "text"
+                                        },
+                                        domProps: {
+                                          value:
+                                            _vm.editedLevel
+                                              .registration_fee_first
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.editedLevel,
+                                              "registration_fee_first",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.selectedMeet
+                              .registration_second_discount_is_enable
+                              ? _c("div", { staticClass: "col-lg mb-2" }, [
+                                  _vm._m(20),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _vm._m(21),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.editedLevel
+                                                .registration_fee_second,
+                                            expression:
+                                              "editedLevel.registration_fee_second"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          id:
+                                            "add-level-specialist-registration-fee",
+                                          placeholder: "0.00",
+                                          autocomplete: "off",
+                                          type: "text"
+                                        },
+                                        domProps: {
+                                          value:
+                                            _vm.editedLevel
+                                              .registration_fee_second
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.editedLevel,
+                                              "registration_fee_second",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.selectedMeet
+                              .registration_third_discount_is_enable
+                              ? _c("div", { staticClass: "col-lg mb-2" }, [
+                                  _vm._m(22),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _vm._m(23),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        directives: [
+                                          {
+                                            name: "model",
+                                            rawName: "v-model",
+                                            value:
+                                              _vm.editedLevel
+                                                .registration_fee_third,
+                                            expression:
+                                              "editedLevel.registration_fee_third"
+                                          }
+                                        ],
+                                        staticClass: "form-control",
+                                        attrs: {
+                                          id:
+                                            "add-level-specialist-registration-fee",
+                                          placeholder: "0.00",
+                                          autocomplete: "off",
+                                          type: "text"
+                                        },
+                                        domProps: {
+                                          value:
+                                            _vm.editedLevel
+                                              .registration_fee_third
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            if ($event.target.composing) {
+                                              return
+                                            }
+                                            _vm.$set(
+                                              _vm.editedLevel,
+                                              "registration_fee_third",
+                                              $event.target.value
+                                            )
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
+                                ])
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "row mb-2" }, [
+                            _vm.selectedMeet.allow_late_registration
+                              ? _c("div", { staticClass: "col-lg mb-2" }, [
+                                  _vm._m(24),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    {
+                                      staticClass: "input-group input-group-sm"
+                                    },
+                                    [
+                                      _vm._m(25),
                                       _vm._v(" "),
                                       _c("input", {
                                         directives: [
@@ -76145,13 +76698,13 @@ var render = function() {
                             _vm._v(" "),
                             _c("div", { staticClass: "row" }, [
                               _c("div", { staticClass: "col-lg mb-2" }, [
-                                _vm._m(14),
+                                _vm._m(26),
                                 _vm._v(" "),
                                 _c(
                                   "div",
                                   { staticClass: "input-group input-group-sm" },
                                   [
-                                    _vm._m(15),
+                                    _vm._m(27),
                                     _vm._v(" "),
                                     _c("input", {
                                       directives: [
@@ -76197,7 +76750,7 @@ var render = function() {
                               _vm._v(" "),
                               _vm.selectedMeet.allow_late_registration
                                 ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                    _vm._m(16),
+                                    _vm._m(28),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -76206,7 +76759,7 @@ var render = function() {
                                           "input-group input-group-sm"
                                       },
                                       [
-                                        _vm._m(17),
+                                        _vm._m(29),
                                         _vm._v(" "),
                                         _c("input", {
                                           directives: [
@@ -76291,7 +76844,7 @@ var render = function() {
         ])
       : _vm.errorMessage !== null
       ? _c("div", { staticClass: "alert alert-danger" }, [
-          _vm._m(18),
+          _vm._m(30),
           _vm._v(" "),
           _c("div", { domProps: { innerHTML: _vm._s(_vm.errorMessage) } })
         ])
@@ -76300,7 +76853,7 @@ var render = function() {
     _vm.state !== null
       ? _c("div", [
           _c("div", [
-            _vm._m(19),
+            _vm._m(31),
             _vm._v(" "),
             _c("div", { staticClass: "mb-2 ml-3" }, [
               _c("div", {}, [
@@ -76349,13 +76902,13 @@ var render = function() {
             : _c("div", [
                 _vm.state.meet === null
                   ? _c("div", [
-                      _vm._m(20),
+                      _vm._m(32),
                       _vm._v(" "),
                       _c("div", { staticClass: "mb-2 ml-3" }, [
                         _vm.state.assignable_meets.length < 1
                           ? _c("div", [
                               _c("div", { staticClass: "alert alert-info" }, [
-                                _vm._m(21),
+                                _vm._m(33),
                                 _vm._v(" "),
                                 _c("ul", [
                                   _c("li", [
@@ -76422,7 +76975,7 @@ var render = function() {
                               ])
                             ])
                           : _c("div", [
-                              _vm._m(22),
+                              _vm._m(34),
                               _vm._v(" "),
                               _c("div", { staticClass: "form-group" }, [
                                 _c(
@@ -76496,7 +77049,7 @@ var render = function() {
                   : _vm._e(),
                 _vm._v(" "),
                 _c("div", [
-                  _vm._m(23),
+                  _vm._m(35),
                   _vm._v(" "),
                   _c("div", { staticClass: "mb-2" }, [
                     _c("div", { staticClass: "mb-1" }, [
@@ -76568,7 +77121,7 @@ var render = function() {
                                           "table table-sm table-striped"
                                       },
                                       [
-                                        _vm._m(24),
+                                        _vm._m(36),
                                         _vm._v(" "),
                                         _c(
                                           "tbody",
@@ -77005,9 +77558,9 @@ var render = function() {
                           _vm._v(" "),
                           _vm.meetSelected
                             ? _c("div", [
-                                _vm._m(25),
+                                _vm._m(37),
                                 _vm._v(" "),
-                                _vm._m(26),
+                                _vm._m(38),
                                 _vm._v(" "),
                                 _c("div", { staticClass: "text-right mb-1" }, [
                                   _c(
@@ -77066,7 +77619,7 @@ var render = function() {
                                           "table table-sm table-striped"
                                       },
                                       [
-                                        _vm._m(27),
+                                        _vm._m(39),
                                         _vm._v(" "),
                                         _c(
                                           "tbody",
@@ -77202,7 +77755,7 @@ var render = function() {
                             : _vm._e(),
                           _vm._v(" "),
                           _c("div", [
-                            _vm._m(28),
+                            _vm._m(40),
                             _vm._v(" "),
                             _vm.state.final_count < 1
                               ? _c("div", [
@@ -77211,7 +77764,7 @@ var render = function() {
                                   )
                                 ])
                               : _c("div", [
-                                  _vm._m(29),
+                                  _vm._m(41),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -77357,6 +77910,56 @@ var render = function() {
                                                                   "\n                                                    "
                                                               )
                                                             ])
+                                                          : _vm._e(),
+                                                        _vm._v(" "),
+                                                        _vm.selectedMeet
+                                                          .registration_first_discount_is_enable
+                                                          ? _c("div", [
+                                                              _c("strong", [
+                                                                _vm._v("First:")
+                                                              ]),
+                                                              _vm._v(
+                                                                "\n                                                        $" +
+                                                                  _vm._s(
+                                                                    level.registration_fee_first
+                                                                  ) +
+                                                                  "\n                                                    "
+                                                              )
+                                                            ])
+                                                          : _vm._e(),
+                                                        _vm._v(" "),
+                                                        _vm.selectedMeet
+                                                          .registration_second_discount_is_enable
+                                                          ? _c("div", [
+                                                              _c("strong", [
+                                                                _vm._v(
+                                                                  "Second:"
+                                                                )
+                                                              ]),
+                                                              _vm._v(
+                                                                "\n                                                        $" +
+                                                                  _vm._s(
+                                                                    level.registration_fee_second
+                                                                  ) +
+                                                                  "\n                                                    "
+                                                              )
+                                                            ])
+                                                          : _vm._e(),
+                                                        _vm._v(" "),
+                                                        _vm.selectedMeet
+                                                          .registration_third_discount_is_enable
+                                                          ? _c("div", [
+                                                              _c("strong", [
+                                                                _vm._v("Third:")
+                                                              ]),
+                                                              _vm._v(
+                                                                "\n                                                        $" +
+                                                                  _vm._s(
+                                                                    level.registration_fee_third
+                                                                  ) +
+                                                                  "\n                                                    "
+                                                              )
+                                                            ])
                                                           : _vm._e()
                                                       ]
                                                     )
@@ -77372,7 +77975,7 @@ var render = function() {
                                                       [
                                                         level.allow_teams
                                                           ? _c("div", [
-                                                              _vm._m(30, true),
+                                                              _vm._m(42, true),
                                                               _vm._v(" "),
                                                               _c("div", [
                                                                 _c("strong", [
@@ -77477,7 +78080,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "d-flex flex-row flex-nowrap" }, [
-                  _vm._m(31),
+                  _vm._m(43),
                   _vm._v(" "),
                   _c("div", {}, [
                     _c(
@@ -77534,6 +78137,81 @@ var staticRenderFns = [
         "\n                                            Registration Fee\n                                        "
       )
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { attrs: { for: "edit-all-levels-team-late-registration-fee" } },
+      [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
+        _vm._v(
+          "\n                                            First Registration Fee\n                                        "
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { attrs: { for: "edit-all-levels-team-late-registration-fee" } },
+      [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
+        _vm._v(
+          "\n                                            Second Registration Fee\n                                        "
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { attrs: { for: "edit-all-levels-team-late-registration-fee" } },
+      [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
+        _vm._v(
+          "\n                                            Third Registration Fee\n                                        "
+        )
+      ]
+    )
   },
   function() {
     var _vm = this
@@ -77651,6 +78329,81 @@ var staticRenderFns = [
         "\n                                            Registration Fee\n                                        "
       )
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { attrs: { for: "add-level-specialist-registration-fee" } },
+      [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
+        _vm._v(
+          "\n                                            First Registration Fee\n                                        "
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { attrs: { for: "add-level-specialist-registration-fee" } },
+      [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
+        _vm._v(
+          "\n                                            Second Registration Fee\n                                        "
+        )
+      ]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "input-group-prepend" }, [
+      _c("span", { staticClass: "input-group-text" }, [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "label",
+      { attrs: { for: "add-level-specialist-registration-fee" } },
+      [
+        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
+        _vm._v(
+          "\n                                            Third Registration Fee\n                                        "
+        )
+      ]
+    )
   },
   function() {
     var _vm = this

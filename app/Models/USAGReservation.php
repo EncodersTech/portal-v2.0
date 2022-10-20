@@ -1095,20 +1095,40 @@ class USAGReservation extends Model
                                 ->wherePivot('allow_women', $l['allow_women'])
                                 ->first(); /** @var AthleteLevel $athleteLevel */
 
+
+                    $registration_updated_fee = null;
+                    if($meet->registration_third_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_third_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                            $registration_updated_fee = $athleteLevel->pivot->registration_fee_third;
+                    }
+                    if($meet->registration_second_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_second_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                            $registration_updated_fee =  $athleteLevel->pivot->registration_fee_second;
+                    }
+                    if($meet->registration_first_discount_is_enable)
+                    {
+                        if(strtotime($meet->registration_first_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) >= 0)
+                            $registration_updated_fee =  $athleteLevel->pivot->registration_fee_first;
+                    }
+                    $athleteLevel->pivot->registration_fee = $registration_updated_fee == null ? $athleteLevel->pivot->registration_fee : $registration_updated_fee;
+        
+                                
                     $registrationLevel = $registration->levels()->attach($athleteLevel->id, [
-                                                            'allow_men' => $athleteLevel->pivot->allow_men,
-                                                            'allow_women' => $athleteLevel->pivot->allow_women,
-                                                            'registration_fee' => $athleteLevel->pivot->registration_fee,
-                                                            'late_registration_fee' => $athleteLevel->pivot->late_registration_fee,
-                                                            'allow_specialist' => $athleteLevel->pivot->allow_specialist,
-                                                            'specialist_registration_fee' => $athleteLevel->pivot->specialist_registration_fee,
-                                                            'specialist_late_registration_fee' => $athleteLevel->pivot->specialist_late_registration_fee,
-                                                            'allow_teams' => $athleteLevel->pivot->allow_teams,
-                                                            'team_registration_fee' => $athleteLevel->pivot->team_registration_fee,
-                                                            'team_late_registration_fee' => $athleteLevel->pivot->team_late_registration_fee,
-                                                            'enable_athlete_limit' => $athleteLevel->pivot->enable_athlete_limit,
-                                                            'athlete_limit' => $athleteLevel->pivot->athlete_limit,
-                                                        ]);
+                        'allow_men' => $athleteLevel->pivot->allow_men,
+                        'allow_women' => $athleteLevel->pivot->allow_women,
+                        'registration_fee' => $athleteLevel->pivot->registration_fee,
+                        'late_registration_fee' => $athleteLevel->pivot->late_registration_fee,
+                        'allow_specialist' => $athleteLevel->pivot->allow_specialist,
+                        'specialist_registration_fee' => $athleteLevel->pivot->specialist_registration_fee,
+                        'specialist_late_registration_fee' => $athleteLevel->pivot->specialist_late_registration_fee,
+                        'allow_teams' => $athleteLevel->pivot->allow_teams,
+                        'team_registration_fee' => $athleteLevel->pivot->team_registration_fee,
+                        'team_late_registration_fee' => $athleteLevel->pivot->team_late_registration_fee,
+                        'enable_athlete_limit' => $athleteLevel->pivot->enable_athlete_limit,
+                        'athlete_limit' => $athleteLevel->pivot->athlete_limit,
+                    ]);
 
                     $registrationLevel = LevelRegistration::where('meet_registration_id', $registration->id)
                                                             ->where('level_id', $athleteLevel->id)
