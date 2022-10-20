@@ -252,11 +252,11 @@
                                                         <tr>
                                                             <th scope="col" class="align-middle">
                                                                 <span v-if="level.has_specialist && level.allow_specialist">
-                                                                    <input @change="selectAllAthelete(level.uid)" type="checkbox">
+                                                                    <input @change="selectAllAthelete(level.uid, 'echeckbox')" type="checkbox" :id="level.uid">
                                                                     Event
                                                                 </span>
                                                                 <span v-else>
-                                                                    <input @change="selectAllAthelete(level.uid)" type="checkbox">
+                                                                    <input @change="selectAllAthelete(level.uid, 'rcheckbox')" type="checkbox" :id="level.uid">
                                                                     Register
                                                                 </span>
                                                             </th>
@@ -755,11 +755,20 @@
             },
         },
         methods: {
-            selectAllAthelete: function selectAllAthelete(uid) {
+            selectAllAthelete: function selectAllAthelete(uid, e) {
                 let id = '[id^="'+ uid + '-athlete-"]';
                 for (let i of document.querySelectorAll(id)) {
                     if (!i.id.match('-event-')) {
-                        i.click();
+                        if($('#'+uid).is(':checked'))
+                        {
+                            if(!$('#'+i.id).is(':checked'))
+                                i.click();
+                        }
+                        else
+                        {
+                            if($('#'+i.id).is(':checked'))
+                                i.click();
+                        }
                     }
                 }
             },

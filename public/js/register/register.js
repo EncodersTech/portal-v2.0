@@ -2472,7 +2472,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     }
   },
   methods: {
-    selectAllAthelete: function selectAllAthelete(uid) {
+    selectAllAthelete: function selectAllAthelete(uid, e) {
       var id = '[id^="' + uid + '-athlete-"]';
 
       var _iterator = _createForOfIteratorHelper(document.querySelectorAll(id)),
@@ -2483,7 +2483,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           var i = _step.value;
 
           if (!i.id.match('-event-')) {
-            i.click();
+            if ($('#' + uid).is(':checked')) {
+              if (!$('#' + i.id).is(':checked')) i.click();
+            } else {
+              if ($('#' + i.id).is(':checked')) i.click();
+            }
           }
         }
       } catch (err) {
@@ -69069,14 +69073,17 @@ var render = function() {
                                                                                                     {
                                                                                                       attrs: {
                                                                                                         type:
-                                                                                                          "checkbox"
+                                                                                                          "checkbox",
+                                                                                                        id:
+                                                                                                          level.uid
                                                                                                       },
                                                                                                       on: {
                                                                                                         change: function(
                                                                                                           $event
                                                                                                         ) {
                                                                                                           return _vm.selectAllAthelete(
-                                                                                                            level.uid
+                                                                                                            level.uid,
+                                                                                                            "echeckbox"
                                                                                                           )
                                                                                                         }
                                                                                                       }
@@ -69095,14 +69102,17 @@ var render = function() {
                                                                                                     {
                                                                                                       attrs: {
                                                                                                         type:
-                                                                                                          "checkbox"
+                                                                                                          "checkbox",
+                                                                                                        id:
+                                                                                                          level.uid
                                                                                                       },
                                                                                                       on: {
                                                                                                         change: function(
                                                                                                           $event
                                                                                                         ) {
                                                                                                           return _vm.selectAllAthelete(
-                                                                                                            level.uid
+                                                                                                            level.uid,
+                                                                                                            "rcheckbox"
                                                                                                           )
                                                                                                         }
                                                                                                       }

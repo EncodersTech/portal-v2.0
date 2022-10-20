@@ -3523,7 +3523,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         for (var i in l.athletes) {
           if (l.athletes.hasOwnProperty(i)) {
             var athlete = l.athletes[i];
-            console.log(athlete);
             this.calculateAthleteFee(l, athlete, true);
           }
         }
