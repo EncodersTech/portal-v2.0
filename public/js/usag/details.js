@@ -3769,7 +3769,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var _this5 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-      var state, initial, _final, lid, l, level, usag_no, a, athlete, _usag_no, c, coach, freed_slots_tracker, added_slots_tracker, _lid, _l, _level, _usag_no2, _a, old_level, added, scratched, _athlete, sizing_id, _sizing_id, a_i, old_a, _old_a$tshirt_size_id, _old_a$leo_size_id, tmp, _lid2, _l2, j, new_a, _a_i, _old_a, _usag_no3, _c, _added, _scratched, _coach, c_i, old_c, _old_c$tshirt_size_id, _tmp, msg;
+      var state, initial, _final, lid, l, level, usag_no, a, athlete, _usag_no, c, coach, freed_slots_tracker, added_slots_tracker, _lid, _l, _level, _usag_no2, _a, old_level, added, scratched, _athlete2, sizing_id, _sizing_id, a_i, old_a, _old_a$tshirt_size_id, _old_a$leo_size_id, tmp, _lid2, _l2, j, new_a, _a_i, _old_a, _usag_no3, _c, _added, _scratched, _coach, c_i, old_c, _old_c$tshirt_size_id, _tmp, msg;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
         while (1) {
@@ -3979,7 +3979,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               if (_final.ids.added.athletes.hasOwnProperty(_usag_no2)) added = _final.ids.added.athletes[_usag_no2];
               scratched = 0;
               if (_final.ids.scratched.athletes.hasOwnProperty(_usag_no2)) scratched = _final.ids.scratched.athletes[_usag_no2];
-              _athlete = _objectSpread(_objectSpread({}, _a), {}, {
+              _athlete2 = _objectSpread(_objectSpread({}, _a), {}, {
                 is_new: false,
                 include_in_calculation: false,
                 fee: Utils.toFloat(_a.fee),
@@ -3989,17 +3989,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 to_waitlist: false,
                 old_level: old_level
               });
-              _athlete.dob = Moment(_athlete.dob);
-              _athlete.dob_display = _athlete.dob.format('MM/DD/YYYY');
+              _athlete2.dob = Moment(_athlete2.dob);
+              _athlete2.dob_display = _athlete2.dob.format('MM/DD/YYYY');
 
               if (_this5.meet.tshirt_chart != null) {
                 sizing_id = _.map(_this5.meet.tshirt_chart.sizes, 'id');
-                if (!sizing_id.includes(_athlete.tshirt_size_id)) _athlete.tshirt_size_id = null;
+                if (!sizing_id.includes(_athlete2.tshirt_size_id)) _athlete2.tshirt_size_id = null;
               }
 
               if (_this5.meet.leo_chart != null) {
                 _sizing_id = _.map(_this5.meet.leo_chart.sizes, 'id');
-                if (!_sizing_id.includes(_athlete.leo_size_id)) _athlete.leo_size_id = null;
+                if (!_sizing_id.includes(_athlete2.leo_size_id)) _athlete2.leo_size_id = null;
               } //#region - if old athlete t-shirt_size set then use old athlete t-shirt-size otherwise null.
 
 
@@ -4014,13 +4014,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               a_i = _context4.t7.value;
               old_a = _.cloneDeep(_this5.old_data_athletes.athletes[a_i]);
 
-              if (!(old_a.id === _athlete.id)) {
+              if (!(old_a.id === _athlete2.id)) {
                 _context4.next = 83;
                 break;
               }
 
-              _athlete.tshirt_size_id = (_old_a$tshirt_size_id = old_a.tshirt_size_id) !== null && _old_a$tshirt_size_id !== void 0 ? _old_a$tshirt_size_id : null;
-              _athlete.leo_size_id = (_old_a$leo_size_id = old_a.leo_size_id) !== null && _old_a$leo_size_id !== void 0 ? _old_a$leo_size_id : null;
+              _athlete2.tshirt_size_id = (_old_a$tshirt_size_id = old_a.tshirt_size_id) !== null && _old_a$tshirt_size_id !== void 0 ? _old_a$tshirt_size_id : null;
+              _athlete2.leo_size_id = (_old_a$leo_size_id = old_a.leo_size_id) !== null && _old_a$leo_size_id !== void 0 ? _old_a$leo_size_id : null;
               return _context4.abrupt("break", 85);
 
             case 83:
@@ -4033,15 +4033,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               if (old_level !== null && old_level != _lid && tmp < 1) {
                 // If athlete was moved to a different level and is not a new addition
-                _athlete.include_in_calculation = true;
-                _athlete.was_late = _athlete.was_late || _this5.late;
-                _athlete.refund = _athlete.fee;
-                _athlete.late_refund = _athlete.late_fee;
-                _athlete.fee += _level.registration_fee;
-                if (_athlete.was_late) _athlete.late_fee += _level.late_registration_fee;
-                _athlete.status = _athlete.to_waitlist || _athlete.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
+                _athlete2.include_in_calculation = true;
+                _athlete2.was_late = _athlete2.was_late || _this5.late;
+                _athlete2.refund = _athlete2.fee;
+                _athlete2.late_refund = _athlete2.late_fee;
+                _athlete2.fee += _level.registration_fee - _athlete2.fee < 0 ? 0 : _level.registration_fee - _athlete.fee; //athlete.fee - level.registration_fee;
 
-                if (!_athlete.in_waitlist) {
+                if (_athlete2.was_late) _athlete2.late_fee += _level.late_registration_fee;
+                _athlete2.status = _athlete2.to_waitlist || _athlete2.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
+
+                if (!_athlete2.in_waitlist) {
                   freed_slots_tracker[old_level] = freed_slots_tracker.hasOwnProperty(old_level) ? freed_slots_tracker[old_level] + 1 : 1;
                   added_slots_tracker[_lid] = added_slots_tracker.hasOwnProperty(_lid) ? added_slots_tracker[_lid] + 1 : 1;
                 }
@@ -4049,32 +4050,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               if (tmp < 0) {
                 // athlete was scratched
-                _athlete.refund = _athlete.fee;
-                _athlete.late_refund = _athlete.late_fee;
-                _athlete.status = _this5.constants.athletes.statuses.Scratched;
+                _athlete2.refund = _athlete2.fee;
+                _athlete2.late_refund = _athlete2.late_fee;
+                _athlete2.status = _this5.constants.athletes.statuses.Scratched;
 
-                if (!_athlete.in_waitlist) {
+                if (!_athlete2.in_waitlist) {
                   freed_slots_tracker[_lid] = freed_slots_tracker.hasOwnProperty(_lid) ? freed_slots_tracker[_lid] + 1 : 1;
                 }
               } else if (tmp > 0) {
                 // athlete was added
-                _athlete.include_in_calculation = true;
-                _athlete.is_new = true;
-                _athlete.to_waitlist = _this5.meet.is_waitlist;
-                _athlete.was_late = _this5.late;
-                _athlete.refund = _athlete.fee;
-                _athlete.late_refund = _athlete.late_fee;
-                _athlete.fee += _level.registration_fee;
-                if (_athlete.was_late) _athlete.late_fee += _level.late_registration_fee;
-                _athlete.status = _athlete.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
+                _athlete2.include_in_calculation = true;
+                _athlete2.is_new = true;
+                _athlete2.to_waitlist = _this5.meet.is_waitlist;
+                _athlete2.was_late = _this5.late;
+                _athlete2.refund = _athlete2.fee;
+                _athlete2.late_refund = _athlete2.late_fee;
+                _athlete2.fee += _level.registration_fee;
+                if (_athlete2.was_late) _athlete2.late_fee += _level.late_registration_fee;
+                _athlete2.status = _athlete2.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
 
-                if (!_athlete.in_waitlist) {
+                if (!_athlete2.in_waitlist) {
                   added_slots_tracker[_lid] = added_slots_tracker.hasOwnProperty(_lid) ? added_slots_tracker[_lid] + 1 : 1;
                 }
               } else {// no status change
               }
 
-              _level.athletes[_usag_no2] = _athlete;
+              _level.athletes[_usag_no2] = _athlete2;
 
             case 89:
               _context4.next = 60;
@@ -4167,9 +4168,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 for (var i in this.athletes) {
                   if (this.athletes.hasOwnProperty(i)) {
-                    var _athlete2 = this.athletes[i];
-                    var flag = !(_athlete2.in_waitlist || _athlete2.to_waitlist);
-                    flag = flag && _athlete2.status != this.constants.statuses.athletes.Scratched;
+                    var _athlete3 = this.athletes[i];
+                    var flag = !(_athlete3.in_waitlist || _athlete3.to_waitlist);
+                    flag = flag && _athlete3.status != this.constants.statuses.athletes.Scratched;
                     if (flag) count++;
                   }
                 }
