@@ -2738,6 +2738,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -72273,143 +72289,134 @@ var render = function() {
                                                                   "\n                                                Athletes in this level are NOT registered as a team.\n                                            "
                                                                 )
                                                               ])
-                                                        ]),
-                                                        _vm._v(" "),
-                                                        _vm.permissions.scratch
-                                                          ? _c(
-                                                              "div",
-                                                              {
-                                                                staticClass:
-                                                                  "btn-group dropdown"
-                                                              },
-                                                              [
-                                                                _vm._m(8, true),
-                                                                _vm._v(" "),
-                                                                _c(
-                                                                  "div",
-                                                                  {
-                                                                    staticClass:
-                                                                      "dropdown-menu dropdown-menu-right"
-                                                                  },
-                                                                  [
-                                                                    !l.changes
-                                                                      .team &&
-                                                                    l.has_team
-                                                                      ? _c(
-                                                                          "button",
-                                                                          {
-                                                                            staticClass:
-                                                                              "dropdown-item text-danger",
-                                                                            attrs: {
-                                                                              type:
-                                                                                "button"
-                                                                            },
-                                                                            on: {
-                                                                              click: function(
-                                                                                $event
-                                                                              ) {
-                                                                                return _vm.toggleTeam(
-                                                                                  l,
-                                                                                  false
-                                                                                )
-                                                                              }
-                                                                            }
-                                                                          },
-                                                                          [
-                                                                            _c(
-                                                                              "span",
-                                                                              {
-                                                                                staticClass:
-                                                                                  "fas fa-fw fa-eraser"
-                                                                              }
-                                                                            ),
-                                                                            _vm._v(
-                                                                              " Scratch Team\n                                                "
-                                                                            )
-                                                                          ]
-                                                                        )
-                                                                      : !l
-                                                                          .changes
-                                                                          .team &&
-                                                                        !l.has_team
-                                                                      ? _c(
-                                                                          "button",
-                                                                          {
-                                                                            staticClass:
-                                                                              "dropdown-item text-success",
-                                                                            attrs: {
-                                                                              type:
-                                                                                "button"
-                                                                            },
-                                                                            on: {
-                                                                              click: function(
-                                                                                $event
-                                                                              ) {
-                                                                                return _vm.toggleTeam(
-                                                                                  l,
-                                                                                  true
-                                                                                )
-                                                                              }
-                                                                            }
-                                                                          },
-                                                                          [
-                                                                            _c(
-                                                                              "span",
-                                                                              {
-                                                                                staticClass:
-                                                                                  "fas fa-fw fa-users"
-                                                                              }
-                                                                            ),
-                                                                            _vm._v(
-                                                                              " Register as Team\n                                                "
-                                                                            )
-                                                                          ]
-                                                                        )
-                                                                      : _c(
-                                                                          "div",
-                                                                          [
-                                                                            _c(
-                                                                              "button",
-                                                                              {
-                                                                                staticClass:
-                                                                                  "dropdown-item",
-                                                                                attrs: {
-                                                                                  type:
-                                                                                    "button"
-                                                                                },
-                                                                                on: {
-                                                                                  click: function(
-                                                                                    $event
-                                                                                  ) {
-                                                                                    return _vm.revertLevelTeam(
-                                                                                      l
-                                                                                    )
-                                                                                  }
-                                                                                }
-                                                                              },
-                                                                              [
-                                                                                _c(
-                                                                                  "span",
-                                                                                  {
-                                                                                    staticClass:
-                                                                                      "fa fa-fw fa-undo-alt"
-                                                                                  }
-                                                                                ),
-                                                                                _vm._v(
-                                                                                  " Revert Changes\n                                                    "
-                                                                                )
-                                                                              ]
-                                                                            )
-                                                                          ]
-                                                                        )
-                                                                  ]
-                                                                )
-                                                              ]
-                                                            )
-                                                          : _vm._e()
+                                                        ])
                                                       ]
                                                     )
                                                   : _vm._e(),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "div",
+                                                  { staticClass: "small mb-1" },
+                                                  [
+                                                    _vm.permissions.scratch
+                                                      ? _c(
+                                                          "div",
+                                                          {
+                                                            staticClass:
+                                                              "btn-group dropdown"
+                                                          },
+                                                          [
+                                                            !l.changes.team &&
+                                                            l.has_team
+                                                              ? _c(
+                                                                  "button",
+                                                                  {
+                                                                    staticClass:
+                                                                      "dropdown-item text-danger",
+                                                                    staticStyle: {
+                                                                      border:
+                                                                        "1px solid"
+                                                                    },
+                                                                    attrs: {
+                                                                      type:
+                                                                        "button"
+                                                                    },
+                                                                    on: {
+                                                                      click: function(
+                                                                        $event
+                                                                      ) {
+                                                                        return _vm.toggleTeam(
+                                                                          l,
+                                                                          false
+                                                                        )
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  [
+                                                                    _c("span", {
+                                                                      staticClass:
+                                                                        "fas fa-fw fa-eraser"
+                                                                    }),
+                                                                    _vm._v(
+                                                                      " Scratch Team\n                                            "
+                                                                    )
+                                                                  ]
+                                                                )
+                                                              : !l.changes
+                                                                  .team &&
+                                                                !l.has_team
+                                                              ? _c(
+                                                                  "button",
+                                                                  {
+                                                                    staticClass:
+                                                                      "dropdown-item text-success",
+                                                                    staticStyle: {
+                                                                      border:
+                                                                        "1px solid"
+                                                                    },
+                                                                    attrs: {
+                                                                      type:
+                                                                        "button"
+                                                                    },
+                                                                    on: {
+                                                                      click: function(
+                                                                        $event
+                                                                      ) {
+                                                                        return _vm.toggleTeam(
+                                                                          l,
+                                                                          true
+                                                                        )
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  [
+                                                                    _c("span", {
+                                                                      staticClass:
+                                                                        "fas fa-fw fa-users"
+                                                                    }),
+                                                                    _vm._v(
+                                                                      " Register as Team\n                                            "
+                                                                    )
+                                                                  ]
+                                                                )
+                                                              : _c(
+                                                                  "button",
+                                                                  {
+                                                                    staticClass:
+                                                                      "dropdown-item",
+                                                                    staticStyle: {
+                                                                      border:
+                                                                        "1px solid"
+                                                                    },
+                                                                    attrs: {
+                                                                      type:
+                                                                        "button"
+                                                                    },
+                                                                    on: {
+                                                                      click: function(
+                                                                        $event
+                                                                      ) {
+                                                                        return _vm.revertLevelTeam(
+                                                                          l
+                                                                        )
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  [
+                                                                    _c("span", {
+                                                                      staticClass:
+                                                                        "fa fa-fw fa-undo-alt"
+                                                                    }),
+                                                                    _vm._v(
+                                                                      " Revert Changes\n                                            "
+                                                                    )
+                                                                  ]
+                                                                )
+                                                          ]
+                                                        )
+                                                      : _vm._e()
+                                                  ]
+                                                ),
                                                 _vm._v(" "),
                                                 _c(
                                                   "div",
@@ -73426,7 +73433,7 @@ var render = function() {
                                                                                   "div",
                                                                                   [
                                                                                     _vm._m(
-                                                                                      9,
+                                                                                      8,
                                                                                       true
                                                                                     )
                                                                                   ]
@@ -73485,7 +73492,7 @@ var render = function() {
                                                                               },
                                                                               [
                                                                                 _vm._m(
-                                                                                  10,
+                                                                                  9,
                                                                                   true
                                                                                 ),
                                                                                 _vm._v(
@@ -73601,7 +73608,7 @@ var render = function() {
                                                     }),
                                                     _vm._v(" "),
                                                     _c("div", [
-                                                      _vm._m(11, true),
+                                                      _vm._m(10, true),
                                                       _vm._v(" "),
                                                       _c(
                                                         "span",
@@ -73656,7 +73663,7 @@ var render = function() {
                                               "div",
                                               { staticClass: "flex-grow-1" },
                                               [
-                                                _vm._m(12),
+                                                _vm._m(11),
                                                 _vm._v(
                                                   " |\n                                            "
                                                 ),
@@ -74288,7 +74295,7 @@ var render = function() {
                                                                               "div",
                                                                               [
                                                                                 _vm._m(
-                                                                                  13,
+                                                                                  12,
                                                                                   true
                                                                                 )
                                                                               ]
@@ -74347,7 +74354,7 @@ var render = function() {
                             "div",
                             { staticClass: "flex-grow-1 text-uppercase" },
                             [
-                              _vm._m(14),
+                              _vm._m(13),
                               _vm._v(" "),
                               _c(
                                 "span",
@@ -74397,7 +74404,7 @@ var render = function() {
                         : _vm.paymentProcessedMessage != null
                         ? _c("div", [
                             _c("div", { staticClass: "alert alert-success" }, [
-                              _vm._m(15),
+                              _vm._m(14),
                               _c("br"),
                               _vm._v(
                                 "\n                        " +
@@ -74423,18 +74430,18 @@ var render = function() {
                           ])
                         : _vm.isProcessingPayment
                         ? _c("div", { staticClass: "alert alert-warning" }, [
-                            _vm._m(16),
+                            _vm._m(15),
                             _c("br"),
                             _vm._v(
                               "\n                    Your payment is being processed.\n                    "
                             ),
-                            _vm._m(17)
+                            _vm._m(16)
                           ])
                         : _c("div", [
                             _vm.paymentOptions != null
                               ? _c("div", [
                                   _c("div", [
-                                    _vm._m(18),
+                                    _vm._m(17),
                                     _vm._v(" "),
                                     _vm.paymentOptions.methods.card
                                       ? _c(
@@ -74703,7 +74710,7 @@ var render = function() {
                                                                   },
                                                                   [
                                                                     _vm._m(
-                                                                      19,
+                                                                      18,
                                                                       true
                                                                     ),
                                                                     _vm._v(" "),
@@ -74851,7 +74858,7 @@ var render = function() {
                                                             "form-group small mt-1 ml-3"
                                                         },
                                                         [
-                                                          _vm._m(20),
+                                                          _vm._m(19),
                                                           _vm._v(" "),
                                                           _c("input", {
                                                             directives: [
@@ -74899,7 +74906,7 @@ var render = function() {
                                                             "small ml-3"
                                                         },
                                                         [
-                                                          _vm._m(21),
+                                                          _vm._m(20),
                                                           _vm._v(" "),
                                                           _c(
                                                             "p",
@@ -75030,7 +75037,7 @@ var render = function() {
                                                       }
                                                     }),
                                                     _vm._v(" "),
-                                                    _vm._m(22)
+                                                    _vm._m(21)
                                                   ]
                                                 )
                                           ]
@@ -75040,10 +75047,10 @@ var render = function() {
                                   _vm._v(" "),
                                   _vm.summary != null
                                     ? _c("div", { staticClass: "mb-3" }, [
-                                        _vm._m(23),
+                                        _vm._m(22),
                                         _vm._v(" "),
                                         _c("div", { staticClass: "row" }, [
-                                          _vm._m(24),
+                                          _vm._m(23),
                                           _vm._v(" "),
                                           _c("div", { staticClass: "col" }, [
                                             _vm.chosenMethod.type == "card"
@@ -75091,7 +75098,7 @@ var render = function() {
                                         ]),
                                         _vm._v(" "),
                                         _c("div", { staticClass: "row" }, [
-                                          _vm._m(25),
+                                          _vm._m(24),
                                           _vm._v(" "),
                                           _c("div", { staticClass: "col" }, [
                                             _vm._v(
@@ -75108,7 +75115,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.own_meet_refund > 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(26),
+                                              _vm._m(25),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75139,7 +75146,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.handling > 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(27),
+                                              _vm._m(26),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75161,7 +75168,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.used_balance != 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(28),
+                                              _vm._m(27),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75191,7 +75198,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.processor > 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(29),
+                                              _vm._m(28),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75225,7 +75232,7 @@ var render = function() {
                                                   "flex-grow-1 text-uppercase"
                                               },
                                               [
-                                                _vm._m(30),
+                                                _vm._m(29),
                                                 _vm._v(" "),
                                                 _c(
                                                   "span",
@@ -75468,24 +75475,6 @@ var staticRenderFns = [
       _c("br"),
       _vm._v("(Reserved)")
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "btn btm-sm btn-link pt-0",
-        attrs: {
-          type: "button",
-          "data-toggle": "dropdown",
-          "aria-haspopup": "true",
-          "aria-expanded": "false"
-        }
-      },
-      [_c("span", { staticClass: "fas fa-fw fa-ellipsis-v" })]
-    )
   },
   function() {
     var _vm = this

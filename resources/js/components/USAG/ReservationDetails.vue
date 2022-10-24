@@ -341,9 +341,25 @@
                                                     Athletes in this level are NOT registered as a team.
                                                 </div>
                                             </div>
-
+                                        </div>
+                                        <div class="small mb-1">
                                             <div v-if="permissions.scratch" class="btn-group dropdown">
-                                                <button type="button" class="btn btm-sm btn-link pt-0"
+                                               <button v-if="!l.changes.team && l.has_team" 
+                                                    class="dropdown-item text-danger" type="button" style="border: 1px solid;"
+                                                    @click="toggleTeam(l, false)">
+                                                    <span class="fas fa-fw fa-eraser"></span> Scratch Team
+                                                </button>
+                                                <button v-else-if="!l.changes.team && !l.has_team"
+                                                    class="dropdown-item text-success" type="button" style="border: 1px solid;"
+                                                    @click="toggleTeam(l, true)">
+                                                    <span class="fas fa-fw fa-users"></span> Register as Team
+                                                </button>
+                                                <button v-else class="dropdown-item" type="button" style="border: 1px solid;"
+                                                    @click="revertLevelTeam(l)">
+                                                    <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
+                                                </button>
+
+                                                <!-- <button type="button" class="btn btm-sm btn-link pt-0"
                                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                     <span class="fas fa-fw fa-ellipsis-v"></span>
                                                 </button>
@@ -366,7 +382,7 @@
                                                             <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
                                                         </button>
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
                                         </div>
 
