@@ -343,7 +343,7 @@
                                             </div>
                                         </div>
                                         <div class="small mb-1">
-                                            <div v-if="permissions.scratch" class="btn-group dropdown">
+                                            <div v-if="permissions.scratch" class="btn-group">
                                                <button v-if="!l.changes.team && l.has_team" 
                                                     class="dropdown-item text-danger" type="button" style="border: 1px solid;"
                                                     @click="toggleTeam(l, false)">

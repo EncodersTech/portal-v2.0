@@ -72303,7 +72303,7 @@ var render = function() {
                                                           "div",
                                                           {
                                                             staticClass:
-                                                              "btn-group dropdown"
+                                                              "btn-group"
                                                           },
                                                           [
                                                             !l.changes.team &&
