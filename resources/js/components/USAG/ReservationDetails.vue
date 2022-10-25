@@ -2207,8 +2207,8 @@
 
                                     athlete.refund = athlete.fee;
                                     athlete.late_refund = athlete.late_fee;
-
-                                    athlete.fee +=  level.registration_fee - athlete.fee < 0 ? 0 : level.registration_fee - _athlete.fee ;//athlete.fee - level.registration_fee;
+                                    let tmp_fee = level.registration_fee - athlete.fee;
+                                    athlete.fee +=  tmp_fee < 0 ? 0 : tmp_fee;
                                     if (athlete.was_late)
                                         athlete.late_fee += level.late_registration_fee;
 
