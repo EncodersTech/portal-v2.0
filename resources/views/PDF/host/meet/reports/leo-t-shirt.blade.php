@@ -69,5 +69,50 @@
             </table>
     @endif
     <br><br><br>
+    @if (count($tshirt_size) < 1)
+    No Tshirt Clothing's.
+    @else
+        <h3 class="mb-0">Tshirt Report</h3><br>
+            <table class="table-0 full-width">
+                <thead>
+                    <tr class="meet-subheader-text">
+                        <th width="3%" >#</th>
+                        <th width="20%" >Gym</th>
+                        @foreach ($tshirt_size as $leo_s)
+                            <th>{{$leo_s}}</th>
+                        @endforeach
+                        <th  width="5%" >Total</th>
+                    </tr>
+
+                </thead>
+                <?php
+                $count = 0;
+                ?>
+                <tbody>
+                    @foreach ($re_tshirt_size as $r)
+                        <tr  style="{{ $loop->even?'background-color: #ccc;':'' }}">
+                            <td class="meet-subheader-text">{{$loop->iteration}}</td>
+                            <td>{{$r['name']}}</td>
+                            @foreach ($tshirt_size_total as $i => $leo_s_t)
+                                <td class="meet-subheader-text">{{ ($r[$i] == 0)?'-':$r[$i]  }}</td>
+                            @endforeach
+                            <td class="meet-subheader-text">{{$r['total']}}</td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td class="meet-subheader-text" colspan="2">Total</td>
+                        @foreach ($tshirt_size_total as $leo_s_t)
+                            <?php
+                            $to_size = $leo_s_t;
+                            $sumAthletes = $to_size + $count;
+                            ?>
+                            <td class="meet-subheader-text">{{$sumAthletes}}</td>
+                        @endforeach
+                        <td  width="5%" class="meet-subheader-text">{{$sub_total_tshirt}}</td>
+                    </tr>
+                </tbody>
+            </table>
+    @endif
+    <br><br><br>
 </body>
 </html>

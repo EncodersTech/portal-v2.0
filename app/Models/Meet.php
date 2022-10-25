@@ -2585,6 +2585,11 @@ class Meet extends Model
             $re_leo_size = [];
             $leo_size_total = [];
             $sub_total = 0;
+            
+            $tshirt_size = [];
+            $re_tshirt_size = [];
+            $tshirt_size_total = [];
+            $sub_total_tshirt = 0;
             if($this->leo_chart && $registrations){
                 $leo_size = $this->leo_chart->sizes->pluck('size','id')->toArray();
                 foreach ($registrations as $i => $registration) {
@@ -2601,14 +2606,36 @@ class Meet extends Model
                     $re_leo_size[$i]['total'] = $re_to;
                 }
             }
+            if($this->tshirt_chart && $registrations){
+                $tshirt_size = $this->tshirt_chart->sizes->pluck('size','id')->toArray();
+                foreach ($registrations as $i => $registration) {
+                    $re_tshirt_size[$i]['name'] = $registration->gym->name;
+                    $re_to = 0;
+                    foreach ($tshirt_size as $le_s_id => $val) {
+                        $le_at = $registration->athletes->where('tshirt_size_id', $le_s_id)->count();
+                        $re_tshirt_size[$i][$le_s_id] = $le_at;
+                        $re_to  +=  $le_at;
+                        $tshirt_size_total[$le_s_id] = isset($tshirt_size_total[$le_s_id]) ? $tshirt_size_total[$le_s_id] : 0;
+                        $tshirt_size_total[$le_s_id] +=  $le_at;
+                        $sub_total_tshirt +=  $le_at;
+                    }
+                    $re_tshirt_size[$i]['total'] = $re_to;
+                }
+            }
             $data = [
                 'host' => $this->gym,
                 'meet' => $this,
                 'leo_size' => $leo_size,
                 're_leo_size' => $re_leo_size,
                 'leo_size_total' => $leo_size_total,
+                
+                'tshirt_size' => $tshirt_size,
+                're_tshirt_size' => $re_tshirt_size,
+                'tshirt_size_total' => $tshirt_size_total,
+                
                 'registrations' => $registrations,
-                'sub_total' => $sub_total
+                'sub_total' => $sub_total,
+                'sub_total_tshirt' => $sub_total_tshirt,
             ];
             return PDF::loadView('PDF.host.meet.reports.leo-t-shirt', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
@@ -2640,17 +2667,6 @@ class Meet extends Model
                     $data['count'] = 0;
                     foreach ($registrations as $i => $registration) {
                         $data['name'] = $val;
-//                        $re_to = 0;
-//                        $re_leo_size[$i]['total'] = $re_to;
-//                        $le_at = $registration->athletes->where('leo_size_id', $le_s_id)->count();
-//                        $re_leo_size[$i][$le_s_id] = [
-//                            'name' => $val,
-//                            'count' => $le_at, 0
-//                        ];
-//                        $re_to += $le_at;
-//                        $leo_size_total[$le_s_id] = isset($leo_size_total[$le_s_id]) ? $leo_size_total[$le_s_id] : 0;
-//                        $leo_size_total[$le_s_id] += $le_at;
-//                        $sub_total += $le_at;
                         $count =  $registration->athletes->where('leo_size_id', $le_s_id)->count();
                         $data['count'] += $count;
                     }

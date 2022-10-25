@@ -130,13 +130,14 @@
                             <th class="meet-subheader-text">First Name </th>
                             <th class="meet-subheader-text">Last Name </th>
                             <th class="meet-subheader-text">Leotard Size </th>
+                            <th class="meet-subheader-text">Tshirt Size </th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($r->levels as $l)
                             <tr style="background-color: #cfd4da;">
                                 <td colspan="3">{{$l->level_category->name}} - {{$l->name}}</td>
-                                <td >Total : {{$l->pivot->athletes->count()}}</td>
+                                <td colspan="2">Total : {{$l->pivot->athletes->count()}}</td>
                             </tr>
                             @if ($l->pivot->athletes->count() > 0)
                                 @foreach ($l->pivot->athletes as $a)
@@ -153,6 +154,13 @@
                                         <td>
                                             @if($a->leo)
                                                 {{$a->leo->size}}
+                                            @else
+                                                {{ '-' }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($a->tshirt)
+                                                {{$a->tshirt->size}}
                                             @else
                                                 {{ '-' }}
                                             @endif
