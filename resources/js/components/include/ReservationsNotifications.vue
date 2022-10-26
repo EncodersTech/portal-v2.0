@@ -27,7 +27,7 @@
                                     </span>
                                     <span v-else>
                                         <span class="fas fa-fw fa-pen-square"></span>
-                                        {{ constants.bodies[item.body] }} Reservation Update - {{ shown.meet ? shown.meet.name : item.meetName }}
+                                        {{ constants.bodies[item.body] }} Reservation Update - {{ item.meet ? item.meet.name : item.meetName }}
                                     </span>
                                 </h5>
                                 <div class="" style="letter-spacing: 0.5px">

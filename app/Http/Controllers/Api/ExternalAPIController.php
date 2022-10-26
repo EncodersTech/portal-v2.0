@@ -184,7 +184,8 @@ class ExternalAPIController extends BaseApiController
                         
                         break;
                     }
-                    
+                    if($body == SanctioningBody::NGA && $meetId[0] == 'N')
+                        $meetId = substr($meetId, 1);
                     $category = CategoryMeet::where('sanction_no', $meetId)
                         ->where('sanctioning_body_id', $body)
                         ->first(); /** @var CategoryMeet $category */
