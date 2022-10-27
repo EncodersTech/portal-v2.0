@@ -1229,8 +1229,13 @@ class MeetRegistration extends Model
                 ));
 
                 //when registration complete then host receive mail.
-                Log::debug('when registration complete then host receive mail.');
-                Mail::to($meet->gym->user->email)->cc("hello@allgymnastics.com")->send(new HostReceiveMeetRegistrationMailable($meet,$gym));
+                if(trim($meet->primary_contact_email) != trim($meet->gym->user->email))
+                    $mailcc = array($meet->primary_contact_email, "hello@allgymnastics.com");
+                else
+                    $mailcc = "hello@allgymnastics.com";
+                    
+                Log::debug('when registration complete then host receive mail.' . json_encode($mailcc));
+                Mail::to($meet->gym->user->email)->cc($mailcc)->send(new HostReceiveMeetRegistrationMailable($meet,$gym));
 
                 //Send an email to the registrant with a confirmation.
                 // Log::debug('Send an email to the registrant with a confirmation.');

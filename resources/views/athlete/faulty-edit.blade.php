@@ -445,6 +445,69 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="col-lg mb-1 pt-1 column-split">
+                            <div class="form-check mb-2">
+                                <input id="nga_checkbox" class="form-check-input athlete-membership-checkbox"
+                                    name="nga_checkbox" type="checkbox" data-body="nga"
+                                    {{ $athlete->nga_checkbox != null ? 'checked' : ''}}>
+                                <label class="form-check-label" for="nga_checkbox">
+                                    NGA Membership
+                                </label>
+                            </div>
+                            
+                            <div id="nga-membership-fields">
+                                <div class="mb-3">
+                                    <input id="nga_no" type="text" placeholder="Enter your NGA membership No." 
+                                            class="form-control form-control-sm @error('nga_no') is-invalid @enderror" 
+                                            name="nga_no" data-body="nga" value="{{ $athlete->nga_no }}"
+                                            required autocomplete="nga_no" disabled>
+                                    @error('nga_no')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            
+                                <div class="mb-3">
+                                    <label for="nga_level_id">
+                                        <span class="fas fa-fw fa-layer-group"></span> Level
+                                    </label>
+                                    <select id="nga_level_id" class="form-control form-control-sm @error('nga_level_id') is-invalid @enderror" 
+                                            name="nga_level_id" required disabled>
+                                        <option value="">(Choose below ...)</option>
+                                        @foreach ($bodies['NGA']['categories'] as $categoryName => $category)
+                                            <optgroup class="bg-secondary" label="{{ $categoryName }}"
+                                                data-male="{{ $category['male'] ? 1 : 0 }}"
+                                                data-female="{{ $category['female'] ? 1 : 0 }}">
+                                            </optgroup>
+                                            @foreach ($category['levels'] as $level)
+                                                <option class="ml-3" value="{{ $level->id }}" 
+                                                    {{ $level->id == $athlete->nga_level_id ? 'selected' : '' }}
+                                                    data-male="{{ $category['male'] ? 1 : 0 }}"
+                                                    data-female="{{ $category['female'] ? 1 : 0 }}">
+                                                    {{ $level->name }}
+                                                </option>
+                                            @endforeach
+                                        @endforeach
+                                    </select>
+                                    @error('nga_level_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <input type="checkbox" id="nga_active" name="nga_active"
+                                        {{ $athlete->nga_active != null ? 'checked' : ''}}>
+                                    <label for="nga_active">
+                                        This membership is active
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     
                     <div class="row">
