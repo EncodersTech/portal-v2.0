@@ -62,7 +62,7 @@
                                 id="registration_first_discount_is_enable"
                                 {{ $meet->oldOrValue('registration_first_discount_is_enable') != null ? 'checked' : '' }} >
                             <label class="form-check-label" for="registration_first_discount_is_enable">
-                                <span class="fas fa-fw fa-clipboard-list"></span> Enable First Discount
+                                <span class="fas fa-fw fa-clipboard-list"></span> Enable Early Registration
                             </label>
                         </div>
                     </h5>
@@ -73,13 +73,12 @@
                     <label for="registration_first_discount_end_date" class="mb-1" ref="registration_first_discount_end_date"
                         data-value="{{ $meet->oldOrValue('registration_first_discount_end_date') }}">
                         <span class="fas fa-fw fa-calendar-alt"></span>
-                        First Registration Discount End Date <span class="text-danger"></span>
+                        Early Registration End Date <span class="text-danger"></span>
                     </label>
                     <datepicker input-class="form-control form-control-sm vue-date-picker-fixer"
                         id="registration_first_discount_end_date"
                         :disabled="registration_first_discount_end_date_disabled"
                         :value="registration_first_discount_end_date"
-                        @selected="registration_firstDateChanged" @input="registration_firstDateChanged"
                         :wrapper-class="'flex-grow-1'" name="registration_first_discount_end_date" :format="'MM/dd/yyyy'"
                         placeholder="mm/dd/yyyy" :bootstrap-styling="true"
                         :typeable="true">
@@ -90,140 +89,9 @@
                     </span>
                     @enderror
                 </div>
-                <input type="hidden" name="registration_first_discount_amount" value="0">   
-                <!-- <div class="col-lg mb-3">
-                    <label for="registration_first_discount_amount_id" class="mb-1" ref="registration_first_discount_amount_id"
-                        data-value="{{ $meet->oldOrValue('registration_first_discount_amount') }}">
-                        <span class="fas fa-fw fa-calendar-alt"></span>
-                        First Discount Amount <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" :class="'form-control form-control-sm'"
-                        id="registration_first_discount_amount_id" 
-                        :disabled="registration_first_discount_amount_disabled"
-                        value="{{
-                                    $meet->oldOrValue('registration_first_discount_amount') != null ?
-                                    number_format($meet->oldOrValue('registration_first_discount_amount'), 2) :
-                                    0
-                                }}"
-                        name="registration_first_discount_amount" :bootstrap-styling="true" :typeable="true">
-                    @error('registration_first_discount_amount')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div> -->
+                <input type="hidden" name="registration_first_discount_amount" value="0">
             </div>
-            <!-- Second Payment Discount -->
-            <div class="row">
-                <div class="col">
-                    <h5 class="border-bottom">
-                        <div class="form-check mb-1">
-                            <input class="form-check-input" type="checkbox" name="registration_second_discount_is_enable"
-                                id="registration_second_discount_is_enable" :disabled="allow_second_discount_disabled"
-                                {{ $meet->oldOrValue('registration_second_discount_is_enable') != null ? 'checked' : '' }} >
-                            <label class="form-check-label" for="registration_second_discount_is_enable">
-                                <span class="fas fa-fw fa-clipboard-list"></span> Enable Second Discount
-                            </label>
-                        </div>
-                    </h5>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg mb-3">
-                    <label for="registration_second_discount_end_date" class="mb-1" ref="registration_second_discount_end_date"
-                        data-value="{{ $meet->oldOrValue('registration_second_discount_end_date') }}">
-                        <span class="fas fa-fw fa-calendar-alt"></span>
-                        Second Registration Discount End Date <span class="text-danger"></span>
-                    </label>
-                    <datepicker input-class="form-control form-control-sm vue-date-picker-fixer"
-                        id="registration_second_discount_end_date"
-                        :disabled="registration_second_discount_end_date_disabled"
-                        :value="registration_second_discount_end_date"
-                        @selected="registration_secondDateChanged" @input="registration_secondDateChanged"
-                        :wrapper-class="'flex-grow-1'" name="registration_second_discount_end_date" :format="'MM/dd/yyyy'"
-                        placeholder="mm/dd/yyyy" :bootstrap-styling="true"
-                        :typeable="true">
-                    </datepicker>
-                    @error('registration_second_discount_end_date')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <input type="hidden" name="registration_second_discount_amount" value="0">                
-                <!-- <div class="col-lg mb-3">
-                    <label for="registration_second_discount_amount_id" class="mb-1" ref="registration_second_discount_amount_id"
-                        data-value="{{ $meet->oldOrValue('registration_second_discount_amount') }}">
-                        <span class="fas fa-fw fa-calendar-alt"></span>
-                        Second Discount Amount <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" :class="'form-control form-control-sm'"
-                        id="registration_second_discount_amount_id"
-                        :disabled="registration_second_discount_amount_disabled"
-                        value="{{ $meet->oldOrValue('registration_second_discount_amount') == null ? 0 : number_format($meet->oldOrValue('registration_second_discount_amount'),2) }}"
-                        name="registration_second_discount_amount" :bootstrap-styling="true" :typeable="true">
-                    @error('registration_second_discount_amount')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div> -->
-            </div>
-            <!-- Third Payment Discount -->
-            <div class="row">
-                <div class="col">
-                    <h5 class="border-bottom">
-                        <div class="form-check mb-1">
-                            <input class="form-check-input" type="checkbox" name="registration_third_discount_is_enable"
-                                id="registration_third_discount_is_enable" :disabled="allow_third_discount_disabled"
-                                {{ $meet->oldOrValue('registration_third_discount_is_enable') != null ? 'checked' : '' }}>
-                            <label class="form-check-label" for="registration_third_discount_is_enable">
-                                <span class="fas fa-fw fa-clipboard-list"></span> Enable Third Discount
-                            </label>
-                        </div>
-                    </h5>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg mb-3">
-                    <label for="registration_third_discount_end_date" class="mb-1" ref="registration_third_discount_end_date"
-                        data-value="{{ $meet->oldOrValue('registration_third_discount_end_date') }}">
-                        <span class="fas fa-fw fa-calendar-alt"></span>
-                        Third Registration Discount End Date <span class="text-danger"></span>
-                    </label>
-                    <datepicker input-class="form-control form-control-sm vue-date-picker-fixer"
-                        :disabled="registration_third_discount_end_date_disabled"
-                        id="registration_third_discount_end_date"
-                        :value="registration_third_discount_end_date"
-                        :wrapper-class="'flex-grow-1'" name="registration_third_discount_end_date" :format="'MM/dd/yyyy'"
-                        placeholder="mm/dd/yyyy" :bootstrap-styling="true"
-                        :typeable="true">
-                    </datepicker>
-                    @error('registration_third_discount_end_date')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div>
-                <input type="hidden" name="registration_third_discount_amount" value="0">
-                <!-- <div class="col-lg mb-3">
-                    <label for="registration_third_discount_amount_id" class="mb-1" ref="registration_third_discount_amount_id"
-                        data-value="{{ $meet->oldOrValue('registration_third_discount_amount') }}">
-                        <span class="fas fa-fw fa-calendar-alt"></span>
-                        Third Discount Amount <span class="text-danger">*</span>
-                    </label>
-                    <input type="text" :class="'form-control form-control-sm'" 
-                    id="registration_third_discount_amount_id"
-                    :disabled="registration_third_discount_amount_disabled"
-                    value="{{ $meet->oldOrValue('registration_third_discount_amount') == null ? 0 : number_format($meet->oldOrValue('registration_third_discount_amount'),2) }}"
-                    name="registration_third_discount_amount" :bootstrap-styling="true" :typeable="true">
-                    @error('registration_third_discount_amount')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                    @enderror
-                </div> -->
-            </div>
+
 
             <div class="row">
                 <div class="col-lg mb-3">

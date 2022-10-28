@@ -163,7 +163,7 @@
                                         <div v-if="first_discount_enable" class="col-lg mb-2">
                                             <label for="add-level-specialist-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                First Registration Fee
+                                                Early Registration Fee
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -174,38 +174,6 @@
                                                 <input id="add-level-specialist-registration-fee" class="form-control"
                                                     placeholder="0.00" autocomplete="off" type="text"
                                                     v-model="newLevel.registration_fee_first">
-                                            </div>
-                                        </div>
-                                        <div v-if="second_discount_enable" class="col-lg mb-2">
-                                            <label for="add-level-specialist-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Second Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="add-level-specialist-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="newLevel.registration_fee_second">
-                                            </div>
-                                        </div>
-                                        <div v-if="third_discount_enable" class="col-lg mb-2">
-                                            <label for="add-level-specialist-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Third Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="add-level-specialist-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="newLevel.registration_fee_third">
                                             </div>
                                         </div>
                                     </div>
@@ -401,7 +369,7 @@
                                         <div class="col-lg mb-2">
                                             <label for="add-level-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                First Registration Fee
+                                                Early Registration Fee
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -415,43 +383,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div v-if="second_discount_enable" class="row mb-2">
-                                        <div class="col-lg mb-2">
-                                            <label for="add-level-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Second Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="add-level-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="editedLevel.registration_fee_second">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div v-if="third_discount_enable" class="row mb-2">
-                                        <div class="col-lg mb-2">
-                                            <label for="add-level-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Third Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="add-level-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="editedLevel.registration_fee_third">
-                                            </div>
-                                        </div>
-                                    </div>
-
+                                
                                     <div class="mb-2" v-if="hasSpecialist(editedLevel.body, editedLevel.category)">
                                         <div class="form-check pb-1">
                                             <input class="form-check-input" id="add-level-allow-specialists"
@@ -707,17 +639,10 @@
                                                         ${{ level.late_registration_fee}}
                                                     </div>
                                                     <div v-if="first_discount_enable">
-                                                        <strong>First Reg.:</strong>
+                                                        <strong>Early Reg.:</strong>
                                                         ${{ level.registration_fee_first}}
                                                     </div>
-                                                    <div v-if="second_discount_enable">
-                                                        <strong>Second Reg.:</strong>
-                                                        ${{ level.registration_fee_second}}
-                                                    </div>
-                                                    <div v-if="third_discount_enable">
-                                                        <strong>Third Reg.:</strong>
-                                                        ${{ level.registration_fee_third}}
-                                                    </div>
+                                                   
                                                 </td>
 
                                                 <td v-if="hasSpecialist(body, category)" class="align-middle">
@@ -933,8 +858,6 @@
                     error: null,
 
                     registration_fee_first: 0.00,
-                    registration_fee_second: 0.00,
-                    registration_fee_third: 0.00,
                 };
             },
             output() {
@@ -962,9 +885,7 @@
                                     enable_athlete_limit: l.enable_athlete_limit,
                                     athlete_limit: l.athlete_limit,
 
-                                    registration_fee_first: l.registration_fee_first, 
-                                    registration_fee_second: l.registration_fee_second,
-                                    registration_fee_third: l.registration_fee_third
+                                    registration_fee_first: l.registration_fee_first,
 
                                 });
                             });
@@ -1315,20 +1236,7 @@
                             throw 'Please enter a valid first registration fee';
                         this.editedLevel.registration_fee_first = fee.toFixed(2);
                     }
-                    if(this.second_discount_enable)
-                    {
-                        fee = Utils.toFloat(this.editedLevel.registration_fee_second);
-                        if ((fee === null) || (fee < 0))
-                            throw 'Please enter a valid second registration fee';
-                        this.editedLevel.registration_fee_second = fee.toFixed(2);
-                    }
-                    if(this.third_discount_enable)
-                    {
-                        fee = Utils.toFloat(this.editedLevel.registration_fee_third);
-                        if ((fee === null) || (fee < 0))
-                            throw 'Please enter a valid third registration fee';
-                        this.editedLevel.registration_fee_third = fee.toFixed(2);
-                    }
+                   
 
                     if (this.late) {
                         fee = Utils.toFloat(this.editedLevel.late_registration_fee);
@@ -1392,8 +1300,6 @@
                     this.editedOldLevel.registration_fee = this.editedLevel.registration_fee;
 
                     this.editedOldLevel.registration_fee_first = this.editedLevel.registration_fee_first;
-                    this.editedOldLevel.registration_fee_second = this.editedLevel.registration_fee_second;
-                    this.editedOldLevel.registration_fee_third = this.editedLevel.registration_fee_third;
                     
                     this.editedOldLevel.late_registration_fee = this.editedLevel.late_registration_fee;
 
@@ -1460,23 +1366,10 @@
                     {
                         fee = Utils.toFloat(this.newLevel.registration_fee_first);
                         if ((fee === null) || (fee < 0))
-                            throw 'Please enter a valid first registration fee';
+                            throw 'Please enter a valid early registration fee';
                         this.newLevel.registration_fee_first = fee.toFixed(2);
                     }
-                    if(this.second_discount_enable)
-                    {
-                        fee = Utils.toFloat(this.newLevel.registration_fee_second);
-                        if ((fee === null) || (fee < 0))
-                            throw 'Please enter a valid second registration fee';
-                        this.newLevel.registration_fee_second = fee.toFixed(2);
-                    }
-                    if(this.third_discount_enable)
-                    {
-                        fee = Utils.toFloat(this.newLevel.registration_fee_third);
-                        if ((fee === null) || (fee < 0))
-                            throw 'Please enter a valid third registration fee';
-                        this.newLevel.registration_fee_third = fee.toFixed(2);
-                    }
+                    
 
                     if (this.late) {
                         fee = Utils.toFloat(this.newLevel.late_registration_fee);
@@ -1676,30 +1569,6 @@
                             } else {
                                 il.registration_fee_first = 0;
                             }
-
-                            if (this.second_discount_enable) {
-                                fee = Utils.toFloat(il.registration_fee_second);
-                                if ((fee === null) || (fee < 0)) {
-                                    isWarn = true;
-                                    return
-                                }
-                                il.registration_fee_second = fee.toFixed(2);
-                            } else {
-                                il.registration_fee_second = 0;
-                            }
-
-                            if (this.third_discount_enable) {
-                                fee = Utils.toFloat(il.registration_fee_third);
-                                if ((fee === null) || (fee < 0)) {
-                                    isWarn = true;
-                                    return
-                                }
-                                il.registration_fee_third = fee.toFixed(2);
-                            } else {
-                                il.registration_fee_third = 0;
-                            }
-
-
 
                             if (this.late) {
                                 fee = Utils.toFloat(il.late_registration_fee);

@@ -2695,81 +2695,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'MeetLevelsList',
   props: {
@@ -2897,9 +2822,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         enable_athlete_limit: false,
         athlete_limit: 0,
         error: null,
-        registration_fee_first: 0.00,
-        registration_fee_second: 0.00,
-        registration_fee_third: 0.00
+        registration_fee_first: 0.00
       };
     },
     output: function output() {
@@ -2923,9 +2846,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 team_late_registration_fee: l.team_late_registration_fee,
                 enable_athlete_limit: l.enable_athlete_limit,
                 athlete_limit: l.athlete_limit,
-                registration_fee_first: l.registration_fee_first,
-                registration_fee_second: l.registration_fee_second,
-                registration_fee_third: l.registration_fee_third
+                registration_fee_first: l.registration_fee_first
               });
             });
           });
@@ -3277,18 +3198,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           this.editedLevel.registration_fee_first = fee.toFixed(2);
         }
 
-        if (this.second_discount_enable) {
-          fee = Utils.toFloat(this.editedLevel.registration_fee_second);
-          if (fee === null || fee < 0) throw 'Please enter a valid second registration fee';
-          this.editedLevel.registration_fee_second = fee.toFixed(2);
-        }
-
-        if (this.third_discount_enable) {
-          fee = Utils.toFloat(this.editedLevel.registration_fee_third);
-          if (fee === null || fee < 0) throw 'Please enter a valid third registration fee';
-          this.editedLevel.registration_fee_third = fee.toFixed(2);
-        }
-
         if (this.late) {
           fee = Utils.toFloat(this.editedLevel.late_registration_fee);
           if (fee === null || fee < 0) throw 'Please enter a valid late registration fee';
@@ -3343,8 +3252,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.editedOldLevel.registration_fee = this.editedLevel.registration_fee;
         this.editedOldLevel.registration_fee_first = this.editedLevel.registration_fee_first;
-        this.editedOldLevel.registration_fee_second = this.editedLevel.registration_fee_second;
-        this.editedOldLevel.registration_fee_third = this.editedLevel.registration_fee_third;
         this.editedOldLevel.late_registration_fee = this.editedLevel.late_registration_fee;
         this.editedOldLevel.allow_specialist = this.editedLevel.allow_specialist;
         this.editedOldLevel.specialist_registration_fee = this.editedLevel.specialist_registration_fee;
@@ -3397,20 +3304,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (this.first_discount_enable) {
           fee = Utils.toFloat(this.newLevel.registration_fee_first);
-          if (fee === null || fee < 0) throw 'Please enter a valid first registration fee';
+          if (fee === null || fee < 0) throw 'Please enter a valid early registration fee';
           this.newLevel.registration_fee_first = fee.toFixed(2);
-        }
-
-        if (this.second_discount_enable) {
-          fee = Utils.toFloat(this.newLevel.registration_fee_second);
-          if (fee === null || fee < 0) throw 'Please enter a valid second registration fee';
-          this.newLevel.registration_fee_second = fee.toFixed(2);
-        }
-
-        if (this.third_discount_enable) {
-          fee = Utils.toFloat(this.newLevel.registration_fee_third);
-          if (fee === null || fee < 0) throw 'Please enter a valid third registration fee';
-          this.newLevel.registration_fee_third = fee.toFixed(2);
         }
 
         if (this.late) {
@@ -3611,32 +3506,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               il.registration_fee_first = fee.toFixed(2);
             } else {
               il.registration_fee_first = 0;
-            }
-
-            if (_this10.second_discount_enable) {
-              fee = Utils.toFloat(il.registration_fee_second);
-
-              if (fee === null || fee < 0) {
-                isWarn = true;
-                return;
-              }
-
-              il.registration_fee_second = fee.toFixed(2);
-            } else {
-              il.registration_fee_second = 0;
-            }
-
-            if (_this10.third_discount_enable) {
-              fee = Utils.toFloat(il.registration_fee_third);
-
-              if (fee === null || fee < 0) {
-                isWarn = true;
-                return;
-              }
-
-              il.registration_fee_third = fee.toFixed(2);
-            } else {
-              il.registration_fee_third = 0;
             }
 
             if (_this10.late) {
@@ -68642,114 +68511,6 @@ var render = function() {
                                     ]
                                   )
                                 ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.second_discount_enable
-                              ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(7),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass: "input-group input-group-sm"
-                                    },
-                                    [
-                                      _vm._m(8),
-                                      _vm._v(" "),
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value:
-                                              _vm.newLevel
-                                                .registration_fee_second,
-                                            expression:
-                                              "newLevel.registration_fee_second"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          id:
-                                            "add-level-specialist-registration-fee",
-                                          placeholder: "0.00",
-                                          autocomplete: "off",
-                                          type: "text"
-                                        },
-                                        domProps: {
-                                          value:
-                                            _vm.newLevel.registration_fee_second
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              _vm.newLevel,
-                                              "registration_fee_second",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ]
-                                  )
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.third_discount_enable
-                              ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(9),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass: "input-group input-group-sm"
-                                    },
-                                    [
-                                      _vm._m(10),
-                                      _vm._v(" "),
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value:
-                                              _vm.newLevel
-                                                .registration_fee_third,
-                                            expression:
-                                              "newLevel.registration_fee_third"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          id:
-                                            "add-level-specialist-registration-fee",
-                                          placeholder: "0.00",
-                                          autocomplete: "off",
-                                          type: "text"
-                                        },
-                                        domProps: {
-                                          value:
-                                            _vm.newLevel.registration_fee_third
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              _vm.newLevel,
-                                              "registration_fee_third",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ]
-                                  )
-                                ])
                               : _vm._e()
                           ]),
                           _vm._v(" "),
@@ -68837,7 +68598,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c("div", { staticClass: "row" }, [
                                   _c("div", { staticClass: "col-lg mb-2" }, [
-                                    _vm._m(11),
+                                    _vm._m(7),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -68846,7 +68607,7 @@ var render = function() {
                                           "input-group input-group-sm"
                                       },
                                       [
-                                        _vm._m(12),
+                                        _vm._m(8),
                                         _vm._v(" "),
                                         _c("input", {
                                           directives: [
@@ -68897,7 +68658,7 @@ var render = function() {
                                         "div",
                                         { staticClass: "col-lg mb-2" },
                                         [
-                                          _vm._m(13),
+                                          _vm._m(9),
                                           _vm._v(" "),
                                           _c(
                                             "div",
@@ -68906,7 +68667,7 @@ var render = function() {
                                                 "input-group input-group-sm"
                                             },
                                             [
-                                              _vm._m(14),
+                                              _vm._m(10),
                                               _vm._v(" "),
                                               _c("input", {
                                                 directives: [
@@ -69030,13 +68791,13 @@ var render = function() {
                             _vm._v(" "),
                             _c("div", { staticClass: "row" }, [
                               _c("div", { staticClass: "col-lg mb-2" }, [
-                                _vm._m(15),
+                                _vm._m(11),
                                 _vm._v(" "),
                                 _c(
                                   "div",
                                   { staticClass: "input-group input-group-sm" },
                                   [
-                                    _vm._m(16),
+                                    _vm._m(12),
                                     _vm._v(" "),
                                     _c("input", {
                                       directives: [
@@ -69080,7 +68841,7 @@ var render = function() {
                               _vm._v(" "),
                               _vm.late
                                 ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                    _vm._m(17),
+                                    _vm._m(13),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -69089,7 +68850,7 @@ var render = function() {
                                           "input-group input-group-sm"
                                       },
                                       [
-                                        _vm._m(18),
+                                        _vm._m(14),
                                         _vm._v(" "),
                                         _c("input", {
                                           directives: [
@@ -69202,7 +68963,7 @@ var render = function() {
                       )
                     ]),
                     _vm._v(" "),
-                    _vm._m(19)
+                    _vm._m(15)
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
@@ -69225,13 +68986,13 @@ var render = function() {
                         _c("div", [
                           _c("div", { staticClass: "row mb-2" }, [
                             _c("div", { staticClass: "col-lg mb-2" }, [
-                              _vm._m(20),
+                              _vm._m(16),
                               _vm._v(" "),
                               _c(
                                 "div",
                                 { staticClass: "input-group input-group-sm" },
                                 [
-                                  _vm._m(21),
+                                  _vm._m(17),
                                   _vm._v(" "),
                                   _c("input", {
                                     directives: [
@@ -69272,7 +69033,7 @@ var render = function() {
                             _vm._v(" "),
                             _vm.late
                               ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(22),
+                                  _vm._m(18),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -69280,7 +69041,7 @@ var render = function() {
                                       staticClass: "input-group input-group-sm"
                                     },
                                     [
-                                      _vm._m(23),
+                                      _vm._m(19),
                                       _vm._v(" "),
                                       _c("input", {
                                         directives: [
@@ -69328,7 +69089,7 @@ var render = function() {
                           _vm.first_discount_enable
                             ? _c("div", { staticClass: "row mb-2" }, [
                                 _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(24),
+                                  _vm._m(20),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -69336,7 +69097,7 @@ var render = function() {
                                       staticClass: "input-group input-group-sm"
                                     },
                                     [
-                                      _vm._m(25),
+                                      _vm._m(21),
                                       _vm._v(" "),
                                       _c("input", {
                                         directives: [
@@ -69370,118 +69131,6 @@ var render = function() {
                                             _vm.$set(
                                               _vm.editedLevel,
                                               "registration_fee_first",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ]
-                                  )
-                                ])
-                              ])
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _vm.second_discount_enable
-                            ? _c("div", { staticClass: "row mb-2" }, [
-                                _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(26),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass: "input-group input-group-sm"
-                                    },
-                                    [
-                                      _vm._m(27),
-                                      _vm._v(" "),
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value:
-                                              _vm.editedLevel
-                                                .registration_fee_second,
-                                            expression:
-                                              "editedLevel.registration_fee_second"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          id: "add-level-registration-fee",
-                                          placeholder: "0.00",
-                                          autocomplete: "off",
-                                          type: "text"
-                                        },
-                                        domProps: {
-                                          value:
-                                            _vm.editedLevel
-                                              .registration_fee_second
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              _vm.editedLevel,
-                                              "registration_fee_second",
-                                              $event.target.value
-                                            )
-                                          }
-                                        }
-                                      })
-                                    ]
-                                  )
-                                ])
-                              ])
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _vm.third_discount_enable
-                            ? _c("div", { staticClass: "row mb-2" }, [
-                                _c("div", { staticClass: "col-lg mb-2" }, [
-                                  _vm._m(28),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    {
-                                      staticClass: "input-group input-group-sm"
-                                    },
-                                    [
-                                      _vm._m(29),
-                                      _vm._v(" "),
-                                      _c("input", {
-                                        directives: [
-                                          {
-                                            name: "model",
-                                            rawName: "v-model",
-                                            value:
-                                              _vm.editedLevel
-                                                .registration_fee_third,
-                                            expression:
-                                              "editedLevel.registration_fee_third"
-                                          }
-                                        ],
-                                        staticClass: "form-control",
-                                        attrs: {
-                                          id: "add-level-registration-fee",
-                                          placeholder: "0.00",
-                                          autocomplete: "off",
-                                          type: "text"
-                                        },
-                                        domProps: {
-                                          value:
-                                            _vm.editedLevel
-                                              .registration_fee_third
-                                        },
-                                        on: {
-                                          input: function($event) {
-                                            if ($event.target.composing) {
-                                              return
-                                            }
-                                            _vm.$set(
-                                              _vm.editedLevel,
-                                              "registration_fee_third",
                                               $event.target.value
                                             )
                                           }
@@ -69579,7 +69228,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c("div", { staticClass: "row" }, [
                                   _c("div", { staticClass: "col-lg mb-2" }, [
-                                    _vm._m(30),
+                                    _vm._m(22),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -69588,7 +69237,7 @@ var render = function() {
                                           "input-group input-group-sm"
                                       },
                                       [
-                                        _vm._m(31),
+                                        _vm._m(23),
                                         _vm._v(" "),
                                         _c("input", {
                                           directives: [
@@ -69639,7 +69288,7 @@ var render = function() {
                                         "div",
                                         { staticClass: "col-lg mb-2" },
                                         [
-                                          _vm._m(32),
+                                          _vm._m(24),
                                           _vm._v(" "),
                                           _c(
                                             "div",
@@ -69648,7 +69297,7 @@ var render = function() {
                                                 "input-group input-group-sm"
                                             },
                                             [
-                                              _vm._m(33),
+                                              _vm._m(25),
                                               _vm._v(" "),
                                               _c("input", {
                                                 directives: [
@@ -69777,13 +69426,13 @@ var render = function() {
                             _vm._v(" "),
                             _c("div", { staticClass: "row" }, [
                               _c("div", { staticClass: "col-lg mb-2" }, [
-                                _vm._m(34),
+                                _vm._m(26),
                                 _vm._v(" "),
                                 _c(
                                   "div",
                                   { staticClass: "input-group input-group-sm" },
                                   [
-                                    _vm._m(35),
+                                    _vm._m(27),
                                     _vm._v(" "),
                                     _c("input", {
                                       directives: [
@@ -69828,7 +69477,7 @@ var render = function() {
                               _vm._v(" "),
                               _vm.late
                                 ? _c("div", { staticClass: "col-lg mb-2" }, [
-                                    _vm._m(36),
+                                    _vm._m(28),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -69837,7 +69486,7 @@ var render = function() {
                                           "input-group input-group-sm"
                                       },
                                       [
-                                        _vm._m(37),
+                                        _vm._m(29),
                                         _vm._v(" "),
                                         _c("input", {
                                           directives: [
@@ -70370,47 +70019,13 @@ var render = function() {
                                                         ? _c("div", [
                                                             _c("strong", [
                                                               _vm._v(
-                                                                "First Reg.:"
+                                                                "Early Reg.:"
                                                               )
                                                             ]),
                                                             _vm._v(
                                                               "\n                                                    $" +
                                                                 _vm._s(
                                                                   level.registration_fee_first
-                                                                ) +
-                                                                "\n                                                "
-                                                            )
-                                                          ])
-                                                        : _vm._e(),
-                                                      _vm._v(" "),
-                                                      _vm.second_discount_enable
-                                                        ? _c("div", [
-                                                            _c("strong", [
-                                                              _vm._v(
-                                                                "Second Reg.:"
-                                                              )
-                                                            ]),
-                                                            _vm._v(
-                                                              "\n                                                    $" +
-                                                                _vm._s(
-                                                                  level.registration_fee_second
-                                                                ) +
-                                                                "\n                                                "
-                                                            )
-                                                          ])
-                                                        : _vm._e(),
-                                                      _vm._v(" "),
-                                                      _vm.third_discount_enable
-                                                        ? _c("div", [
-                                                            _c("strong", [
-                                                              _vm._v(
-                                                                "Third Reg.:"
-                                                              )
-                                                            ]),
-                                                            _vm._v(
-                                                              "\n                                                    $" +
-                                                                _vm._s(
-                                                                  level.registration_fee_third
                                                                 ) +
                                                                 "\n                                                "
                                                             )
@@ -70723,57 +70338,7 @@ var staticRenderFns = [
       [
         _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
         _vm._v(
-          "\n                                            First Registration Fee\n                                        "
-        )
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("span", { staticClass: "input-group-text" }, [
-        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      { attrs: { for: "add-level-specialist-registration-fee" } },
-      [
-        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
-        _vm._v(
-          "\n                                            Second Registration Fee\n                                        "
-        )
-      ]
-    )
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("span", { staticClass: "input-group-text" }, [
-        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "label",
-      { attrs: { for: "add-level-specialist-registration-fee" } },
-      [
-        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
-        _vm._v(
-          "\n                                            Third Registration Fee\n                                        "
+          "\n                                            Early Registration Fee\n                                        "
         )
       ]
     )
@@ -70955,49 +70520,7 @@ var staticRenderFns = [
     return _c("label", { attrs: { for: "add-level-registration-fee" } }, [
       _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
       _vm._v(
-        "\n                                            First Registration Fee\n                                        "
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("span", { staticClass: "input-group-text" }, [
-        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", { attrs: { for: "add-level-registration-fee" } }, [
-      _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
-      _vm._v(
-        "\n                                            Second Registration Fee\n                                        "
-      )
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "input-group-prepend" }, [
-      _c("span", { staticClass: "input-group-text" }, [
-        _c("span", { staticClass: "fas fa-fw fa-dollar-sign" })
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", { attrs: { for: "add-level-registration-fee" } }, [
-      _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
-      _vm._v(
-        "\n                                            Third Registration Fee\n                                        "
+        "\n                                            Early Registration Fee\n                                        "
       )
     ])
   },

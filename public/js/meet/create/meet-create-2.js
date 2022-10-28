@@ -79441,14 +79441,8 @@ $(document).ready(function (e) {
       lateStartDate: _this.today,
       lateEndDate: _this.today,
       registration_first_discount_end_date: _this.today,
-      registration_second_discount_end_date: _this.today,
-      registration_third_discount_end_date: _this.today,
       registration_first_discount_end_date_disabled: true,
       registration_first_discount_amount_disabled: true,
-      registration_second_discount_end_date_disabled: true,
-      registration_second_discount_amount_disabled: true,
-      registration_third_discount_end_date_disabled: true,
-      registration_third_discount_amount_disabled: true,
       allow_second_discount_disabled: true,
       allow_third_discount_disabled: true
     },
@@ -79458,12 +79452,6 @@ $(document).ready(function (e) {
       },
       lateStartDateChanged: function lateStartDateChanged(v) {
         this.lateEndDate = Moment(v).add(1, 'days').toDate();
-      },
-      registration_firstDateChanged: function registration_firstDateChanged(v) {
-        this.registration_second_discount_end_date = Moment(v).add(1, 'days').toDate();
-      },
-      registration_secondDateChanged: function registration_secondDateChanged(v) {
-        this.registration_third_discount_end_date = Moment(v).add(1, 'days').toDate();
       }
     },
     mounted: function mounted() {
@@ -79480,10 +79468,6 @@ $(document).ready(function (e) {
       if (oldLateEnd) this.lateEndDate = Moment.tz(oldLateEnd, formats, "America/New_York").toDate();else this.lateEndDate = Moment(this.lateStartDate).add(1, 'days').toDate();
       var registration_first_discount_end_date = this.$refs.registration_first_discount_end_date.dataset.value;
       if (registration_first_discount_end_date) this.registration_first_discount_end_date = Moment.tz(registration_first_discount_end_date, formats, "America/New_York").toDate();else this.registration_first_discount_end_date = Moment(this.today).add(1, 'days').toDate();
-      var registration_second_discount_end_date = this.$refs.registration_second_discount_end_date.dataset.value;
-      if (registration_second_discount_end_date) this.registration_second_discount_end_date = Moment.tz(registration_second_discount_end_date, formats, "America/New_York").toDate();else this.registration_second_discount_end_date = Moment(this.registration_first_discount_end_date).add(1, 'days').toDate();
-      var registration_third_discount_end_date = this.$refs.registration_third_discount_end_date.dataset.value;
-      if (registration_third_discount_end_date) this.registration_third_discount_end_date = Moment.tz(registration_third_discount_end_date, formats, "America/New_York").toDate();else this.registration_third_discount_end_date = Moment(this.registration_second_discount_end_date).add(1, 'days').toDate();
     }
   });
   setupLateRegistrationBehavior();
@@ -79522,92 +79506,19 @@ $(document).ready(function (e) {
   }
 
   setupFirstDiscountRegistrationBehavior();
-  setupSecondDiscountRegistrationBehavior();
-  setupThirdDiscountRegistrationBehavior();
 
   function setupFirstDiscountRegistrationBehavior() {
     var checkbox = $('#registration_first_discount_is_enable');
     var registration_first_discount_end_date = $('#registration_first_discount_end_date');
     var registration_first_discount_amount = $('#registration_first_discount_amount_id');
-    var allow_second_discount_disabled = $('#registration_second_discount_is_enable');
     checkbox.change(function (e) {
       var checked = checkbox.prop('checked');
-
-      if (!checked) {
-        disableSecond(checked);
-        disableThird(checked);
-      }
-
       registration_first_discount_end_date.prop('disabled', !checked);
       registration_first_discount_amount.prop('disabled', !checked);
-      allow_second_discount_disabled.prop('disabled', !checked);
       app.registration_first_discount_end_date_disabled = !checked;
       app.registration_first_discount_amount_disabled = !checked;
-      app.allow_second_discount_disabled = !checked;
     });
     checkbox.change();
-  }
-
-  function setupSecondDiscountRegistrationBehavior() {
-    var checkbox = $('#registration_second_discount_is_enable');
-    var registration_second_discount_end_date_disabled = $('#registration_second_discount_end_date_disabled');
-    var registration_second_discount_amount = $('#registration_second_discount_amount_id');
-    var allow_third_discount_disabled = $('#registration_third_discount_is_enable');
-    checkbox.change(function (e) {
-      var checked = checkbox.prop('checked');
-
-      if (!checked) {
-        disableThird(checked);
-      }
-
-      registration_second_discount_end_date_disabled.prop('disabled', !checked);
-      registration_second_discount_amount.prop('disabled', !checked);
-      allow_third_discount_disabled.prop('disabled', !checked);
-      app.registration_second_discount_end_date_disabled = !checked;
-      app.registration_second_discount_amount_disabled = !checked;
-      app.allow_third_discount_disabled = !checked;
-    });
-    checkbox.change();
-  }
-
-  function setupThirdDiscountRegistrationBehavior() {
-    var checkbox = $('#registration_third_discount_is_enable');
-    var registration_third_discount_end_date_disabled = $('#registration_third_discount_end_date_disabled');
-    var registration_third_discount_amount = $('#registration_third_discount_amount_id');
-    checkbox.change(function (e) {
-      var checked = checkbox.prop('checked');
-      registration_third_discount_end_date_disabled.prop('disabled', !checked);
-      registration_third_discount_amount.prop('disabled', !checked);
-      app.registration_third_discount_end_date_disabled = !checked;
-      app.registration_third_discount_amount_disabled = !checked;
-    });
-    checkbox.change();
-  }
-
-  function disableSecond(checked) {
-    var allow_second_discount_disabled = $('#registration_second_discount_is_enable');
-    $('#registration_second_discount_is_enable').prop('checked', false);
-    var registration_second_discount_end_date_disabled = $('#registration_second_discount_end_date_disabled');
-    var registration_second_discount_amount = $('#registration_second_discount_amount_id');
-    registration_second_discount_end_date_disabled.prop('disabled', !checked);
-    registration_second_discount_amount.prop('disabled', !checked);
-    allow_second_discount_disabled.prop('disabled', !checked);
-    app.registration_second_discount_end_date_disabled = !checked;
-    app.registration_second_discount_amount_disabled = !checked;
-    app.allow_second_discount_disabled = !checked;
-  }
-
-  function disableThird(checked) {
-    var allow_third_discount_disabled = $('#registration_third_discount_is_enable');
-    $('#registration_third_discount_is_enable').prop('checked', false);
-    var registration_third_discount_end_date_disabled = $('#registration_third_discount_end_date_disabled');
-    var registration_third_discount_amount = $('#registration_third_discount_amount_id');
-    registration_third_discount_end_date_disabled.prop('disabled', !checked);
-    registration_third_discount_amount.prop('disabled', !checked);
-    allow_third_discount_disabled.prop('disabled', !checked);
-    app.registration_third_discount_end_date_disabled = !checked;
-    app.registration_third_discount_amount_disabled = !checked;
-    app.allow_third_discount_disabled = !checked;
   }
 });
 

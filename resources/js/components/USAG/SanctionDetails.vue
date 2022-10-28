@@ -49,7 +49,7 @@
                                         <div class="col-lg mb-2" v-if="selectedMeet.registration_first_discount_is_enable">
                                             <label for="edit-all-levels-team-late-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                First Registration Fee
+                                                Early Registration Fee
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -62,38 +62,7 @@
                                                     v-model="editedLevel.registration_fee_first">
                                             </div>
                                         </div>
-                                        <div class="col-lg mb-2" v-if="selectedMeet.registration_second_discount_is_enable">
-                                            <label for="edit-all-levels-team-late-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Second Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="edit-all-levels-team-late-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="editedLevel.registration_fee_second">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg mb-2" v-if="selectedMeet.registration_third_discount_is_enable">
-                                            <label for="edit-all-levels-team-late-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Third Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="edit-all-levels-team-late-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="editedLevel.registration_fee_third">
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                     
                                     <div class="row mb-2">
@@ -241,7 +210,7 @@
                                         <div v-if="selectedMeet.registration_first_discount_is_enable" class="col-lg mb-2">
                                             <label for="add-level-specialist-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                First Registration Fee
+                                                Early Registration Fee
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -254,38 +223,7 @@
                                                     v-model="editedLevel.registration_fee_first">
                                             </div>
                                         </div>
-                                        <div v-if="selectedMeet.registration_second_discount_is_enable" class="col-lg mb-2">
-                                            <label for="add-level-specialist-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Second Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="add-level-specialist-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="editedLevel.registration_fee_second">
-                                            </div>
-                                        </div>
-                                        <div v-if="selectedMeet.registration_third_discount_is_enable" class="col-lg mb-2">
-                                            <label for="add-level-specialist-registration-fee">
-                                                <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Third Registration Fee
-                                            </label>
-                                            <div class="input-group input-group-sm">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-text">
-                                                        <span class="fas fa-fw fa-dollar-sign"></span>
-                                                    </span>
-                                                </div>
-                                                <input id="add-level-specialist-registration-fee" class="form-control"
-                                                    placeholder="0.00" autocomplete="off" type="text"
-                                                    v-model="editedLevel.registration_fee_third">
-                                            </div>
-                                        </div>
+                                        
                                     </div>
                                     <div class="row mb-2">
                                         <div v-if="selectedMeet.allow_late_registration" class="col-lg mb-2">
@@ -745,17 +683,10 @@
                                                             ${{ level.late_registration_fee}}
                                                         </div>
                                                         <div v-if="selectedMeet.registration_first_discount_is_enable">
-                                                            <strong>First:</strong>
+                                                            <strong>Early:</strong>
                                                             ${{ level.registration_fee_first}}
                                                         </div>
-                                                        <div v-if="selectedMeet.registration_second_discount_is_enable">
-                                                            <strong>Second:</strong>
-                                                            ${{ level.registration_fee_second}}
-                                                        </div>
-                                                        <div v-if="selectedMeet.registration_third_discount_is_enable">
-                                                            <strong>Third:</strong>
-                                                            ${{ level.registration_fee_third}}
-                                                        </div>
+                                                        
                                                     </td>
 
                                                     <td class="align-middle small" v-if="meetSelected">
@@ -1096,8 +1027,6 @@
                     can_edit: true,
                     registration_fee: 0,
                     registration_fee_first: 0,
-                    registration_fee_second: 0,
-                    registration_fee_third: 0,
                     late_registration_fee: 0,
                     allow_teams: false,
                     team_registration_fee: 0,
@@ -1143,24 +1072,7 @@
                     }else{
                         this.editedLevel.registration_fee_first = 0;
                     }
-                    if(this.selectedMeet.registration_second_discount_is_enable)
-                    {
-                        fee = Utils.toFloat(this.editedLevel.registration_fee_second);
-                        if((fee === null) || (fee < 0))
-                            throw 'Please enter a valid second registration fee';
-                        this.editedLevel.registration_fee_second = fee.toFixed(2);
-                    }else{
-                         this.editedLevel.registration_fee_second = 0;
-                    }
-                    if(this.selectedMeet.registration_third_discount_is_enable)
-                    {
-                        fee = Utils.toFloat(this.editedLevel.registration_fee_third);
-                        if((fee === null) || (fee < 0))
-                            throw 'Please enter a valid third registration fee';
-                        this.editedLevel.registration_fee_third = fee.toFixed(2);
-                    }else{
-                        this.editedLevel.registration_fee_third = 0;
-                    }
+                    
 
                     if (this.editedLevel.allow_teams) {
                         fee = Utils.toFloat(this.editedLevel.team_registration_fee);
@@ -1199,8 +1111,6 @@
                                 level.registration_fee = this.editedLevel.registration_fee;
                                 
                                 level.registration_fee_first = this.editedLevel.registration_fee_first;
-                                level.registration_fee_second = this.editedLevel.registration_fee_second;
-                                level.registration_fee_third = this.editedLevel.registration_fee_third;
 
                                 level.late_registration_fee = this.editedLevel.late_registration_fee;
 
@@ -1254,24 +1164,7 @@
                     }else{
                         this.editedLevel.registration_fee_first = 0;
                     }
-                    if(this.selectedMeet.registration_second_discount_is_enable)
-                    {
-                        fee = Utils.toFloat(this.editedLevel.registration_fee_second);
-                        if((fee === null) || (fee < 0))
-                            throw 'Please enter a valid second registration fee';
-                        this.editedLevel.registration_fee_second = fee.toFixed(2);
-                    }else{
-                         this.editedLevel.registration_fee_second = 0;
-                    }
-                    if(this.selectedMeet.registration_third_discount_is_enable)
-                    {
-                        fee = Utils.toFloat(this.editedLevel.registration_fee_third);
-                        if((fee === null) || (fee < 0))
-                            throw 'Please enter a valid third registration fee';
-                        this.editedLevel.registration_fee_third = fee.toFixed(2);
-                    }else{
-                        this.editedLevel.registration_fee_third = 0;
-                    }
+                    
 
                     if (this.editedLevel.allow_teams) {
                         fee = Utils.toFloat(this.editedLevel.team_registration_fee);
@@ -1305,8 +1198,6 @@
                     this.state.final[this.editedLevel.code].registration_fee = this.editedLevel.registration_fee;
                     
                     this.state.final[this.editedLevel.code].registration_fee_first = this.editedLevel.registration_fee_first;
-                    this.state.final[this.editedLevel.code].registration_fee_second = this.editedLevel.registration_fee_second;
-                    this.state.final[this.editedLevel.code].registration_fee_third = this.editedLevel.registration_fee_third;
 
                     this.state.final[this.editedLevel.code].late_registration_fee = this.editedLevel.late_registration_fee;
 
@@ -1467,8 +1358,6 @@
                             'athlete_limit',
 
                             'registration_fee_first',
-                            'registration_fee_second',
-                            'registration_fee_third',
                         ].forEach(field => {
                             level[field] = (level[field] === undefined ? 0 : level[field]);
                         });
