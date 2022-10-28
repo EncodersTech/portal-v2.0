@@ -4035,9 +4035,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 // If athlete was moved to a different level and is not a new addition
                 _athlete.include_in_calculation = true;
                 _athlete.was_late = _athlete.was_late || _this5.late;
-                _athlete.refund = _athlete.fee;
-                _athlete.late_refund = _athlete.late_fee;
                 tmp_fee = _level.registration_fee - _athlete.fee;
+                _athlete.refund = tmp_fee < 0 ? tmp_fee * -1 : 0; //athlete.fee;
+
+                _athlete.late_refund = _athlete.late_fee;
                 _athlete.fee += tmp_fee < 0 ? 0 : tmp_fee;
                 if (_athlete.was_late) _athlete.late_fee += _level.late_registration_fee;
                 _athlete.status = _athlete.to_waitlist || _athlete.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;

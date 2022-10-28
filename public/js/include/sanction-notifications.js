@@ -66258,8 +66258,8 @@ var render = function() {
                                           ) +
                                           " Reservation Update - " +
                                           _vm._s(
-                                            _vm.shown.meet
-                                              ? _vm.shown.meet.name
+                                            item.meet
+                                              ? item.meet.name
                                               : item.meetName
                                           ) +
                                           "\n                                "
