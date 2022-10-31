@@ -77699,6 +77699,66 @@ $(document).ready(function (e) {
         //     'fas fa-exclamation-triangle'
         // );
       },
+      openPendinReport: function openPendinReport(usagReservation) {
+        $('#general_info').html('<td>' + usagReservation.action_status + '</td><td>' + usagReservation.contact_email + '</td><td>' + usagReservation.contact_name + '</td>');
+        if (usagReservation.gym) $('#gym_info').html('<td>' + usagReservation.gym.name + '</td><td>' + usagReservation.gym.office_phone + '</td><td>' + usagReservation.gym.usag_membership + '</td>');else $('#gym_info').html('<td colspan="3">Not Found</td>');
+        $('#sanction_info').html('<td>' + usagReservation.usag_sanction.status_label + '</td><td>' + usagReservation.usag_sanction.contact_email + '</td><td>' + usagReservation.usag_sanction.contact_name + '</td><td>' + usagReservation.usag_sanction.usag_meet_name + '</td>');
+        $('#athlete_update').html('');
+        $('#coaches_add').html('');
+        $('#athlete_add_div').hide();
+        $('#athlete_update_div').hide();
+        $('#coach_div').hide();
+
+        if (usagReservation.payload.Reservation.Details.Gymnasts.Add !== undefined) {
+          $('#athlete_add_div').show();
+          var athletes_add = usagReservation.payload.Reservation.Details.Gymnasts.Add;
+          var athlete_table = '';
+          athletes_add.forEach(function (athletes) {
+            athlete_table += '<tr><td>' + athletes.ReservationID + '</td><td>' + athletes.Name + '</td><td>' + athletes.USAGID + '</td><td>' + athletes.Gender + '</td><td>' + athletes.DOB + '</td><td>' + athletes.MemberType + '</td><td>' + athletes.Apparatus + '</td><td>' + athletes.Level + '</td></tr>';
+          });
+          $('#athlete_add').html(athlete_table);
+        }
+
+        if (usagReservation.payload.Reservation.Details.Gymnasts.Update !== undefined) {
+          $('#athlete_update_div').show();
+          var athletes_update = usagReservation.payload.Reservation.Details.Gymnasts.Update;
+          var _athlete_table = '';
+          athletes_update.forEach(function (athletes) {
+            console.log(athletes);
+            _athlete_table += '<tr><td>' + athletes.ReservationID + '</td><td>' + athletes.USAGID + '</td><td>' + athletes.Apparatus + '</td><td>' + athletes.Level + '</td><td>Update</td></tr>';
+          });
+          $('#athlete_update').html(_athlete_table);
+        }
+
+        if (usagReservation.payload.Reservation.Details.Gymnasts.Scratch !== undefined) {
+          $('#athlete_update_div').show();
+          var _athletes_update = usagReservation.payload.Reservation.Details.Gymnasts.Scratch;
+          var _athlete_table2 = '';
+
+          _athletes_update.forEach(function (athletes) {
+            console.log(athletes);
+            _athlete_table2 += '<tr><td>' + athletes.ReservationID + '</td><td>' + athletes.USAGID + '</td><td>' + athletes.Apparatus + '</td><td>' + athletes.Level + '</td><td>Scratch</td></tr>';
+          });
+
+          $('#athlete_update').html(_athlete_table2);
+        }
+
+        if (usagReservation.payload.Reservation.Details.Coaches !== undefined && usagReservation.payload.Reservation.Details.Coaches.Add !== undefined) {
+          $('#coach_div').show();
+          var coaches_add = usagReservation.payload.Reservation.Details.Coaches.Add;
+          var coaches_table = '';
+          coaches_add.forEach(function (coaches) {
+            coaches_table += '<tr><td>' + coaches.ReservationID + '</td><td>' + coaches.Name + '</td><td>' + coaches.USAGID + '</td><td>' + coaches.MemberType + '</td></tr>';
+          });
+          $('#coaches_add').html(coaches_table);
+        }
+
+        $('#payload_info').html('<pre>' + JSON.stringify(usagReservation.payload, null, 2) + '</pre>');
+        $('#modal-usag-report').modal('show');
+      },
+      close_modal: function close_modal() {
+        $('#modal-usag-report').modal('hide');
+      },
       confirmWaitlistRegistration: function confirmWaitlistRegistration(tx) {
         var _this7 = this;
 

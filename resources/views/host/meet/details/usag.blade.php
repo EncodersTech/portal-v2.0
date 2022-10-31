@@ -225,13 +225,15 @@
                                     {{ $usagReservation->status_label }}</td>
                                 <td>{{ $usagReservation->timestamp }}</td>
                                 <td>
-                                    <a href="{{env('APP_URL')}}/gyms/{{$usagReservation->gym->id}}/sanctions/usag/{{$usagReservation->usag_sanction->number}}/reservation" class="btn btn-sm btn-success ml-1">View Details</a>
+                                    <button type="button" class="btn btn-sm btn-info ml-1" title="Send email"
+                                        @click="openPendinReport({{$usagReservation}})">View Details
+                                    </button>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-sm btn-info ml-1" title="Send email"
                                         @click="sendEmailTo({{$usagReservation}})">
                                         <span class="fas fa-fw fa-envelope"></span>
-                                </button>
+                                    </button>
                                 </td>
                                 @else
                                 <th colspan="7" class="text-center">No Records Found.</th>
@@ -257,6 +259,7 @@
                                 <th scope="col">Type</th>
                                 <th scope="col">Status</th>
                                 <th scope="col">Last updated</th>
+                                <th scope="col">Details</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -288,6 +291,11 @@
                                 <td class="{{\App\Models\USAGReservation::statusColor($usagReservation->status)}}">
                                     {{ $usagReservation->status_label }}</td>
                                 <td>{{ $usagReservation->timestamp }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-info ml-1" title="Send email"
+                                        @click="openPendinReport({{$usagReservation}})">View Details
+                                    </button>
+                                </td>
                                 @else
                                 @if($kl == 0)
                                 <th colspan="7" class="text-center">No Records Found.</th>
@@ -305,4 +313,128 @@
     @else
     <h4>No USAG Reservation.</h4>
     @endif
+</div>
+
+<div class="modal fade" id="modal-usag-report" tabindex="-1" role="dialog" aria-labelledby="modal-usag-report" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl" role="document" >
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title text-info">
+                    <span class="fas fa-question-circle"></span> Report
+                </h5>
+                <button type="button" id="modal-usag-report-close" class="close" aria-label="Close" @click="close_modal()">
+                    <span class="fas fa-times" aria-hidden="true"></span>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div>
+                    <h5><b>General Info</b></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Contact Email</th>
+                                <th>Contact Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="general_info">
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><br>
+                <div>
+                    <h5><b>Gym Info</b></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Gym Name</th>
+                                <th>Gym Phone</th>
+                                <th>USAG Membership</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="gym_info">
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><br>
+                <div>
+                    <h5><b>USAG Sanction Info</b></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Contact Email</th>
+                                <th>Contact Name</th>
+                                <th>Meet Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="sanction_info">
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="athlete_add_div" style="display:none;">
+                    <h5><b>Athlete Add</b></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ReservationID</th>
+                                <th>Name</th>
+                                <th>USAGID</th>
+                                <th>Gender</th>
+                                <th>DOB</th>
+                                <th>MemberType</th>
+                                <th>Apparatus</th>
+                                <th>Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="athlete_add">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="athlete_update_div" style="display:none;">
+                    <h5><b>Athlete Update</b></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ReservationID</th>
+                                <th>USAGID</th>
+                                <th>Apparatus</th>
+                                <th>Level</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="athlete_update">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="coach_div" style="display:none;">
+                    <h5><b>Coaches Add</b></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ReservationID</th>
+                                <th>Name</th>
+                                <th>USAGID</th>
+                                <th>Member Type</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coaches_add">
+                        </tbody>
+                    </table>
+                </div>
+                <div>
+                    <h5><b>Original Payload</b></h5>
+                    <div id="payload_info">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
