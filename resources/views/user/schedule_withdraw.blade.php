@@ -123,8 +123,11 @@
                         <select id="bank_id" name="bank_id" class="form-control form-control-sm" required>
                             <option value="">(Choose a bank account ...)</option>
                             <?php 
-                                foreach ($bank_accounts as $ba) {
-                                echo '<option value="'.$ba->id.'">'.$ba->name.'</option>';
+                                if(!empty($bank_accounts))
+                                {
+                                    foreach ($bank_accounts as $ba) {
+                                    echo '<option value="'.$ba->id.'">'.$ba->name.'</option>';
+                                }
                             } ?>
                         </select>
                     </div> 

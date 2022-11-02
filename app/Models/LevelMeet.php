@@ -15,8 +15,7 @@ class LevelMeet extends Pivot
         'id', 'allow_men', 'allow_women', 'registration_fee', 'late_registration_fee',
         'allow_specialist', 'specialist_registration_fee', 'specialist_late_registration_fee',
         'allow_teams', 'team_registration_fee', 'team_late_registration_fee',
-        'enable_athlete_limit', 'athlete_limit', 'disabled', 'registration_fee_first', 'registration_fee_second',
-        'registration_fee_third'
+        'enable_athlete_limit', 'athlete_limit', 'disabled', 'registration_fee_first'
     ];
 
     public function athlete_level() {

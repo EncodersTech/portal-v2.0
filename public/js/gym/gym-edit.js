@@ -64780,7 +64780,7 @@ window.Utils = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\js\gym\gym-edit.js */"./resources/js/gym/gym-edit.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\gym\gym-edit.js */"./resources/js/gym/gym-edit.js");
 
 
 /***/ })

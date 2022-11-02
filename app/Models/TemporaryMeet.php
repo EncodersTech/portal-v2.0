@@ -912,8 +912,8 @@ class TemporaryMeet extends Model
                     'athlete_limit' => $level->athlete_limit,
 
                     'registration_fee_first' => $level->registration_fee_first,
-                    'registration_fee_second' => $level->registration_fee_second,
-                    'registration_fee_third' => $level->registration_fee_third,
+                    // 'registration_fee_second' => $level->registration_fee_second,
+                    // 'registration_fee_third' => $level->registration_fee_third,
                 ]);
             }
 

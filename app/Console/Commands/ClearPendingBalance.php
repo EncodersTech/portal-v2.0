@@ -59,7 +59,7 @@ class ClearPendingBalance extends Command
                                 throw new CustomBaseException('No such user with id `' . $tx->user_id . '`');
 
                             $tx->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
-                            $user->cleared_balance -= $tx->total;
+                            $user->cleared_balance += $tx->total;
                             $tx->save();
                             $user->save();
 

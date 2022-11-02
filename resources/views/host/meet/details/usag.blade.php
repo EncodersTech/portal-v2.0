@@ -429,8 +429,8 @@
                     </table>
                 </div>
                 <div>
-                    <h5><b>Original Payload</b></h5>
-                    <div id="payload_info">
+                    <h5><b>Original Payload</b>  <span class="btn btn-sm btn-primary"  id="btns" @click="hidethis(this)">Show</span></h5> 
+                    <div id="payload_info" style="display:none;">
 
                     </div>
                 </div>

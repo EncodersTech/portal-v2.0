@@ -1268,7 +1268,7 @@ class Meet extends Model
                 'male', 'female', 'registration_fee', 'late_registration_fee', 'allow_specialist',
                 'specialist_registration_fee', 'specialist_late_registration_fee', 'allow_team',
                 'team_registration_fee', 'team_late_registration_fee', 'enable_athlete_limit',
-                'athlete_limit', 'registration_fee_first', 'registration_fee_second', 'registration_fee_third'
+                'athlete_limit', 'registration_fee_first'
             ];
             $levelGenderMatrix = [];
             $levels = json_decode($attr['levels']);
@@ -1301,8 +1301,8 @@ class Meet extends Model
                     'athlete_limit' => (int) $level->pivot->athlete_limit,
 
                     'registration_fee_first' => (float) $level->pivot->registration_fee_first, 
-                    'registration_fee_second' => (float) $level->pivot->registration_fee_second,
-                    'registration_fee_third' => (float) $level->pivot->registration_fee_third
+                    // 'registration_fee_second' => (float) $level->pivot->registration_fee_second,
+                    // 'registration_fee_third' => (float) $level->pivot->registration_fee_third
                 ];
             }
             $oldLevelsJson = json_encode($oldLevels);
@@ -1355,24 +1355,24 @@ class Meet extends Model
                 else{
                     $levelData->registration_fee_first = 0;
                 }
-                if($this->registration_second_discount_is_enable)
-                {
-                    if(!Helper::isFloat($levelData->registration_fee_second))
-                        throw new CustomBaseException('Wrong level data : invalid second registration fee', -1);
-                    $levelData->registration_fee_second = (float) $levelData->registration_fee_second;
-                }
-                else{
-                    $levelData->registration_fee_second = 0;
-                }
-                if($this->registration_third_discount_is_enable)
-                {
-                    if(!Helper::isFloat($levelData->registration_fee_third))
-                        throw new CustomBaseException('Wrong level data : invalid first registration fee', -1);
-                    $levelData->registration_fee_third = (float) $levelData->registration_fee_third;
-                }
-                else{
-                    $levelData->registration_fee_third = 0;
-                }
+                // if($this->registration_second_discount_is_enable)
+                // {
+                //     if(!Helper::isFloat($levelData->registration_fee_second))
+                //         throw new CustomBaseException('Wrong level data : invalid second registration fee', -1);
+                //     $levelData->registration_fee_second = (float) $levelData->registration_fee_second;
+                // }
+                // else{
+                //     $levelData->registration_fee_second = 0;
+                // }
+                // if($this->registration_third_discount_is_enable)
+                // {
+                //     if(!Helper::isFloat($levelData->registration_fee_third))
+                //         throw new CustomBaseException('Wrong level data : invalid first registration fee', -1);
+                //     $levelData->registration_fee_third = (float) $levelData->registration_fee_third;
+                // }
+                // else{
+                //     $levelData->registration_fee_third = 0;
+                // }
 
                 if ($this->allow_late_registration) {
                     if(!Helper::isFloat($levelData->late_registration_fee))
@@ -1444,9 +1444,6 @@ class Meet extends Model
                         ($oldLevel->pivot->registration_fee != $levelData->registration_fee) ||
 
                         ($oldLevel->pivot->registration_fee_first != $levelData->registration_fee_first) ||
-                        ($oldLevel->pivot->registration_fee_second != $levelData->registration_fee_second) ||
-                        ($oldLevel->pivot->registration_fee_third != $levelData->registration_fee_third) ||
-                        
                         ($oldLevel->pivot->late_registration_fee != $levelData->late_registration_fee) ||
 
                         ($oldLevel->pivot->allow_specialist != $levelData->allow_specialist) ||
@@ -1466,8 +1463,8 @@ class Meet extends Model
                     $oldLevel->pivot->registration_fee = $levelData->registration_fee;
 
                     $oldLevel->pivot->registration_fee_first = $levelData->registration_fee_first;
-                    $oldLevel->pivot->registration_fee_second = $levelData->registration_fee_second;
-                    $oldLevel->pivot->registration_fee_third = $levelData->registration_fee_third;
+                    // $oldLevel->pivot->registration_fee_second = $levelData->registration_fee_second;
+                    // $oldLevel->pivot->registration_fee_third = $levelData->registration_fee_third;
 
                     $oldLevel->pivot->late_registration_fee = $levelData->late_registration_fee;
 
@@ -1496,8 +1493,8 @@ class Meet extends Model
                         'registration_fee' => $levelData->registration_fee,
  
                         'registration_fee_first' => $levelData->registration_fee_first,
-                        'registration_fee_second' => $levelData->registration_fee_second,
-                        'registration_fee_third' => $levelData->registration_fee_third,
+                        // 'registration_fee_second' => $levelData->registration_fee_second,
+                        // 'registration_fee_third' => $levelData->registration_fee_third,
 
                         'late_registration_fee' => $levelData->late_registration_fee,
                         'allow_specialist' => $levelData->allow_specialist,
@@ -1572,8 +1569,8 @@ class Meet extends Model
                         'registration_fee' => $level['registration_fee'],
 
                         'registration_fee_first' => $level['registration_fee_first'],
-                        'registration_fee_second' => $level['registration_fee_second'],
-                        'registration_fee_third' => $level['registration_fee_third'],
+                        // 'registration_fee_second' => $level['registration_fee_second'],
+                        // 'registration_fee_third' => $level['registration_fee_third'],
                         
                         'late_registration_fee' => $level['late_registration_fee'],
                         'allow_specialist' => $level['allow_specialist'],

@@ -204,7 +204,7 @@ $(document).ready(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\assets\admin\js\usag_sanction\usag_sanction.js */"./resources/assets/admin/js/usag_sanction/usag_sanction.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\assets\admin\js\usag_sanction\usag_sanction.js */"./resources/assets/admin/js/usag_sanction/usag_sanction.js");
 
 
 /***/ })

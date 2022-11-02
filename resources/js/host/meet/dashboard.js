@@ -883,6 +883,13 @@ $(document).ready(e => {
             {
                 $('#modal-usag-report').modal('hide');
             },
+            hidethis(e){
+                if ($('#btns').html() == "Show")
+                    $('#btns').html("Hide");
+                else
+                    $('#btns').html("Show");
+                $('#payload_info').toggle();
+            },
 
             confirmWaitlistRegistration(tx) {
                 if (!tx)

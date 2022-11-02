@@ -133,16 +133,16 @@ class MeetController extends AppBaseController
                     {
                         $m_levels[$k][$key]["fee"] = $value["pivot"]["registration_fee"];
                         $m_levels[$k][$key]["registration_fee_first"] = $value["pivot"]["registration_fee_first"];
-                        $m_levels[$k][$key]["registration_fee_second"] = $value["pivot"]["registration_fee_second"];
-                        $m_levels[$k][$key]["registration_fee_third"] = $value["pivot"]["registration_fee_third"];
+                        // $m_levels[$k][$key]["registration_fee_second"] = $value["pivot"]["registration_fee_second"];
+                        // $m_levels[$k][$key]["registration_fee_third"] = $value["pivot"]["registration_fee_third"];
                     }
                     else if($m_levels[$k][$key]["fee"] !=  $value["pivot"]["registration_fee"])
                     {
                         $m_levels[$k][$key]["has_change"] = true;
                         $m_levels[$k][$key]["fee"] = min($m_levels[$k][$key]["fee"], $value["pivot"]["registration_fee"]);
                         $m_levels[$k][$key]["registration_fee_first"] = min($value["pivot"]["registration_fee_first"], $value["pivot"]["registration_fee_first"]);
-                        $m_levels[$k][$key]["registration_fee_second"] = min($value["pivot"]["registration_fee_second"],  $value["pivot"]["registration_fee_second"]);
-                        $m_levels[$k][$key]["registration_fee_third"] = min($value["pivot"]["registration_fee_third"],$value["pivot"]["registration_fee_third"] );
+                        // $m_levels[$k][$key]["registration_fee_second"] = min($value["pivot"]["registration_fee_second"],  $value["pivot"]["registration_fee_second"]);
+                        // $m_levels[$k][$key]["registration_fee_third"] = min($value["pivot"]["registration_fee_third"],$value["pivot"]["registration_fee_third"] );
                     }
                     # code...
                 }
@@ -432,8 +432,8 @@ class MeetController extends AppBaseController
                 'athlete_limit' => $level->pivot->athlete_limit,
                 
                 'registration_fee_first' => $level->pivot->registration_fee_first, 
-                'registration_fee_second' => $level->pivot->registration_fee_second,
-                'registration_fee_third' => $level->pivot->registration_fee_third
+                // 'registration_fee_second' => $level->pivot->registration_fee_second,
+                // 'registration_fee_third' => $level->pivot->registration_fee_third
             ];
         }
 

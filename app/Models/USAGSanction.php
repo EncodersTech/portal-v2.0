@@ -645,8 +645,8 @@ class USAGSanction extends Model
                                 'registration_fee' => $incomingLevels[$code]['registration_fee'],
                                 
                                 'registration_fee_first' => $incomingLevels[$code]['registration_fee_first'],
-                                'registration_fee_second' => $incomingLevels[$code]['registration_fee_second'],
-                                'registration_fee_third' => $incomingLevels[$code]['registration_fee_third'],
+                                // 'registration_fee_second' => $incomingLevels[$code]['registration_fee_second'],
+                                // 'registration_fee_third' => $incomingLevels[$code]['registration_fee_third'],
 
                                 'late_registration_fee' => $incomingLevels[$code]['late_registration_fee'],
                                 'allow_teams' => $incomingLevels[$code]['allow_teams'],
@@ -668,8 +668,8 @@ class USAGSanction extends Model
                             'registration_fee' => $incomingLevels[$code]['registration_fee'],
 
                             'registration_fee_first' => $incomingLevels[$code]['registration_fee_first'],
-                            'registration_fee_second' => $incomingLevels[$code]['registration_fee_second'],
-                            'registration_fee_third' => $incomingLevels[$code]['registration_fee_third'],
+                            // 'registration_fee_second' => $incomingLevels[$code]['registration_fee_second'],
+                            // 'registration_fee_third' => $incomingLevels[$code]['registration_fee_third'],
                             
                             'late_registration_fee' => $incomingLevels[$code]['late_registration_fee'],
                             'allow_specialist' => false,

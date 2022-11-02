@@ -77759,6 +77759,10 @@ $(document).ready(function (e) {
       close_modal: function close_modal() {
         $('#modal-usag-report').modal('hide');
       },
+      hidethis: function hidethis(e) {
+        if ($('#btns').html() == "Show") $('#btns').html("Hide");else $('#btns').html("Show");
+        $('#payload_info').toggle();
+      },
       confirmWaitlistRegistration: function confirmWaitlistRegistration(tx) {
         var _this7 = this;
 
@@ -78313,7 +78317,7 @@ window.Utils = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\new\portal-v2.0\resources\js\host\meet\dashboard.js */"./resources/js/host/meet/dashboard.js");
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\host\meet\dashboard.js */"./resources/js/host/meet/dashboard.js");
 
 
 /***/ })
