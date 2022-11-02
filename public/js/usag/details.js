@@ -4031,8 +4031,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _athlete.refund = tmp_fee < 0 ? tmp_fee * -1 : 0; //athlete.fee;
 
                 _athlete.late_refund = _athlete.late_fee;
-                _athlete.fee += tmp_fee < 0 ? 0 : tmp_fee;
-                if (_athlete.was_late) _athlete.late_fee += _level.late_registration_fee;
+                _athlete.fee = tmp_fee < 0 ? 0 : tmp_fee;
+                if (_athlete.was_late) _athlete.late_fee = _level.late_registration_fee;
                 _athlete.status = _athlete.to_waitlist || _athlete.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
 
                 if (!_athlete.in_waitlist) {

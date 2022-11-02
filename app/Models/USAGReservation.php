@@ -1244,7 +1244,7 @@ class USAGReservation extends Model
 
                             //#region - check = if athlete moved and new level fee is <= old level fee than count different, and add to refund.
                             $refundAmount = null;  $newLevelRegiFee = 0;
-                            $newLevelRegiFee = $feLevel['late_registration_fee'];
+                            $newLevelRegiFee = $feLevel['registration_fee'];
                             if ($feLevel['was_late']) {
                                 $newLevelRegiFee = $feLevel['late_registration_fee'] + $feLevel['registration_fee'];
                             }
@@ -1253,15 +1253,13 @@ class USAGReservation extends Model
                             } else {
                                 $refundAmount = 0;
                             }
-                            //#endregion
-
                             $athlete->level_registration_id = $registrationLevel->id;
                             $athlete->was_late = $athlete->was_late || $late;
-                            $athlete->refund =  $refundAmount ?? $athlete->fee;
+                            $athlete->refund =  $refundAmount != null ? $refundAmount : $athlete->fee;
                             $athlete->late_refund = $athlete->late_fee;
-                            $athlete->fee += $registrationLevel->registration_fee;
+                            $athlete->fee = $registrationLevel->registration_fee;
                             if ($late)
-                                $athlete->late_fee += $registrationLevel->late_registration_fee;
+                                $athlete->late_fee = $registrationLevel->late_registration_fee;
                             $athlete->save();
 
 //                            $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id]['new'] = [

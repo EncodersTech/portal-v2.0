@@ -2198,9 +2198,9 @@
                                     let tmp_fee = level.registration_fee - athlete.fee;
                                     athlete.refund = tmp_fee < 0 ? tmp_fee * (-1) : 0; //athlete.fee;
                                     athlete.late_refund = athlete.late_fee;
-                                    athlete.fee +=  tmp_fee < 0 ? 0 : tmp_fee;
+                                    athlete.fee =  tmp_fee < 0 ? 0 : tmp_fee;
                                     if (athlete.was_late)
-                                        athlete.late_fee += level.late_registration_fee;
+                                        athlete.late_fee = level.late_registration_fee;
 
                                     athlete.status = (athlete.to_waitlist || athlete.in_waitlist) ? this.constants.athletes.statuses.NonReserved : this.constants.athletes.statuses.Registered;
 
