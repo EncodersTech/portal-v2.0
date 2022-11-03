@@ -1006,6 +1006,9 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div v-if="summary.total < 0" class="d-flex flex-row flew-nowrap mt-3 mb-2 p-3 rounded bg-warning">
+                                    The Refund Amount Will Be Processed After Meet End By The Host.
+                                </div>
                             </div>
                         </div>
                     </div>

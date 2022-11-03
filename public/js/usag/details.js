@@ -2754,6 +2754,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -75192,7 +75195,22 @@ var render = function() {
                                               )
                                             ])
                                           ]
-                                        )
+                                        ),
+                                        _vm._v(" "),
+                                        _vm.summary.total < 0
+                                          ? _c(
+                                              "div",
+                                              {
+                                                staticClass:
+                                                  "d-flex flex-row flew-nowrap mt-3 mb-2 p-3 rounded bg-warning"
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "\n                                The Refund Amount Will Be Processed After Meet End By The Host.\n                            "
+                                                )
+                                              ]
+                                            )
+                                          : _vm._e()
                                       ])
                                     : _vm._e()
                                 ])
