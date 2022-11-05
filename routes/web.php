@@ -128,6 +128,8 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     });
 
     Route::get('/meets/{meet}', 'MeetController@details')->name('gyms.meets.details');
+    
+    Route::get('/meet/success', 'MeetController@afterMeetSuccessPage')->name('meet.success');
 
     Route::middleware(['permission:create_meet,edit_meet'])->group(function () {
         Route::get('/gyms/{gym}/meets', 'MeetController@index')->name('gyms.meets.index');

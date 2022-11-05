@@ -369,9 +369,20 @@ class MeetController extends AppBaseController
             throw new CustomBaseException('Something went wrong while saving your meet.', -1);
 
         $meet = $tm->storeStepFive($attr);
-
-        return redirect(route('gyms.meets.index', ['gym' => $gym]));
+        return view('meet.create.success', [
+            'current_page' => 'success',
+            'redirect_url' => route('gyms.meets.index', ['gym' => $gym])
+        ]);
+        // $this->afterMeetSuccessPage(route('gyms.meets.index', ['gym' => $gym]));
+        // return redirect(route('gyms.meets.index', ['gym' => $gym]));
     }
+    // public function afterMeetSuccessPage($url)
+    // {
+    //     return view('meet.create.success', [
+    //         'current_page' => 'success',
+    //         'redirect_url' => $url
+    //     ]);
+    // }
 
     public function edit(Request $request, string $gym, string $meet, string $step = null)
     {

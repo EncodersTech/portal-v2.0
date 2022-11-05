@@ -77,5 +77,6 @@
     "/assets/admin/js/select2.min.js": "/assets/admin/js/select2.min.js?id=8d435cd331d1ff270899",
     "/assets/admin/js/summernote.min.js": "/assets/admin/js/summernote.min.js?id=26e879c3b4050466c76c",
     "/assets/admin/js/chart.min.js": "/assets/admin/js/chart.min.js?id=c467856207f1b0ad3fcc",
-    "/assets/admin/js/sweetalert.min.js": "/assets/admin/js/sweetalert.min.js?id=5a33b7909f9baaea7b47"
+    "/assets/admin/js/sweetalert.min.js": "/assets/admin/js/sweetalert.min.js?id=5a33b7909f9baaea7b47",
+    "/assets/admin/js/party.min.js": "/assets/admin/js/party.min.js?id=cf15a84a77c4f5f121db"
 }

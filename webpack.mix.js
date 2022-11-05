@@ -135,3 +135,5 @@ mix.babel('node_modules/chart.js/dist/Chart.min.js',
     'public/assets/admin/js/chart.min.js');
 mix.babel('node_modules/sweetalert/dist/sweetalert.min.js',
     'public/assets/admin/js/sweetalert.min.js');
+mix.babel('node_modules/party-js/bundle/party.min.js',
+    'public/assets/admin/js/party.min.js');
