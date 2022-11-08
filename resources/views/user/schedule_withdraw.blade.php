@@ -42,6 +42,9 @@
                 </div> 
             </div> 
         </div> 
+        @if(Auth::user()->withdrawal_freeze)
+            <div class="alert alert-danger">Withdrawal Frozen</div>
+        @endif
         <div class="row" style="    background-color: aliceblue;">
             <div class="col-lg">
                 Account Withdrawal Limits: 
@@ -139,7 +142,11 @@
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
                         </div>
+                        @if(Auth::user()->withdrawal_freeze)
+                        <span class="btn btn-sm btn-danger">Frozen</span>
+                        @else
                         <button class="btn btn-sm btn-primary <?php echo $min_withdraw_limit > $max_withdraw_limit ? 'disabled' : ''; ?>" <?php echo $min_withdraw_limit > $max_withdraw_limit ? 'disabled' : ''; ?>>Withdraw</button>
+                        @endif
                     </div> 
                 </div>
             </div> 

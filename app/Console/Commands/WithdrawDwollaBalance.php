@@ -81,31 +81,33 @@ class WithdrawDwollaBalance extends Command
 
                     $dwollaScheduleWithdrawal = resolve(DwollaScheduleWithdrawal::class); /** @var DwollaScheduleWithdrawal $dwollaScheduleWithdrawal */
                     $user = User::find($k->user_id);
-                    if($k->frequency == 1)// && $interval->d >= 7)
+                    if(!$user->withdrawal_freeze)
                     {
-                        DB::table('withdraw_scheduler')
+                        if($k->frequency == 1 && $interval->d >= 7)
+                        {
+                            DB::table('withdraw_scheduler')
+                                ->where('id', $k->id)
+                                ->update(['last_attempt' => now() , 'attempt' => $k->attempt + 1, 'updated_at' => now()]);
+            
+                            $dwollaScheduleWithdrawal->withdrawBalanceSchedule($user, (array) $k, $auto_withdraw_charge->value);
+                        }
+                        else if($k->frequency == 2 && $interval->d >= 14)
+                        {
+                            DB::table('withdraw_scheduler')
                             ->where('id', $k->id)
                             ->update(['last_attempt' => now() , 'attempt' => $k->attempt + 1, 'updated_at' => now()]);
         
-                        $dwollaScheduleWithdrawal->withdrawBalanceSchedule($user, (array) $k, $auto_withdraw_charge->value);
-                    }
-                    else if($k->frequency == 2 && $interval->d >= 14)
-                    {
-                        DB::table('withdraw_scheduler')
-                        ->where('id', $k->id)
-                        ->update(['last_attempt' => now() , 'attempt' => $k->attempt + 1, 'updated_at' => now()]);
-    
-                        $dwollaScheduleWithdrawal->withdrawBalanceSchedule($user, (array) $k, $auto_withdraw_charge->value);
-                    }
-                    else if($k->frequency == 3 && $interval->d >= 30)
-                    {
-                        DB::table('withdraw_scheduler')
-                        ->where('id', $k->id)
-                        ->update(['last_attempt' => now() , 'attempt' => $k->attempt + 1, 'updated_at' => now()]);
-    
-                        $dwollaScheduleWithdrawal->withdrawBalanceSchedule($user, (array) $k, $auto_withdraw_charge->value);
-                    }
+                            $dwollaScheduleWithdrawal->withdrawBalanceSchedule($user, (array) $k, $auto_withdraw_charge->value);
+                        }
+                        else if($k->frequency == 3 && $interval->d >= 30)
+                        {
+                            DB::table('withdraw_scheduler')
+                            ->where('id', $k->id)
+                            ->update(['last_attempt' => now() , 'attempt' => $k->attempt + 1, 'updated_at' => now()]);
         
+                            $dwollaScheduleWithdrawal->withdrawBalanceSchedule($user, (array) $k, $auto_withdraw_charge->value);
+                        }
+                    }
                 }
             }
             $this->info('Cleared');
