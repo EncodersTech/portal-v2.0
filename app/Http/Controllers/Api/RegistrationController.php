@@ -265,12 +265,12 @@ class RegistrationController extends BaseApiController
 
             if ($meet->accept_ach /*&& $meet->gym->canUseACH() && $gym->canUseACH()*/) {
 
-                // $bankAccounts = $request->_managed_account->getBankAccounts(false);
-                $bankAccounts = $request->_managed_account->getStripeBankAccounts(false);
-                if (($bankAccounts instanceof CustomStripeException) || ($bankAccounts === null))
-                    $bankAccounts = [];
-                // if (($bankAccounts instanceof CustomDwollaException) || ($bankAccounts === null))
+                $bankAccounts = $request->_managed_account->getBankAccounts(false);
+                // $bankAccounts = $request->_managed_account->getStripeBankAccounts(false);
+                // if (($bankAccounts instanceof CustomStripeException) || ($bankAccounts === null))
                 //     $bankAccounts = [];
+                if (($bankAccounts instanceof CustomDwollaException) || ($bankAccounts === null))
+                    $bankAccounts = [];
 
                 $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ACH] = [
                     'mode' => MeetRegistration::PAYMENT_OPTION_FEE_MODE[MeetRegistration::PAYMENT_OPTION_ACH],
@@ -279,25 +279,25 @@ class RegistrationController extends BaseApiController
                 ];
 
                 foreach ($bankAccounts as $ba) {
-                    // print_r($ba);
                     // if (($ba->status != 'verified'))
                     //     continue;
-                    // if (($ba->status != 'verified') || !in_array('ach', $ba->channels))
-                    //     continue;
+                    if (($ba->status != 'verified') || !in_array('ach', $ba->channels))
+                        continue;
 
-                    $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ACH]['accounts'][] = [
-                        'id' => $ba->id,
-                        'type' => $ba->account_type,
-                        'name' => $ba->account_holder_name,
-                        'bankName' => $ba->bank_name
-                    ];
                     // $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ACH]['accounts'][] = [
                     //     'id' => $ba->id,
-                    //     'type' => $ba->bankAccountType,
-                    //     'name' => $ba->name,
-                    //     'bankName' => $ba->bankName
+                    //     'type' => $ba->account_type,
+                    //     'name' => $ba->account_holder_name,
+                    //     'bankName' => $ba->bank_name
                     // ];
+                    $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ACH]['accounts'][] = [
+                        'id' => $ba->id,
+                        'type' => $ba->bankAccountType,
+                        'name' => $ba->name,
+                        'bankName' => $ba->bankName
+                    ];
                 }
+                
             }
 
             return $available_payment_options;

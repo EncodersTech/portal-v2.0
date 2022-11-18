@@ -111,6 +111,8 @@ class TemporaryMeet extends Model
         'primary_contact_email' => ['required', 'string', 'email', 'max:255'],
         'primary_contact_phone' => ['required', 'phone:AUTO,US'],
         'primary_contact_fax' => ['nullable', 'phone:AUTO,US'],
+        'get_mail_primary' => ['sometimes'],
+        'get_mail_secondary' => ['sometimes'],
 
         'secondary_contact' => ['sometimes'],
         'secondary_contact_first_name' => ['required_with:has_secondary_contact', 'string', 'max:255'],
@@ -770,6 +772,7 @@ class TemporaryMeet extends Model
                 'primary_contact_email' => $attr['primary_contact_email'],
                 'primary_contact_phone' => $attr['primary_contact_phone'],
                 'primary_contact_fax' => $attr['primary_contact_fax'],
+                'get_mail_primary' => isset($attr['get_mail_primary']) ??  false,
 
                 'secondary_contact' => $hasSecondary,
                 'secondary_contact_first_name' => ($hasSecondary ? $attr['secondary_contact_first_name'] : null),
@@ -779,6 +782,7 @@ class TemporaryMeet extends Model
                 'secondary_contact_phone' => ($hasSecondary ? $attr['secondary_contact_phone'] : null),
                 'secondary_contact_fax' => ($hasSecondary ? $attr['secondary_contact_fax'] : null),
                 'secondary_cc' => ($hasSecondary ? isset($attr['secondary_cc']) : false),
+                'get_mail_secondary' => ($hasSecondary ? isset($attr['get_mail_secondary']) : false),
             ]);
             $this->save();
 
@@ -840,6 +844,7 @@ class TemporaryMeet extends Model
                 'primary_contact_email' => $this->primary_contact_email,
                 'primary_contact_phone' => $this->primary_contact_phone,
                 'primary_contact_fax' => $this->primary_contact_fax,
+                'get_mail_primary' => $this->get_mail_primary,
 
                 'secondary_contact' => $this->secondary_contact,
                 'secondary_contact_first_name' => $this->secondary_contact_first_name,
@@ -849,6 +854,7 @@ class TemporaryMeet extends Model
                 'secondary_contact_phone' => $this->secondary_contact_phone,
                 'secondary_contact_fax' => $this->secondary_contact_fax,
                 'secondary_cc' => $this->secondary_cc,
+                'get_mail_secondary' => $this->get_mail_secondary,
                 'is_featured' => $this->is_featured,
                 'show_participate_clubs' => $this->show_participate_clubs,
 

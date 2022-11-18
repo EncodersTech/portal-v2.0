@@ -1229,12 +1229,19 @@ class MeetRegistration extends Model
                 ));
 
                 //when registration complete then host receive mail.
-                if(trim($meet->primary_contact_email) != trim($meet->gym->user->email))
-                    $mailcc = array($meet->primary_contact_email, "hello@allgymnastics.com");
-                else
-                    $mailcc = "hello@allgymnastics.com";
+                $mailcc[] = "hello@allgymnastics.com";
+                if($meet->get_mail_primary)
+                {
+                    if(trim($meet->primary_contact_email) != trim($meet->gym->user->email))
+                        $mailcc[] = $meet->primary_contact_email;
+                }
+                if($meet->get_mail_secondary && $meet->secondary_contact)
+                {
+                    if(trim($meet->secondary_contact_email) != trim($meet->gym->user->email))
+                        $mailcc[] = $meet->secondary_contact_email;
+                }
                     
-                Log::debug('when registration complete then host receive mail.' . json_encode($mailcc));
+                Log::debug('when registration complete then host receive mail. => ' . json_encode($mailcc));
                 Mail::to($meet->gym->user->email)->cc($mailcc)->send(new HostReceiveMeetRegistrationMailable($meet,$gym));
 
                 //Send an email to the registrant with a confirmation.
@@ -1783,41 +1790,26 @@ class MeetRegistration extends Model
                 if (!isset($chosenMethod['id']))
                     throw new CustomBaseException('Invalid payment method format.', -1);
 
-                $transaction = StripeService::createCharge(
-                    $gym->user->stripe_connect_id,
-                    $chosenMethod['id'],
+                $fundingSource = $dwollaService->getFundingSource($chosenMethod['id']); /** @var FundingSource $fundingSource */
+                $transaction = self::payWithACH(
+                    $gym->user->dwolla_customer_id,
+                    $fundingSource,
                     $gymSummary['total'],
-                    'USD',
-                    '',
                     [
+                        'type' => 'registration',
                         'registration' => $registration->id,
-                        'gym' => $gym->name,
-                        'meet' => $meet->name,
-                    ],
-                    'ach'
-
+                        'meet' => $gym->name,
+                        'gym' => $meet->name,
+                    ]
                 );
-                // print_r($transaction); die();
-                // $fundingSource = $dwollaService->getFundingSource($chosenMethod['id']); /** @var FundingSource $fundingSource */
-                // $transaction = self::payWithACH(
-                //     $gym->user->dwolla_customer_id,
-                //     $fundingSource,
-                //     $gymSummary['total'],
-                //     [
-                //         'type' => 'registration',
-                //         'registration' => $registration->id,
-                //         'meet' => $gym->name,
-                //         'gym' => $meet->name,
-                //     ]
-                // );
                 
                 
                 
-                // $transaction = $dwollaService->getACHTransfer($transaction); 
+                $transaction = $dwollaService->getACHTransfer($transaction); 
 
-                // $result['payment_method_string'] = '(Pending) ' . ucfirst($fundingSource->bank_account_type) .
-                //                         ' Bank Account' . $fundingSource->name . '"';
-                $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");
+                $result['payment_method_string'] = '(Pending) ' . ucfirst($fundingSource->bank_account_type) .
+                                        ' Bank Account' . $fundingSource->name . '"';
+                // $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");
                 // $result['payment_method_string'] = '(Pending) ' . ucfirst($transaction->payment_method_details->ach_debit->account_holder_type) .
                 //                         ' Bank Account' . $transaction->payment_method_details->ach_debit->bank_name ;
                 

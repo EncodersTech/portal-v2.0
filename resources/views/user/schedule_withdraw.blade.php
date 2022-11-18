@@ -42,6 +42,12 @@
                 </div> 
             </div> 
         </div> 
+        <div class="row mb-3">
+            <div class="col align-self-center">
+                <p class="alert alert-info" style="text-align:center;">Schedule Recurring Withdrawal</p>
+            </div>
+        </div>
+
         @if(Auth::user()->withdrawal_freeze)
             <div class="alert alert-danger">Withdrawal Frozen</div>
         @endif
@@ -53,7 +59,7 @@
         <div class="row mb-3">
             <div class="col-lg mb-3">
                 <label for="available_funds" class="mb-1">
-                    <span class="fas fa-fw fa-dollar-sign"></span> Minimum Withdrawal Amuont: 
+                    <span class="fas fa-fw fa-dollar-sign"></span> Minimum Withdrawal Amount: 
                 </label> 
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
@@ -115,7 +121,7 @@
                 </div> 
                 <div class="col-lg mb-3">
                     <label for="bank_id" class="mb-1">
-                        <span class="fas fa-fw fa-dollar-sign"></span> Choose Bank to Withdraw
+                        <span class="fas fa-fw fa-dollar-sign"></span> Choose Bank to Transfer
                     </label> 
                     <div class="input-group input-group-sm">
                         <div class="input-group-prepend">
@@ -151,6 +157,14 @@
                 </div>
             </div> 
         </form> 
+        <div class="row mb-3">
+                <div class="col align-self-center">
+                <a class="alert alert-warning btn nav-link{{ $active_tab == 'balance_transactions' ? ' active' : ''}}"
+                    href="{{ route('account.balance.transactions') }}"  role="tab">
+                    To Schedule a One-Time Withdrawal, Click Here ...
+                </a>
+                </div>
+            </div>
     </div>
     <?php if(count($withdraw_table) > 0){ ?>
     <div class="p-3">

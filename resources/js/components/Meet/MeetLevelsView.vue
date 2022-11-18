@@ -289,8 +289,6 @@
                                         level.registration_fee = Utils.toFloat(level.pivot.registration_fee).toFixed(2);
                                         
                                         level.registration_fee_first = Utils.toFloat(level.pivot.registration_fee_first).toFixed(2);
-                                        level.registration_fee_second = Utils.toFloat(level.pivot.registration_fee_second).toFixed(2);
-                                        level.registration_fee_third = Utils.toFloat(level.pivot.registration_fee_third).toFixed(2);
 
                                         level.late_registration_fee = Utils.toFloat(level.pivot.late_registration_fee).toFixed(2);
                                         level.allow_specialist = level.pivot.allow_specialist;

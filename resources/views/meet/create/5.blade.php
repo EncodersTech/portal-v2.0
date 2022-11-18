@@ -112,6 +112,18 @@
                     @enderror
                 </div>
             </div>
+            <div class="row" style="margin-bottom:10px;">
+                <div class="col">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            name="get_mail_primary" id="get_mail_primary"
+                            {{ $tm->oldOrValue('get_mail_primary') ? 'checked' : '' }}>
+                        <label class="form-check-label" for="get_mail_primary">
+                            Send a copy of meet registration notifications
+                        </label>
+                    </div> 
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col">
@@ -275,6 +287,18 @@
                                 {{ $tm->oldOrValue('secondary_cc') ? 'checked' : '' }}>
                             <label class="form-check-label" for="secondary_cc">
                                 Send a copy of meet emails
+                            </label>
+                        </div> 
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                name="get_mail_secondary" id="get_mail_secondary"
+                                {{ $tm->oldOrValue('get_mail_secondary') ? 'checked' : '' }}>
+                            <label class="form-check-label" for="get_mail_secondary">
+                                Send a copy of meet registration notifications
                             </label>
                         </div> 
                     </div>

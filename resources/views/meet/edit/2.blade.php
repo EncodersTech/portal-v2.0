@@ -3,7 +3,7 @@
         <form method="POST" action="{{ route('gyms.meets.update.2', ['gym' => $gym, 'meet' => $meet]) }}">
             @csrf
             @method('PATCH')
-
+        <div id="registratoin_div">
             <div class="row">
                 <div class="col">
                     <h5 class="border-bottom"><span class="fas fa-fw fa-clipboard-list">
@@ -241,7 +241,22 @@
                     </div>
                 </div>
             </div>
+            <div class="d-flex flex-row flex-nowrap mt-3">
+                <div class="flex-grow-1">
+                    <a href="{{ route('gyms.meets.index', ['gym' => $gym]) }}" class="btn btn-primary">
+                        <span class="fas fa-long-arrow-alt-left"></span> Back
+                    </a>
+                </div>
 
+                <div class="ml-3">
+                    <a class="btn btn-success" id="viewpaymenttab" href="#">
+                        <span class="fas fa-long-arrow-alt-right"></span> Next
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="payment_div" style="display:none;">
             <div class="row">
                 <div class="col">
                     <h5 class="border-bottom"><span class="fas fa-fw fa-credit-card">
@@ -422,10 +437,9 @@
                     </div>
                 </div>
             </div>
-
             <div class="d-flex flex-row flex-nowrap mt-3">
                 <div class="flex-grow-1">
-                    <a href="{{ route('gyms.meets.index', ['gym' => $gym]) }}" class="btn btn-primary">
+                    <a href="#" class="btn btn-primary" id="registrationview">
                         <span class="fas fa-long-arrow-alt-left"></span> Back
                     </a>
                 </div>
@@ -436,6 +450,7 @@
                     </button>
                 </div>
             </div>
+        </div>
         </form>
     </div>
 </div>

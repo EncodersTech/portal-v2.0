@@ -107,6 +107,49 @@
                     $('#deposit_ratio').prop("checked",false);
                 }
             });
+            $("#viewpaymenttab").click(function(e){
+                $("#payment_div").show();
+                $("#registratoin_div").hide();
+            });
+            $("#registrationview").click(function(e){
+                $("#payment_div").hide();
+                $("#registratoin_div").show();
+            });
+            $("#accept_mailed_check").click(e => {
+                var amc = $("#accept_mailed_check").is(":checked");
+                if(amc == true)
+                    confirmAction(
+                        'This option will appear to registrants only if you have a valid credit card linked to your account at the time of registration. This card will be charged for Credit Card and Handling fees. If you chose to defer these fee to registering gym, They will be advised to include them in their entry fee check..<br/><br/>' +
+                        '<strong>Do you agree to these terms?</strong>',
+                        'green',
+                        'fas fa-check',
+                        () => {
+                            $("#accept_mailed_check").click();
+                        }
+                    );
+            });
+            function confirmAction(msg, color, icon, callback) {
+                $.confirm({
+                    title: 'Are you sure ?',
+                    content: msg,
+                    icon: icon,
+                    type: color,
+                    typeAnimated: true,
+                    buttons: {
+                        no: function () {
+                            callback();
+                            this.close();
+                        },
+                        confirm:  {
+                            text: 'Yes',
+                            btnClass: 'btn-' + color,
+                            action: function () {
+                                // callback();
+                            }
+                        }
+                    }
+                });
+            };
         });
     </script>
 @endsection
