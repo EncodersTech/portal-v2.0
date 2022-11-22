@@ -60,7 +60,7 @@
                                 @if($l->level_category_id == \App\Models\LevelCategory::GYMNASTICS_WOMEN)
                                     <th>{{$l->abbreviation}}</th>
                                 @elseif($l->level_category_id == \App\Models\LevelCategory::GYMNASTICS_MEN)
-                                    <th style="background-color: #888888">{{($l->abbreviation}}</th>
+                                    <th style="background-color: #888888">{{$l->abbreviation}}</th>
                                 @else
                                     <th>{{$l->abbreviation}}</th>
                                 @endif
@@ -69,7 +69,7 @@
                                 <th>ES*</th>
                             @endif
                             <th>Total</th>
-                            {{-- th>Athletes</th>--}}
+                            
                         </tr>
                         <thead>
                     </table>

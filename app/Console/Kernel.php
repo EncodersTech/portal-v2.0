@@ -51,7 +51,7 @@ class Kernel extends ConsoleKernel
             ->emailOutputOnFailure(config('admin_email'));
        
         $schedule->command('withdraw-dwolla-balance:start')
-            ->everyMinute()
+            ->twiceDaily(0, 12)
             ->withoutOverlapping()
             ->sendOutputTo($logFile);
     }
