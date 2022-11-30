@@ -46,10 +46,10 @@ use Illuminate\Support\Str;
 class DwollaScheduleWithdrawal {
 
     public function withdrawBalanceSchedule($user, $request, $fee = 0) {
-        
         try {
             DB::beginTransaction();
 
+            // $user = User::lockForUpdate()->find(6); /** @var User $user */
             // $user = User::lockForUpdate()->find(auth()->user()->id); /** @var User $user */
             if ($user == null)
                 throw new CustomBaseException('No such user with id `' . $user()->id . '`');
@@ -71,7 +71,6 @@ class DwollaScheduleWithdrawal {
                 }
                 // if ($amount > 5000.0 && !$isDwollaVerified)
                 //     throw new CustomBaseException('Dwolla unverified: Amount needs to be less than $5000', -1);
-
                 if (($amount+$fee) > $user->cleared_balance)
                 {
                     Log::info('You do not have enough balance to withdraw that amount.', [$amount]);
@@ -81,44 +80,144 @@ class DwollaScheduleWithdrawal {
                 Log::info('Invalid amount: Amount needs to be a positive value', [$amount]);
                 throw new CustomBaseException('Invalid amount', -1);
             }
-
             $amount = $user->cleared_balance - $fee;
             $featuredFee = $user->meetFeaturedWithdrawalFeeWithdraw($user)['total_net_value'];
             $amount = $amount - $featuredFee;
             
-            
+            $dwollaService = resolve(DwollaService::class);
             $bankAccount = $user->getBankAccount($bankAccount);
-            // if (!Str::endsWith($bankAccount['_links']['customer']['href'], $user->dwolla_customer_id))
-            if ( $bankAccount == null )
-            throw new CustomBaseException('No such bank account linked to your account.', -1);
-            $loop_count = 1;
-            $full_amount = $amount;
-            $extra_amount = 0;
-            if($amount > 10000)
+            
+            $op = $dwollaService->retrieveCustomer($user->dwolla_customer_id);
+            if($op->status != 'verified')
             {
-                $loop_count = (int)($amount / 10000);
-                $full_amount = $loop_count * 10000;
-                $extra_amount = $amount - $full_amount;
-                for($i=0;$i<$loop_count;$i++)
+                $data_s = DB::table('withdrawal_tracking')->where('user_id', $user->id)->first();
+                $flag = 0;
+                $end =   \Carbon\Carbon::now();
+                if(!empty($data_s))
                 {
-                    if($i == 0)
-                        $fees = $fee;
+                    $enableAmount = 5000 - $data_s->amount;
+                    $flag = 1;
+                }
+                else
+                    $enableAmount = 5000;
+                
+                if($flag)
+                {
+                    $enableAmount -= $featuredFee;
+                    $start =  \Carbon\Carbon::parse($data_s->last_attempt);
+                    
+                    $days = $end->diffInDays($start);
+                    if($days > 7)
+                    {
+                        if($amount > 5000)
+                        {
+                            $this->process_payment($user,5000,$featuredFee,  $fee,$bankAccount);
+                            $setdata = array(
+                                'amount' => 5000 ,
+                                'user_id' => $user->id,
+                                'last_attempt' => $end,
+                                'updated_at' => $end,
+                            );
+                            DB::table('withdrawal_tracking')->where('user_id', $user->id)->update($setdata);
+                        }
+                        else
+                        {
+                            $this->process_payment($user,$amount,$featuredFee,  $fee,$bankAccount);
+                            $setdata = array(
+                                'amount' => $amount ,
+                                'user_id' => $user->id,
+                                'last_attempt' => $end,
+                                'updated_at' => $end,
+                            );
+                            DB::table('withdrawal_tracking')->where('user_id', $user->id)->update($setdata);
+                        }
+                    }
                     else
-                        $fees = 0;
+                    {
+                        if($enableAmount > 0)
+                        {
+                            $this->process_payment($user,$enableAmount,$featuredFee,  $fee,$bankAccount);
+                            $setdata = array(
+                                'amount' => $enableAmount + $data_s->amount ,
+                                'user_id' => $user->id,
+                                'last_attempt' => $end,
+                                'updated_at' => $end,
+                            );
+                            DB::table('withdrawal_tracking')->where('user_id', $user->id)->update($setdata);
+                        }
                         
-                    $this->process_payment($user,10000,$featuredFee,  $fees,$bankAccount);
+                    }
                 }
-                if($extra_amount > 0)
+                else
                 {
-                    Log::info('Fees : ', [$fee]);
-                    $this->process_payment($user,$extra_amount,$featuredFee, 0,$bankAccount);
+                    if($amount > 5000)
+                    {
+                        $this->process_payment($user,5000,$featuredFee,  $fee,$bankAccount);
+                        $setdata = array(
+                            'amount' => 5000 ,
+                            'user_id' => $user->id,
+                            'last_attempt' => $end,
+                            'created_at' => $end,
+                            'updated_at' => $end,
+                        );
+                        DB::table('withdrawal_tracking')->insert($setdata);
+                    }
+                    else
+                    {
+                        $this->process_payment($user,$amount,$featuredFee,  $fee,$bankAccount);
+                        $setdata = array(
+                            'amount' => $amount ,
+                            'user_id' => $user->id,
+                            'last_attempt' => $end,
+                            'created_at' => $end,
+                            'updated_at' => $end,
+                        );
+                        DB::table('withdrawal_tracking')->update($setdata);
+                    }
                 }
+                DB::commit();
             }
             else
             {
-                Log::info('Fees : ', [$fee]);
-                $this->process_payment($user,$amount,$featuredFee, $fee,$bankAccount);
+                // if (!Str::endsWith($bankAccount['_links']['customer']['href'], $user->dwolla_customer_id))
+                if ( $bankAccount == null )
+                    throw new CustomBaseException('No such bank account linked to your account.', -1);
+                $loop_count = 1;
+                $full_amount = $amount;
+                $extra_amount = 0;
+                if($amount > 10000)
+                {
+                    $loop_count = (int)($amount / 10000);
+                    $full_amount = $loop_count * 10000;
+                    $extra_amount = $amount - $full_amount;
+                    for($i=0;$i<$loop_count;$i++)
+                    {
+                        if($i == 0)
+                        {
+                            $fees = $fee;
+                            $featuredFee = $featuredFee;
+                        }
+                        else
+                        {
+                            $fees = 0;
+                            $featuredFee = 0;
+                        }
+                            
+                        $this->process_payment($user,10000,$featuredFee,  $fees,$bankAccount);
+                    }
+                    if($extra_amount > 0)
+                    {
+                        Log::info('Fees : ', [$fee]);
+                        $this->process_payment($user,$extra_amount,$featuredFee, 0,$bankAccount);
+                    }
+                }
+                else
+                {
+                    Log::info('Fees : ', [$fee]);
+                    $this->process_payment($user,$amount,$featuredFee, $fee,$bankAccount);
+                }
             }
+            
 
             return array("code"=>200);
         } catch(\Throwable $e) {

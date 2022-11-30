@@ -162,6 +162,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
 
     Route::middleware(['permission:register'])->group(function () {
         Route::get('/meets/{meet}/register', 'MeetRegistrationController@index')->name('gyms.meets.register');
+        Route::get('/meets/register/{meet}', 'MeetController@register_details')->name('gyms.meets.details');
         Route::post('/gym/{gym}/registration/{registration}/remaining-payment', 'MeetRegistrationController@remainingPayment')->name('gyms.registration.remaining.payment');
         Route::get('/gym/{gym}/registration/{registration}/pay/{transaction}', 'MeetRegistrationController@pay')->name('gyms.registration.pay');
         Route::get('/gyms/{gym}/joined', 'GymController@joinedMeets')->name('gyms.meets.joined');

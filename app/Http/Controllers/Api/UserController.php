@@ -434,11 +434,60 @@ class UserController extends BaseApiController
                 $amount = (float) $amount;
                 if ($amount < 0)
                     throw new CustomBaseException('Invalid amount: Amount needs to be a positive value', -1);
-                // if ($amount > 5000.0 && !$isDwollaVerified)
-                //     throw new CustomBaseException('Dwolla unverified: Amount needs to be less than $5000', -1);
+                if ($amount > 5000.0 && !$isDwollaVerified)
+                    throw new CustomBaseException('Dwolla unverified: Amount needs to be less than $5000', -1);
 
                 if ($amount > $user->cleared_balance)
                     throw new CustomBaseException('You do not have enough balance to withdraw that amount.', -1);
+                
+                if($amount <= 5000.0 && !$isDwollaVerified)
+                {
+                    $data_s = DB::table('withdrawal_tracking')->where('user_id', $user->id)->first();
+                    $end =   \Carbon\Carbon::now();
+                    if(!empty($data_s))
+                    {
+                        $enableAmount = 5000 - $data_s->amount;
+                        $start =  \Carbon\Carbon::parse($data_s->last_attempt);
+                        $days = $end->diffInDays($start);
+                        if($days <= 7 && $amount > $enableAmount)
+                        {
+                            if($enableAmount == 0)
+                                throw new CustomBaseException('Dwolla unverified: Withdrawal amount limit exceeds, try again after '.(7-$days).' days' , -1);
+                            else
+                                throw new CustomBaseException('Dwolla unverified: Amount needs to be less than '.$enableAmount, -1);
+                        }
+                        else if($days > 7)
+                        {
+                            $setdata = array(
+                                'amount' => $amount,
+                                'last_attempt' => $end,
+                                'updated_at' => $end,
+                            );
+                            DB::table('withdrawal_tracking')->where('user_id', $user->id)->update($setdata);
+                        }
+                        else
+                        {
+                            $setdata = array(
+                                'amount' => $amount+$data_s->amount,
+                                'last_attempt' => $end,
+                                'updated_at' => $end,
+                            );
+                            DB::table('withdrawal_tracking')->where('user_id', $user->id)->update($setdata);
+                        }
+                    }
+                    else
+                    {
+                        $setdata = array(
+                            'amount' => $amount ,
+                            'user_id' => $user->id,
+                            'last_attempt' => $end,
+                            'created_at' => $end,
+                            'updated_at' => $end,
+                        );
+                        DB::table('withdrawal_tracking')->insert($setdata);
+                    }
+                    DB::commit();
+                }
             } else {
                 throw new CustomBaseException('Invalid amount', -1);
             }

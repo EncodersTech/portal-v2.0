@@ -20,6 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 use App\Services\StripeService;
 use App\Services\DwollaService;
+use App\Services\DwollaScheduleWithdrawal;
 use App\Mail\Registrant\NotifyMailCheckMailable;
 use Illuminate\Support\Facades\Mail;
 
@@ -37,44 +38,10 @@ class UserController extends AppBaseController
 
     public function customUsers()
     {
-        print_r(DwollaService::STATUS_UNVERIFIED. ' '.
-        DwollaService::STATUS_RETRY. ' '.
-        DwollaService::STATUS_DOCUMENT);
-        $datas = DB::select('select users.id as userid, users.dwolla_customer_id, users.email, users.office_phone,
-         users.first_name, users.last_name,  count(meets.id) as meetid, gyms.name as gym_name  from gyms 
-        join meets on meets.gym_id = gyms.id
-        join users on gyms.user_id = users.id
-        group by users.id, gyms.name 
-        order by users.id');
-        echo '<table><tr>
-        <td>User id</td>
-        <td>Dwolla Customer Id</td>
-        <td>Email</td>
-        <td>Office Phone</td>
-        <td>Name</td>
-        <td>Gym</td>
-        <td>Account Status</td>
-        </tr>';
-        foreach ($datas as $data) {
-            try{
-                $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
-                $dwollaCustomer = $dwollaService->retrieveCustomer($data->dwolla_customer_id);
-                echo '<tr><td>'.
-                $data->userid.'</td><td> '.
-                $data->dwolla_customer_id.'</td><td> '.
-                $data->email.'</td><td> '.
-                $data->office_phone.'</td><td> '.
-                $data->first_name.' '.
-                $data->last_name.'</td><td> '.
-                $data->meetid.'</td><td> '.
-                $data->gym_name.'</td><td> '.
-                $dwollaCustomer->status . '</td> </tr>'; 
-            }catch(Exception $e)
-            {
-                print_r($e->getMessage()); die();
-            }
-        }
-        
+        $request['bank_id'] = '63b3180f-009d-4f5e-bcd2-4236c7d71c53';
+        $request['amount'] = '20';
+        $dwollaScheduleWithdrawal = resolve(DwollaScheduleWithdrawal::class);
+        $dwollaScheduleWithdrawal->withdrawBalanceSchedule(auth()->user()->id, $request);
         
     }
 
