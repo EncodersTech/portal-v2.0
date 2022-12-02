@@ -2273,14 +2273,21 @@ class Meet extends Model
     }
     public function generateGymRegistrationReport(Gym $gym = null) : PdfWrapper   {
         try{
-            $base = $this->registrations()
-                        ->where('status', MeetRegistration::STATUS_REGISTERED);
+            $base = $this->registrations()->where('status', MeetRegistration::STATUS_REGISTERED);
+            
             // print_r($base);
             if ($gym !== null)
-            $base_r = $base->where('gym_id', $gym->id);
-            $meet_id = $base_r->select(['meet_id'])->first();
+            {
+                $base_r = $base->where('gym_id', $gym->id);
+                $meet_id = $base_r->select(['meet_id'])->first();
+                $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
+            }
+            else
+            {
+                $meet_id = $base->select(['meet_id'])->first();
+                $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
+            }
 
-            $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
             $gym_name = [];
             foreach ($re_gyms as $key => $value) {
                 $k = Gym::where('id',$value->gym_id)->first();
@@ -2317,7 +2324,6 @@ class Meet extends Model
 
     public function generateRegistrationDetailReport(Gym $gym = null) : PdfWrapper   {
         try {
-           
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
             /** @var Builder $base */
