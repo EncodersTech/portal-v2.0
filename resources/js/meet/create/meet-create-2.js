@@ -35,41 +35,45 @@ $(document).ready(e => {
         },
         mounted() {
             let formats = ['MM/DD/YYYY', 'YYYY-MM-DD HH::mm:ss'];
-            let oldStart = this.$refs.oldStartDate.dataset.value;
-            if (oldStart)
-                this.startDate = Moment.tz(oldStart, formats, "America/New_York").toDate();
-            else
-                this.startDate = Moment(this.today).add(1, 'days').toDate();
-
-            let oldEnd = this.$refs.oldEndDate.dataset.value;
-            if (oldEnd)
-                this.endDate = Moment.tz(oldEnd, formats, "America/New_York").toDate();
-            else
-                this.endDate = Moment(this.startDate).add(1, 'days').toDate();
-
-            let oldScratch = this.$refs.oldScratchDate.dataset.value;
-            if (oldScratch)
-                this.scratchDate = Moment.tz(oldScratch, formats, "America/New_York").toDate();
-            else
-                this.scratchDate = Moment(this.endDate).add(1, 'days').toDate();
-
-            let oldLateStart = this.$refs.oldLateStartDate.dataset.value;
-            if (oldLateStart)
-                this.lateStartDate = Moment.tz(oldLateStart, formats, "America/New_York").toDate();
-            else
-                this.lateStartDate = Moment(this.endDate).add(1, 'days').toDate();
-
-            let oldLateEnd = this.$refs.oldLateEndDate.dataset.value;
-            if (oldLateEnd)
-                this.lateEndDate = Moment.tz(oldLateEnd, formats, "America/New_York").toDate();
-            else
-                this.lateEndDate = Moment(this.lateStartDate).add(1, 'days').toDate();
-
-            let registration_first_discount_end_date = this.$refs.registration_first_discount_end_date.dataset.value;
-            if (registration_first_discount_end_date)
-                this.registration_first_discount_end_date = Moment.tz(registration_first_discount_end_date, formats, "America/New_York").toDate();
-            else
-                this.registration_first_discount_end_date = Moment(this.today).add(1, 'days').toDate();
+            if(typeof(this.$refs.oldStartDate) !== 'undefined')
+            {
+                let oldStart = this.$refs.oldStartDate.dataset.value;
+                if (oldStart)
+                    this.startDate = Moment.tz(oldStart, formats, "America/New_York").toDate();
+                else
+                    this.startDate = Moment(this.today).add(1, 'days').toDate();
+    
+                let oldEnd = this.$refs.oldEndDate.dataset.value;
+                if (oldEnd)
+                    this.endDate = Moment.tz(oldEnd, formats, "America/New_York").toDate();
+                else
+                    this.endDate = Moment(this.startDate).add(1, 'days').toDate();
+    
+                let oldScratch = this.$refs.oldScratchDate.dataset.value;
+                if (oldScratch)
+                    this.scratchDate = Moment.tz(oldScratch, formats, "America/New_York").toDate();
+                else
+                    this.scratchDate = Moment(this.endDate).add(1, 'days').toDate();
+    
+                let oldLateStart = this.$refs.oldLateStartDate.dataset.value;
+                if (oldLateStart)
+                    this.lateStartDate = Moment.tz(oldLateStart, formats, "America/New_York").toDate();
+                else
+                    this.lateStartDate = Moment(this.endDate).add(1, 'days').toDate();
+    
+                let oldLateEnd = this.$refs.oldLateEndDate.dataset.value;
+                if (oldLateEnd)
+                    this.lateEndDate = Moment.tz(oldLateEnd, formats, "America/New_York").toDate();
+                else
+                    this.lateEndDate = Moment(this.lateStartDate).add(1, 'days').toDate();
+    
+                let registration_first_discount_end_date = this.$refs.registration_first_discount_end_date.dataset.value;
+                if (registration_first_discount_end_date)
+                    this.registration_first_discount_end_date = Moment.tz(registration_first_discount_end_date, formats, "America/New_York").toDate();
+                else
+                    this.registration_first_discount_end_date = Moment(this.today).add(1, 'days').toDate();
+            }
+            
         }
     });
 

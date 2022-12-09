@@ -84,18 +84,6 @@ class Meet extends Model
 
         'athlete_limit' => ['nullable', 'integer', 'gt:0'],
 
-        'accept_paypal' => ['sometimes'],
-        'accept_ach' => ['sometimes'],
-        'accept_mailed_check' => ['sometimes'],
-        'accept_deposit' => ['sometimes'],
-        'deposit_ratio' => ['nullable', 'integer', 'gt:0'],
-        'mailed_check_instructions' => ['required_with:accept_mailed_check', 'string'],
-
-        'defer_handling_fees' => ['sometimes'],
-        'defer_processor_fees' => ['sometimes'],
-
-        'process_refunds' => ['sometimes'],
-
         'registration_first_discount_end_date' => ['required_with:registration_first_discount_is_enable', 'sometimes', 'date_format:m/d/Y', 'after_or_equal:registration_start_date'],
         'registration_second_discount_end_date' => ['required_with:registration_second_discount_is_enable','sometimes', 'date_format:m/d/Y', 'after_or_equal:registration_first_discount_end_date'],
         'registration_third_discount_end_date' => ['required_with:registration_third_discount_is_enable','sometimes', 'date_format:m/d/Y', 'after_or_equal:registration_second_discount_end_date'],
@@ -107,6 +95,20 @@ class Meet extends Model
         'registration_first_discount_is_enable' => ['sometimes'],
         'registration_second_discount_is_enable' => ['sometimes'],
         'registration_third_discount_is_enable' => ['sometimes'],
+    ];
+
+    public const UPDATE_STEP_6_RULES = [
+        'accept_paypal' => ['sometimes'],
+        'accept_ach' => ['sometimes'],
+        'accept_mailed_check' => ['sometimes'],
+        'accept_deposit' => ['sometimes'],
+        'deposit_ratio' => ['nullable', 'integer', 'gt:0'],
+        'mailed_check_instructions' => ['required_with:accept_mailed_check', 'string'],
+
+        'defer_handling_fees' => ['sometimes'],
+        'defer_processor_fees' => ['sometimes'],
+
+        'process_refunds' => ['sometimes'],
     ];
 
     public const UPDATE_STEP_3_RULES = TemporaryMeet::CREATE_STEP_3_RULES;
@@ -932,7 +934,77 @@ class Meet extends Model
             throw $e;
         }
     }
+    public function updateStepSix(array $attr)
+    {
+        DB::beginTransaction();
+        try {
 
+            $today = now()->setTime(0, 0);
+
+            $deposit_ratio = null;
+
+            $accept_paypal = false; //hide paypal payment option.
+            $accept_ach = true; //cc and ach default payment decision on 15-3-21, so here ach value set true.
+            $accept_mailed_check = isset($attr['accept_mailed_check']);
+            $accept_deposit = isset($attr['accept_deposit']);
+
+            $defer_handling_fees = isset($attr['defer_handling_fees']);
+            $defer_processor_fees = isset($attr['defer_processor_fees']);
+
+            if ($accept_deposit) {
+                if (!isset($attr['deposit_ratio']))
+                    throw new CustomBaseException('Please provide deposit ratio', '-1');
+                $deposit_ratio = $attr['deposit_ratio'];
+                if (!Helper::isInteger($deposit_ratio))
+                    throw new CustomBaseException('Invalid deposit ratio value.', '-1');
+                $deposit_ratio = (int) $deposit_ratio;
+
+                if ($deposit_ratio < 1)
+                    throw new CustomBaseException('Deposit ratio must be greater than 0.', '-1');
+            }
+
+            $old = [
+               
+                'accept_paypal' => $this->accept_paypal,
+                'accept_ach' => $this->accept_ach,
+                'accept_mailed_check' => $this->accept_mailed_check,
+                'accept_deposit' => $this->accept_deposit,
+                'deposit_ratio' => $this->deposit_ratio,
+                
+                'mailed_check_instructions' => $this->mailed_check_instructions,
+                'defer_handling_fees' => $this->defer_handling_fees,
+                'defer_processor_fees' => $this->defer_processor_fees,
+            ];
+
+            $new = [
+                
+                'accept_paypal' => $accept_paypal,
+                'accept_ach' => $accept_ach,
+                'accept_mailed_check' => $accept_mailed_check,
+                'accept_deposit' => $accept_deposit,
+                'deposit_ratio' => ($deposit_ratio != null ? $deposit_ratio : 0),
+                'mailed_check_instructions' => isset($attr['mailed_check_instructions']) ? $attr['mailed_check_instructions'] : null,
+                'defer_handling_fees' => ($this->isEditRestricted() ? $this->defer_handling_fees : $defer_handling_fees),
+                'defer_processor_fees' => ($this->isEditRestricted() ? $this->defer_processor_fees : $defer_processor_fees),
+            ];
+
+            $diff = AuditEvent::attributeDiff($old, $new);
+            if (count($diff) < 1)
+                return true;
+
+            AuditEvent::meetUpdated(
+                request()->_managed_account, auth()->user(), $this, $diff
+            );
+            
+            $this->update($new);
+            $this->save();
+            DB::commit();
+            return true;
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
     public function updateStepTwo(array $attr)
     {
         DB::beginTransaction();
@@ -973,14 +1045,6 @@ class Meet extends Model
             $athlete_limit = null;
             $deposit_ratio = null;
 
-            $accept_paypal = false; //hide paypal payment option.
-            $accept_ach = true; //cc and ach default payment decision on 15-3-21, so here ach value set true.
-            $accept_mailed_check = isset($attr['accept_mailed_check']);
-            $accept_deposit = isset($attr['accept_deposit']);
-
-            $defer_handling_fees = isset($attr['defer_handling_fees']);
-            $defer_processor_fees = isset($attr['defer_processor_fees']);
-
             if ($allow_late) {
                 if (!Helper::isFloat($attr['late_registration_fee']))
                     throw new CustomBaseException('Invalid late registration fee value.', '-1');
@@ -1001,17 +1065,7 @@ class Meet extends Model
                 if ($athlete_limit < 1)
                     throw new CustomBaseException('Invalid athlete limit value.', '-1');
             }
-            if ($accept_deposit) {
-                if (!isset($attr['deposit_ratio']))
-                    throw new CustomBaseException('Please provide deposit ratio', '-1');
-                $deposit_ratio = $attr['deposit_ratio'];
-                if (!Helper::isInteger($deposit_ratio))
-                    throw new CustomBaseException('Invalid deposit ratio value.', '-1');
-                $deposit_ratio = (int) $deposit_ratio;
 
-                if ($deposit_ratio < 1)
-                    throw new CustomBaseException('Deposit ratio must be greater than 0.', '-1');
-            }
             $first_end_date = null;
             $first_discount = null;
             $second_end_date = null;
@@ -1056,14 +1110,7 @@ class Meet extends Model
                     }
                 }
             }
-            // $registration_first_discount_end_date = (new \DateTime($attr['registration_first_discount_end_date']))->setTime(0, 0);
-            // $registration_second_discount_end_date = (new \DateTime($attr['registration_second_discount_end_date']))->setTime(0, 0);
-            // $registration_third_discount_end_date = (new \DateTime($attr['registration_third_discount_end_date']))->setTime(0, 0);
-            
-            // $registration_first_discount_amount = isset($attr['registration_first_discount_amount']) ? $attr['registration_first_discount_amount'] : 0;
-            // $registration_second_discount_amount = isset($attr['registration_second_discount_amount']) ? $attr['registration_second_discount_amount'] : 0;
-            // $registration_third_discount_amount = isset($attr['registration_third_discount_amount']) ? $attr['registration_third_discount_amount'] : 0;
-            
+
             $old = [
                 'registration_start_date' => $this->registration_start_date,
                 'registration_end_date' => $this->registration_end_date,
@@ -1073,16 +1120,7 @@ class Meet extends Model
                 'late_registration_start_date' => $this->late_registration_start_date,
                 'late_registration_end_date' => $this->late_registration_end_date,
                 'athlete_limit' => $this->athlete_limit,
-                'accept_paypal' => $this->accept_paypal,
-                'accept_ach' => $this->accept_ach,
-                'accept_mailed_check' => $this->accept_mailed_check,
-                'accept_deposit' => $this->accept_deposit,
-                'deposit_ratio' => $this->deposit_ratio,
                 
-                'mailed_check_instructions' => $this->mailed_check_instructions,
-                'defer_handling_fees' => $this->defer_handling_fees,
-                'defer_processor_fees' => $this->defer_processor_fees,
-
                 'registration_first_discount_end_date' => $this->registration_first_discount_end_date,
                 'registration_first_discount_amount' => $this->registration_first_discount_amount,
                 'registration_second_discount_end_date' => $this->registration_second_discount_end_date,
@@ -1104,15 +1142,7 @@ class Meet extends Model
                 'late_registration_start_date' => $late_registration_start_date,
                 'late_registration_end_date' => $late_registration_end_date,
                 'athlete_limit' => $athlete_limit,
-                'accept_paypal' => $accept_paypal,
-                'accept_ach' => $accept_ach,
-                'accept_mailed_check' => $accept_mailed_check,
-                'accept_deposit' => $accept_deposit,
-                'deposit_ratio' => ($deposit_ratio != null ? $deposit_ratio : 0),
-                'mailed_check_instructions' => isset($attr['mailed_check_instructions']) ? $attr['mailed_check_instructions'] : null,
-                'defer_handling_fees' => ($this->isEditRestricted() ? $this->defer_handling_fees : $defer_handling_fees),
-                'defer_processor_fees' => ($this->isEditRestricted() ? $this->defer_processor_fees : $defer_processor_fees),
-
+                
                 'registration_first_discount_end_date' => $first_end_date,
                 'registration_second_discount_end_date' => $second_end_date,
                 'registration_third_discount_end_date' => $third_end_date,

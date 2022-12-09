@@ -212,7 +212,7 @@ class MeetController extends AppBaseController
             return new CustomBaseException('Invalid step.');
 
         $step = (int) $step;
-        if (($step < 1) || ($step > 5))
+        if (($step < 1) || ($step > 6))
             return new CustomBaseException('Invalid step.');
 
         $gym = $request->_managed_account->retrieveGym($gym); /** @var Gym $gym */
@@ -221,7 +221,7 @@ class MeetController extends AppBaseController
         if ($tm->step < 2){
             $tm->name = '';
         }
-        if (($tm == null) || ($tm->step < $step))
+        if (($tm == null) || (($tm->step < $step) && $step != 6))
             return redirect(route('gyms.meets.create', ['$gym' => $gym]))
                 ->with('error','Something went wrong while displaying your meet.');
 
@@ -240,7 +240,7 @@ class MeetController extends AppBaseController
             'step' => $step,
             'required_sanctions' => $required_sanctions
         ];
-
+        
         switch($step) {
             case 1:
                 $data['tshirt_charts'] = ClothingSizeChart::where('is_leo', false)->get();
@@ -261,7 +261,20 @@ class MeetController extends AppBaseController
                 }
                 $data['card_exist'] = $card_exist;
                 break;
-
+            case 6:
+                
+                $card_exist = 1;
+                $card = null;
+                $user = auth()->user();
+                try {
+                    $card = $user->getCards(true);
+                    if($card == null)
+                        $card_exist = 0;
+                } catch (CustomStripeException $e) {
+                    $card_exist = 0;
+                }
+                $data['card_exist'] = $card_exist;
+                break;
             case 3:
                 $data['competition_formats'] = MeetCompetitionFormat::all();
                 break;
@@ -301,7 +314,24 @@ class MeetController extends AppBaseController
             'step' => $tm->step
         ]));
     }
+    public function storeStepSix(Request $request, string $gym, string $temporary)
+    {
+        $attr = $request->validate(TemporaryMeet::CREATE_STEP_6_RULES);
 
+        $gym = $request->_managed_account->retrieveGym($gym); /** @var Gym $gym */
+
+        $tm = $gym->temporary_meets->find($temporary);
+        if ($tm == null)
+            throw new CustomBaseException('Something went wrong while saving your meet.', -1);
+
+        $tm->storeStepSix($attr);
+        
+        return redirect(route('gyms.meets.create.step.view', [
+            'gym' => $gym,
+            'tm' => $tm,
+            'step' => $tm->step
+        ]));
+    }
     public function storeStepTwo(Request $request, string $gym, string $temporary)
     {
         $attr = $request->validate(TemporaryMeet::CREATE_STEP_2_RULES);
@@ -389,7 +419,7 @@ class MeetController extends AppBaseController
         $gym = $request->_managed_account->retrieveGym($gym); /** @var Gym $gym */
         $meet = $gym->retrieveMeet($meet); /** @var Meet $meet */
 
-        if (!Helper::isInteger($step) || ($step < 1) || ($step > 5)) {
+        if (!Helper::isInteger($step) || ($step < 1) || ($step > 6)) {
             return redirect(route('gyms.meets.edit', [
                 'gym' => $gym,
                 'meet' => $meet,
@@ -531,7 +561,29 @@ class MeetController extends AppBaseController
             'step' => 1
         ]))->with('success', 'Changes saved.');
     }
+    public function updateStepSix(Request $request, string $gym, string $meet)
+    {
+        $redirect = route('gyms.meets.edit', [
+            'gym' => $gym,
+            'meet' => $meet,
+            'step' => 6
+        ]);
 
+        $attr = $request->all();
+        $validator = Validator::make($attr, Meet::UPDATE_STEP_6_RULES);
+
+        if ($validator->fails())
+            return redirect($redirect)->withInput()->withErrors($validator);
+
+        $gym = $request->_managed_account->retrieveGym($gym); /** @var Gym $gym */
+        $meet = $gym->retrieveMeet($meet); /** @var Meet $meet */
+        if (!$meet->canBeEdited())
+            throw new CustomBaseException('You cannot edit this meet.', -1);
+
+        $meet->updateStepSix($attr);
+
+        return redirect($redirect)->with('success', 'Changes saved.') ;
+    }
     public function updateStepTwo(Request $request, string $gym, string $meet)
     {
         $redirect = route('gyms.meets.edit', [
@@ -917,7 +969,7 @@ class MeetController extends AppBaseController
             Log::warning(self::class . '@hostReportCreate : ' . $e->getMessage(), [
                 'Throwable' => $e
             ]);
-            throw new CustomBaseException('Something went wrong while generating your report.', Response::HTTP_INTERNAL_SERVER_ERROR, $e);
+            throw new CustomBaseException('Something went wrong while generating your report.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

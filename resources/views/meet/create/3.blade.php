@@ -152,7 +152,7 @@
             <div class="d-flex flex-row flex-nowrap mt-3">
                 <div class="flex-grow-1">
                     <a ref="previousStepLink" class="d-none"
-                        href="{{ route('gyms.meets.create.step.view', ['gym' => $gym, 'step' => ($step - 1), 'temporary' => $tm]) }}">
+                        href="{{ route('gyms.meets.create.step.view', ['gym' => $gym, 'step' => (($step == 3 ? 7:$step )- 1), 'temporary' => $tm]) }}">
                     </a>
 
                     <button class="btn btn-primary" type="button" @click="previousStep">

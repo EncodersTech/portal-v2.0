@@ -46,19 +46,7 @@ class TemporaryMeet extends Model
         'show_participate' => ['nullable'],
         'is_featured' => ['nullable'],
     ];
-
-    public const CREATE_STEP_2_RULES = [
-        'registration_start_date' => ['required', 'date_format:m/d/Y', 'after_or_equal:today'],
-        'registration_end_date' => ['required', 'date_format:m/d/Y', 'after_or_equal:registration_start_date'],
-        'registration_scratch_end_date' => ['required', 'date_format:m/d/Y', 'after:today'],
-
-        'allow_late_registration' => ['sometimes'],
-        'late_registration_fee' => ['required_with:allow_late_registration', 'numeric'],
-        'late_registration_start_date' => ['required_with:allow_late_registration', 'date_format:m/d/Y', 'after:registration_end_date'],
-        'late_registration_end_date' => ['required_with:allow_late_registration', 'date_format:m/d/Y', 'after_or_equal:late_registration_start_date'],
-
-        'athlete_limit' => ['nullable', 'integer', 'gt:0'],
-
+    public const CREATE_STEP_6_RULES = [
         'accept_paypal' => ['sometimes'],
         'accept_ach' => ['sometimes'],
         'accept_mailed_check' => ['sometimes'],
@@ -71,6 +59,18 @@ class TemporaryMeet extends Model
         'defer_processor_fees' => ['sometimes'],
 
         'process_refunds' => ['sometimes'],
+    ];
+    public const CREATE_STEP_2_RULES = [
+        'registration_start_date' => ['required', 'date_format:m/d/Y', 'after_or_equal:today'],
+        'registration_end_date' => ['required', 'date_format:m/d/Y', 'after_or_equal:registration_start_date'],
+        'registration_scratch_end_date' => ['required', 'date_format:m/d/Y', 'after:today'],
+
+        'allow_late_registration' => ['sometimes'],
+        'late_registration_fee' => ['required_with:allow_late_registration', 'numeric'],
+        'late_registration_start_date' => ['required_with:allow_late_registration', 'date_format:m/d/Y', 'after:registration_end_date'],
+        'late_registration_end_date' => ['required_with:allow_late_registration', 'date_format:m/d/Y', 'after_or_equal:late_registration_start_date'],
+
+        'athlete_limit' => ['nullable', 'integer', 'gt:0'],
 
         'registration_first_discount_end_date' => ['sometimes', 'date_format:m/d/Y', 'after_or_equal:registration_start_date'],
         'registration_second_discount_end_date' => ['sometimes', 'date_format:m/d/Y', 'after:registration_first_discount_end_date'],
@@ -267,7 +267,62 @@ class TemporaryMeet extends Model
             throw $e;
         }
     }
+    public function storeStepSix(array $attr)
+    {
+        DB::beginTransaction();
 
+        try {
+
+           
+            $deposit_ratio = null;
+
+            $accept_paypal = isset($attr['accept_paypal']);
+            $accept_ach = true; //cc and ach default payment decision on 15-3-21, so here ach value set true.
+            $accept_mailed_check = isset($attr['accept_mailed_check']);
+            $accept_deposit = isset($attr['accept_deposit']);
+            $mailed_check_instructions = null;
+
+            $defer_handling_fees = isset($attr['defer_handling_fees']);
+            $defer_processor_fees = isset($attr['defer_processor_fees']);
+
+            if ($accept_mailed_check) {
+                if (!isset($attr['mailed_check_instructions']))
+                    throw new CustomBaseException('Please provide instructions for mailed checks', '-1');
+                $mailed_check_instructions = $attr['mailed_check_instructions'];
+            }
+
+            if ($accept_deposit) {
+                if (!isset($attr['deposit_ratio']))
+                    throw new CustomBaseException('Please provide deposit ratio', '-1');
+                $deposit_ratio = $attr['deposit_ratio'];
+                if (!Helper::isInteger($deposit_ratio))
+                    throw new CustomBaseException('Invalid deposit ratio value.', '-1');
+                $deposit_ratio = (int) $deposit_ratio;
+
+                if ($deposit_ratio < 1)
+                    throw new CustomBaseException('Deposit ratio must be greater than 0.', '-1');
+            }
+
+            $this->update([
+                
+                'deposit_ratio' => ($deposit_ratio != null ? $deposit_ratio : 0),
+                'accept_paypal' => $accept_paypal,
+                'accept_ach' => $accept_ach,
+                'accept_mailed_check' => $accept_mailed_check,
+                'accept_deposit' => $accept_deposit,
+                'mailed_check_instructions' => $mailed_check_instructions,
+                'defer_handling_fees' => $defer_handling_fees,
+                'defer_processor_fees' => $defer_processor_fees,
+                'step' => 3
+            ]);
+            $this->save();
+            DB::commit();
+            return true;
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
     public function storeStepTwo(array $attr)
     {
         DB::beginTransaction();
@@ -292,15 +347,6 @@ class TemporaryMeet extends Model
             $athlete_limit = null;
             $deposit_ratio = null;
 
-            $accept_paypal = isset($attr['accept_paypal']);
-            $accept_ach = true; //cc and ach default payment decision on 15-3-21, so here ach value set true.
-            $accept_mailed_check = isset($attr['accept_mailed_check']);
-            $accept_deposit = isset($attr['accept_deposit']);
-            $mailed_check_instructions = null;
-
-            $defer_handling_fees = isset($attr['defer_handling_fees']);
-            $defer_processor_fees = isset($attr['defer_processor_fees']);
-
             if ($allow_late) {
                 if (!Helper::isFloat($attr['late_registration_fee']))
                     throw new CustomBaseException('Invalid late registration fee value.', '-1');
@@ -312,10 +358,6 @@ class TemporaryMeet extends Model
                 if ($late_registration_end_date >= $this->start_date)
                     throw new CustomBaseException('The meet start date should be after the late registration end date.');
             }
-
-            // 'registration_first_discount_is_enable' => ['sometimes'],
-            // 'registration_second_discount_is_enable' => ['sometimes'],
-            // 'registration_third_discount_is_enable' => ['sometimes'],
 
             $registration_first_discount_is_enable = isset($attr['registration_first_discount_is_enable']);
             $registration_second_discount_is_enable = isset($attr['registration_second_discount_is_enable']);
@@ -373,24 +415,6 @@ class TemporaryMeet extends Model
                     throw new CustomBaseException('Invalid athlete limit value.', '-1');
             }
 
-            if ($accept_mailed_check) {
-                if (!isset($attr['mailed_check_instructions']))
-                    throw new CustomBaseException('Please provide instructions for mailed checks', '-1');
-                $mailed_check_instructions = $attr['mailed_check_instructions'];
-            }
-
-            if ($accept_deposit) {
-                if (!isset($attr['deposit_ratio']))
-                    throw new CustomBaseException('Please provide deposit ratio', '-1');
-                $deposit_ratio = $attr['deposit_ratio'];
-                if (!Helper::isInteger($deposit_ratio))
-                    throw new CustomBaseException('Invalid deposit ratio value.', '-1');
-                $deposit_ratio = (int) $deposit_ratio;
-
-                if ($deposit_ratio < 1)
-                    throw new CustomBaseException('Deposit ratio must be greater than 0.', '-1');
-            }
-
             $this->update([
                 'registration_start_date' => $registration_start_date,
                 'registration_end_date' => $registration_end_date,
@@ -400,14 +424,6 @@ class TemporaryMeet extends Model
                 'late_registration_start_date' => $late_registration_start_date,
                 'late_registration_end_date' => $late_registration_end_date,
                 'athlete_limit' => $athlete_limit,
-                'deposit_ratio' => ($deposit_ratio != null ? $deposit_ratio : 0),
-                'accept_paypal' => $accept_paypal,
-                'accept_ach' => $accept_ach,
-                'accept_mailed_check' => $accept_mailed_check,
-                'accept_deposit' => $accept_deposit,
-                'mailed_check_instructions' => $mailed_check_instructions,
-                'defer_handling_fees' => $defer_handling_fees,
-                'defer_processor_fees' => $defer_processor_fees,
 
                 'registration_first_discount_end_date' => $first_end_date,
                 'registration_second_discount_end_date' => $second_end_date,
@@ -421,9 +437,8 @@ class TemporaryMeet extends Model
                 'registration_second_discount_is_enable' => $registration_second_discount_is_enable,
                 'registration_third_discount_is_enable' => $registration_third_discount_is_enable,
 
-                'step' => 3
+                'step' => 6
             ]);
-            // print_r($attr); die();
             $this->save();
             DB::commit();
             return true;

@@ -52,7 +52,6 @@ class HandlingFeeChargeFailedMailable extends Mailable implements ShouldQueue
     public function failed(\Exception $e)
     {
         Log::channel('slack-warning')->warning(self::class . ' email failed : ' . $e->getMessage(), [
-            'Deposit' => $this->deposit,
             'Exception' => $e
         ]);
     }

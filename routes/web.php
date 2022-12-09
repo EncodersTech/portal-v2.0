@@ -125,6 +125,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::post('/gyms/{gym}/meets/store/3/entry/{temporary}', 'MeetController@storeStepThree')->name('gyms.meets.store.3');
         Route::post('/gyms/{gym}/meets/store/4/entry/{temporary}', 'MeetController@storeStepFour')->name('gyms.meets.store.4');
         Route::post('/gyms/{gym}/meets/store/5/entry/{temporary}', 'MeetController@storeStepFive')->name('gyms.meets.store.5');
+        Route::post('/gyms/{gym}/meets/store/6/entry/{temporary}', 'MeetController@storeStepSix')->name('gyms.meets.store.6');
     });
 
     Route::get('/meets/{meet}', 'MeetController@details')->name('gyms.meets.details');
@@ -146,6 +147,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::patch('/gyms/{gym}/meets/{meet}/update/3', 'MeetController@updateStepThree')->name('gyms.meets.update.3');
         Route::patch('/gyms/{gym}/meets/{meet}/update/4', 'MeetController@updateStepFour')->name('gyms.meets.update.4');
         Route::patch('/gyms/{gym}/meets/{meet}/update/5', 'MeetController@updateStepFive')->name('gyms.meets.update.5');
+        Route::patch('/gyms/{gym}/meets/{meet}/update/6', 'MeetController@updateStepSix')->name('gyms.meets.update.6'); //payment
 
         Route::post('/gyms/{gym}/meets/{meet}/archive', 'MeetController@archive')->name('gyms.meets.archive');
         Route::post('/gyms/{gym}/meets/{meet}/restore', 'MeetController@restore')->name('gyms.meets.restore');

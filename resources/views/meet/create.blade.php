@@ -27,7 +27,12 @@
                     </li>
                     <li class="nav-item">
                         <span class="nav-link {{ $step == 2 ? 'active' : ''}}">
-                            <span class="fas fa-fw fa-money-check"></span> Registration &amp; Payment
+                            <span class="fas fa-fw fa-money-check"></span> Registration
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <span class="nav-link {{ $step == 6 ? 'active' : ''}}">
+                            <span class="fas fa-fw fa-money-check"></span> Payment
                         </span>
                     </li>
                     <li class="nav-item">
@@ -72,6 +77,9 @@
                             @case(4)
                                 @include('meet.create.4')
                                 @break
+                            @case(6)
+                                @include('meet.create.6')
+                                @break
 
                             @default
                                 @include('meet.create.5')
@@ -86,7 +94,7 @@
 @endsection
 
 @section('scripts-main')
-    <script src="{{ mix('js/meet/create/meet-create-' . $step . '.js') }}"></script>
+    <script src="{{ mix('js/meet/create/meet-create-' . ($step == 6 ? 2:$step) . '.js') }}"></script>
     <script>
         $(document).ready(function() {
             $("#accept_mailed_check").change(function(e){
@@ -107,14 +115,14 @@
                     $('#deposit_ratio').prop("checked",false);
                 }
             });
-            $("#viewpaymenttab").click(function(e){
-                $("#payment_div").show();
-                $("#registratoin_div").hide();
-            });
-            $("#registrationview").click(function(e){
-                $("#payment_div").hide();
-                $("#registratoin_div").show();
-            });
+            // $("#viewpaymenttab").click(function(e){
+            //     $("#payment_div").show();
+            //     $("#registratoin_div").hide();
+            // });
+            // $("#registrationview").click(function(e){
+            //     $("#payment_div").hide();
+            //     $("#registratoin_div").show();
+            // });
             $("#accept_mailed_check").click(e => {
                 var amc = $("#accept_mailed_check").is(":checked");
                 if(amc == true)

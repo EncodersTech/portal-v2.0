@@ -239,7 +239,7 @@ class DwollaScheduleWithdrawal {
             'processor_id' => null,
             'total' => - ($amount + $fee),
             'description' => 'Balance automatic withdrawal $' . number_format($amount, 2) . $extra,
-            'clears_on' => $now,
+            'clears_on' => now()->addDays(2),
             'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL,
             'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING
         ]); /** @var UserBalanceTransaction $balanceTransaction */
@@ -250,7 +250,7 @@ class DwollaScheduleWithdrawal {
                 'processor_id' => null,
                 'total' => -$featuredFee,
                 'description' => 'Featured fee charge when withdraw balance',
-                'clears_on' => $now,
+                'clears_on' => now()->addDays(2),
                 'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL,
                 'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING
             ]);

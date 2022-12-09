@@ -411,13 +411,25 @@ class UserController extends BaseApiController
             'token' => $token
         ]);
     }
-
+    public function isDwollaVerified()
+    {
+        $user = auth()->user();
+        try{
+            $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
+            $dwollaCustomer = $dwollaService->retrieveCustomer($user->dwolla_customer_id);
+            return  $dwollaCustomer->status == DwollaService::STATUS_VERIFIED ? true : false;
+        }
+        catch(CustomDwollaException $e)
+        {
+            return  false;
+        }
+    }
     public function withdrawBalance(Request $request) {
         $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
         // $stripeService = resolve(StripeService::class); /** @var DwollaService $dwollaService */
         $transaction = null;
         $balanceTransaction = null;
-        $isDwollaVerified = null;
+        $isDwollaVerified = $this->isDwollaVerified();
         try {
             DB::beginTransaction();
 
