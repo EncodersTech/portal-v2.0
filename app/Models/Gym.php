@@ -2157,7 +2157,15 @@ class Gym extends Model
             throw $e;
         }
     }
-
+    public function getCoachesFromMeetRegistrations($meetID)
+    {
+        $query = 'select c.id,c.first_name,c.last_name,c.usag_no,c.aau_no,c.usaigc_no,c.nga_no from meet_registrations as mr 
+        join gyms on mr.gym_id = gyms.id
+        join coaches as c on c.gym_id = gyms.id
+        where gyms.id = '.$this->id.' and meet_id = '.$meetID;
+        $result = DB::select($query);
+        return $result;
+    }
     public function copyFromMeet(array $attr) {
         DB::beginTransaction();
         try {

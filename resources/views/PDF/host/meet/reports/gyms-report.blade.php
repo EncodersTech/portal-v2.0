@@ -43,12 +43,11 @@
         <table class="table-0">
             <thead>
                 <tr>
-                    <th class="col-1" style="width: 22%">Gym</th>
+                    <th class="col-2">Gym</th>
                     <th class="col-2">Address</th>
                     <th class="col-2">City</th>
-                    <th class="col-4">Country</th>
-                    <th class="col-5">Phone</th>
-                    <th class="col-6">Email</th>
+                    <th class="col-2">Contact</th>
+                    <th class="col-4">Coaches</th>
                 </tr>
             </thead>
             <tbody>
@@ -64,13 +63,34 @@
                         @endif
                         </td>
                         <td>
-                        {{ $r->city }}, {{ $r->state->code }}, {{ $r->zipcode }}
+                        {{ $r->city }}, {{ $r->state->code }}, {{ $r->zipcode }}, {{ $r->country->name }}
                         </td>
-                        <td>
-                        {{ $r->country->name }}
-                        </td>
-                        <td>{{ $r->office_phone }}</td>
-                        <td>{{ $r->user->email }}</td>
+                        <td style="word-wrap: break-word;">{{ 'Phone: ' . $r->office_phone }}<br>{{'Email: '. $r->user->email }}</td>
+                        @php 
+                        $coaches = $r->getCoachesFromMeetRegistrations($meet->id)
+                        @endphp
+                        <td><table class="table-1">
+                        @foreach($coaches as $c)
+                        <tr>
+                            <td>{{ $c->first_name .' '.$c->last_name }}</td>
+                            <td>
+                            @if($c->usag_no != null)
+                                {{ '  USAG: '.$c->usag_no }}.<br>
+                            @endif
+                            @if($c->usaigc_no != null)
+                                {{ '  USAIGC: '.$c->usaigc_no }}.<br>
+                            @endif
+                            @if($c->aau_no != null)
+                                {{ '  AAU: '.$c->aau_no }}.<br>
+                            @endif
+                            @if($c->nga_no != null)
+                                {{ '  NGA: '.$c->nga_no}}
+                            @endif
+
+                            </td>
+                        </tr>
+                        @endforeach
+                        </table></td>
                     </tr>
                 @endforeach
             </tbody>
