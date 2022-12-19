@@ -5492,7 +5492,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (this.selectedMeet.registration_first_discount_is_enable) {
           fee = Utils.toFloat(this.editedLevel.registration_fee_first);
-          if (fee === null || fee < 0) throw 'Please enter a valid first registration fee';
+          if (fee === null || fee < 0) throw 'Please enter a valid early registration fee';
           this.editedLevel.registration_fee_first = fee.toFixed(2);
         } else {
           this.editedLevel.registration_fee_first = 0;
@@ -5570,7 +5570,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         if (this.selectedMeet.registration_first_discount_is_enable) {
           fee = Utils.toFloat(this.editedLevel.registration_fee_first);
-          if (fee === null || fee < 0) throw 'Please enter a valid first registration fee';
+          if (fee === null || fee < 0) throw 'Please enter a valid early registration fee';
           this.editedLevel.registration_fee_first = fee.toFixed(2);
         } else {
           this.editedLevel.registration_fee_first = 0;

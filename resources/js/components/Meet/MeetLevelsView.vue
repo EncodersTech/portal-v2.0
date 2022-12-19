@@ -75,11 +75,11 @@
                                                         <strong>Limit:</strong> {{ level.athlete_limit }}
                                                     </div>
                                                     <div>
-                                                        <strong>Regular:</strong>
+                                                        <strong>Standard:</strong>
                                                         ${{ level.registration_fee}}
                                                     </div>
                                                     <div v-if="first_discount_enable">
-                                                        <strong>First Reg.:</strong>
+                                                        <strong>Early Reg.:</strong>
                                                         ${{ level.registration_fee_first}}
                                                     </div>
                                                     <div v-if="second_discount_enable">

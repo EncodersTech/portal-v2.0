@@ -1386,7 +1386,7 @@ class Meet extends Model
                 if($this->registration_first_discount_is_enable)
                 {
                     if(!Helper::isFloat($levelData->registration_fee_first))
-                        throw new CustomBaseException('Wrong level data : invalid first registration fee', -1);
+                        throw new CustomBaseException('Wrong level data : invalid early registration fee', -1);
                     $levelData->registration_fee_first = (float) $levelData->registration_fee_first;
                 }
                 else{

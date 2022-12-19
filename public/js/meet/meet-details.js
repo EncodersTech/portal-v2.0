@@ -66025,7 +66025,7 @@ var render = function() {
                                                       _vm._v(" "),
                                                       _c("div", [
                                                         _c("strong", [
-                                                          _vm._v("Regular:")
+                                                          _vm._v("Standard:")
                                                         ]),
                                                         _vm._v(
                                                           "\n                                                    $" +
@@ -66040,7 +66040,7 @@ var render = function() {
                                                         ? _c("div", [
                                                             _c("strong", [
                                                               _vm._v(
-                                                                "First Reg.:"
+                                                                "Early Reg.:"
                                                               )
                                                             ]),
                                                             _vm._v(

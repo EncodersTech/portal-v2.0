@@ -1233,7 +1233,7 @@
                     {
                         fee = Utils.toFloat(this.editedLevel.registration_fee_first);
                         if ((fee === null) || (fee < 0))
-                            throw 'Please enter a valid first registration fee';
+                            throw 'Please enter a valid early registration fee';
                         this.editedLevel.registration_fee_first = fee.toFixed(2);
                     }
                    
