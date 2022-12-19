@@ -29,6 +29,12 @@ class DwollaService {
     public const BANK_ACCOUNT_RULES = [
         'bank_account' => ['required', 'string']
     ];
+    public const BANK_ACCOUNT_ADD_RULES = [
+        'account_name' => ['required', 'string'],
+        'account_type' => ['required', 'string'],
+        'routing_number' => ['required', 'numeric'],
+        'account_number' => ['required', 'numeric'],
+    ];
 
     public const MICRO_DEPOSITS_RULES = [
         'amount1' => ['required', 'numeric'],
@@ -138,6 +144,28 @@ class DwollaService {
         } catch (ApiException $e) {
             $this->_handleDwollaException($e, 'iav_generate');
         }
+    }
+    public function addBankAccount($attr)
+    {
+        try {
+        Configuration::$access_token = $this->authenticate();
+        $apiClient = new ApiClient($this->host);
+
+        $fundingSourcesApi = new FundingsourcesApi($apiClient);
+        $fundingSource = $fundingSourcesApi->createCustomerFundingSource([
+            "routingNumber" => $attr['routing_number'],
+            "accountNumber" => $attr['account_number'],
+            "bankAccountType" => $attr['account_type'],
+            "name" => $attr['account_name']
+          ], $this->host.$attr['user_dwolla_id']);
+
+        $fsApi = new FundingsourcesApi($apiClient);
+        $microDeposits = $fsApi->microDeposits(array(), $fundingSource);
+        return $microDeposits;
+        } catch (ApiException $e) {
+            throw new CustomDwollaException("Bank Account Add Failed", 401, $e);
+        }
+        // $fundingSources = $fundingSourcesApi->getAccountFundingSources($accountUrl, $removed);
     }
 
     public function listAccountFundingSources(bool $removed = false)

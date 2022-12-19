@@ -17,6 +17,46 @@
                 </div>
 
                 <div id="dwolla-bank-link-form-iav-container"></div>
+                <div>
+                    <form action="{{ route('account.bank.add') }}" method="post">
+                    @csrf
+                        <table>
+                            <tr>
+                                <td>Account Name: </td>
+                                <td>
+                                    <input type="text" class="form-control" name="account_name" placeholder="My Account" value="Test Account">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Account Type: </td>
+                                <td>
+                                    <select name="account_type" class="form-control">
+                                        <option value="savings">Savings</option>
+                                        <option value="checking">Checking</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Routing Number: </td>
+                                <td>
+                                    <input type="number" class="form-control" name="routing_number" placeholder="#########" value="222222226">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Account Number: </td>
+                                <td>
+                                    <input type="text" class="form-control" name="account_number" placeholder="#########" value="123456789">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <button type="submit" class="btn btn-success btn-sm" style="width:100%;">Add Bank</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
 
                 <div class="modal-footer pb-0 pr-0 pl-0 -1 d-block">
                     <div id="modal-linked-bank-account-spinner" class="small" style="display: none;">

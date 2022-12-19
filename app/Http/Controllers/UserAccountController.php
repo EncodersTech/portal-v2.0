@@ -564,6 +564,15 @@ class UserAccountController extends Controller
         $bankAccounts = auth()->user()->removeBankAccount($id);
         return back()->with('success', 'Your bank account was unlinked.');
     }
+    public function addBankAccount(Request $request)
+    {
+        $attr = $request->validate(
+            DwollaService::BANK_ACCOUNT_ADD_RULES
+        );
+        $attr['user_dwolla_id'] = auth()->user()->dwolla_customer_id;
+        $fundingSource = resolve(DwollaService::class)->addBankAccount($attr);
+        return back()->with('success', 'Your bank account is Added Successfully.');
+    }
 
     public function verifyMicroDeposits() {
         $attr = request()->validate(

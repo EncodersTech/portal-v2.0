@@ -64856,93 +64856,91 @@ $(document).ready(function () {
     $('.modal-linked-bank-account-close').click(function (e) {
       if (_busy) return;
       $('#modal-linked-bank-account').modal('hide');
-    });
-    $('#modal-linked-bank-account').on('show.bs.modal', function () {
-      initIAVFlow();
-    });
-    tryAgain.click(function (e) {
-      initIAVFlow();
-    });
+    }); // $('#modal-linked-bank-account').on('show.bs.modal', () => {
+    //     initIAVFlow();
+    // });
+    // tryAgain.click(e => {
+    //     initIAVFlow();
+    // });
+
     $('.bank-account-remove>button').click(function (e) {
       var bank_id = $(event.currentTarget).data('bank');
       var form = $('form[data-bank=' + bank_id + ']');
       confirmAction('Do you really want to unlink this account ?', 'red', 'far far-exclamation-triangle', function () {
         form.submit();
       });
-    });
-
-    function initIAVFlow() {
-      _busy = true;
-      iavError.hide();
-      tryAgain.hide();
-      spinner.show();
-      iavContainer.html('');
-      axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/user/bank/iav').then(function (result) {
-        iavToken = result.data.token;
-        dwolla.configure($('#dwolla-env').val());
-        dwolla.iav.start(iavToken, {
-          container: 'dwolla-bank-link-form-iav-container',
-          stylesheets: ['https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext'],
-          microDeposits: true,
-          fallbackToMicroDeposits: true,
-          backButton: true,
-          subscriber: function subscriber(_ref) {
-            var currentPage = _ref.currentPage,
-                error = _ref.error;
-            _busy = false;
-            if (currentPage == 'BankSearch') spinner.hide();else if (currentPage == 'SuccessIAV' || currentPage == 'SuccessMicroDeposits') _busy = true;
-          }
-        }, function (err, res) {
-          if (err) {
-            var msg = err.message;
-
-            switch (err.code) {
-              case 'InvalidIavToken':
-              case 'UnexpectedPage':
-                msg = 'Something went wrong with our payment processor.<br/>' + 'Please try again later (code: ' + err.code + ').';
-                break;
-              // might need to return instead for µ-Deposits to take over
-
-              case 'RateLimitReached':
-                msg = 'Sorry, we’re having trouble logging into your account.<br/>' + 'Please wait 30 minutes before trying again, or try a different account';
-                break;
-
-              default:
-            }
-
-            showIAVError(msg);
-            return;
-          }
-
-          spinner.show();
-          setTimeout(function () {
-            Utils.refresh();
-          }, 7500);
-        });
-      })["catch"](function (error) {
-        var msg = '';
-
-        if (error.response) {
-          msg = error.response.data.message;
-        } else if (error.request) {
-          msg = 'No server response.';
-        } else {
-          msg = error.message;
-        }
-
-        showIAVError(msg);
-      })["finally"](function () {});
-
-      function showIAVError(msg) {
-        _busy = false;
-        spinner.hide();
-        iavError.html('<span class="fas fa-fw fa-times-circle"></span> ' + msg);
-        iavError.show();
-        tryAgain.show();
-      }
-    }
-
-    ;
+    }); // function initIAVFlow() {
+    //     _busy = true;
+    //     iavError.hide();
+    //     tryAgain.hide();
+    //     spinner.show();
+    //     iavContainer.html('');
+    //     Axios.get('/api/user/bank/iav').then(result => {
+    //         iavToken = result.data.token;
+    //         dwolla.configure($('#dwolla-env').val());
+    //         dwolla.iav.start(
+    //             iavToken, {
+    //                 container: 'dwolla-bank-link-form-iav-container',
+    //                 stylesheets: [
+    //                     'https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext',
+    //                 ],
+    //                 microDeposits: true,
+    //                 fallbackToMicroDeposits: true,
+    //                 backButton: true,
+    //                 subscriber: ({ currentPage, error }) => {
+    //                     _busy = false;
+    //                     if (currentPage == 'BankSearch')
+    //                         spinner.hide();
+    //                     else if (currentPage == 'SuccessIAV' || currentPage == 'SuccessMicroDeposits')
+    //                         _busy = true;
+    //                 }
+    //             }, function(err, res) {
+    //                 if (err) {
+    //                     let msg = err.message;
+    //                     switch (err.code) {
+    //                         case 'InvalidIavToken':
+    //                         case 'UnexpectedPage':
+    //                             msg = 'Something went wrong with our payment processor.<br/>' +
+    //                                     'Please try again later (code: ' + err.code + ').';
+    //                             break;
+    //                         // might need to return instead for µ-Deposits to take over
+    //                         case 'RateLimitReached':
+    //                             msg = 'Sorry, we’re having trouble logging into your account.<br/>' +
+    //                                     'Please wait 30 minutes before trying again, or try a different account';
+    //                             break;
+    //                         default:
+    //                     }
+    //                     showIAVError(msg);
+    //                     return;
+    //                 }
+    //                 spinner.show();
+    //                 setTimeout(() => {
+    //                     Utils.refresh();
+    //                 }, 7500);
+    //             }
+    //         );
+    //     }).catch(error => {
+    //         let msg = '';
+    //         if (error.response) {
+    //             msg = error.response.data.message;
+    //         } else if (error.request) {
+    //             msg = 'No server response.';
+    //         } else {
+    //             msg = error.message;
+    //         }
+    //         showIAVError(msg);
+    //     }).finally(() => {
+    //     });
+    //     function showIAVError(msg) {
+    //         _busy = false;
+    //         spinner.hide();
+    //         iavError.html(
+    //             '<span class="fas fa-fw fa-times-circle"></span> ' + msg
+    //         );
+    //         iavError.show();
+    //         tryAgain.show();
+    //     }
+    // };
   }
 
   function setupBankAccountVerifyModal() {

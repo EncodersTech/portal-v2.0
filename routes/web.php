@@ -78,6 +78,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     Route::delete('/account/card/{id}', 'UserAccountController@deleteCard')->name('account.card.remove');
 
     Route::delete('/account/bank/{id}', 'UserAccountController@deleteBankAccount')->name('account.bank.remove');
+    Route::post('/account/bank/add', 'UserAccountController@addBankAccount')->name('account.bank.add');
     Route::patch('/account/bank/verify', 'UserAccountController@verifyMicroDeposits')->name('account.bank.verify');
 
     Route::post('/account/members', 'UserAccountController@inviteMember')->name('account.member.invite');
