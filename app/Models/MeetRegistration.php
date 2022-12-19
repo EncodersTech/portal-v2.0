@@ -32,7 +32,7 @@ class MeetRegistration extends Model
     use Excludable;
 
     public const STATUS_REGISTERED = 1;
-    //public const STATUS_WAITLIST_CONFIRMED = 3;
+    // public const STATUS_WAITLIST_CONFIRMED = 3;
     public const STATUS_CANCELED = 4;
 
     public const PAYMENT_OPTION_CARD = 'card';

@@ -2789,7 +2789,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -4577,7 +4576,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
 
         level.pinUnpin = function (athlete) {
-          if (vm.meet.is_waitlist) return;
+          if (vm.registration.transactions[0].status != 6) return;
           athlete.pin_out_of_waitlist = !athlete.pin_out_of_waitlist;
           vm.calculateWaitlistStatuses();
         };
@@ -73654,73 +73653,69 @@ var render = function() {
                                                                                                             "dropdown-menu dropdown-menu-right"
                                                                                                         },
                                                                                                         [
+                                                                                                          _vm
+                                                                                                            .registration
+                                                                                                            .transactions[0]
+                                                                                                            .status ==
+                                                                                                            6 &&
+                                                                                                          athlete.in_waitlist
+                                                                                                            ? _c(
+                                                                                                                "button",
+                                                                                                                {
+                                                                                                                  staticClass:
+                                                                                                                    "dropdown-item text-primary",
+                                                                                                                  attrs: {
+                                                                                                                    type:
+                                                                                                                      "button"
+                                                                                                                  },
+                                                                                                                  on: {
+                                                                                                                    click: function(
+                                                                                                                      $event
+                                                                                                                    ) {
+                                                                                                                      return level.pinUnpin(
+                                                                                                                        athlete
+                                                                                                                      )
+                                                                                                                    }
+                                                                                                                  }
+                                                                                                                },
+                                                                                                                [
+                                                                                                                  _c(
+                                                                                                                    "span",
+                                                                                                                    {
+                                                                                                                      staticClass:
+                                                                                                                        "fas fa-fw fa-thumbtack"
+                                                                                                                    }
+                                                                                                                  ),
+                                                                                                                  _vm._v(
+                                                                                                                    " "
+                                                                                                                  ),
+                                                                                                                  !athlete.pin_out_of_waitlist
+                                                                                                                    ? _c(
+                                                                                                                        "span",
+                                                                                                                        [
+                                                                                                                          _vm._v(
+                                                                                                                            "Pin Out Of Waitlist"
+                                                                                                                          )
+                                                                                                                        ]
+                                                                                                                      )
+                                                                                                                    : _c(
+                                                                                                                        "span",
+                                                                                                                        [
+                                                                                                                          _vm._v(
+                                                                                                                            "Unpin"
+                                                                                                                          )
+                                                                                                                        ]
+                                                                                                                      )
+                                                                                                                ]
+                                                                                                              )
+                                                                                                            : _vm._e(),
+                                                                                                          _vm._v(
+                                                                                                            " "
+                                                                                                          ),
                                                                                                           athlete.is_new
                                                                                                             ? _c(
                                                                                                                 "div",
                                                                                                                 [
-                                                                                                                  !_vm
-                                                                                                                    .meet
-                                                                                                                    .is_waitlist &&
-                                                                                                                  athlete.is_new &&
-                                                                                                                  (level.waitlist_slots >
-                                                                                                                    0 ||
-                                                                                                                    _vm
-                                                                                                                      .meet
-                                                                                                                      .waitlist_slots >
-                                                                                                                      0)
-                                                                                                                    ? _c(
-                                                                                                                        "button",
-                                                                                                                        {
-                                                                                                                          staticClass:
-                                                                                                                            "dropdown-item text-primary",
-                                                                                                                          attrs: {
-                                                                                                                            type:
-                                                                                                                              "button"
-                                                                                                                          },
-                                                                                                                          on: {
-                                                                                                                            click: function(
-                                                                                                                              $event
-                                                                                                                            ) {
-                                                                                                                              return level.pinUnpin(
-                                                                                                                                athlete
-                                                                                                                              )
-                                                                                                                            }
-                                                                                                                          }
-                                                                                                                        },
-                                                                                                                        [
-                                                                                                                          _c(
-                                                                                                                            "span",
-                                                                                                                            {
-                                                                                                                              staticClass:
-                                                                                                                                "fas fa-fw fa-thumbtack"
-                                                                                                                            }
-                                                                                                                          ),
-                                                                                                                          _vm._v(
-                                                                                                                            " "
-                                                                                                                          ),
-                                                                                                                          !athlete.pin_out_of_waitlist
-                                                                                                                            ? _c(
-                                                                                                                                "span",
-                                                                                                                                [
-                                                                                                                                  _vm._v(
-                                                                                                                                    "Pin Out Of Waitlist"
-                                                                                                                                  )
-                                                                                                                                ]
-                                                                                                                              )
-                                                                                                                            : _c(
-                                                                                                                                "span",
-                                                                                                                                [
-                                                                                                                                  _vm._v(
-                                                                                                                                    "Unpin"
-                                                                                                                                  )
-                                                                                                                                ]
-                                                                                                                              )
-                                                                                                                        ]
-                                                                                                                      )
-                                                                                                                    : _vm._e(),
-                                                                                                                  _vm._v(
-                                                                                                                    " "
-                                                                                                                  ),
                                                                                                                   _c(
                                                                                                                     "button",
                                                                                                                     {

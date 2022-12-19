@@ -951,7 +951,7 @@ class USAGReservation extends Model
         return $result;
     }
 
-    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance) {
+    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon) {
         DB::beginTransaction();
         try {
             $sanction = USAGSanction::where('number', $sanction)
@@ -1757,12 +1757,29 @@ class USAGReservation extends Model
                 }
             }
             #endregion
-
+            $couponAmount = 0;
+            $prev_deposit = null;
+            if($coupon != '' && strlen($coupon) != 0)
+            {
+                // print_r($meet->id. ' '. $gym->id)
+                $prev_deposit = Deposit::where('meet_id',$meet->id)
+                            ->where('gym_id',$gym->id)
+                            ->where('token_id',$coupon)
+                            ->where('is_enable',true)
+                            ->where('is_used',false)
+                            ->first();
+                if($prev_deposit)
+                {
+                    $couponAmount = $prev_deposit->amount;
+                    $summary['subtotal'] -=  $couponAmount;
+                }
+            }
+            $snapshot['coupon'] = $couponAmount;
             #region FEE CALCULATIONS
             $incurredFees = $registration->calculateRegistrationTotal($snapshot);
 
             $subtotal = $incurredFees['subtotal'];
-            if ($subtotal != $summary['subtotal'])
+            if ($subtotal != $summary['subtotal'] + $couponAmount)
             {
                 $incurredFees = $registration->calculateRegistrationTotal($snapshot, false, $summary['subtotal']);
                 $subtotal = $summary['subtotal'];
@@ -1777,7 +1794,7 @@ class USAGReservation extends Model
             if ($registrant == null)
                 throw new CustomBaseException('No such registrant');
 
-            $calculatedFees = MeetRegistration::calculateFees($subtotal, $meet, $is_own, $chosenMethod, $useBalance, $registrant->cleared_balance);
+            $calculatedFees = MeetRegistration::calculateFees($subtotal, $meet, $is_own, $chosenMethod, $useBalance, $registrant->cleared_balance,false,$couponAmount);
 
             $calculatedFees += $incurredFees;
 
@@ -1935,7 +1952,11 @@ class USAGReservation extends Model
                     $sanction
                 ));
             }
-
+            if(isset($prev_deposit) && $prev_deposit != null)
+            {
+                $prev_deposit->is_used = true;
+                $prev_deposit->save();
+            }
             DB::commit();
             return $registration;
         } catch (Throwable $e) {

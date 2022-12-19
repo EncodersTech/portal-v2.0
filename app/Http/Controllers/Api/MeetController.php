@@ -988,11 +988,29 @@ class MeetController extends BaseApiController
                 }
                 $registrations[$i]->specialists = $specialists;
             }
+            $users_info = DB::select("select users.id, users.email from gyms join users on gyms.user_id = users.id");
             $getAllGym = Gym::where('user_id', '!=',  $request->_managed_account->id)->get();
+            $user_i = [];
+            foreach ($users_info as $k) {
+                $user_i[$k->id] = $k->email;
+            }
+            $newgym = [];
+            foreach ($getAllGym as $k) {
+                $getAllGym_2 = $k;
+                if(isset($user_i[$k['user_id']]))
+                {
+                    $getAllGym_2['email'] = $user_i[$k['user_id']];
+                }
+                else
+                {
+                    $getAllGym_2['email'] = 'no mail';
+                }
+                $newgym[] = $getAllGym_2;
+            }
             $depositGym =  $meet->deposit()->exclude(['token_id'])->orderBy('id', 'desc')->get();
             $result = [
                 'registrations' => $registrations,
-                'allgym' => $getAllGym,
+                'allgym' => $newgym,
                 'depositGym' => $depositGym
             ];
 

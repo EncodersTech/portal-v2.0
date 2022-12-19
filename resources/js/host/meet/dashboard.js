@@ -1199,10 +1199,12 @@ $(document).ready(e => {
                   sortField: 'text'
                 });
                 selectizeControlEdit = select2[0].selectize.setValue(this.depositVarEdit.gym_id); 
+                select2.selectedValue = this.depositVarEdit.gym_id;
             },
             sendDepositEdit(tx){
                 // tx.gym_id = this.$refs.selectedItem.value;
-                tx.gym_id = selectizeControlEdit.getValue();
+                // tx.gym_id = selectizeControlEdit.getValue();
+                tx.gym_id = $('#select3').val();
                 try {
                     $('#modal-confirm-deposit-edit').modal('hide');
                     if (!tx)

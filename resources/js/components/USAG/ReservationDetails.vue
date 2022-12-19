@@ -1,5 +1,42 @@
 <template>
     <div>
+        <div class="modal fade" id="modal-coupon" tabindex="-1" role="dialog" aria-labelledby="modal-coupon" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-primary">
+                            <span class="fas fa-check"></span> Coupon
+                        </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span class="fas fa-times" aria-hidden="true"></span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="d-flex flex-row flex-no-wrap mb-3">
+                            <div style="width: 50%;">
+                                Enter Your Coupon Code
+                            </div>
+
+                            <div class="ml-1">
+                                <input type="text" class="form-control form-control-sm" v-model="coupon"  placeholder="XXXXXXXX" value="">
+                            </div>
+                        </div>
+                        <div class="container-fluid">
+                            <div class="text-right mt-3">
+                                <button class="btn btn-sm btn-secondary mr-1" data-dismiss="modal">
+                                    <span class="far fa-fw fa-times-circle"></span> Close
+                                </button>
+                                <button class="btn btn-sm btn-success"
+                                    @click="checkCoupon(coupon)">
+                                    <span class="fas fa-fw fa-check"></span> Confirm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div v-if="isLoading" class="text-center p-3">
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             Loading sanction details, please wait ...
@@ -984,6 +1021,14 @@
                                         ${{ numberFormat(summary.processor) }}
                                     </div>
                                 </div>
+                                <div v-if="couponValue > 0" class="row">
+                                    <div class="col">
+                                        <span class="fas fa-fw fa-file-invoice"></span> Coupon :
+                                    </div>
+                                    <div class="col">
+                                        - ${{ numberFormat(couponValue) }}
+                                    </div>
+                                </div>
 
                                 <div class="d-flex flex-row flew-nowrap mt-3 mb-2 p-3 rounded bg-primary">
                                     <div class="flex-grow-1 text-uppercase">
@@ -994,6 +1039,9 @@
                                     </div>
 
                                     <div>
+                                        <button v-if="!this.couponSuccess" id="couponBtn" class="btn btn-sm btn-info mr-1" @click="haveCoupon">
+                                            <span class="fas fa-ticket-alt"></span> Have a Coupon?
+                                        </button>
                                         <button class="btn btn-sm btn-secondary" @click="previousStep">
                                             <span class="fas fa-long-arrow-alt-left"></span> Back
                                         </button>
@@ -1164,6 +1212,9 @@
                 step: 1,
                 scratch_athlete: false,
                 old_data_athletes: [],
+                coupon: "",
+                couponSuccess: false,
+                couponValue: 0
             }
         },
         methods: {
@@ -1769,17 +1820,26 @@
             },
 
 
-            recalculateTotals() {
+            recalculateTotals(deposit_ratio = 100, previous_deposit = 0) {
+                if(deposit_ratio != 100)
+                {
+                    this.coupon = '';
+                    previous_deposit = 0;
+                }
+                if(this.couponValue != 0 && deposit_ratio == 100)
+                    previous_deposit = this.couponValue;
+
                 if ((this.paymentOptions == null) || (this.chosenMethod == null))
                     return;
 
                 this.summary = {
-                    subtotal: this.total,
+                    subtotal: (deposit_ratio == 100 ? this.total : (this.total * deposit_ratio)/100),
                     own_meet_refund: (this.paymentOptions.is_own ? this.total : 0),
                     handling: 0,
                     used_balance: 0,
                     processor: 0,
                     total: 0,
+                    discount: this.paymentOptions.discount
                 };
 
                 if (this.paymentOptions.defer.handling || this.paymentOptions.is_own) {
@@ -1804,7 +1864,7 @@
                     }
                 }
 
-                localTotal -= this.summary.used_balance;
+                localTotal -= (this.summary.used_balance + this.paymentOptions.discount);
                 if (localTotal > 0) {
                     if (this.paymentOptions.defer.processor || this.paymentOptions.is_own) {
                         this.summary.processor = this.applyFeeMode(
@@ -1822,6 +1882,15 @@
                 }
 
                 this.summary.total = localTotal + this.summary.processor;
+                if(this.summary.total - previous_deposit < 0)
+                {
+                    this.showAlert("Coupon cannot be used if value is greater then total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
+                }
+                else
+                {
+                    this.summary.total -= previous_deposit;
+
+                }
             },
 
             applyFeeMode(amount, fee, mode) {
@@ -1872,7 +1941,43 @@
                 this.useBalance = false;
                 this.recalculateTotals();
             },
-
+            haveCoupon()
+            {
+                $('#modal-coupon').modal('show');
+            },
+            checkCoupon()
+            {
+                axios.post(
+                    '/api/registration/register/coupon',
+                    {
+                        '__managed': this.managed,
+                        meet_id:this.meet.id,
+                        gym_id:this.state.gym.id,
+                        coupon:this.coupon.trim().toUpperCase()
+                    }
+                ).then(result => {
+                    this.couponValue = result.data.value;
+                    $('#deposit').prop('checked', false);
+                    $('#fullAmount').prop('checked', true);
+                    $('#deposit').attr("disabled",true);
+                    this.recalculateTotals(100,result.data.value);
+                    this.showAlert("Coupon Successfully Applied", 'Success', 'green', 'fas fa-check');
+                    this.couponSuccess = true;
+                    $('#couponBtn').hide();
+                }).catch(error => {
+                    let msg = '';
+                    if (error.response) {
+                        msg = error.response.data.message;
+                    } else if (error.request) {
+                        msg = 'No server response.';
+                    } else {
+                        msg = error.message;
+                    }
+                    this.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+                }).finally(() => {
+                    $('#modal-coupon').modal('hide');
+                });
+            },
             validateData() {
                 let result = false;
 
@@ -1967,6 +2072,7 @@
                                 },
                                 data: this.state.final,
                                 use_balance: this.useBalance,
+                                coupon: this.coupon.trim().toUpperCase()
                             }
                         ).then(result => {
                             this.registrationUrl = result.data.url;

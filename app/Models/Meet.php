@@ -152,6 +152,13 @@ class Meet extends Model
     {
         return $this->hasMany(MeetAdmission::class);
     }
+    public function isWaitlistApproved($ID)
+    {
+        // return DB::table('',)
+        $query = 'SELECT status FROM meet_transactions WHERE meet_registration_id ='.$ID;
+        $result = DB::select($query);
+        return ( $result == 6 );
+    }
 
     public function categories()
     {

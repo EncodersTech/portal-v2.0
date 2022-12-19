@@ -24,8 +24,9 @@ class USAGReservationController extends BaseApiController
             $method = $request->input('method');
             $useBalance = boolval($request->input('use_balance'));
             $data = $request->input('data');
+            $coupon = $request->input('coupon');
 
-            $result = USAGReservation::merge($gym, $sanction, $data, $summary, $method, $useBalance); /** @var MeetRegistration $result */            
+            $result = USAGReservation::merge($gym, $sanction, $data, $summary, $method, $useBalance,$coupon ); /** @var MeetRegistration $result */            
             
             return $this->success([
                 'message' => 'Your reservation has been successfully processed.',

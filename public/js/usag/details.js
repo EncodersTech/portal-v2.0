@@ -2757,6 +2757,54 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -2881,7 +2929,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       grandTotal: 0,
       step: 1,
       scratch_athlete: false,
-      old_data_athletes: []
+      old_data_athletes: [],
+      coupon: "",
+      couponSuccess: false,
+      couponValue: 0
     };
   },
   methods: {
@@ -3545,14 +3596,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.recalculateTotals();
     },
     recalculateTotals: function recalculateTotals() {
+      var deposit_ratio = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
+      var previous_deposit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+      if (deposit_ratio != 100) {
+        this.coupon = '';
+        previous_deposit = 0;
+      }
+
+      if (this.couponValue != 0 && deposit_ratio == 100) previous_deposit = this.couponValue;
       if (this.paymentOptions == null || this.chosenMethod == null) return;
       this.summary = {
-        subtotal: this.total,
+        subtotal: deposit_ratio == 100 ? this.total : this.total * deposit_ratio / 100,
         own_meet_refund: this.paymentOptions.is_own ? this.total : 0,
         handling: 0,
         used_balance: 0,
         processor: 0,
-        total: 0
+        total: 0,
+        discount: this.paymentOptions.discount
       };
 
       if (this.paymentOptions.defer.handling || this.paymentOptions.is_own) {
@@ -3570,7 +3631,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }
 
-      localTotal -= this.summary.used_balance;
+      localTotal -= this.summary.used_balance + this.paymentOptions.discount;
 
       if (localTotal > 0) {
         if (this.paymentOptions.defer.processor || this.paymentOptions.is_own) {
@@ -3581,6 +3642,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       this.summary.total = localTotal + this.summary.processor;
+
+      if (this.summary.total - previous_deposit < 0) {
+        this.showAlert("Coupon cannot be used if value is greater then total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
+      } else {
+        this.summary.total -= previous_deposit;
+      }
     },
     applyFeeMode: function applyFeeMode(amount, fee, mode) {
       return mode == 'flat' ? // flat || percent
@@ -3620,6 +3687,45 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
       this.useBalance = false;
       this.recalculateTotals();
+    },
+    haveCoupon: function haveCoupon() {
+      $('#modal-coupon').modal('show');
+    },
+    checkCoupon: function checkCoupon() {
+      var _this4 = this;
+
+      axios.post('/api/registration/register/coupon', {
+        '__managed': this.managed,
+        meet_id: this.meet.id,
+        gym_id: this.state.gym.id,
+        coupon: this.coupon.trim().toUpperCase()
+      }).then(function (result) {
+        _this4.couponValue = result.data.value;
+        $('#deposit').prop('checked', false);
+        $('#fullAmount').prop('checked', true);
+        $('#deposit').attr("disabled", true);
+
+        _this4.recalculateTotals(100, result.data.value);
+
+        _this4.showAlert("Coupon Successfully Applied", 'Success', 'green', 'fas fa-check');
+
+        _this4.couponSuccess = true;
+        $('#couponBtn').hide();
+      })["catch"](function (error) {
+        var msg = '';
+
+        if (error.response) {
+          msg = error.response.data.message;
+        } else if (error.request) {
+          msg = 'No server response.';
+        } else {
+          msg = error.message;
+        }
+
+        _this4.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+      })["finally"](function () {
+        $('#modal-coupon').modal('hide');
+      });
     },
     validateData: function validateData() {
       var result = false;
@@ -3682,7 +3788,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     mergeReservation: function mergeReservation() {
-      var _this4 = this;
+      var _this5 = this;
 
       if (this.chosenMethod.type == 'check') {
         if (!this.checkNo) {
@@ -3695,19 +3801,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
-        _this4.isProcessingPayment = true;
-        axios.post('/api/gyms/' + _this4.state.gym.id + '/reservations/usag/' + _this4.sanction_id + '/merge', {
-          '__managed': _this4.managed,
-          summary: _this4.summary,
+        _this5.isProcessingPayment = true;
+        axios.post('/api/gyms/' + _this5.state.gym.id + '/reservations/usag/' + _this5.sanction_id + '/merge', {
+          '__managed': _this5.managed,
+          summary: _this5.summary,
           method: {
-            type: _this4.chosenMethod.type,
-            id: _this4.chosenMethod.id ? _this4.chosenMethod.id : null
+            type: _this5.chosenMethod.type,
+            id: _this5.chosenMethod.id ? _this5.chosenMethod.id : null
           },
-          data: _this4.state["final"],
-          use_balance: _this4.useBalance
+          data: _this5.state["final"],
+          use_balance: _this5.useBalance,
+          coupon: _this5.coupon.trim().toUpperCase()
         }).then(function (result) {
-          _this4.registrationUrl = result.data.url;
-          _this4.paymentProcessedMessage = result.data.message;
+          _this5.registrationUrl = result.data.url;
+          _this5.paymentProcessedMessage = result.data.message;
         })["catch"](function (error) {
           var msg = '';
 
@@ -3719,9 +3826,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             msg = error.message;
           }
 
-          _this4.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+          _this5.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
         })["finally"](function () {
-          _this4.isProcessingPayment = false;
+          _this5.isProcessingPayment = false;
         });
       }, this);
     },
@@ -3761,7 +3868,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   mounted: function mounted() {
-    var _this5 = this;
+    var _this6 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
       var state, initial, _final, lid, l, level, usag_no, a, athlete, _usag_no, c, coach, freed_slots_tracker, added_slots_tracker, _lid, _l, _level, _usag_no2, _a, old_level, added, scratched, _athlete, sizing_id, _sizing_id, a_i, old_a, _old_a$tshirt_size_id, _old_a$leo_size_id, tmp, tmp_fee, _lid2, _l2, j, new_a, _a_i, _old_a, _usag_no3, _c, _added, _scratched, _coach, c_i, old_c, _old_c$tshirt_size_id, _tmp, msg;
@@ -3771,16 +3878,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           switch (_context4.prev = _context4.next) {
             case 0:
               _context4.prev = 0;
-              _this5.isLoading = true;
-              state = _.cloneDeep(_this5.sanction_data);
+              _this6.isLoading = true;
+              state = _.cloneDeep(_this6.sanction_data);
               initial = state.initial;
               _final = state["final"];
               _context4.next = 7;
-              return _this5.loadMeetDetails(state);
+              return _this6.loadMeetDetails(state);
 
             case 7:
               _context4.next = 9;
-              return _this5.loadRegistrationDetails(state);
+              return _this6.loadRegistrationDetails(state);
 
             case 9:
               state.initial = {
@@ -3821,26 +3928,26 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               break;
 
             case 21:
-              if (!_this5.registrationLevelToMeetLevelMatrix.hasOwnProperty(lid)) {
+              if (!_this6.registrationLevelToMeetLevelMatrix.hasOwnProperty(lid)) {
                 _context4.next = 25;
                 break;
               }
 
               // check if level exists in registration (lid in registrationLevelToMeetLevelMatrix)
-              level = _objectSpread(_objectSpread({}, _.cloneDeep(_this5.genderAwareMeetLevelMatrix[_this5.registrationLevelToMeetLevelMatrix[lid]])), {}, {
+              level = _objectSpread(_objectSpread({}, _.cloneDeep(_this6.genderAwareMeetLevelMatrix[_this6.registrationLevelToMeetLevelMatrix[lid]])), {}, {
                 athletes: {}
               });
               _context4.next = 30;
               break;
 
             case 25:
-              if (!_this5.genderAwareMeetLevelMatrix.hasOwnProperty(l.uid)) {
+              if (!_this6.genderAwareMeetLevelMatrix.hasOwnProperty(l.uid)) {
                 _context4.next = 29;
                 break;
               }
 
               // if not, check if level exists in meet (uid in genderAwareMeetLevelMatrix)
-              level = _objectSpread(_objectSpread({}, _.cloneDeep(_this5.genderAwareMeetLevelMatrix[l.uid])), {}, {
+              level = _objectSpread(_objectSpread({}, _.cloneDeep(_this6.genderAwareMeetLevelMatrix[l.uid])), {}, {
                 athletes: {}
               });
               _context4.next = 30;
@@ -3921,13 +4028,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               break;
 
             case 50:
-              if (!_this5.registrationLevelToMeetLevelMatrix.hasOwnProperty(_lid)) {
+              if (!_this6.registrationLevelToMeetLevelMatrix.hasOwnProperty(_lid)) {
                 _context4.next = 54;
                 break;
               }
 
               // check if level exists in registration (lid in registrationLevelToMeetLevelMatrix)
-              _level = _objectSpread(_objectSpread({}, _.cloneDeep(_this5.genderAwareMeetLevelMatrix[_this5.registrationLevelToMeetLevelMatrix[_lid]])), {}, {
+              _level = _objectSpread(_objectSpread({}, _.cloneDeep(_this6.genderAwareMeetLevelMatrix[_this6.registrationLevelToMeetLevelMatrix[_lid]])), {}, {
                 is_new: false,
                 athletes: {}
               });
@@ -3935,13 +4042,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               break;
 
             case 54:
-              if (!_this5.genderAwareMeetLevelMatrix.hasOwnProperty(_l.uid)) {
+              if (!_this6.genderAwareMeetLevelMatrix.hasOwnProperty(_l.uid)) {
                 _context4.next = 58;
                 break;
               }
 
               // if not, check if level exists in meet (uid in genderAwareMeetLevelMatrix)
-              _level = _objectSpread(_objectSpread({}, _.cloneDeep(_this5.genderAwareMeetLevelMatrix[_l.uid])), {}, {
+              _level = _objectSpread(_objectSpread({}, _.cloneDeep(_this6.genderAwareMeetLevelMatrix[_l.uid])), {}, {
                 is_new: true,
                 athletes: {}
               });
@@ -3987,18 +4094,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _athlete.dob = Moment(_athlete.dob);
               _athlete.dob_display = _athlete.dob.format('MM/DD/YYYY');
 
-              if (_this5.meet.tshirt_chart != null) {
-                sizing_id = _.map(_this5.meet.tshirt_chart.sizes, 'id');
+              if (_this6.meet.tshirt_chart != null) {
+                sizing_id = _.map(_this6.meet.tshirt_chart.sizes, 'id');
                 if (!sizing_id.includes(_athlete.tshirt_size_id)) _athlete.tshirt_size_id = null;
               }
 
-              if (_this5.meet.leo_chart != null) {
-                _sizing_id = _.map(_this5.meet.leo_chart.sizes, 'id');
+              if (_this6.meet.leo_chart != null) {
+                _sizing_id = _.map(_this6.meet.leo_chart.sizes, 'id');
                 if (!_sizing_id.includes(_athlete.leo_size_id)) _athlete.leo_size_id = null;
               } //#region - if old athlete t-shirt_size set then use old athlete t-shirt-size otherwise null.
 
 
-              _context4.t6 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this5.old_data_athletes.athletes);
+              _context4.t6 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this6.old_data_athletes.athletes);
 
             case 76:
               if ((_context4.t7 = _context4.t6()).done) {
@@ -4007,7 +4114,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               a_i = _context4.t7.value;
-              old_a = _.cloneDeep(_this5.old_data_athletes.athletes[a_i]);
+              old_a = _.cloneDeep(_this6.old_data_athletes.athletes[a_i]);
 
               if (!(old_a.id === _athlete.id)) {
                 _context4.next = 83;
@@ -4029,14 +4136,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               if (old_level !== null && old_level != _lid && tmp < 1) {
                 // If athlete was moved to a different level and is not a new addition
                 _athlete.include_in_calculation = true;
-                _athlete.was_late = _athlete.was_late || _this5.late;
+                _athlete.was_late = _athlete.was_late || _this6.late;
                 tmp_fee = _level.registration_fee - _athlete.fee;
                 _athlete.refund = tmp_fee < 0 ? tmp_fee * -1 : 0; //athlete.fee;
 
                 _athlete.late_refund = _athlete.late_fee;
                 _athlete.fee = tmp_fee < 0 ? 0 : tmp_fee;
                 if (_athlete.was_late) _athlete.late_fee = _level.late_registration_fee;
-                _athlete.status = _athlete.to_waitlist || _athlete.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
+                _athlete.status = _athlete.to_waitlist || _athlete.in_waitlist ? _this6.constants.athletes.statuses.NonReserved : _this6.constants.athletes.statuses.Registered;
 
                 if (!_athlete.in_waitlist) {
                   freed_slots_tracker[old_level] = freed_slots_tracker.hasOwnProperty(old_level) ? freed_slots_tracker[old_level] + 1 : 1;
@@ -4048,7 +4155,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 // athlete was scratched
                 _athlete.refund = _athlete.fee;
                 _athlete.late_refund = _athlete.late_fee;
-                _athlete.status = _this5.constants.athletes.statuses.Scratched;
+                _athlete.status = _this6.constants.athletes.statuses.Scratched;
 
                 if (!_athlete.in_waitlist) {
                   freed_slots_tracker[_lid] = freed_slots_tracker.hasOwnProperty(_lid) ? freed_slots_tracker[_lid] + 1 : 1;
@@ -4057,13 +4164,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 // athlete was added
                 _athlete.include_in_calculation = true;
                 _athlete.is_new = true;
-                _athlete.to_waitlist = _this5.meet.is_waitlist;
-                _athlete.was_late = _this5.late;
+                _athlete.to_waitlist = _this6.meet.is_waitlist;
+                _athlete.was_late = _this6.late;
                 _athlete.refund = _athlete.fee;
                 _athlete.late_refund = _athlete.late_fee;
                 _athlete.fee += _level.registration_fee;
                 if (_athlete.was_late) _athlete.late_fee += _level.late_registration_fee;
-                _athlete.status = _athlete.in_waitlist ? _this5.constants.athletes.statuses.NonReserved : _this5.constants.athletes.statuses.Registered;
+                _athlete.status = _athlete.in_waitlist ? _this6.constants.athletes.statuses.NonReserved : _this6.constants.athletes.statuses.Registered;
 
                 if (!_athlete.in_waitlist) {
                   added_slots_tracker[_lid] = added_slots_tracker.hasOwnProperty(_lid) ? added_slots_tracker[_lid] + 1 : 1;
@@ -4118,7 +4225,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               new_a = _l2.athletes[j];
-              _context4.t12 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this5.old_data_athletes.athletes);
+              _context4.t12 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this6.old_data_athletes.athletes);
 
             case 105:
               if ((_context4.t13 = _context4.t12()).done) {
@@ -4127,14 +4234,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               _a_i = _context4.t13.value;
-              _old_a = _.cloneDeep(_this5.old_data_athletes.athletes[_a_i]);
+              _old_a = _.cloneDeep(_this6.old_data_athletes.athletes[_a_i]);
 
               if (!(new_a.status != _old_a.status)) {
                 _context4.next = 111;
                 break;
               }
 
-              _this5.scratch_athlete = true;
+              _this6.scratch_athlete = true;
               return _context4.abrupt("break", 113);
 
             case 111:
@@ -4150,9 +4257,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _l2.freed_slots = freed_slots_tracker.hasOwnProperty(_lid2) ? freed_slots_tracker[_lid2] : 0;
               _l2.added_slots = added_slots_tracker.hasOwnProperty(_lid2) ? added_slots_tracker[_lid2] : 0;
               _l2.slots += _l2.freed_slots;
-              _this5.meet.slots += _l2.freed_slots;
+              _this6.meet.slots += _l2.freed_slots;
               _l2.slots -= _l2.added_slots;
-              _this5.meet.slots -= _l2.added_slots;
+              _this6.meet.slots -= _l2.added_slots;
               _l2.expanded = true;
 
               _l2.athlete_count = function () {
@@ -4182,7 +4289,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _l2.changes = {
                 team: false,
-                scratch_athlete: _this5.scratch_athlete
+                scratch_athlete: _this6.scratch_athlete
               };
 
             case 126:
@@ -4216,7 +4323,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _coach.dob = Moment(_coach.dob);
               _coach.dob_display = _coach.dob.format('MM/DD/YYYY'); //#region - if old athlete t-shirt_size set then use old athlete t-shirt-size otherwise null.
 
-              _context4.t16 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this5.old_data_athletes.coaches);
+              _context4.t16 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this6.old_data_athletes.coaches);
 
             case 141:
               if ((_context4.t17 = _context4.t16()).done) {
@@ -4225,7 +4332,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               c_i = _context4.t17.value;
-              old_c = _.cloneDeep(_this5.old_data_athletes.coaches[c_i]);
+              old_c = _.cloneDeep(_this6.old_data_athletes.coaches[c_i]);
 
               if (!(old_c.id === _coach.id)) {
                 _context4.next = 147;
@@ -4245,13 +4352,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               if (_tmp < 0) {
                 // coach was scratched
-                _coach.status = _this5.constants.coach.statuses.Scratched;
+                _coach.status = _this6.constants.coach.statuses.Scratched;
               } else if (_tmp > 0) {
                 // coach was added
                 _coach.is_new = true;
-                _coach.to_waitlist = _this5.meet.is_waitlist;
-                _coach.was_late = _this5.late;
-                _coach.status = _coach.in_waitlist ? _this5.constants.coaches.statuses.NonReserved : _this5.constants.coaches.statuses.Registered;
+                _coach.to_waitlist = _this6.meet.is_waitlist;
+                _coach.was_late = _this6.late;
+                _coach.status = _coach.in_waitlist ? _this6.constants.coaches.statuses.NonReserved : _this6.constants.coaches.statuses.Registered;
               } else {// no status change
               }
 
@@ -4268,11 +4375,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }; //#endregion
 
 
-              Vue.set(_this5, 'state', state);
+              Vue.set(_this6, 'state', state);
 
-              _this5.calculateMeetNeededWaitlistSlots();
+              _this6.calculateMeetNeededWaitlistSlots();
 
-              _this5.calculateSubtotal();
+              _this6.calculateSubtotal();
 
               _context4.next = 168;
               break;
@@ -4293,17 +4400,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 msg = _context4.t18;
               }
 
-              _this5.errorMessage = msg + '<br/>Please reload this page.';
-              _this5.isError = true;
+              _this6.errorMessage = msg + '<br/>Please reload this page.';
+              _this6.isError = true;
 
             case 168:
               _context4.prev = 168;
-              _this5.isLoading = false;
+              _this6.isLoading = false;
               return _context4.finish(168);
 
             case 171:
               _context4.next = 173;
-              return _this5.loadPaymentOptions(_this5.state);
+              return _this6.loadPaymentOptions(_this6.state);
 
             case 173:
             case "end":
@@ -71077,6 +71184,98 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
+    _c(
+      "div",
+      {
+        staticClass: "modal fade",
+        attrs: {
+          id: "modal-coupon",
+          tabindex: "-1",
+          role: "dialog",
+          "aria-labelledby": "modal-coupon",
+          "aria-hidden": "true"
+        }
+      },
+      [
+        _c(
+          "div",
+          {
+            staticClass: "modal-dialog modal-dialog-centered",
+            attrs: { role: "document" }
+          },
+          [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(0),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c(
+                  "div",
+                  { staticClass: "d-flex flex-row flex-no-wrap mb-3" },
+                  [
+                    _c("div", { staticStyle: { width: "50%" } }, [
+                      _vm._v(
+                        "\n                            Enter Your Coupon Code\n                        "
+                      )
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "ml-1" }, [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.coupon,
+                            expression: "coupon"
+                          }
+                        ],
+                        staticClass: "form-control form-control-sm",
+                        attrs: {
+                          type: "text",
+                          placeholder: "XXXXXXXX",
+                          value: ""
+                        },
+                        domProps: { value: _vm.coupon },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.coupon = $event.target.value
+                          }
+                        }
+                      })
+                    ])
+                  ]
+                ),
+                _vm._v(" "),
+                _c("div", { staticClass: "container-fluid" }, [
+                  _c("div", { staticClass: "text-right mt-3" }, [
+                    _vm._m(1),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-sm btn-success",
+                        on: {
+                          click: function($event) {
+                            return _vm.checkCoupon(_vm.coupon)
+                          }
+                        }
+                      },
+                      [
+                        _c("span", { staticClass: "fas fa-fw fa-check" }),
+                        _vm._v(" Confirm\n                            ")
+                      ]
+                    )
+                  ])
+                ])
+              ])
+            ])
+          ]
+        )
+      ]
+    ),
+    _vm._v(" "),
     _vm.isLoading
       ? _c("div", { staticClass: "text-center p-3" }, [
           _c("span", {
@@ -71087,14 +71286,14 @@ var render = function() {
         ])
       : _vm.errorMessage !== null
       ? _c("div", { staticClass: "alert alert-danger" }, [
-          _vm._m(0),
+          _vm._m(2),
           _vm._v(" "),
           _c("div", { domProps: { innerHTML: _vm._s(_vm.errorMessage) } })
         ])
       : _vm.state !== null
       ? _c("div", [
           _c("div", [
-            _vm._m(1),
+            _vm._m(3),
             _vm._v(" "),
             _c("div", { staticClass: "mb-2 ml-3" }, [
               _c("div", {}, [
@@ -71144,7 +71343,7 @@ var render = function() {
                 _vm.step == 1
                   ? _c("div", [
                       _c("div", [
-                        _vm._m(2),
+                        _vm._m(4),
                         _vm._v(" "),
                         _c("div", { staticClass: "mb-2" }, [
                           _c("div", { staticClass: "mb-1" }, [
@@ -71326,7 +71525,7 @@ var render = function() {
                                                           "table table-sm table-hover"
                                                       },
                                                       [
-                                                        _vm._m(3, true),
+                                                        _vm._m(5, true),
                                                         _vm._v(" "),
                                                         _c(
                                                           "tbody",
@@ -71539,7 +71738,7 @@ var render = function() {
                                                                                   "div",
                                                                                   [
                                                                                     _vm._m(
-                                                                                      4,
+                                                                                      6,
                                                                                       true
                                                                                     )
                                                                                   ]
@@ -71608,7 +71807,7 @@ var render = function() {
                                               "div",
                                               { staticClass: "flex-grow-1" },
                                               [
-                                                _vm._m(5),
+                                                _vm._m(7),
                                                 _vm._v(" "),
                                                 _c("span", {
                                                   class:
@@ -71644,7 +71843,7 @@ var render = function() {
                                                       "table table-sm table-hover"
                                                   },
                                                   [
-                                                    _vm._m(6),
+                                                    _vm._m(8),
                                                     _vm._v(" "),
                                                     _c(
                                                       "tbody",
@@ -71857,7 +72056,7 @@ var render = function() {
                                                                               "div",
                                                                               [
                                                                                 _vm._m(
-                                                                                  7,
+                                                                                  9,
                                                                                   true
                                                                                 )
                                                                               ]
@@ -73323,7 +73522,7 @@ var render = function() {
                                                                                   "div",
                                                                                   [
                                                                                     _vm._m(
-                                                                                      8,
+                                                                                      10,
                                                                                       true
                                                                                     )
                                                                                   ]
@@ -73382,7 +73581,7 @@ var render = function() {
                                                                               },
                                                                               [
                                                                                 _vm._m(
-                                                                                  9,
+                                                                                  11,
                                                                                   true
                                                                                 ),
                                                                                 _vm._v(
@@ -73498,7 +73697,7 @@ var render = function() {
                                                     }),
                                                     _vm._v(" "),
                                                     _c("div", [
-                                                      _vm._m(10, true),
+                                                      _vm._m(12, true),
                                                       _vm._v(" "),
                                                       _c(
                                                         "span",
@@ -73553,7 +73752,7 @@ var render = function() {
                                               "div",
                                               { staticClass: "flex-grow-1" },
                                               [
-                                                _vm._m(11),
+                                                _vm._m(13),
                                                 _vm._v(
                                                   " |\n                                            "
                                                 ),
@@ -74185,7 +74384,7 @@ var render = function() {
                                                                               "div",
                                                                               [
                                                                                 _vm._m(
-                                                                                  12,
+                                                                                  14,
                                                                                   true
                                                                                 )
                                                                               ]
@@ -74244,7 +74443,7 @@ var render = function() {
                             "div",
                             { staticClass: "flex-grow-1 text-uppercase" },
                             [
-                              _vm._m(13),
+                              _vm._m(15),
                               _vm._v(" "),
                               _c(
                                 "span",
@@ -74294,7 +74493,7 @@ var render = function() {
                         : _vm.paymentProcessedMessage != null
                         ? _c("div", [
                             _c("div", { staticClass: "alert alert-success" }, [
-                              _vm._m(14),
+                              _vm._m(16),
                               _c("br"),
                               _vm._v(
                                 "\n                        " +
@@ -74320,18 +74519,18 @@ var render = function() {
                           ])
                         : _vm.isProcessingPayment
                         ? _c("div", { staticClass: "alert alert-warning" }, [
-                            _vm._m(15),
+                            _vm._m(17),
                             _c("br"),
                             _vm._v(
                               "\n                    Your payment is being processed.\n                    "
                             ),
-                            _vm._m(16)
+                            _vm._m(18)
                           ])
                         : _c("div", [
                             _vm.paymentOptions != null
                               ? _c("div", [
                                   _c("div", [
-                                    _vm._m(17),
+                                    _vm._m(19),
                                     _vm._v(" "),
                                     _vm.paymentOptions.methods.card
                                       ? _c(
@@ -74600,7 +74799,7 @@ var render = function() {
                                                                   },
                                                                   [
                                                                     _vm._m(
-                                                                      18,
+                                                                      20,
                                                                       true
                                                                     ),
                                                                     _vm._v(" "),
@@ -74748,7 +74947,7 @@ var render = function() {
                                                             "form-group small mt-1 ml-3"
                                                         },
                                                         [
-                                                          _vm._m(19),
+                                                          _vm._m(21),
                                                           _vm._v(" "),
                                                           _c("input", {
                                                             directives: [
@@ -74796,7 +74995,7 @@ var render = function() {
                                                             "small ml-3"
                                                         },
                                                         [
-                                                          _vm._m(20),
+                                                          _vm._m(22),
                                                           _vm._v(" "),
                                                           _c(
                                                             "p",
@@ -74927,7 +75126,7 @@ var render = function() {
                                                       }
                                                     }),
                                                     _vm._v(" "),
-                                                    _vm._m(21)
+                                                    _vm._m(23)
                                                   ]
                                                 )
                                           ]
@@ -74937,10 +75136,10 @@ var render = function() {
                                   _vm._v(" "),
                                   _vm.summary != null
                                     ? _c("div", { staticClass: "mb-3" }, [
-                                        _vm._m(22),
+                                        _vm._m(24),
                                         _vm._v(" "),
                                         _c("div", { staticClass: "row" }, [
-                                          _vm._m(23),
+                                          _vm._m(25),
                                           _vm._v(" "),
                                           _c("div", { staticClass: "col" }, [
                                             _vm.chosenMethod.type == "card"
@@ -74988,7 +75187,7 @@ var render = function() {
                                         ]),
                                         _vm._v(" "),
                                         _c("div", { staticClass: "row" }, [
-                                          _vm._m(24),
+                                          _vm._m(26),
                                           _vm._v(" "),
                                           _c("div", { staticClass: "col" }, [
                                             _vm._v(
@@ -75005,7 +75204,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.own_meet_refund > 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(25),
+                                              _vm._m(27),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75036,7 +75235,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.handling > 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(26),
+                                              _vm._m(28),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75058,7 +75257,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.used_balance != 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(27),
+                                              _vm._m(29),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75088,7 +75287,7 @@ var render = function() {
                                         _vm._v(" "),
                                         _vm.summary.processor > 0
                                           ? _c("div", { staticClass: "row" }, [
-                                              _vm._m(28),
+                                              _vm._m(30),
                                               _vm._v(" "),
                                               _c(
                                                 "div",
@@ -75099,6 +75298,28 @@ var render = function() {
                                                       _vm._s(
                                                         _vm.numberFormat(
                                                           _vm.summary.processor
+                                                        )
+                                                      ) +
+                                                      "\n                                "
+                                                  )
+                                                ]
+                                              )
+                                            ])
+                                          : _vm._e(),
+                                        _vm._v(" "),
+                                        _vm.couponValue > 0
+                                          ? _c("div", { staticClass: "row" }, [
+                                              _vm._m(31),
+                                              _vm._v(" "),
+                                              _c(
+                                                "div",
+                                                { staticClass: "col" },
+                                                [
+                                                  _vm._v(
+                                                    "\n                                    - $" +
+                                                      _vm._s(
+                                                        _vm.numberFormat(
+                                                          _vm.couponValue
                                                         )
                                                       ) +
                                                       "\n                                "
@@ -75122,7 +75343,7 @@ var render = function() {
                                                   "flex-grow-1 text-uppercase"
                                               },
                                               [
-                                                _vm._m(29),
+                                                _vm._m(32),
                                                 _vm._v(" "),
                                                 _c(
                                                   "span",
@@ -75145,6 +75366,31 @@ var render = function() {
                                             ),
                                             _vm._v(" "),
                                             _c("div", [
+                                              !this.couponSuccess
+                                                ? _c(
+                                                    "button",
+                                                    {
+                                                      staticClass:
+                                                        "btn btn-sm btn-info mr-1",
+                                                      attrs: {
+                                                        id: "couponBtn"
+                                                      },
+                                                      on: {
+                                                        click: _vm.haveCoupon
+                                                      }
+                                                    },
+                                                    [
+                                                      _c("span", {
+                                                        staticClass:
+                                                          "fas fa-ticket-alt"
+                                                      }),
+                                                      _vm._v(
+                                                        " Have a Coupon?\n                                    "
+                                                      )
+                                                    ]
+                                                  )
+                                                : _vm._e(),
+                                              _vm._v(" "),
                                               _c(
                                                 "button",
                                                 {
@@ -75224,6 +75470,51 @@ var render = function() {
   ])
 }
 var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h5", { staticClass: "modal-title text-primary" }, [
+        _c("span", { staticClass: "fas fa-check" }),
+        _vm._v(" Coupon\n                    ")
+      ]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "close",
+          attrs: {
+            type: "button",
+            "data-dismiss": "modal",
+            "aria-label": "Close"
+          }
+        },
+        [
+          _c("span", {
+            staticClass: "fas fa-times",
+            attrs: { "aria-hidden": "true" }
+          })
+        ]
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "button",
+      {
+        staticClass: "btn btn-sm btn-secondary mr-1",
+        attrs: { "data-dismiss": "modal" }
+      },
+      [
+        _c("span", { staticClass: "far fa-fw fa-times-circle" }),
+        _vm._v(" Close\n                            ")
+      ]
+    )
+  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -75598,6 +75889,15 @@ var staticRenderFns = [
     return _c("div", { staticClass: "col" }, [
       _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
       _vm._v(" Payment Processor Fee :\n                                ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col" }, [
+      _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
+      _vm._v(" Coupon :\n                                ")
     ])
   },
   function() {

@@ -35,7 +35,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-primary">
-                    <span class="fas fa-check"></span> Edit Deposit
+                    <span class="fas fa-check"></span> Edit Deposit @{{ depositVarEdit.gym_id }}
                 </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span class="fas fa-times" aria-hidden="true"></span>
@@ -45,10 +45,10 @@
             <div class="modal-body">
                 <div class="d-flex flex-row flex-no-wrap mb-3">
                     <div style="width: 50%;">
-                        <select class="form-control form-control-sm" id="select3" ref="selectedItem" >
+                        <select class="form-control form-control-sm" id="select3" ref="selectedItem" > 
                             <option v-for="(item , index) in allGym" v-bind:key="index"  
-                                :value="item.id" :selected="item.id == depositVarEdit.gym_id" >
-                                @{{ item.name + ' - ' +item.city +', '+ item.state.code }}
+                                :value="item.id" :selected="depositVarEdit.gym_id" >
+                                @{{ item.name + ' - ' +item.city +', '+ item.state.code +', '+depositVarEdit.gym_id }}
                             </option>
                         </select>
                     </div>
@@ -79,7 +79,7 @@
         <select class="form-control form-control-sm" id="select2" v-model="depositVar.gymId">
             <option value="">Select Gym</option>
             <option v-for="g in allGym" :key="g['id']"
-                :value="g['id']">@{{ g['name'] + ' - ' +g['city'] +','+ g['state']['code']}}
+                :value="g['id']">@{{ g['name'] + ' - ' +g['city'] +', ' + g['email']}}
             </option>
         </select>
     </div>
