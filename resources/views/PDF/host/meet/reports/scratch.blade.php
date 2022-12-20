@@ -85,7 +85,7 @@
                                             </td>
 
                                             <td class="col-4">
-                                                {{ $meet->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
+                                                {{ $a->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
                                             </td>
 
                                             <td class="col-5">
