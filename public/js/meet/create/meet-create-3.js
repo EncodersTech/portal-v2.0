@@ -69989,7 +69989,7 @@ var render = function() {
                                                       _vm._v(" "),
                                                       _c("div", [
                                                         _c("strong", [
-                                                          _vm._v("Regular:")
+                                                          _vm._v("Standard:")
                                                         ]),
                                                         _vm._v(
                                                           "\n                                                    $" +
@@ -70293,7 +70293,7 @@ var staticRenderFns = [
     return _c("label", { attrs: { for: "add-level-registration-fee" } }, [
       _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
       _vm._v(
-        "\n                                            Registration Fee\n                                        "
+        "\n                                            Standard Registration Fee\n                                        "
       )
     ])
   },
@@ -70478,7 +70478,7 @@ var staticRenderFns = [
     return _c("label", { attrs: { for: "add-level-registration-fee" } }, [
       _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
       _vm._v(
-        "\n                                            Registration Fee\n                                        "
+        "\n                                            Standard Registration Fee\n                                        "
       )
     ])
   },

@@ -94,7 +94,7 @@
 
             <div class="modal-body">
                 <p>
-                    If you chose the micro-deposit method to verify your bank account, our payment processor will
+                    Micro-deposit method is used to verify your bank account, our payment processor will
                     transfer <strong>two deposits of less than $0.10</strong> to your linked bank account in 1-3
                     business days.<br/><br/>
 

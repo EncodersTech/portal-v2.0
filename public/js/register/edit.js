@@ -4761,6 +4761,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         athlete.original_level = athleteLevel.uid;
         athlete.total = Utils.toFloat(athlete.new_fee) + Utils.toFloat(athlete.new_late_fee) - Utils.toFloat(athlete.new_refund) - Utils.toFloat(athlete.new_late_refund);
         athleteLevel.athletes.push(athlete);
+        athleteLevel.athletes.sort(function (a, b) {
+          if (a.last_name.toLowerCase() < b.last_name.toLowerCase()) return -1;
+          if (a.last_name.toLowerCase() > b.last_name.toLowerCase()) return 1;
+          return 0;
+        });
       };
 
       for (var _i7 in registration.athletes) {
@@ -4922,6 +4927,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           specialist.total += Utils.toFloat(evt.new_fee) + Utils.toFloat(evt.new_late_fee) - Utils.toFloat(evt.new_refund) - Utils.toFloat(evt.new_late_refund);
         });
         specialistLevel.athletes.push(specialist);
+        specialistLevel.athletes.sort(function (a, b) {
+          if (a.last_name.toLowerCase() < b.last_name.toLowerCase()) return -1;
+          if (a.last_name.toLowerCase() > b.last_name.toLowerCase()) return 1;
+          return 0;
+        });
       };
 
       for (var _i8 in registration.specialists) {
@@ -5018,6 +5028,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         coach.original_data = _.cloneDeep(coach);
 
         _this14.coaches.push(coach);
+
+        _this14.coaches.sort(function (a, b) {
+          if (a.last_name.toLowerCase() < b.last_name.toLowerCase()) return -1;
+          if (a.last_name.toLowerCase() > b.last_name.toLowerCase()) return 1;
+          return 0;
+        });
       };
 
       for (var _i9 in registration.coaches) {

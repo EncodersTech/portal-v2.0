@@ -6,7 +6,7 @@
             <div class="row">
                 <div class="col">
                     <h5 class="border-bottom"><span class="fas fa-fw fa-clipboard-list">
-                        </span> Registration
+                        </span> Standard Registration
                     </h5>
                 </div>
             </div>
@@ -16,7 +16,7 @@
                     <label for="registration_start_date" class="mb-1" ref="oldStartDate"
                         data-value="{{ $tm->oldOrValue('registration_start_date') }}">
                         <span class="fas fa-fw fa-calendar-alt"></span>
-                        Registration Start Date <span class="text-danger">*</span>
+                        Standard Registration Start Date <span class="text-danger">*</span>
                     </label>
                     <datepicker :input-class="'form-control form-control-sm bg-white'" :value="startDate"
                         @selected="startDateChanged" @input="startDateChanged" :wrapper-class="'flex-grow-1'"
@@ -34,7 +34,7 @@
                     <label for="registration_end_date" class="mb-1" ref="oldEndDate"
                         data-value="{{ $tm->oldOrValue('registration_end_date') }}">
                         <span class="fas fa-fw fa-calendar-alt"></span>
-                        Registration End Date <span class="text-danger">*</span>
+                        Standard Registration End Date <span class="text-danger">*</span>
                     </label>
                     <datepicker :input-class="'form-control form-control-sm bg-white'" :value="endDate"
                         :wrapper-class="'flex-grow-1'" name="registration_end_date" :format="'MM/dd/yyyy'"

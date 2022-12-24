@@ -3202,6 +3202,15 @@ export default {
                 athlete.total = Utils.toFloat(athlete.new_fee) + Utils.toFloat(athlete.new_late_fee)
                             - Utils.toFloat(athlete.new_refund) - Utils.toFloat(athlete.new_late_refund);
                 athleteLevel.athletes.push(athlete);
+                athleteLevel.athletes.sort((a, b) => {
+                    if (a.last_name.toLowerCase() < b.last_name.toLowerCase())
+                        return -1;
+
+                    if (a.last_name.toLowerCase() > b.last_name.toLowerCase())
+                        return 1;
+
+                    return 0;
+                });
             }
 
             for (let i in registration.specialists) {
@@ -3391,6 +3400,15 @@ export default {
                                         - Utils.toFloat(evt.new_refund) - Utils.toFloat(evt.new_late_refund);
                 });
                 specialistLevel.athletes.push(specialist);
+                specialistLevel.athletes.sort((a, b) => {
+                    if (a.last_name.toLowerCase() < b.last_name.toLowerCase())
+                        return -1;
+
+                    if (a.last_name.toLowerCase() > b.last_name.toLowerCase())
+                        return 1;
+
+                    return 0;
+                });
             }
 
             for (let i in registration.coaches) {
@@ -3492,6 +3510,15 @@ export default {
                 coach.original_data = _.cloneDeep(coach);
 
                 this.coaches.push(coach);
+                this.coaches.sort((a, b) => {
+                    if (a.last_name.toLowerCase() < b.last_name.toLowerCase())
+                        return -1;
+
+                    if (a.last_name.toLowerCase() > b.last_name.toLowerCase())
+                        return 1;
+
+                    return 0;
+                });
             }
 
             this.registration  = registration;

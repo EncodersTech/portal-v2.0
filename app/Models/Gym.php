@@ -2159,9 +2159,10 @@ class Gym extends Model
     }
     public function getCoachesFromMeetRegistrations($meetID)
     {
-        $query = 'select c.id,c.first_name,c.last_name,c.usag_no,c.aau_no,c.usaigc_no,c.nga_no from meet_registrations as mr 
+        $query = 'select c.id,c.first_name,c.last_name,c.usag_no,c.aau_no,c.usaigc_no,c.nga_no 
+        from meet_registrations as mr 
         join gyms on mr.gym_id = gyms.id
-        join coaches as c on c.gym_id = gyms.id
+        join registration_coaches as c on c.meet_registration_id = mr.id
         where gyms.id = '.$this->id.' and meet_id = '.$meetID;
         $result = DB::select($query);
         return $result;

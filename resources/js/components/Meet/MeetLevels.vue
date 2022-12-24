@@ -128,7 +128,7 @@
                                         <div class="col-lg mb-2">
                                             <label for="add-level-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Registration Fee
+                                                Standard Registration Fee
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -334,7 +334,7 @@
                                         <div class="col-lg mb-2">
                                             <label for="add-level-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Registration Fee
+                                                Standard Registration Fee
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -631,7 +631,7 @@
                                                         <strong>Limit:</strong> {{ level.athlete_limit }}
                                                     </div>
                                                     <div>
-                                                        <strong>Regular:</strong>
+                                                        <strong>Standard:</strong>
                                                         ${{ level.registration_fee}}
                                                     </div>
                                                     <div v-if="late">

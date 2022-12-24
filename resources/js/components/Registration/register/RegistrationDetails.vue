@@ -1182,6 +1182,15 @@
                         coach.checked = false;
 
                         this.coaches.push(coach);
+                        this.coaches.sort((a, b) => {
+                            if (a.last_name.toLowerCase() < b.last_name.toLowerCase())
+                                return -1;
+
+                            if (a.last_name.toLowerCase() > b.last_name.toLowerCase())
+                                return 1;
+
+                            return 0;
+                        });
                     }
                 }).catch(error => {
                     let msg = '';
@@ -1242,6 +1251,15 @@
                 }
 
                 level.athletes.push(levelAthlete);
+                level.athletes.sort((a, b) => {
+                    if (a.last_name.toLowerCase() < b.last_name.toLowerCase())
+                        return -1;
+
+                    if (a.last_name.toLowerCase() > b.last_name.toLowerCase())
+                        return 1;
+
+                    return 0;
+                });
             },
 
             toggleItems(toggle) {

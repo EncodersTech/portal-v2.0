@@ -2883,6 +2883,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           coach.checked = false;
 
           _this6.coaches.push(coach);
+
+          _this6.coaches.sort(function (a, b) {
+            if (a.last_name.toLowerCase() < b.last_name.toLowerCase()) return -1;
+            if (a.last_name.toLowerCase() > b.last_name.toLowerCase()) return 1;
+            return 0;
+          });
         }
       })["catch"](function (error) {
         var msg = '';
@@ -2940,6 +2946,11 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       }
 
       level.athletes.push(levelAthlete);
+      level.athletes.sort(function (a, b) {
+        if (a.last_name.toLowerCase() < b.last_name.toLowerCase()) return -1;
+        if (a.last_name.toLowerCase() > b.last_name.toLowerCase()) return 1;
+        return 0;
+      });
     },
     toggleItems: function toggleItems(toggle) {
       this.bodies.forEach(function (b) {
