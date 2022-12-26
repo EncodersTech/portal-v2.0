@@ -60,7 +60,7 @@
         </div>
     </div>
 @empty
-    <h3 style="width:450px; margin:0 auto;">No USAG Reservation available.</h3>
+    <h3 style="width:450px; margin:0 auto;">No USAG Reservations available.</h3>
 @endforelse
 
 

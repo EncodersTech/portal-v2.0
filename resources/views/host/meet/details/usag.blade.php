@@ -311,7 +311,7 @@
     </div>
     @endif
     @else
-    <h4>No USAG Reservation.</h4>
+    <h4>No USAG Reservations.</h4>
     @endif
 </div>
 
