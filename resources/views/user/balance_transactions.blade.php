@@ -227,7 +227,7 @@
                                 @if($isDwollaVerified)
                                 <currency-input class="form-control form-control-sm" v-model="withdrawal.amount"
                                     :currency="null" locale="en" :precision="2" :allow-negative="false"
-                                    :value-range="{min: 0, max: {{ Auth::user()->cleared_balance }}}"
+                                    :value-range="{min: 0, max: {{ (Auth::user()->cleared_balance - 0.01) }}}"
                                     :disabled="!withdrawal.account">
                                 </currency-input>
                                 @else
