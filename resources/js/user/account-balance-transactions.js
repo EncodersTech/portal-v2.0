@@ -145,16 +145,16 @@ $(document).ready(() => {
                 if (!result)
                     return axios.get('/api/user/bank/accounts');
                 
-                let bankSt = [];
-                for (var i in result.data.bank_accounts) {
-                    if(result.data.bank_accounts[i].status == 'verified')
-                    bankSt[i] = result.data.bank_accounts[i];
-                }
-                this.bankAccounts = bankSt;
-                //this.bankAccounts = result.data.bank_accounts
-                // this.bankAccounts = result.data.bank_accounts.filter(
-                //     ba => (ba.account_type != 'balance') && (ba.status == 'verified')
-                // );
+                // let bankSt = [];
+                // for (var i in result.data.bank_accounts) {
+                //     if(result.data.bank_accounts[i].status == 'verified')
+                //     bankSt[i] = result.data.bank_accounts[i];
+                // }
+                // this.bankAccounts = bankSt;
+                this.bankAccounts = result.data.bank_accounts;
+                this.bankAccounts = result.data.bank_accounts.filter(
+                    ba => (ba.account_type != 'balance') && (ba.status == 'verified')
+                );
             },
 
             loadBalanceTransactions(result) {
