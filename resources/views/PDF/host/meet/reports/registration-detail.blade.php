@@ -96,7 +96,7 @@
                         <tr>
                             <td class="col-1">Club #</td>
                             <td class="col-1">
-                                {{ !empty($registration->gym->usag_membership)?'#USAG':''}}{{!empty($registration->gym->usaigc_membership)?', #USAIGC':''}}{{!empty($registration->gym->aau_membership)?', #AAU':''}}{{!empty($registration->gym->nga_membership)?', #NGA':''}}
+                                {{ !empty($registration->gym->usag_membership)?'#USAG:'.$registration->gym->usag_membership:''}}{{!empty($registration->gym->usaigc_membership)?', #USAIGC:'.$registration->gym->usaigc_membership:''}}{{!empty($registration->gym->aau_membership)?', #AAU:'.$registration->gym->aau_membership:''}}{{!empty($registration->gym->nga_membership)?', #NGA:'.$registration->gym->nga_membership:''}}
                             </td>
                         <tr>
                         <tr>

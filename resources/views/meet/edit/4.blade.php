@@ -9,7 +9,7 @@
                 <div class="col">
                     <h5 class="border-bottom">
                         <span class="fas fa-fw fa-copy"></span>
-                        Schedule &amp; Attachement
+                        Schedule &amp; Attachment
                     </h5>
                 </div>
             </div>

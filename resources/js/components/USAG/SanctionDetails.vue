@@ -407,7 +407,7 @@
                                 </strong>
                                 <p class="m-0">
                                     Once you apply the changes and assign this sanction to a meet,
-                                    you will no longuer be able to replace it in or remove it from that meet.
+                                    you will no longer be able to replace it in or remove it from that meet.
                                 </p>
                             </div>
                         
