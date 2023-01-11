@@ -78378,7 +78378,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("p", { staticClass: "m-0" }, [
         _vm._v(
-          "\n                                Once you apply the changes and assign this sanction to a meet,\n                                you will no longuer be able to replace it in or remove it from that meet.\n                            "
+          "\n                                Once you apply the changes and assign this sanction to a meet,\n                                you will no longer be able to replace it in or remove it from that meet.\n                            "
         )
       ])
     ])

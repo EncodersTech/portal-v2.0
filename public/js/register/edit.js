@@ -2789,6 +2789,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3059,7 +3063,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         change_level: false,
         change_number: false,
         change_specialist_events: false,
-        scratch: false
+        scratch: false,
+        scratch_without_refund: false
       },
       editing: {
         object: null,
@@ -3808,6 +3813,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               },
               scratch: function scratch() {
                 return athlete.is_new || vm.permissions.scratch && !athlete.has_pending_events();
+              },
+              scratch_without_refund: function scratch_without_refund() {
+                return athlete.is_new || !vm.permissions.scratch && !athlete.has_pending_events();
               }
             };
             athlete.original_data = _.cloneDeep(athlete);
@@ -3860,6 +3868,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               },
               scratch: function scratch() {
                 return athlete.is_new || vm.permissions.scratch && athlete.status == vm.constants.athletes.statuses.Registered;
+              },
+              scratch_without_refund: function scratch_without_refund() {
+                return athlete.is_new || !vm.permissions.scratch && athlete.status == vm.constants.athletes.statuses.Registered;
               }
             };
             athlete.new_fee = _this9.add_athlete_level.registration_fee;
@@ -4740,6 +4751,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           },
           scratch: function scratch() {
             return athlete.is_new || vm.permissions.scratch && athlete.status == vm.constants.athletes.statuses.Registered;
+          },
+          scratch_without_refund: function scratch_without_refund() {
+            return athlete.is_new || !vm.permissions.scratch && athlete.status == vm.constants.athletes.statuses.Registered;
           }
         };
         athlete.original_data = _.cloneDeep(athlete);
@@ -73804,6 +73818,47 @@ var render = function() {
                                                                                                                           ),
                                                                                                                           _vm._v(
                                                                                                                             " Scratch\n                                                                            "
+                                                                                                                          )
+                                                                                                                        ]
+                                                                                                                      )
+                                                                                                                    : _vm._e(),
+                                                                                                                  _vm._v(
+                                                                                                                    " "
+                                                                                                                  ),
+                                                                                                                  !athlete.is_scratched() &&
+                                                                                                                  !athlete.permissions.scratch() &&
+                                                                                                                  athlete.permissions.scratch_without_refund()
+                                                                                                                    ? _c(
+                                                                                                                        "button",
+                                                                                                                        {
+                                                                                                                          staticClass:
+                                                                                                                            "dropdown-item text-danger",
+                                                                                                                          attrs: {
+                                                                                                                            type:
+                                                                                                                              "button"
+                                                                                                                          },
+                                                                                                                          on: {
+                                                                                                                            click: function(
+                                                                                                                              $event
+                                                                                                                            ) {
+                                                                                                                              return _vm.scratchObject(
+                                                                                                                                athlete,
+                                                                                                                                "athlete",
+                                                                                                                                level
+                                                                                                                              )
+                                                                                                                            }
+                                                                                                                          }
+                                                                                                                        },
+                                                                                                                        [
+                                                                                                                          _c(
+                                                                                                                            "span",
+                                                                                                                            {
+                                                                                                                              staticClass:
+                                                                                                                                "fas fa-fw fa-user-slash"
+                                                                                                                            }
+                                                                                                                          ),
+                                                                                                                          _vm._v(
+                                                                                                                            " Scratch Without Refund\n                                                                            "
                                                                                                                           )
                                                                                                                         ]
                                                                                                                       )

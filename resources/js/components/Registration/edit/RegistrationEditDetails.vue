@@ -729,6 +729,10 @@
                                                                                 type="button" @click="scratchObject(athlete, 'athlete', level)">
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                             </button>
+                                                                            <button v-if="!athlete.is_scratched() && !athlete.permissions.scratch() && athlete.permissions.scratch_without_refund()" class="dropdown-item text-danger"
+                                                                                type="button" @click="scratchObject(athlete, 'athlete', level)">
+                                                                                <span class="fas fa-fw fa-user-slash"></span> Scratch Without Refund
+                                                                            </button>
                                                                             <button v-if="athlete.permissions.change_level()"
                                                                                 class="dropdown-item text-info" type="button"
                                                                                     @click="showMoveModal(athlete, level.uid)">
@@ -1351,6 +1355,7 @@ export default {
                 change_number:false,
                 change_specialist_events:false,
                 scratch:false,
+                scratch_without_refund: false
             },
 
             editing: {
@@ -2186,6 +2191,12 @@ export default {
                                 !athlete.has_pending_events()
                             );
                         },
+                        scratch_without_refund: function(){
+                            return athlete.is_new || (
+                                !vm.permissions.scratch &&
+                                !athlete.has_pending_events()
+                            );
+                        }
                     };
 
                     athlete.original_data = _.cloneDeep(athlete);
@@ -2252,6 +2263,12 @@ export default {
                                 (athlete.status == vm.constants.athletes.statuses.Registered)
                             );
                         },
+                        scratch_without_refund: function(){
+                            return athlete.is_new || (
+                                !vm.permissions.scratch &&
+                                (athlete.status == vm.constants.athletes.statuses.Registered)
+                            );
+                        }
                     };
 
                     athlete.new_fee = this.add_athlete_level.registration_fee;
@@ -3176,6 +3193,12 @@ export default {
                             (athlete.status == vm.constants.athletes.statuses.Registered)
                         );
                     },
+                    scratch_without_refund: function(){
+                            return athlete.is_new || (
+                                !vm.permissions.scratch &&
+                                (athlete.status == vm.constants.athletes.statuses.Registered)
+                            );
+                        }
                 };
 
                 athlete.original_data = _.cloneDeep(athlete);

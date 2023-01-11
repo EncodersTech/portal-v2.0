@@ -2927,7 +2927,20 @@ class MeetRegistration extends Model
 
                                             $athleteTotal = 0;
                                         } else {
-                                            throw new CustomBaseException('You are not allowed to scratch athletes.');
+                                            if ($a['is_specialist']) {
+                                                foreach ($athlete->events as $event) { /** @var RegistrationSpecialistEvent $event */
+                                                    $event->refund = 0; //$event->specialist->registration_level->specialist_registration_fee;
+                                                    $event->late_refund = 0; //$event->late_fee;
+                                                    $event->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED;
+                                                }
+                                            } else {
+                                                $newAthlete['refund'] = 0;//$athlete->registration_level->registration_fee;
+                                                $newAthlete['late_refund'] = 0;// $athlete->late_fee;
+                                                $newAthlete['status'] = RegistrationAthlete::STATUS_SCRATCHED;
+                                            }
+
+                                            $athleteTotal = 0;
+                                            // throw new CustomBaseException('You are not allowed to scratch athletes.');
                                         }
                                     }
                                 }

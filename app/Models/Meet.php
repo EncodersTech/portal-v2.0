@@ -2240,7 +2240,7 @@ class Meet extends Model
 //                            RegistrationAthlete::STATUS_REGISTERED
                         ])->where(DB::raw(
                             '(registration_athletes.refund + registration_athletes.late_refund)'
-                        ), '>', 0);
+                        ), '>=', 0);
                     },
                     'levels' => function ($q) {
                         $q->where(DB::raw(
