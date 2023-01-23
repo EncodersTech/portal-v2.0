@@ -282,12 +282,17 @@
                     $total_reg_at = 0;
                     $total_reg_fees = 0;
                     $total_participant_fees = 0;
+                    $coupon = 0;
+
                     ?>
                         @foreach ($registration->transactions as $transaction)
                         <?php
                         $reg_type = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? 'MODIFICATION' : 'Reg.';
                         $symbols = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? '-' : '';
                         $coupon = (isset($transaction->breakdown['gym']['coupon']) && $transaction->breakdown['gym']['coupon'] > 0) ? $transaction->breakdown['gym']['coupon'] : 0;
+                        if($transaction->breakdown['gym']['subtotal'] == 0 && $transaction->breakdown['gym']['coupon'] > 0)
+                        $gym_sub_total = (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] > 0) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'] + $coupon - (($transaction->breakdown['gym']['handling']+$transaction->breakdown['gym']['processor'])-$transaction->breakdown['gym']['total']);
+                        else
                         $gym_sub_total = (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] > 0) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'] + $coupon;
 
                         
@@ -331,7 +336,9 @@
                             $total_participant_fees = $transaction->breakdown['gym']['total'];
                             
                             $coupon = (isset($transaction->breakdown['gym']['coupon']) && $transaction->breakdown['gym']['coupon'] > 0) ? $transaction->breakdown['gym']['coupon'] : 0;
-                        //if ($transaction->breakdown['gym']['own_meet_refund'] > '0') {
+                            if($total_reg_fees == 0 && $coupon > 0)
+                                $total_reg_fees -= (($transaction->breakdown['gym']['handling']+$transaction->breakdown['gym']['processor'])-$transaction->breakdown['gym']['total']);
+                         //if ($transaction->breakdown['gym']['own_meet_refund'] > '0') {
 //                            $total_reg_fees -= $transaction->breakdown['gym']['subtotal'];
 //                            $total_participant_fees -= $transaction->breakdown['gym']['total'];
 //                        } else {

@@ -97,7 +97,7 @@
                                     <span class="fas fa-fw fa-tasks"></span> Registration Subtotal
                                 </div>
                                 <div class="col">
-                                    $@{{ numberFormat(transaction.breakdown.host.subtotal + (transaction.breakdown.host.coupon > 0 ? transaction.breakdown.host.coupon : 0)) }}
+                                    $@{{ numberFormat(transaction.breakdown.host.subtotal) }}
                                 </div>
                             </div>
                         </div>
@@ -188,7 +188,7 @@
                                     $@{{ numberFormat(transaction.breakdown.host.total) - numberFormat(transaction.total_handling_fee * cc_fees / 100) }}
                                 </div> -->
                                 <div class="col">
-                                $@{{ (transaction.breakdown.host.deposit_total == 0 || isNaN(transaction.breakdown.gym.deposit_total)) ? numberFormat(transaction.breakdown.host.total + (transaction.breakdown.host.coupon > 0 ? transaction.breakdown.host.coupon : 0)) : numberFormat(transaction.breakdown.host.deposit_total) }}
+                                $@{{ (transaction.breakdown.host.deposit_total == 0 || isNaN(transaction.breakdown.gym.deposit_total)) ? numberFormat(transaction.breakdown.host.total + parseFloat(transaction.breakdown.host.coupon > 0 ? transaction.breakdown.host.coupon : 0)) : numberFormat(transaction.breakdown.host.deposit_total) }}
                                 </div>
                             </div>
                         </div>
@@ -374,7 +374,7 @@
                                 $@{{ numberFormat(tx.breakdown.gym.deposit_total) }}
                             </span>
                             <span v-else :class="tx.breakdown.host.total < 0 ? 'text-danger' : 'text-success'">
-                                $@{{ numberFormat(tx.breakdown.host.total + (tx.breakdown.host.coupon>0?tx.breakdown.host.coupon:0)) }}
+                                $@{{ numberFormat(tx.breakdown.host.total + parseFloat(tx.breakdown.host.coupon>0?tx.breakdown.host.coupon:0)) }}
                             </span>
                         </td>
 

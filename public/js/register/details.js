@@ -77199,6 +77199,7 @@ $(document).ready(function (e) {
             tx.updated_at_display = tx.updated_at.format('MM/DD/YYYY hh:mm:ss A');
             tx.repayable = !tx.was_replaced && (tx.status == _this.constants.transactions.statuses.Canceled || tx.status == _this.constants.transactions.statuses.Failed || tx.status == _this.constants.transactions.statuses.WaitlistConfirmed);
             tx.waitlist = tx.status == _this.constants.transactions.statuses.WaitlistConfirmed || tx.status == _this.constants.transactions.statuses.WaitlistPending;
+            tx.breakdown.gym.subtotal = tx.breakdown.gym.subtotal == 0 && tx.breakdown.gym.coupon > 0 ? parseFloat(tx.breakdown.gym.subtotal) + parseFloat(tx.breakdown.gym.coupon) - (parseFloat(tx.breakdown.gym.handling) + parseFloat(tx.breakdown.gym.processor) - parseFloat(tx.breakdown.gym.total)) : parseFloat(tx.breakdown.gym.subtotal) + parseFloat(tx.breakdown.gym.coupon);
 
             _this.transactions.push(tx);
           }

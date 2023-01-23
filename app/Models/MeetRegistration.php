@@ -969,6 +969,7 @@ class MeetRegistration extends Model
                 ];
                 $snapshot['deposit'] = $deposit; //coupon
                 $couponAmount = 0;
+                $couponAmountMain = 0;
                 $prev_deposit = null;
                 if($coupon != '' && strlen($coupon) != 0)
                 {
@@ -981,14 +982,15 @@ class MeetRegistration extends Model
                                 ->first();
                     if($prev_deposit)
                     {
-                        $couponAmount = $prev_deposit->amount;
-                        $summary['subtotal'] -=  $couponAmount;
+                        // $ttl = $summary['subtotal'] + $summary['handling'] + $summary['processor'];
+                        // $couponAmount = $ttl < $prev_deposit->amount ? $ttl  : $prev_deposit->amount;
+                        $couponAmountMain = $prev_deposit->amount;
+                        $couponAmount = $summary['subtotal'] < $prev_deposit->amount ? $summary['subtotal']  : $prev_deposit->amount;
+                        $summary['subtotal'] -= $couponAmount;
                     }
                 }
                 $snapshot['coupon'] = $couponAmount;
-
                 $incurredFees = $registration->calculateRegistrationTotal($snapshot);
-
                 $subtotal = $incurredFees['subtotal'];
                 $deposit_subtotal = $incurredFees['deposit_subtotal'];
                 if($deposit)
@@ -1028,16 +1030,29 @@ class MeetRegistration extends Model
                     }
                     
                 }
-                // print_r($discount);
-                // die();
                 $calculatedFees = self::calculateFees($subtotal +  $couponAmount, $meet, $is_own, $chosenMethod,
                     $useBalance, $registrant->cleared_balance,$deposit, $couponAmount, $discount);
 
                 $calculatedFees += $incurredFees;
-
+                if($couponAmountMain > 0)
+                {
+                    if($calculatedFees['gym']['total'] + $couponAmount <= $couponAmountMain)
+                    {
+                        $couponAmount += $calculatedFees['gym']['total'];
+                        $calculatedFees['gym']['total'] = 0;
+                    }
+                    else if($calculatedFees['gym']['total'] + $couponAmount > $couponAmountMain)
+                    {
+                        $calculatedFees['gym']['total'] -= $couponAmountMain - $couponAmount;
+                        $couponAmount = $couponAmountMain;
+                    }
+                    $calculatedFees['gym']['coupon'] = $couponAmount;
+                    $calculatedFees['host']['coupon'] = $couponAmount;
+                }
+                // print_r($calculatedFees);
+                // print_r();
+                // die();
                 $gymSummary = $calculatedFees['gym'];
-                // print_r($gymSummary); die();
-
                 if($deposit)
                 {
                     if ($gymSummary['deposit_handling'] != $summary['handling'])
@@ -1050,7 +1065,6 @@ class MeetRegistration extends Model
                 }
 
 
-                
 
                 if ($gymSummary['used_balance'] != $summary['used_balance'])
                     throw new CustomBaseException('Used balance calculation mismatch.', -1);
@@ -1092,6 +1106,19 @@ class MeetRegistration extends Model
                 
                 if ($needRegularTransaction) {
                     if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
+                        $chosenMethod = [
+                            'type' => self::PAYMENT_OPTION_BALANCE,
+                            'id' => null,
+                            'fee' => $meet->balance_fee(),
+                            'mode' => self::PAYMENT_OPTION_FEE_MODE[self::PAYMENT_OPTION_BALANCE]
+                        ];
+                        
+                        $athleteStatus = RegistrationAthlete::STATUS_REGISTERED;
+                        $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
+                        $coachStatus = RegistrationCoach::STATUS_REGISTERED;
+                    }
+                    if($gymSummary['total'] == 0 && $couponAmountMain > 0)
+                    {
                         $chosenMethod = [
                             'type' => self::PAYMENT_OPTION_BALANCE,
                             'id' => null,
@@ -1209,7 +1236,11 @@ class MeetRegistration extends Model
                 // TODO : Mail to host
                 if(isset($prev_deposit) && $prev_deposit != null)
                 {
-                    $prev_deposit->is_used = true;
+                    // $prev_deposit->is_used = true;
+                    if($couponAmount < $prev_deposit->amount)
+                        $prev_deposit->amount -= $couponAmount;
+                    else
+                        $prev_deposit->is_used = true;
                     $prev_deposit->save();
                 }
                 DB::commit();

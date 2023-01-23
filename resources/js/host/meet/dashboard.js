@@ -524,7 +524,7 @@ $(document).ready(e => {
 
                             tx.waitlist = (tx.status == this.constants.transactions.statuses.WaitlistConfirmed)
                             || (tx.status == this.constants.transactions.statuses.WaitlistPending);
-
+                            tx.breakdown.host.subtotal = tx.breakdown.host.subtotal == 0 && tx.breakdown.host.coupon > 0 ? parseFloat(tx.breakdown.host.subtotal) + parseFloat(tx.breakdown.host.coupon) - (parseFloat(tx.breakdown.host.handling) + parseFloat(tx.breakdown.host.processor) - parseFloat(tx.breakdown.host.total)) : parseFloat(tx.breakdown.host.subtotal) + parseFloat(tx.breakdown.host.coupon);
                             if (!tx.waitlist) {
                                 if (tx.method == this.constants.transactions.methods.Check) {
                                     let total_handling_fee = tx.breakdown.host.handling + tx.breakdown.gym.handling;

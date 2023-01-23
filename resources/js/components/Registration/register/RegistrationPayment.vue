@@ -678,7 +678,8 @@
                         '__managed': this.managed,
                         meet_id:this.registrationData.meet.id,
                         gym_id:this.registrationData.gym,
-                        coupon:this.coupon.trim().toUpperCase()
+                        coupon:this.coupon.trim().toUpperCase(),
+                        total:this.summary.total
                     }
                 ).then(result => {
                     this.couponValue = result.data.value;

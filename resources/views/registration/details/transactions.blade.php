@@ -80,8 +80,9 @@
                                 <span class="fas fa-fw fa-tasks"></span> Registration Subtotal
                             </div>
                             <div class="col">
-                                $@{{ numberFormat(transaction.breakdown.gym.subtotal + (transaction.breakdown.gym.coupon > 0 ? transaction.breakdown.gym.coupon : 0)) }}
-                            </div>
+                                $@{{numberFormat(transaction.breakdown.gym.subtotal) }}
+                                
+                                </div>
                         </div>
                     </div>
                     <div v-if="transaction.breakdown.gym.deposit_subtotal > 0" class="pt-1 mt-1 border-top">
@@ -127,7 +128,7 @@
                             </div>
                         </div>
                     </div>
-
+                    
                     <div v-if="transaction.breakdown.gym.used_balance != 0" class="pt-1 mt-1 border-top">
                         <div class="row">
                             <div class="col">

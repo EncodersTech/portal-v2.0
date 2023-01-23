@@ -240,6 +240,9 @@ $(document).ready(e => {
                         tx.waitlist = (tx.status == this.constants.transactions.statuses.WaitlistConfirmed)
                             || (tx.status == this.constants.transactions.statuses.WaitlistPending);
 
+                        tx.breakdown.gym.subtotal  = tx.breakdown.gym.subtotal == 0 && tx.breakdown.gym.coupon > 0 ? parseFloat(tx.breakdown.gym.subtotal) + parseFloat(tx.breakdown.gym.coupon) - (parseFloat(tx.breakdown.gym.handling) + parseFloat(tx.breakdown.gym.processor) - parseFloat(tx.breakdown.gym.total)) : parseFloat(tx.breakdown.gym.subtotal) + parseFloat(tx.breakdown.gym.coupon);
+                                
+
                         this.transactions.push(tx);
                     }
 

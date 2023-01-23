@@ -3975,7 +3975,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         '__managed': this.managed,
         meet_id: this.registrationData.meet.id,
         gym_id: this.registrationData.gym,
-        coupon: this.coupon.trim().toUpperCase()
+        coupon: this.coupon.trim().toUpperCase(),
+        total: this.summary.total
       }).then(function (result) {
         _this2.couponValue = result.data.value;
         $('#deposit').prop('checked', false);
