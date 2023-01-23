@@ -2445,6 +2445,7 @@ class Meet extends Model
                 $registrations[$i]['transactions'] = $registration->transactions()
                 ->orderBy('created_at', 'ASC')
                 ->get();
+                $team_late = 0;
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {
                     if (!isset($transaction->breakdown['level_team_fees'])) {
                         unset($registrations[$i]['transactions'][$j]);

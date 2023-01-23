@@ -120,6 +120,9 @@
                             Amount
                         </th>
                         <th scope="col" class="align-middle">
+                            Code
+                        </th>
+                        <th scope="col" class="align-middle">
                             Status
                         </th>
                         <th scope="col" class="align-middle">
@@ -140,6 +143,9 @@
                         </td>
                         <td class="align-middle">
                             $@{{ tx.amount }}
+                        </td>
+                        <td class="align-middle">
+                            @{{ tx.token_id }}
                         </td>
                         <td class="align-middle">
                             <div v-if="!tx.is_enable">

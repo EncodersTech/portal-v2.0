@@ -1007,7 +1007,7 @@ class MeetController extends BaseApiController
                 }
                 $newgym[] = $getAllGym_2;
             }
-            $depositGym =  $meet->deposit()->exclude(['token_id'])->orderBy('id', 'desc')->get();
+            $depositGym =  $meet->deposit()->orderBy('id', 'desc')->get();
             $result = [
                 'registrations' => $registrations,
                 'allgym' => $newgym,
