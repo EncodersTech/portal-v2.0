@@ -57,6 +57,7 @@ class UserAccountController extends Controller
     public function showPaymentOptions()
     {
         $user = auth()->user();     /** @var User $user */
+        
         $cards = null;
         $bankAccounts = null;
         $stripe_error = null;
@@ -74,7 +75,6 @@ class UserAccountController extends Controller
         } catch (CustomStripeException $e) {
             $stripe_error = $e->getMessage();
         }
-
         try {
             $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
             $dwollaCustomer = $dwollaService->retrieveCustomer($user->dwolla_customer_id);
@@ -93,7 +93,7 @@ class UserAccountController extends Controller
             );
 
             $bankAccounts = $user->getBankAccounts(true);
-
+            
             if ($bankAccounts != null) {
                 foreach ($bankAccounts as $i => $ba) {
                     // print_r($ba);
@@ -114,6 +114,9 @@ class UserAccountController extends Controller
         } catch (CustomDwollaException $e) {
             $dwolla_error = $e->getMessage();
         }
+        $is_fake = false;
+        if(strpos($user->stripe_customer_id,'fake_') !== false)
+            $is_fake = true;
 
         return view('user.payment_options', [
             'dwolla' => $dwollaCustomer,
@@ -126,7 +129,7 @@ class UserAccountController extends Controller
             'stripe_error' => $stripe_error,
             'dwolla_error' => $dwolla_error,
             'current_page' => 'profile',
-            'is_error' => $stripe_error == null ? false : true
+            'is_error' => $is_fake
         ]);
     }
 
