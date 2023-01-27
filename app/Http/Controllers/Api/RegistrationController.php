@@ -70,7 +70,8 @@ class RegistrationController extends BaseApiController
             {
                 return $this->success([
                     'message' => "Coupon Found Successfully",
-                    'value' => ($request->total < $deposit->amount) ? $request->total : $deposit->amount
+                    'value' => $deposit->amount
+                    // 'value' => ($request->total < $deposit->amount) ? $request->total : $deposit->amount
                 ]);
             }
             else{
