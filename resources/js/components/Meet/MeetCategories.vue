@@ -33,11 +33,12 @@
                             </span>
                         </label>
                     </div>
+                    <div :id="'sanc-' + body.id +'-'+ category.id" v-bind:class="(body.id == 1 || !category.check) ? 'hide-this' : '' ">
+                        <input class="form-control-sm" :id="'sanc-body-'+body.id+'-'+category.id" :readonly="body.locked" placeholder="Sanction no" :name="'sanction_body_no['+body.id+']['+category.id+']'" v-model="category.sanction"/>
+                    </div>
                 </div>
                 
-                <div :id="'sanc-' + body.id" v-bind:class="(body.id == 1) ? 'hide-this' : '' ">
-                    <input class="form-control-sm" :id="'sanc-body-'+body.id" :readonly="body.locked" placeholder="Sanction no" :name="'sanction_body_no['+body.id+']'" v-model="body.categories[0].sanction"/>
-                </div>
+
             </div>
         </div>
     </div>

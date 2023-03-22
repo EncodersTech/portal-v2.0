@@ -1754,6 +1754,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'MeetCategories',
   props: {
@@ -2695,6 +2696,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+$('[data-toggle="tooltip"]').tooltip();
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'MeetLevelsList',
   props: {
@@ -67683,49 +67694,50 @@ var render = function() {
                         : _vm._e()
                     ]
                   )
-                ])
-              ])
-            }),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                class: body.id == 1 ? "hide-this" : "",
-                attrs: { id: "sanc-" + body.id }
-              },
-              [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: body.categories[0].sanction,
-                      expression: "body.categories[0].sanction"
-                    }
-                  ],
-                  staticClass: "form-control-sm",
-                  attrs: {
-                    id: "sanc-body-" + body.id,
-                    readonly: body.locked,
-                    placeholder: "Sanction no",
-                    name: "sanction_body_no[" + body.id + "]"
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    class: body.id == 1 || !category.check ? "hide-this" : "",
+                    attrs: { id: "sanc-" + body.id + "-" + category.id }
                   },
-                  domProps: { value: body.categories[0].sanction },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: category.sanction,
+                          expression: "category.sanction"
+                        }
+                      ],
+                      staticClass: "form-control-sm",
+                      attrs: {
+                        id: "sanc-body-" + body.id + "-" + category.id,
+                        readonly: body.locked,
+                        placeholder: "Sanction no",
+                        name:
+                          "sanction_body_no[" +
+                          body.id +
+                          "][" +
+                          category.id +
+                          "]"
+                      },
+                      domProps: { value: category.sanction },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(category, "sanction", $event.target.value)
+                        }
                       }
-                      _vm.$set(
-                        body.categories[0],
-                        "sanction",
-                        $event.target.value
-                      )
-                    }
-                  }
-                })
-              ]
-            )
+                    })
+                  ]
+                )
+              ])
+            })
           ],
           2
         )
@@ -68355,7 +68367,18 @@ var render = function() {
                                       ) +
                                       " athletes only.\n                                    "
                                   )
+                                ]),
+                            _vm._v(" "),
+                            _vm.late
+                              ? _c("div", { staticClass: "text-warning" }, [
+                                  _c("span", {
+                                    staticClass: "fas fa-info-circle"
+                                  }),
+                                  _vm._v(
+                                    " \n                                        Late fee will be added on top of the standard registration fee\n                                    "
+                                  )
                                 ])
+                              : _vm._e()
                           ]),
                           _vm._v(" "),
                           _c("div", { staticClass: "row mb-2" }, [
@@ -68967,6 +68990,15 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "modal-body" }, [
+                    _vm.late
+                      ? _c("div", { staticClass: "text-warning" }, [
+                          _c("span", { staticClass: "fas fa-info-circle" }),
+                          _vm._v(
+                            " \n                        Late fee will be added on top of the standard registration fee\n                    "
+                          )
+                        ])
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("div", { staticClass: "row" }, [
                       _c("div", { staticClass: "col-md mb-2" }, [
                         _vm.editedLevel.error != null
@@ -70314,7 +70346,7 @@ var staticRenderFns = [
     return _c("label", { attrs: { for: "add-level-late-registration-fee" } }, [
       _c("span", { staticClass: "fas fa-fw fa-dollar-sign" }),
       _vm._v(
-        "\n                                            Late Registration Fee\n                                        "
+        "\n                                            Late Registration Fee \n                                        "
       )
     ])
   },
@@ -83199,16 +83231,16 @@ $(document).ready(function (e) {
 
         this.selected_categories = val;
         this.sanc.forEach(function (e) {
-          $('#sanc-' + e).hide();
+          $('#sanc-' + e[0] + '-' + e[1]).hide();
         });
         this.sanc = [];
         this.selected_categories.forEach(function (e) {
           if (e.body_id != 1) {
-            _this.sanc.push(e.body_id);
+            _this.sanc.push([e.body_id, e.id]);
           }
         });
         this.sanc.forEach(function (e) {
-          $('#sanc-' + e).show();
+          $('#sanc-' + e[0] + '-' + e[1]).show();
         }); // console.log(this.selected_categories);
       },
       nextStep: function nextStep() {
@@ -83222,8 +83254,8 @@ $(document).ready(function (e) {
               this.selected_categories.forEach(function (e) {
                 if (e.body_id != 1 && $.inArray(e.body_id, prev_record) == -1) {
                   prev_record.push(e.body_id);
-                  var sv = $('#sanc-body-' + e.body_id).val();
-                  if (sv.trim().length > 0) sbn.push([e.body_id, sv]); // else throw 'Please enter the sanction no of selected category to proceed';
+                  var sv = $('#sanc-body-' + e.body_id + '-' + e.id).val();
+                  if (sv.trim().length > 0) sbn.push([e.body_id, e.id, sv]); // else throw 'Please enter the sanction no of selected category to proceed';
                 }
               });
               this.sanc_body_no = sbn;

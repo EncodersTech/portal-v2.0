@@ -321,11 +321,12 @@
                                 <div v-if="meet.is_waitlist" class="alert alert-warning small mb-1">
                                     <span class="fas fa-fw fa-exclamation-triangle"></span>
                                     This meet is either closed for registrations or has no more free slots. Athletes and coaches in this registration will go into a waitlist.
+                                    <button class="btn btn-sm btn-primary float-right" style="margin-top:-5px;" type="button" @click="removeAllFromWaitList()">Unmark All Waitlist</button>
                                 </div>
 
                                 <div v-if="meet.slots_needed_in_waitlist > 0" class="text-danger mb-1">
                                     <span class="fas fa-fw fa-exclamation-triangle"></span>
-                                    {{ meet.slots_needed_in_waitlist }} mote athlete(s) in this meet need to go in the waitlist.
+                                    {{ meet.slots_needed_in_waitlist }} more athlete(s) in this meet need to go in the waitlist.
                                 </div>
 
                                 <div class="small mb-3">
@@ -615,7 +616,7 @@
 
                                                                 <div class="dropdown-menu dropdown-menu-right">
                                                                     <div >
-                                                                        <button v-if="athlete.to_waitlist" class="dropdown-item text-primary" type="button" @click="removeFromWaitlist(athlete, l)">
+                                                                        <button v-if="athlete.to_waitlist" class="dropdown-item text-primary" type="button" :id="'unmark_'+athlete.id" @click="removeFromWaitlist(athlete, l)">
                                                                             <span class="fas fa-fw fa-times"></span> Unmark for waitlist
                                                                         </button>
                                                                         <button v-else class="dropdown-item text-danger" type="button" @click="addToWaitlist(athlete, l)">
@@ -725,7 +726,7 @@
                                                         </td>
 
                                                         <td v-if="meet.tshirt_chart != null" scope="col" class="align-middle">
-                                                            <select v-model="coach.tshirt_size_id" class="form-control form-control-sm" :disabled="coach.tshirt_size_id != null">
+                                                            <select v-model="coach.tshirt_size_id" class="form-control form-control-sm">
                                                                 <option :value="null">
                                                                     (Choose ...)
                                                                 </option>
@@ -1218,6 +1219,12 @@
             }
         },
         methods: {
+            removeAllFromWaitList()
+            {
+                document.querySelectorAll("button[id^='unmark_']").forEach(function(button) {
+                    button.click();
+                });
+            },
             levelUniqueId(level) {
                 return level.id + (level.male ? '-m' : '') + (level.female ? '-f' : '');
             },
@@ -1709,6 +1716,7 @@
                 }
             },
 
+
             removeFromWaitlist(a, l) {
                 if (a.is_new && a.to_waitlist) {
                     a.total = a.fee + a.late_fee - (a.refund + a.late_refund);
@@ -2138,6 +2146,7 @@
                 this.isLoading = true;
 
                 let state = _.cloneDeep(this.sanction_data);
+                this.state = state;
                 let initial = state.initial;
                 let final = state.final;
 
@@ -2456,7 +2465,7 @@
                         let tmp = added - scratched;
 
                         if (tmp < 0) { // coach was scratched
-                            coach.status = this.constants.coach.statuses.Scratched;
+                            coach.status = this.constants.coaches.statuses.Scratched;
                         } else if (tmp > 0) { // coach was added
                             coach.is_new = true;
                             coach.to_waitlist = this.meet.is_waitlist;

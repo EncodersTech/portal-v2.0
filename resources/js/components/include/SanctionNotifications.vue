@@ -17,10 +17,10 @@
                 </h5>
 
                 <div class="row pt-3">
-                    <div class="col-12 col-xs-12 col-sm-4 col-md-12 col-lg-4 mb-1" v-for="item  in items[current.body]">
+                    <div class="col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1" style="font-size:12px;" v-for="item  in items[current.body]">
                     <div class="small-box text-white" :class="[item.is_new ? 'bg-success' : 'bg-danger']">
                         <div class="inner">
-                            <h5 class="mb-3">
+                            <h5 class="mb-3" style="font-size: 15px;">
                                 <span v-if="item.is_new">
                                     <span class="fas fa-fw fa-plus-square"></span>
                                         New {{ constants.bodies[item.body] }} Sanction

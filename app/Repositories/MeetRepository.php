@@ -338,7 +338,7 @@ class MeetRepository
                 $array2 = $maleData['Male']['levels'];
             }
             $finalArray2 = array_merge($array2, isset($levels['Male']['other']) ? $levels['Male']['other'] : []);
-
+            $index = 1;
             foreach ($finalArray2 as $item) {
                 $final2[$index] = $item;
                 $index++;

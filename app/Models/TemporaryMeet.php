@@ -456,9 +456,9 @@ class TemporaryMeet extends Model
             $sb = json_decode($attr['sanction_body_no']);
             $sb_ar = [];
             foreach ($sb as $key => $value) {
-                $value[1] = trim($value[1]);
-                if($value[1] != "" || $value[1] != null)
-                    $sb_ar[$value[0]] = $value[1];
+                    $v = trim($value[2]);
+                    if($v != "" || $v != null)
+                        $sb_ar[$value[0]][$value[1]] = $v;
             }
             $competition_format = MeetCompetitionFormat::find($attr['meet_competition_format_id']);
             if ($competition_format === null)
@@ -490,7 +490,7 @@ class TemporaryMeet extends Model
                 $categoryData->id = $category->id;
                 $categoryData->body_id = $body->id;
                 // $categoryData->sanction = null;
-                $categoryData->sanction = isset($sb_ar[$body->id]) ? $sb_ar[$body->id] : null;
+                $categoryData->sanction = (isset($sb_ar[$body->id]) && isset($sb_ar[$body->id][$category->id])) ? $sb_ar[$body->id][$category->id] : null;
                 $categoryData->officially_sanctioned = false;
 
                 $key = 'b' . $categoryData->body_id . '-c' . $category->id;

@@ -106,6 +106,15 @@
                                                     @case(\App\Models\RegistrationAthlete::STATUS_SCRATCHED)
                                                         Scratched
                                                         @break
+                                                    @case(\App\Models\RegistrationAthlete::STATUS_REGISTERED)
+                                                        Registered
+                                                        @break
+                                                    @case(\App\Models\RegistrationAthlete::STATUS_PENDING_NON_RESERVED)
+                                                        Pending Non Reserved
+                                                        @break
+                                                    @case(\App\Models\RegistrationAthlete::STATUS_PENDING_RESERVED)
+                                                        Pending Reserved
+                                                        @break
 
                                                     @default
                                                         Moved
@@ -113,7 +122,7 @@
                                             </td>
 
                                             <td class="text-right">
-                                                $ {{ number_format($a->refund_fee(), 2) }}
+                                                $ {{ number_format($a->net_fee(), 2) }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -150,6 +159,12 @@
                                                                         @case(\App\Models\RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED)
                                                                             Scratched
                                                                             @break
+                                                                        @case(\App\Models\RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED)
+                                                                            Registered
+                                                                            @break
+                                                                        @case(\App\Models\RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING)
+                                                                            Pending
+                                                                            @break
 
                                                                         @default
                                                                             Moved
@@ -157,7 +172,7 @@
                                                                 </td>
 
                                                                 <td class="text-right">
-                                                                    $ {{ number_format($evt->refund_fee(), 2) }}
+                                                                    $ {{ number_format($evt->net_fee(), 2) }}
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -168,7 +183,8 @@
                                     @endforeach
 
                                     @foreach ($r->levels as $l)
-                                        <tr>
+                                        @if(( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee>0 ? 1 : 0))
+                                        <tr> 
                                             <td colspan="4">
                                                 <strong>
                                                     {{ $l->sanctioning_body->initialism }} |
@@ -186,13 +202,14 @@
                                             </td>
 
                                             <td class="col-5">
-                                                Team Refund
+                                                Team Registration
                                             </td>
 
                                             <td class="text-right">
-                                                $ {{ number_format($l->pivot->refund_fee(), 2) }}
+                                                $ {{ number_format($l->pivot->net_fee(), 2) }}
                                             </td>
                                         </tr>
+                                        @endif
                                     @endforeach
 
                                     @if ($r->late_refund > 0)
@@ -221,7 +238,7 @@
                                         <td colspan="4"></td>
                                         <td colspan="2" class="total">Total</td>
                                         <td class="text-right total">
-                                            $ {{ number_format($r->total, 2) }}
+                                            $ {{ number_format($r->net_fee, 2) }}
                                         </td>
                                     </tr>
                                 </tbody>

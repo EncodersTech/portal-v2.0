@@ -122,6 +122,10 @@
                                             <span class="fas fa-info-circle"></span> This category allows
                                             {{ selected.category.male ? 'male' : 'female' }} athletes only.
                                         </div>
+                                        <div  v-if="late" class="text-warning">
+                                            <span class="fas fa-info-circle"></span> 
+                                            Late fee will be added on top of the standard registration fee
+                                        </div>
                                     </div>
 
                                     <div class="row mb-2">
@@ -145,7 +149,7 @@
                                         <div v-if="late" class="col-lg mb-2">
                                             <label for="add-level-late-registration-fee">
                                                 <span class="fas fa-fw fa-dollar-sign"></span>
-                                                Late Registration Fee
+                                                Late Registration Fee 
                                             </label>
                                             <div class="input-group input-group-sm">
                                                 <div class="input-group-prepend">
@@ -322,6 +326,11 @@
                     </div>
 
                     <div class="modal-body">
+                        <div  v-if="late" class="text-warning">
+                            <span class="fas fa-info-circle"></span> 
+                            Late fee will be added on top of the standard registration fee
+                        </div>
+
                         <div class="row">
                             <div class="col-md mb-2">
                                 <div class="alert alert-danger"
@@ -738,6 +747,8 @@
 
 
 <script>
+    $('[data-toggle="tooltip"]').tooltip()
+
     export default {
         name: 'MeetLevelsList',
         props: {

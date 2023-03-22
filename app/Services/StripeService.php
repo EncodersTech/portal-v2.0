@@ -145,7 +145,6 @@ class StripeService {
             
             if($type == 'ach')
             {
-                // print_r($customer); die();
                 return \Stripe\Charge::create([
                     'amount'   => $amount,
                     'currency' => $currency,
@@ -153,20 +152,11 @@ class StripeService {
                     "metadata" => $metadata,
                     'source' => $customer
                   ]);
-                // return \Stripe\PaymentIntent::create([
-                //     "amount" => $amount,
-                //     "currency" => "usd",
-                //     "description" => $description,
-                //     "metadata" => $metadata,
-                //     "payment_method" => $source,
-                //     "payment_method_types" => ["us_bank_account"],
-                // ], ["stripe_account" => $customer]);
             }
+            // throw new CustomStripeException("Amount too small. Minimum amount is 0.50 USD.", 1);
             return Charge::create(array_merge(compact(['customer', 'source', 'amount', 'currency',
                 'description', 'metadata'
             ]), ["expand" => array("balance_transaction")]));
-
-            // return Customer::create();
         } catch (Base $e) {
             self::_handleStripeException($e);
         }
@@ -195,18 +185,45 @@ class StripeService {
             }
     
             if ($e instanceof Card) {
-                //dump($e->getJsonBody(), $e->getMessage());
-    
+                $result = [
+                    'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                    'message' => $e->getMessage(),
+                    'details' => $error['param'],
+                ];
             } elseif ($e instanceof RateLimit) {
+                $result = [
+                    'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                    'message' => $e->getMessage(),
+                    'details' => $error['param'],
+                ];
     
             } elseif ($e instanceof InvalidRequest) {
+                $result = [
+                    'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                    'message' => $e->getMessage(),
+                    'details' => $error['param'],
+                ];
     
             } elseif ($e instanceof Authentication) {
+                $result = [
+                    'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                    'message' => $e->getMessage(),
+                    'details' => $error['param'],
+                ];
     
             } elseif ($e instanceof ApiConnection) {
+                $result = [
+                    'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                    'message' => $e->getMessage(),
+                    'details' => $error['param'],
+                ];
     
             } else {    // Stripe\Error\Base
-    
+                $result = [
+                    'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                    'message' => $e->getMessage(),
+                    'details' => $error['param'],
+                ];
             }
     
             if ($throw)
@@ -215,7 +232,7 @@ class StripeService {
             return $result;
         }catch(CustomStripeException $e)
         {
-            return $result;
+            throw new CustomStripeException($result['message'], $result['code'], $e); //$result;
         }
         
     }

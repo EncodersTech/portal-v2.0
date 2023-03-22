@@ -14,7 +14,7 @@ class LevelRegistration extends Pivot
         'allow_specialist', 'specialist_registration_fee', 'specialist_late_registration_fee',
         'allow_teams', 'team_registration_fee', 'team_late_registration_fee',
         'enable_athlete_limit', 'athlete_limit', 'has_team', 'was_late', 'team_fee', 'team_late_fee',
-        'team_refund', 'team_late_refund', 'disabled'
+        'team_refund', 'team_late_refund', 'disabled', 'is_waitlist_team_paid'
     ];
 
     public function registration() {

@@ -66210,7 +66210,8 @@ var render = function() {
                       "div",
                       {
                         staticClass:
-                          "col-12 col-xs-12 col-sm-4 col-md-12 col-lg-4 mb-1"
+                          "col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1",
+                        staticStyle: { "font-size": "12px" }
                       },
                       [
                         _c(
@@ -66227,45 +66228,53 @@ var render = function() {
                           },
                           [
                             _c("div", { staticClass: "inner" }, [
-                              _c("h5", { staticClass: "mb-3" }, [
-                                item.is_new
-                                  ? _c("span", [
-                                      _c("span", {
-                                        staticClass: "fas fa-fw fa-plus-square"
-                                      }),
-                                      _vm._v(
-                                        "\n                                    New " +
-                                          _vm._s(
-                                            _vm.constants.bodies[item.body]
-                                          ) +
-                                          " Reservation  - " +
-                                          _vm._s(
-                                            item.meet
-                                              ? item.meet.name
-                                              : item.meetName
-                                          ) +
-                                          "\n                                "
-                                      )
-                                    ])
-                                  : _c("span", [
-                                      _c("span", {
-                                        staticClass: "fas fa-fw fa-pen-square"
-                                      }),
-                                      _vm._v(
-                                        "\n                                    " +
-                                          _vm._s(
-                                            _vm.constants.bodies[item.body]
-                                          ) +
-                                          " Reservation Update - " +
-                                          _vm._s(
-                                            item.meet
-                                              ? item.meet.name
-                                              : item.meetName
-                                          ) +
-                                          "\n                                "
-                                      )
-                                    ])
-                              ]),
+                              _c(
+                                "h5",
+                                {
+                                  staticClass: "mb-3",
+                                  staticStyle: { "font-size": "15px" }
+                                },
+                                [
+                                  item.is_new
+                                    ? _c("span", [
+                                        _c("span", {
+                                          staticClass:
+                                            "fas fa-fw fa-plus-square"
+                                        }),
+                                        _vm._v(
+                                          "\n                                    New " +
+                                            _vm._s(
+                                              _vm.constants.bodies[item.body]
+                                            ) +
+                                            " Reservation  - " +
+                                            _vm._s(
+                                              item.meet
+                                                ? item.meet.name
+                                                : item.meetName
+                                            ) +
+                                            "\n                                "
+                                        )
+                                      ])
+                                    : _c("span", [
+                                        _c("span", {
+                                          staticClass: "fas fa-fw fa-pen-square"
+                                        }),
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(
+                                              _vm.constants.bodies[item.body]
+                                            ) +
+                                            " Reservation Update - " +
+                                            _vm._s(
+                                              item.meet
+                                                ? item.meet.name
+                                                : item.meetName
+                                            ) +
+                                            "\n                                "
+                                        )
+                                      ])
+                                ]
+                              ),
                               _vm._v(" "),
                               _c(
                                 "div",
@@ -66463,7 +66472,8 @@ var render = function() {
                       "div",
                       {
                         staticClass:
-                          "col-12 col-xs-12 col-sm-4 col-md-12 col-lg-4 mb-1"
+                          "col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1",
+                        staticStyle: { "font-size": "12px" }
                       },
                       [
                         _c(
@@ -66474,33 +66484,41 @@ var render = function() {
                           },
                           [
                             _c("div", { staticClass: "inner" }, [
-                              _c("h5", { staticClass: "mb-3" }, [
-                                item.is_new
-                                  ? _c("span", [
-                                      _c("span", {
-                                        staticClass: "fas fa-fw fa-plus-square"
-                                      }),
-                                      _vm._v(
-                                        "\n                                    New " +
-                                          _vm._s(
-                                            _vm.constants.bodies[item.body]
-                                          ) +
-                                          " Sanction\n                            "
-                                      )
-                                    ])
-                                  : _c("span", [
-                                      _c("span", {
-                                        staticClass: "fas fa-fw fa-pen-square"
-                                      }),
-                                      _vm._v(
-                                        "\n                                    " +
-                                          _vm._s(
-                                            _vm.constants.bodies[item.body]
-                                          ) +
-                                          " Sanction Update\n                            "
-                                      )
-                                    ])
-                              ]),
+                              _c(
+                                "h5",
+                                {
+                                  staticClass: "mb-3",
+                                  staticStyle: { "font-size": "15px" }
+                                },
+                                [
+                                  item.is_new
+                                    ? _c("span", [
+                                        _c("span", {
+                                          staticClass:
+                                            "fas fa-fw fa-plus-square"
+                                        }),
+                                        _vm._v(
+                                          "\n                                    New " +
+                                            _vm._s(
+                                              _vm.constants.bodies[item.body]
+                                            ) +
+                                            " Sanction\n                            "
+                                        )
+                                      ])
+                                    : _c("span", [
+                                        _c("span", {
+                                          staticClass: "fas fa-fw fa-pen-square"
+                                        }),
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(
+                                              _vm.constants.bodies[item.body]
+                                            ) +
+                                            " Sanction Update\n                            "
+                                        )
+                                      ])
+                                ]
+                              ),
                               _vm._v(" "),
                               _c(
                                 "div",

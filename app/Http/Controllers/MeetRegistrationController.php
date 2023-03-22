@@ -147,9 +147,15 @@ class MeetRegistrationController extends Controller
                 if ($transaction->was_replaced)
                     throw new CustomBaseException("Invalid transaction status.", -1);
             }
-
-            $snapshot = $transaction->reapplyFees(true);
-            $subtotal = $transaction->calculatedTotal($snapshot)['subtotal'];
+            if($waitlist)
+            {
+                $snapshot = $transaction->chargeWaitlistedTransaction(true);
+                $subtotal = $transaction->calculateWaitlistTotal($snapshot)['subtotal'];
+            }
+            else{
+                $snapshot = $transaction->reapplyFees(true);
+                $subtotal = $transaction->calculatedTotal($snapshot)['subtotal'];
+            }
 
         } catch (CustomBaseException $e) {
             return redirect(route('meets.browse'))->with('error', $e->getMessage());

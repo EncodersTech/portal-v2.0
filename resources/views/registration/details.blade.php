@@ -61,6 +61,15 @@
                             </div>
                         </div>
                     @endif
+                    <div v-if="transactions.length > 0">
+                        <div v-for="tx in transactions" :key="tx.processor_id">
+                            <div v-if="tx.status == constants.transactions.statuses.WaitlistConfirmed" class="alert alert-success d-flex flex-no-wrap flex-row">
+                                <span>You have an approved waitlist registration that had been created on @{{ tx.created_at_display }}
+                                    and is awaiting payment. Please pay the registration fee from <b>"Transaction"</b> tab as soon as possible to secure your spot in the meet.</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="text-info small mb-3">
                         <span class="fas fa-info-circle"></span> All dates and times are in EST.

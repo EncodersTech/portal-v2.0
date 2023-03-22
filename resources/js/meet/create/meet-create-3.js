@@ -51,19 +51,19 @@ $(document).ready(e => {
                 this.selected_categories = val;
                 
                 this.sanc.forEach(function (e) {
-                    $('#sanc-' + e).hide();
+                    $('#sanc-' + e[0] + '-'+ e[1]).hide();
                 }); 
                 this.sanc = []
 
                 this.selected_categories.forEach(e=>{
                     if(e.body_id != 1)
                     {
-                        this.sanc.push(e.body_id);
+                        this.sanc.push([e.body_id, e.id]);
                     }
                 });
 
                 this.sanc.forEach(e=>{
-                    $('#sanc-'+e).show();
+                    $('#sanc-' + e[0] + '-'+ e[1]).show();
                 });
 
                 // console.log(this.selected_categories);
@@ -81,9 +81,9 @@ $(document).ready(e => {
                             this.selected_categories.forEach(function (e) {
                                 if (e.body_id != 1 && $.inArray(e.body_id, prev_record) == -1) {
                                     prev_record.push(e.body_id);
-                                    var sv = $('#sanc-body-' + e.body_id).val();
+                                    var sv = $('#sanc-body-' + e.body_id + '-' + e.id).val();
                                     if (sv.trim().length > 0) 
-                                        sbn.push([e.body_id,sv]);
+                                        sbn.push([e.body_id,e.id,sv]);
                                     // else throw 'Please enter the sanction no of selected category to proceed';
                                 }
                             });

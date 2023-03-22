@@ -18,6 +18,7 @@ use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Barryvdh\Snappy\PdfWrapper;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use App\Services\USAIGCService;
 use Throwable;
 
 class Meet extends Model
@@ -1187,9 +1188,13 @@ class Meet extends Model
         try {
             $sb_ar = [];
             foreach ($attr['sanction_body_no'] as $key => $value) {
-                $value = trim($value);
-                if($value != "" || $value != null)
-                    $sb_ar[$key] = $value;
+                foreach ($value as $k => $v) {
+                    $v = trim($v);
+                    if($v != "" || $v != null)
+                    {
+                        $sb_ar[$key][$k] = $v;
+                    }
+                }
             }
             $restrictedBodies = $this->hasActiveBodyRegistrations();
 
@@ -1235,7 +1240,7 @@ class Meet extends Model
                 $categoryData->id = $category->id;
                 $categoryData->body_id = $body->id;
                 // $categoryData->sanction = null;
-                $categoryData->sanction = isset($sb_ar[$body->id]) ? $sb_ar[$body->id] : null;
+                $categoryData->sanction = (isset($sb_ar[$body->id]) && isset($sb_ar[$body->id][$category->id])) ? $sb_ar[$body->id][$category->id] : null;
                 $categoryData->officially_sanctioned = false;
                 $categoryData->requires_sanction = LevelCategory::requiresSanction($categoryData->body_id);
                 $flag = false;
@@ -2117,10 +2122,15 @@ class Meet extends Model
                 foreach ($registration->athletes as $athlete) { /** @var RegistrationSpecialist $specialist */
                     $total += $athlete->net_fee();
                 }
-
+                $teamonly = 0;
+                foreach ($registration->levels as $levels) { /** @var RegistrationSpecialist $specialist */
+                    $total += $levels->pivot->net_fee();
+                    $teamonly += $levels->pivot->net_fee();
+                }
                 $registration->net_fee = $total;
+                $registration->net_fee_not_athlete = $teamonly;
             }
-
+            
             $data = [
                 'host' => $this->gym,
                 'meet' => $this,

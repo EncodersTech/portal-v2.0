@@ -72,7 +72,83 @@ class MeetTransaction extends Model
     {
         return $this->hasOne(CheckConfirmationTransaction::class, 'transaction_id');
     }
+    public function chargeWaitlistedTransaction()
+    {
+        $r = $this->meet_registration; /** @var MeetRegistration $r */
+        $m = $r->meet; /** @var Meet $m */
 
+        $levels = [];
+        try{
+            $athletes = $this->athletes;
+            $snapshot = [
+                'registration' => [
+                    'late_fee' => ($r->was_late) ? $r->late_fee : 0
+                ],
+                'levels' => []
+            ];
+            foreach ($athletes as $a) {
+                $l = $a->registration_level;
+                if (!key_exists($l->id, $snapshot['levels'])) {
+                    $snapshot['levels'][$l->id] = [
+                        'team_fee' => ($l->has_team && !$l->is_waitlist_team_paid) ? $l->team_fee : 0,
+                        'team_late_fee' => ($l->was_late && !$l->is_waitlist_team_paid) ? $l->team_late_fee : 0
+                    ];
+                }
+                $snapshot['levels'][$l->id]['athletes'][$a->id] = [
+                    'fee' => $l->registration_fee,
+                    'late_fee' => ($a->was_late) ? $l->late_registration_fee : 0
+                ];
+            }
+
+            $specialist_events = $this->specialist_events;
+            foreach ($specialist_events as $se) { /** @var RegistrationSpecialistEvent $se */
+                $s = $se->specialist; /** @var RegistrationSpecialist $s */
+                $l = $s->registration_level; /** @var LevelRegistration $l */
+
+                if (!key_exists($l->id, $snapshot['levels'])) {
+                    $snapshot['levels'][$l->id] = [
+                        'team_fee' => ($l->has_team && !$l->is_waitlist_team_paid) ? $l->team_fee : 0,
+                        'team_late_fee' => ($l->was_late && !$l->is_waitlist_team_paid) ? $l->team_late_fee : 0
+                    ];
+                }
+
+                $snapshot['levels'][$l->id]['specialists'][$s->id] = [
+                        'fee' => $l->specialist_registration_fee,
+                        'late_fee' => ($se->was_late) ? $l->specialist_late_registration_fee : 0,
+                ];
+            }
+            return $snapshot;
+        }
+        catch(Exception $e){
+            throw new CustomBaseException('Error while charging waitlisted transaction', $e);
+        }
+    }
+    public function calculateWaitlistTotal($snapshot)
+    {
+        $total = $snapshot['registration']['late_fee'];
+        $level_team_fees = [];
+        foreach ($snapshot['levels'] as $key => $level) {
+            $total += $level['team_fee'] + $level['team_late_fee'];
+            $level_team_fees[$key] = 
+            [
+                'fee' => $level['team_fee'],
+                'late' => $level['team_late_fee']
+            ];
+            if(isset($level['athletes']))
+                foreach ($level['athletes'] as $athlete) {
+                    $total += $athlete['fee'] + $athlete['late_fee'];
+                }
+            if(isset($level['specialists']))
+                foreach ($level['specialists'] as $specialist) {
+                    $total += $specialist['fee'] + $specialist['late_fee'];
+                }
+        }
+        return [
+            'level_team_fees' => $level_team_fees,
+            'registration_late_fee' => $snapshot['registration']['late_fee'],
+            'subtotal' => $total
+        ];
+    }
     public function reapplyFees(bool $dryRun = false) {
         $r = $this->meet_registration; /** @var MeetRegistration $r */
         $m = $r->meet; /** @var Meet $m */

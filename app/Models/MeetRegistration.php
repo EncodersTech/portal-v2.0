@@ -1371,11 +1371,20 @@ class MeetRegistration extends Model
                 )
                     throw new CustomBaseException("Invalid transaction status.", -1);
             }
-
-            $snapshot = $oldTx->reapplyFees();
-            $calculatedTotal = $oldTx->calculatedTotal($snapshot);
-            $subtotal = $calculatedTotal['subtotal'];
-            unset($calculatedTotal['subtotal']);
+            if($waitlistPayment)
+            {
+                $snapshot = $oldTx->chargeWaitlistedTransaction();
+                $calculatedTotal = $oldTx->calculateWaitlistTotal($snapshot);
+                $subtotal = $calculatedTotal['subtotal'];
+                unset($calculatedTotal['subtotal']);
+            }
+            else
+            {
+                $snapshot = $oldTx->reapplyFees();
+                $calculatedTotal = $oldTx->calculatedTotal($snapshot);
+                $subtotal = $calculatedTotal['subtotal'];
+                unset($calculatedTotal['subtotal']);
+            }
 
             $host = User::lockForUpdate()->find($meet->gym->user->id); /** @var User $host */
             if ($host == null)
@@ -1472,15 +1481,25 @@ class MeetRegistration extends Model
             foreach ($oldTx->athletes as $a) {  /** @var RegistrationAthlete $a */
                 $a->status = $athleteStatus;
                 if ($waitlistPayment)
+                {
                     $a->in_waitlist = false;
+                    $a->fee = $a->registration_level->registration_fee;
+                    $a->late_fee = ($a->was_late) ? $a->registration_level->late_registration_fee : 0;
+                }
                 $a->transaction()->associate($transaction);
                 $a->save();
             }
 
             foreach ($oldTx->specialist_events as $e) { /** @var RegistrationSpecialistEvent $e */
                 $e->status = $specialistStatus;
+                $l = $e->specialist->registration_level; /** @var RegistrationSpecialist $s */
+
                 if ($waitlistPayment)
+                {
                     $e->in_waitlist = false;
+                    $e->fee = $l->specialist_registration_fee;
+                    $e->late_fee = ($e->was_late) ? $l->specialist_late_registration_fee : 0;
+                }
                 $e->transaction()->associate($transaction);
                 $e->save();
             }
@@ -1498,8 +1517,20 @@ class MeetRegistration extends Model
                 // if (property_exists($l->pivot->id, $levelTeamFees)) 
                 if (isset($levelTeamFees[$l->pivot->id])) 
                 {
-                    $l->pivot->team_fee += $levelTeamFees[$l->pivot->id]['fee'];
-                    $l->pivot->team_late_fee += $levelTeamFees[$l->pivot->id]['late'];
+                    if ($waitlistPayment)
+                    {
+                        if(!$l->pivot->is_waitlist_team_paid)
+                        {
+                            $l->pivot->team_fee = $levelTeamFees[$l->pivot->id]['fee'];
+                            $l->pivot->team_late_fee = $levelTeamFees[$l->pivot->id]['late'];
+                        }
+                    }
+                    else
+                    {
+                        $l->pivot->team_fee += $levelTeamFees[$l->pivot->id]['fee'];
+                        $l->pivot->team_late_fee += $levelTeamFees[$l->pivot->id]['late'];
+                    }
+                    
                     if ($l->pivot->team_late_fee > 0)
                         $l->pivot->was_late = true;
                     $l->pivot->save();
@@ -1769,7 +1800,6 @@ class MeetRegistration extends Model
                         'meet' => $meet->name,
                     ]
                 );
-
                 $result['payment_method_string'] = 'Card ending with ' .
                                         $transaction->payment_method_details->card->last4;
 

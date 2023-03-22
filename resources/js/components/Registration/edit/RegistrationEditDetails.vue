@@ -2903,7 +2903,7 @@ export default {
                                 meetCategory.pivot.officially_sanctioned ||
                                 meetCategory.pivot.frozen;
              
-                
+                // category.locked = meetCategory.pivot.frozen;
                 let f_date =  Moment(meet.registration_first_discount_end_date, 'YYYY-MM-DD');
                 let s_date =  Moment(meet.registration_second_discount_end_date, 'YYYY-MM-DD');
                 let t_date =  Moment(meet.registration_third_discount_end_date, 'YYYY-MM-DD');

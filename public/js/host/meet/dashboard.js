@@ -77433,7 +77433,7 @@ $(document).ready(function (e) {
               _tx2.updated_at = Moment(_tx2.updated_at);
               _tx2.updated_at_display = _tx2.updated_at.format('MM/DD/YYYY hh:mm:ss A');
               _tx2.waitlist = _tx2.status == this.constants.transactions.statuses.WaitlistConfirmed || _tx2.status == this.constants.transactions.statuses.WaitlistPending;
-              _tx2.breakdown.host.subtotal = _tx2.breakdown.host.subtotal == 0 && _tx2.breakdown.host.coupon > 0 ? parseFloat(_tx2.breakdown.host.subtotal) + parseFloat(_tx2.breakdown.host.coupon) - (parseFloat(_tx2.breakdown.host.handling) + parseFloat(_tx2.breakdown.host.processor) - parseFloat(_tx2.breakdown.host.total)) : parseFloat(_tx2.breakdown.host.subtotal) + parseFloat(_tx2.breakdown.host.coupon);
+              if (_tx2.breakdown.length > 0) _tx2.breakdown.host.subtotal = _tx2.breakdown.host.subtotal == 0 && _tx2.breakdown.host.coupon > 0 ? parseFloat(_tx2.breakdown.host.subtotal) + parseFloat(_tx2.breakdown.host.coupon) - (parseFloat(_tx2.breakdown.host.handling) + parseFloat(_tx2.breakdown.host.processor) - parseFloat(_tx2.breakdown.host.total)) : parseFloat(_tx2.breakdown.host.subtotal) + parseFloat(_tx2.breakdown.host.coupon);
 
               if (!_tx2.waitlist) {
                 if (_tx2.method == this.constants.transactions.methods.Check) {

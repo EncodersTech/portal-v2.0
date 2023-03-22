@@ -94,19 +94,19 @@ class UserController extends BaseApiController
             if ($profilePicture)
                 $user->storeProfilePicture($profilePicture);
 
-            $user->stripe_customer_id = 'fake_stripe_'.User::generateRandomString();
-            // = StripeService::createCustomer(
-            //     $user->fullName(),
-            //     $user->email,
-            //     config('app.name') . ' | ' . $user->fullName()
-            // )->id;
+            // $user->stripe_customer_id = 'fake_stripe_'.User::generateRandomString();
+            $user->stripe_customer_id = StripeService::createCustomer(
+                $user->fullName(),
+                $user->email,
+                config('app.name') . ' | ' . $user->fullName()
+            )->id;
 
-            $user->dwolla_customer_id = 'fake_dwolla_'.User::generateRandomString();
-            // = resolve(DwollaService::class)->createCustomer(
-            //     $user->first_name,
-            //     $user->last_name,
-            //     $user->email
-            // )->id;
+            // $user->dwolla_customer_id = 'fake_dwolla_'.User::generateRandomString();
+            $user->dwolla_customer_id = resolve(DwollaService::class)->createCustomer(
+                $user->first_name,
+                $user->last_name,
+                $user->email
+            )->id;
 
             $user->save();
 

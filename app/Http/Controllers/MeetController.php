@@ -92,11 +92,11 @@ class MeetController extends AppBaseController
                 {
                     $klc = " ; Sanction No: ".$pivot->sanction_no;
                 }
-                $body = $pivot->sanctioning_body->initialism . $klc;
+                $body = $pivot->sanctioning_body->initialism ;
                 if (!isset($allCategories[$body]))
                     $allCategories[$body] = [];
 
-                $allCategories[$body][] = $c->name;
+                $allCategories[$body][] = $c->name . $klc;
                 // $allCategories[$body]["sanc"][] = $c->name;
             }
 
@@ -359,7 +359,6 @@ class MeetController extends AppBaseController
         $tm = $gym->temporary_meets->find($temporary); /** @var TemporaryMeet $tm */
         if ($tm == null)
             throw new CustomBaseException('Something went wrong while saving your meet.', -1);
-
         $tm->storeStepThree($attr);
 
         return redirect(route('gyms.meets.create.step.view', [
@@ -610,7 +609,6 @@ class MeetController extends AppBaseController
 
     public function updateStepThree(Request $request, string $gym, string $meet)
     {
-        
         $request->sanction_body_no = json_encode($request->sanction_body_no);
         $redirect = route('gyms.meets.edit', [
             'gym' => $gym,

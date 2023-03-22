@@ -1255,7 +1255,7 @@ class USAGReservation extends Model
                             }
                             $athlete->level_registration_id = $registrationLevel->id;
                             $athlete->was_late = $athlete->was_late || $late;
-                            $athlete->refund =  $refundAmount != null ? $refundAmount : $athlete->fee;
+                            $athlete->refund =  ($refundAmount != null) ? $refundAmount : $athlete->fee;
                             $athlete->late_refund = $athlete->late_fee;
                             $athlete->fee = $registrationLevel->registration_fee;
                             if ($late)
@@ -1588,12 +1588,12 @@ class USAGReservation extends Model
                     })->count();
 
                 $levelHasAthletes = ($athleteCount + $specialistCount) > 0;
-                $hasAthletes = $hasAthletes || $levelHasAthletes;
+                $hasAthletes = $hasAthletes || $levelHasAthletes;                
                 if ($levelHasAthletes) {
                     if ($rl->has_team) {
                         if (($rl->team_fee - $rl->team_refund) != $rl->team_registration_fee)
                             $rl->team_fee += $rl->team_registration_fee - ($rl->team_fee - $rl->team_refund);
-
+                            
                         if ($rl->was_late) {
                             if (($rl->team_late_fee - $rl->team_late_refund) != $rl->team_late_registration_fee)
                                 $rl->team_late_fee += $rl->team_late_registration_fee - ($rl->team_late_fee - $rl->team_late_refund);

@@ -4483,7 +4483,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return c.pivot.sanctioning_body_id == body.id && c.id == category.id;
         });
         if (meetCategory === undefined) throw 'Something went wrong (can\'t find category)';
-        category.locked = body.locked || meetCategory.pivot.officially_sanctioned || meetCategory.pivot.frozen;
+        category.locked = body.locked || meetCategory.pivot.officially_sanctioned || meetCategory.pivot.frozen; // category.locked = meetCategory.pivot.frozen;
+
         var f_date = Moment(meet.registration_first_discount_end_date, 'YYYY-MM-DD');
         var s_date = Moment(meet.registration_second_discount_end_date, 'YYYY-MM-DD');
         var t_date = Moment(meet.registration_third_discount_end_date, 'YYYY-MM-DD');

@@ -1,8 +1,8 @@
 @forelse($usagReservations as $usagReservation)
-    <div class="col-12 col-xs-12 col-sm-4 col-md-12 col-lg-4 mb-1">
+    <div class="col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1" style="font-size:12px;">
         <div class="small-box {{ \App\Models\USAGReservation::actionColor($usagReservation->action) }}">
             <div class="inner">
-                <h5 class="mb-3">
+                <h5 class="mb-3" style="font-size: 15px;">
                     @if($usagReservation->action == \App\Models\USAGReservation::RESERVATION_ACTION_ADD)
                         <span class="fas fa-fw fa-plus-square"></span>
                         New USAG Reservation

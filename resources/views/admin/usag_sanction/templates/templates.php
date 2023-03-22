@@ -1,8 +1,8 @@
 <script id="UsagSanctionSearchTemplate" type="text/x-jsrender">
-<div class="col-12 col-xs-12 col-sm-4 col-md-12 col-lg-4 mb-1">
+<div class="col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1" style="font-size:12px;">
     <div class="small-box {{:cardBg}}">
         <div class="inner">
-            <h5 class="mb-3">
+            <h5 class="mb-3" style="font-size: 15px;">
                 <span class="fas fa-fw fa-plus-square"></span>
                 {{:sanction}}
             </h5>

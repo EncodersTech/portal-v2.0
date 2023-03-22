@@ -2805,6 +2805,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -2936,6 +2937,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     };
   },
   methods: {
+    removeAllFromWaitList: function removeAllFromWaitList() {
+      document.querySelectorAll("button[id^='unmark_']").forEach(function (button) {
+        button.click();
+      });
+    },
     levelUniqueId: function levelUniqueId(level) {
       return level.id + (level.male ? '-m' : '') + (level.female ? '-f' : '');
     },
@@ -3880,16 +3886,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _context4.prev = 0;
               _this6.isLoading = true;
               state = _.cloneDeep(_this6.sanction_data);
+              _this6.state = state;
               initial = state.initial;
               _final = state["final"];
-              _context4.next = 7;
+              _context4.next = 8;
               return _this6.loadMeetDetails(state);
 
-            case 7:
-              _context4.next = 9;
+            case 8:
+              _context4.next = 10;
               return _this6.loadRegistrationDetails(state);
 
-            case 9:
+            case 10:
               state.initial = {
                 levels: {},
                 coaches: {}
@@ -3901,16 +3908,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _context4.t0 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(initial.levels);
 
-            case 12:
+            case 13:
               if ((_context4.t1 = _context4.t0()).done) {
-                _context4.next = 36;
+                _context4.next = 37;
                 break;
               }
 
               lid = _context4.t1.value;
 
               if (!initial.levels.hasOwnProperty(lid)) {
-                _context4.next = 34;
+                _context4.next = 35;
                 break;
               }
 
@@ -3918,18 +3925,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               level = null;
 
               if (!state.initial.levels.hasOwnProperty(lid)) {
-                _context4.next = 21;
+                _context4.next = 22;
                 break;
               }
 
               // check if level was processed before
               level = state.initial.levels[lid];
-              _context4.next = 30;
+              _context4.next = 31;
               break;
 
-            case 21:
+            case 22:
               if (!_this6.registrationLevelToMeetLevelMatrix.hasOwnProperty(lid)) {
-                _context4.next = 25;
+                _context4.next = 26;
                 break;
               }
 
@@ -3937,12 +3944,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               level = _objectSpread(_objectSpread({}, _.cloneDeep(_this6.genderAwareMeetLevelMatrix[_this6.registrationLevelToMeetLevelMatrix[lid]])), {}, {
                 athletes: {}
               });
-              _context4.next = 30;
+              _context4.next = 31;
               break;
 
-            case 25:
+            case 26:
               if (!_this6.genderAwareMeetLevelMatrix.hasOwnProperty(l.uid)) {
-                _context4.next = 29;
+                _context4.next = 30;
                 break;
               }
 
@@ -3950,13 +3957,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               level = _objectSpread(_objectSpread({}, _.cloneDeep(_this6.genderAwareMeetLevelMatrix[l.uid])), {}, {
                 athletes: {}
               });
-              _context4.next = 30;
+              _context4.next = 31;
               break;
 
-            case 29:
+            case 30:
               throw 'Invalid level ' + l.code;
 
-            case 30:
+            case 31:
               level.expanded = true;
 
               for (usag_no in l.athletes) {
@@ -3976,11 +3983,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               state.initial.levels[lid] = level;
 
-            case 34:
-              _context4.next = 12;
+            case 35:
+              _context4.next = 13;
               break;
 
-            case 36:
+            case 37:
               for (_usag_no in initial.coaches) {
                 if (initial.coaches.hasOwnProperty(_usag_no)) {
                   c = initial.coaches[_usag_no];
@@ -4001,16 +4008,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               added_slots_tracker = {};
               _context4.t2 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_final.levels);
 
-            case 41:
+            case 42:
               if ((_context4.t3 = _context4.t2()).done) {
-                _context4.next = 94;
+                _context4.next = 95;
                 break;
               }
 
               _lid = _context4.t3.value;
 
               if (!_final.levels.hasOwnProperty(_lid)) {
-                _context4.next = 92;
+                _context4.next = 93;
                 break;
               }
 
@@ -4018,18 +4025,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _level = null;
 
               if (!state["final"].levels.hasOwnProperty(_lid)) {
-                _context4.next = 50;
+                _context4.next = 51;
                 break;
               }
 
               // check if level was processed before
               _level = state["final"].levels[_lid];
-              _context4.next = 59;
+              _context4.next = 60;
               break;
 
-            case 50:
+            case 51:
               if (!_this6.registrationLevelToMeetLevelMatrix.hasOwnProperty(_lid)) {
-                _context4.next = 54;
+                _context4.next = 55;
                 break;
               }
 
@@ -4038,12 +4045,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 is_new: false,
                 athletes: {}
               });
-              _context4.next = 59;
+              _context4.next = 60;
               break;
 
-            case 54:
+            case 55:
               if (!_this6.genderAwareMeetLevelMatrix.hasOwnProperty(_l.uid)) {
-                _context4.next = 58;
+                _context4.next = 59;
                 break;
               }
 
@@ -4052,25 +4059,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 is_new: true,
                 athletes: {}
               });
-              _context4.next = 59;
+              _context4.next = 60;
               break;
 
-            case 58:
+            case 59:
               throw 'Invalid level ' + _l.code;
 
-            case 59:
+            case 60:
               _context4.t4 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_l.athletes);
 
-            case 60:
+            case 61:
               if ((_context4.t5 = _context4.t4()).done) {
-                _context4.next = 91;
+                _context4.next = 92;
                 break;
               }
 
               _usag_no2 = _context4.t5.value;
 
               if (!_l.athletes.hasOwnProperty(_usag_no2)) {
-                _context4.next = 89;
+                _context4.next = 90;
                 break;
               }
 
@@ -4107,9 +4114,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _context4.t6 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this6.old_data_athletes.athletes);
 
-            case 76:
+            case 77:
               if ((_context4.t7 = _context4.t6()).done) {
-                _context4.next = 85;
+                _context4.next = 86;
                 break;
               }
 
@@ -4117,19 +4124,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               old_a = _.cloneDeep(_this6.old_data_athletes.athletes[a_i]);
 
               if (!(old_a.id === _athlete.id)) {
-                _context4.next = 83;
+                _context4.next = 84;
                 break;
               }
 
               _athlete.tshirt_size_id = (_old_a$tshirt_size_id = old_a.tshirt_size_id) !== null && _old_a$tshirt_size_id !== void 0 ? _old_a$tshirt_size_id : null;
               _athlete.leo_size_id = (_old_a$leo_size_id = old_a.leo_size_id) !== null && _old_a$leo_size_id !== void 0 ? _old_a$leo_size_id : null;
-              return _context4.abrupt("break", 85);
+              return _context4.abrupt("break", 86);
 
-            case 83:
-              _context4.next = 76;
+            case 84:
+              _context4.next = 77;
               break;
 
-            case 85:
+            case 86:
               //#endregion
               tmp = added - scratched;
 
@@ -4180,30 +4187,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _level.athletes[_usag_no2] = _athlete;
 
-            case 89:
-              _context4.next = 60;
+            case 90:
+              _context4.next = 61;
               break;
-
-            case 91:
-              state["final"].levels[_lid] = _level;
 
             case 92:
-              _context4.next = 41;
+              state["final"].levels[_lid] = _level;
+
+            case 93:
+              _context4.next = 42;
               break;
 
-            case 94:
+            case 95:
               _context4.t8 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(state["final"].levels);
 
-            case 95:
+            case 96:
               if ((_context4.t9 = _context4.t8()).done) {
-                _context4.next = 128;
+                _context4.next = 129;
                 break;
               }
 
               _lid2 = _context4.t9.value;
 
               if (!state["final"].levels.hasOwnProperty(_lid2)) {
-                _context4.next = 126;
+                _context4.next = 127;
                 break;
               }
 
@@ -4211,25 +4218,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _context4.t10 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_l2.athletes);
 
-            case 100:
+            case 101:
               if ((_context4.t11 = _context4.t10()).done) {
-                _context4.next = 115;
+                _context4.next = 116;
                 break;
               }
 
               j = _context4.t11.value;
 
               if (!_l2.athletes.hasOwnProperty(j)) {
-                _context4.next = 113;
+                _context4.next = 114;
                 break;
               }
 
               new_a = _l2.athletes[j];
               _context4.t12 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this6.old_data_athletes.athletes);
 
-            case 105:
+            case 106:
               if ((_context4.t13 = _context4.t12()).done) {
-                _context4.next = 113;
+                _context4.next = 114;
                 break;
               }
 
@@ -4237,22 +4244,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _old_a = _.cloneDeep(_this6.old_data_athletes.athletes[_a_i]);
 
               if (!(new_a.status != _old_a.status)) {
-                _context4.next = 111;
+                _context4.next = 112;
                 break;
               }
 
               _this6.scratch_athlete = true;
-              return _context4.abrupt("break", 113);
+              return _context4.abrupt("break", 114);
 
-            case 111:
-              _context4.next = 105;
+            case 112:
+              _context4.next = 106;
               break;
 
-            case 113:
-              _context4.next = 100;
+            case 114:
+              _context4.next = 101;
               break;
 
-            case 115:
+            case 116:
               //#endregion
               _l2.freed_slots = freed_slots_tracker.hasOwnProperty(_lid2) ? freed_slots_tracker[_lid2] : 0;
               _l2.added_slots = added_slots_tracker.hasOwnProperty(_lid2) ? added_slots_tracker[_lid2] : 0;
@@ -4292,23 +4299,23 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 scratch_athlete: _this6.scratch_athlete
               };
 
-            case 126:
-              _context4.next = 95;
+            case 127:
+              _context4.next = 96;
               break;
 
-            case 128:
+            case 129:
               _context4.t14 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_final.coaches);
 
-            case 129:
+            case 130:
               if ((_context4.t15 = _context4.t14()).done) {
-                _context4.next = 155;
+                _context4.next = 156;
                 break;
               }
 
               _usag_no3 = _context4.t15.value;
 
               if (!_final.coaches.hasOwnProperty(_usag_no3)) {
-                _context4.next = 153;
+                _context4.next = 154;
                 break;
               }
 
@@ -4325,9 +4332,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _context4.t16 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(_this6.old_data_athletes.coaches);
 
-            case 141:
+            case 142:
               if ((_context4.t17 = _context4.t16()).done) {
-                _context4.next = 149;
+                _context4.next = 150;
                 break;
               }
 
@@ -4335,24 +4342,24 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               old_c = _.cloneDeep(_this6.old_data_athletes.coaches[c_i]);
 
               if (!(old_c.id === _coach.id)) {
-                _context4.next = 147;
+                _context4.next = 148;
                 break;
               }
 
               _coach.tshirt_size_id = (_old_c$tshirt_size_id = old_c.tshirt_size_id) !== null && _old_c$tshirt_size_id !== void 0 ? _old_c$tshirt_size_id : null;
-              return _context4.abrupt("break", 149);
+              return _context4.abrupt("break", 150);
 
-            case 147:
-              _context4.next = 141;
+            case 148:
+              _context4.next = 142;
               break;
 
-            case 149:
+            case 150:
               //#endregion
               _tmp = _added - _scratched;
 
               if (_tmp < 0) {
                 // coach was scratched
-                _coach.status = _this6.constants.coach.statuses.Scratched;
+                _coach.status = _this6.constants.coaches.statuses.Scratched;
               } else if (_tmp > 0) {
                 // coach was added
                 _coach.is_new = true;
@@ -4365,11 +4372,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               if (_coach.is_new) _coach.gender = null;
               state["final"].coaches[_usag_no3] = _coach;
 
-            case 153:
-              _context4.next = 129;
+            case 154:
+              _context4.next = 130;
               break;
 
-            case 155:
+            case 156:
               state["final"].coach_count = function () {
                 return Object.keys(this.coaches).length;
               }; //#endregion
@@ -4381,11 +4388,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               _this6.calculateSubtotal();
 
-              _context4.next = 168;
+              _context4.next = 169;
               break;
 
-            case 161:
-              _context4.prev = 161;
+            case 162:
+              _context4.prev = 162;
               _context4.t18 = _context4["catch"](0);
               console.error(_context4.t18);
               msg = '';
@@ -4403,21 +4410,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               _this6.errorMessage = msg + '<br/>Please reload this page.';
               _this6.isError = true;
 
-            case 168:
-              _context4.prev = 168;
+            case 169:
+              _context4.prev = 169;
               _this6.isLoading = false;
-              return _context4.finish(168);
+              return _context4.finish(169);
 
-            case 171:
-              _context4.next = 173;
+            case 172:
+              _context4.next = 174;
               return _this6.loadPaymentOptions(_this6.state);
 
-            case 173:
+            case 174:
             case "end":
               return _context4.stop();
           }
         }
-      }, _callee4, null, [[0, 161, 168, 171]]);
+      }, _callee4, null, [[0, 162, 169, 172]]);
     }))();
   }
 });
@@ -72151,7 +72158,24 @@ var render = function() {
                                               "fas fa-fw fa-exclamation-triangle"
                                           }),
                                           _vm._v(
-                                            "\n                                This meet is either closed for registrations or has no more free slots. Athletes and coaches in this registration will go into a waitlist.\n                            "
+                                            "\n                                This meet is either closed for registrations or has no more free slots. Athletes and coaches in this registration will go into a waitlist.\n                                "
+                                          ),
+                                          _c(
+                                            "button",
+                                            {
+                                              staticClass:
+                                                "btn btn-sm btn-primary float-right",
+                                              staticStyle: {
+                                                "margin-top": "-5px"
+                                              },
+                                              attrs: { type: "button" },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.removeAllFromWaitList()
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("Unmark All Waitlist")]
                                           )
                                         ]
                                       )
@@ -72172,7 +72196,7 @@ var render = function() {
                                                 _vm.meet
                                                   .slots_needed_in_waitlist
                                               ) +
-                                              " mote athlete(s) in this meet need to go in the waitlist.\n                            "
+                                              " more athlete(s) in this meet need to go in the waitlist.\n                            "
                                           )
                                         ]
                                       )
@@ -73605,7 +73629,10 @@ var render = function() {
                                                                                                   "dropdown-item text-primary",
                                                                                                 attrs: {
                                                                                                   type:
-                                                                                                    "button"
+                                                                                                    "button",
+                                                                                                  id:
+                                                                                                    "unmark_" +
+                                                                                                    athlete.id
                                                                                                 },
                                                                                                 on: {
                                                                                                   click: function(
@@ -74181,11 +74208,6 @@ var render = function() {
                                                                             ],
                                                                             staticClass:
                                                                               "form-control form-control-sm",
-                                                                            attrs: {
-                                                                              disabled:
-                                                                                coach.tshirt_size_id !=
-                                                                                null
-                                                                            },
                                                                             on: {
                                                                               change: function(
                                                                                 $event

@@ -1299,9 +1299,9 @@ class Gym extends Model
                         }
                         // bug solved with checking the date validation .......... END
 
-                        $gender = strtolower($import['EVENT']);
+                        $gender = strtolower($import['GENDER']);
                         if (!in_array($gender, ['male', 'female'])) {
-                            $issues[] = 'Invalid gender value `' . $import['EVENT'] . '`';
+                            $issues[] = 'Invalid gender value `' . $import['GENDER'] . '`';
                         }
 
                         $us_citizen = strtolower($import['USACITIZEN']);
@@ -1310,7 +1310,8 @@ class Gym extends Model
                         }
                         $us_citizen = ($us_citizen == 'yes');
 
-                        $level = AthleteLevel::where('abbreviation', $import['COMPLEVEL'])->first();
+                        $import['COMPLEVEL'] = preg_replace('/([a-z])([A-Z])|([a-zA-Z])(\d)/', '$1$3 $2$4', $import['COMPLEVEL']);
+                        $level = AthleteLevel::where('name', $import['COMPLEVEL'])->where('sanctioning_body_id', 2)->first();
                         if ($level == null) {
                             $issues[] = 'Invalid level value `' . $import['COMPLEVEL'] . '`';
                         } else if ($gender != null) {
