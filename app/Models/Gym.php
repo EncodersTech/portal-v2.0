@@ -1495,13 +1495,13 @@ class Gym extends Model
             //     ];
             // }
             if (isset($attr['usaigc_no'])) {
-                if(trim($attr['usaigc_no']) != $this->usaigc_membership)
-                    throw new CustomBaseException('USAIGC No should be same as club sanction');
+                // if(trim($attr['usaigc_no']) != $this->usaigc_membership)
+                //     throw new CustomBaseException('USAIGC No should be same as club sanction');
                  // $duplicate = $this->coaches()->where('usaigc_no', $attr['usaigc_no'])->first();
                 // if ($duplicate !== null)
                 //     throw new CustomBaseException('There is already a coach with USAIGC No ' .
                 //         $attr['usaigc_no'] . ' in this gym.', '-1');
-                $attr['usaigc_no'] .= '-' . rand(100000,999999);
+                // $attr['usaigc_no'] .= '-' . rand(100000,999999);
                 $coach += [
                     'usaigc_no' => $attr['usaigc_no'],
                     'usaigc_background_check' => isset($attr['usaigc_background_check'])
@@ -1602,7 +1602,7 @@ class Gym extends Model
                             $this->_importCoachesNGA($result, $duplicates);
                             break;
                         default:
-                            throw new CustomBaseException('USAIGC server import is disabled.', -1);
+                            $this->_importCoachesUSAIGCApi($result, $duplicates);
                             break;
                     }
                 }
@@ -1621,6 +1621,152 @@ class Gym extends Model
         }
 
         return $result;
+    }
+    private function _importCoachesUSAIGCApi(array &$result, string $duplicates)
+    {
+        try{
+            if ($this->usaigc_membership == null)
+                throw new CustomBaseException('A gym needs to have an IGC membership number to import from USAIGC servers.');
+            $usaigcService = resolve(USAIGCService::class); /** @var USAIGCService $usaigcService */
+            $imports = $usaigcService->getCoach($this->usaigc_membership); // trackthis_1
+            foreach ($imports as $row) {
+                $new = [
+                    'first_name' => null,
+                    'last_name' => null,
+                    'gender' => null,
+                    'dob' => null,
+                    'usaigc_no' => null,
+                ];
+                try {
+                    $issues = [];
+                    $first_name = null;
+                    $last_name = null;
+                    $dob = null;
+                    $gender = null;
+                    $usaigc_no = null;
+                    $active = null;
+
+                    $usaigc_no = trim($row['COACHID']);
+                    $a = ['usaigc_no' => $usaigc_no];
+                    $coach = $this->coaches()->where('usaigc_no', $usaigc_no)->first();
+
+                    if (($coach == null) || ($duplicates == 'overwrite') || ($duplicates == 'fail')) {
+                        $first_name = trim($row['FIRSTNAME']);
+                        $len = strlen($first_name);
+                        if (($len < 1) || ($len > 255))
+                            $issues[] = 'Invalid first name value `' . $row['FIRSTNAME'] . '`';
+
+                        $last_name = trim($row['LASTNAME']);
+                        $len = strlen($last_name);
+                        if (($len < 1) || ($len > 255))
+                            $issues[] = 'Invalid last name value `' . $row['LASTNAME'] . '`';
+
+                        
+                        $gender = 'n'; //gender is not available from usaigc
+                        if (!in_array($gender, ['m', 'f'])) {
+                            $gender = 'N/A';
+                            $issues[] = 'Invalid gender value';
+                        }
+                        if (($dob === null) || ($dob === false)) {
+                            $dob = new \DateTime();
+                            $issues[] = 'Invalid DOB value ';
+                        }
+                        
+                        $active =  $row['STATUS'] == 'Active' ? True : False;
+                        
+                        $issues = count($issues) > 0 ? implode("\n", $issues) : null;
+                        $create = ($coach == null);
+                        $needs_to_fail = !$create && ($duplicates == 'fail');
+                        if ($needs_to_fail)
+                            throw new CustomBaseException($issues, FailedCoachImport::ERROR_CODE_DUPLICATE);
+                        
+
+                        if ($issues != null)
+                            throw new CustomBaseException($issues , -1);
+                            
+                        $new = [
+                            'first_name' => Helper::title($first_name),
+                            'last_name' => Helper::title($last_name),
+                            'gender' => $gender,
+                            'dob' => $dob,
+                            'usaigc_no' => $usaigc_no
+                        ];
+
+                        $old = [];
+
+                        if (!$create) {
+                            $old = [
+                                'first_name' => $coach->first_name,
+                                'last_name' => $coach->last_name,
+                                'gender' => $coach->gender,
+                                'dob' => $coach->dob,
+                                'usaigc_no' => $coach->usaigc_no
+                                // 'nga_no' => 'N'.filter_var($coach->nga_no, FILTER_SANITIZE_NUMBER_INT)
+                            ];
+                        }
+                        $diff = AuditEvent::attributeDiff($old, $new);
+
+                        if (count($diff) < 1) { // No change, skip.
+                            $result['ignored']++;
+                            continue;
+                        }
+                        
+                        if ($create)
+                        {
+                            $coach = $this->coaches()->create($new);
+                        }
+                        else
+                            $coach->update($new);
+
+                        $coach->save();
+                        AuditEvent::coachImportedCsv(
+                            request()->_managed_account, auth()->user(), $coach, SanctioningBody::NGA,
+                            $diff, !$create
+                        );
+                        $result[$create ? 'imported' : 'overwritten']++;
+                    } else { // $duplicates == 'ignore'
+                        $result['ignored']++;
+                        continue;
+                    }
+                } catch(\Throwable $e) {
+                    $code = FailedCoachImport::ERROR_CODE_SERVER;
+
+                    if ($e instanceof CustomBaseException) {
+                        $code = (
+                            $e->getCode() ==  FailedCoachImport::ERROR_CODE_DUPLICATE ?
+                            FailedCoachImport::ERROR_CODE_DUPLICATE :
+                            $code = FailedCoachImport::ERROR_CODE_VALIDATION
+                        );
+                    }
+
+                    $raw = json_encode($row);
+                    if ($raw === false)
+                        throw new CustomBaseException('Server error', ErrorCodeCategory::getCategoryBase('General') + 1);
+                    if (($dob === null) || ($dob === false)) {
+                        $dob = new \DateTime();
+                        $issues[] = 'Invalid DOB value ';
+                    }
+                    $this->failed_coach_imports()->create([
+                        'first_name' => Helper::title($first_name),
+                        'last_name' => Helper::title($last_name),
+                        'gender' => $gender,
+                        'dob' => $dob,
+                        'usaigc_no' => $usaigc_no,
+                        'method' => self::IMPORT_METHOD_API,
+                        'sanctioning_body_id' => SanctioningBody::USAIGC,
+                        'raw' =>  $raw,
+                        'error_code' => $code,
+                        'error_message' => $e->getMessage()
+                    ]);
+
+                    //throw $e;
+                    $result['failed']++;
+                }
+            }
+        }catch(\Throwable $e)
+        {
+            throw $e;
+        }
     }
     private function _importCoachesNGA(array &$result, string $duplicates) //ic
     {

@@ -15,7 +15,7 @@ use GuzzleHttp\Client as Guzzle;
 class USAIGCService {
     public const API_BASE_DEV = 'igcdev.com';
     public const API_BASE_PROD = 'usaigc.com';
-    public const API_PATH = '/API/V2/';
+    public const API_PATH = '/API/V1/';
 
     public const API_DATE_FORMAT = 'n/j/Y';
 
@@ -39,7 +39,8 @@ class USAIGCService {
 
     public function getClub(string $clubId)
     {
-        $path = 'getClub/ID/IGC' . $clubId;
+        $clubId = str_replace("IGC","",$clubId);
+        $path = 'getClub?ID=IGC' . $clubId;
         try {
             $responseJSON = (string) $this->guzzle->request('GET', $path)->getBody();
 
@@ -53,10 +54,42 @@ class USAIGCService {
             throw new CustomBaseException('Something went wrong with the USAIGC server import.',-1);
         }
     }
+    public function getCoach(string $clubId)
+    {
+        $clubId = str_replace("IGC","",$clubId);
+        $path = 'getClubCoach?ID=IGC' . $clubId;
+        try {
+            $responseJSON = (string) $this->guzzle->request('GET', $path)->getBody();
 
+            $response = json_decode($responseJSON, true);
+            if ($response === null)
+                throw new \Exception("Wrong response\n" . $response);
+
+            return $response;
+        } catch (\Throwable $e) {
+            logger()->error(self::class . '::getClub() : ' . $e->getMessage());
+            throw new CustomBaseException('Something went wrong with the USAIGC server import.',-1);
+        }
+    }
+    public function setSanction($igcno, $url)
+    {
+        $path = 'setSanctionUrl/'.$igcno.'?data='.$url;
+        try {
+            $responseJSON = (string) $this->guzzle->request('GET', $path)->getBody();
+
+            $response = json_decode($responseJSON, true);
+            if ($response === null)
+                throw new \Exception("Wrong response\n" . $response);
+
+            return $response;
+        } catch (\Throwable $e) {
+            logger()->error(self::class . '::setSanction() : ' . $e->getMessage());
+            throw new CustomBaseException('Something went wrong with the USAIGC server import.',-1);
+        }
+    }
     public function verifyAthlete($athlete, bool $throw = false)
     {
-        $path = 'getAthleteStatus/ID/IGC';
+        $path = 'getAthleteStatus?ID=IGC';
         try {
             $issues = [];
             $isValid = false;
@@ -124,7 +157,7 @@ class USAIGCService {
 
     public function verifyAthletes(RegistrationAthleteVerification $verification) : array
     {
-        $path = 'getAthleteStatus/ID/IGC';
+        $path = 'getAthleteStatus?ID=IGC';
         try {
             $registration = $verification->meet_registration; /** @var MeetRegistration $registration */
             $results = [];

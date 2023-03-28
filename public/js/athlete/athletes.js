@@ -3015,7 +3015,7 @@ __webpack_require__.r(__webpack_exports__);
               flag = flag || athlete.usag_level.name.toLowerCase().includes(_this3.search.toLowerCase());
             }
 
-            if (athlete.usaigc_no) flag = flag || ('igc' + athlete.usaigc_no).includes(_this3.filters.search.toLowerCase());
+            if (athlete.usaigc_no) flag = flag || ('igc' + athlete.usaigc_no).includes(_this3.search.toLowerCase());
 
             if (athlete.usaigc_level) {
               flag = flag || athlete.usaigc_level.level_category.name.toLowerCase().includes(_this3.search.toLowerCase());
@@ -82325,6 +82325,7 @@ $(document).ready(function (e) {
         this.selectedFailedAthleteImports = v;
       },
       onFaultySearchTextChanged: function onFaultySearchTextChanged(v) {
+        // this.filters.search = v;
         this.faultySearch = v;
       }
     }

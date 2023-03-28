@@ -432,7 +432,7 @@
                             }
 
                             if (athlete.usaigc_no)
-                                flag = flag || ('igc' + athlete.usaigc_no).includes(this.filters.search.toLowerCase());
+                                flag = flag || ('igc' + athlete.usaigc_no).includes(this.search.toLowerCase());
 
                             if (athlete.usaigc_level) {
                                 flag = flag || athlete.usaigc_level.level_category.name.toLowerCase().includes(this.search.toLowerCase());

@@ -22,7 +22,6 @@ class ContactController extends BaseApiController
 
         if ($apiGuard->check())
             $attr['email'] = $apiGuard->user()->email;
-
-        Mail::to(config('mail.admin'))->send(new ContactForm($attr['email'], $attr['message']));
+        Mail::to('support@allgymnastics.com')->send(new ContactForm($attr['email'], $attr['message']));
     }
 }

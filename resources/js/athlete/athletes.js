@@ -55,6 +55,7 @@ $(document).ready(e => {
             },
 
             onFaultySearchTextChanged(v) {
+                // this.filters.search = v;
                 this.faultySearch = v;
             }
         }
