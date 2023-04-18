@@ -1310,6 +1310,8 @@ class Gym extends Model
                         }
                         $us_citizen = ($us_citizen == 'yes');
 
+                        $import['COMPLEVEL'] = trim($import['COMPLEVEL']);
+                        $import['COMPLEVEL'] = str_replace(' ', '', $import['COMPLEVEL']);
                         $import['COMPLEVEL'] = preg_replace('/([a-z])([A-Z])|([a-zA-Z])(\d)/', '$1$3 $2$4', $import['COMPLEVEL']);
                         $level = AthleteLevel::where('name', $import['COMPLEVEL'])->where('sanctioning_body_id', 2)->first();
                         if ($level == null) {

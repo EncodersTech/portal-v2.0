@@ -52,11 +52,13 @@ $(document).ready(e => {
             }, 2500),
 
             firstStep(registrationData) {
+                $("#clickdiv").hide();
                 this.registrationData = registrationData;
                 this.step++;
             },
 
             backToFirstStep() {
+                $("#clickdiv").show();
                 this.step--;
             },
 

@@ -1799,6 +1799,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationsNotifications',
   props: {
@@ -2154,9 +2159,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: 'SanctionNotifications',
+  name: "SanctionNotifications",
   props: {
     managed: {
       "default": null,
@@ -2167,9 +2171,9 @@ __webpack_require__.r(__webpack_exports__);
     constants: function constants() {
       return {
         bodies: {
-          1: 'USAG',
-          2: 'USAIGC',
-          3: 'AAU',
+          1: "USAG",
+          2: "USAIGC",
+          3: "AAU",
           USAG: 1,
           USAIGC: 2,
           AAU: 3
@@ -2255,11 +2259,11 @@ __webpack_require__.r(__webpack_exports__);
 
                 sanction.readable = {};
                 sanction.timestamp = Moment(sanction.timestamp);
-                sanction.readable.timestamp = sanction.timestamp.format('MM/DD/YYYY h:m:s a');
+                sanction.readable.timestamp = sanction.timestamp.format("MM/DD/YYYY h:m:s a");
                 sanction.created_at = Moment(sanction.created_at);
-                sanction.readable.created_at = sanction.created_at.format('MM/DD/YYYY h:m:s a');
+                sanction.readable.created_at = sanction.created_at.format("MM/DD/YYYY h:m:s a");
                 sanction.updated_at = Moment(sanction.updated_at);
-                sanction.readable.updated_at = sanction.updated_at.format('MM/DD/YYYY h:m:s a');
+                sanction.readable.updated_at = sanction.updated_at.format("MM/DD/YYYY h:m:s a");
                 delete sanction.number;
                 delete sanction.gym_id;
                 delete sanction.parent_id;
@@ -2288,14 +2292,14 @@ __webpack_require__.r(__webpack_exports__);
                     items: [],
                     last_updated: sanction.timestamp,
                     readable: {
-                      last_updated: sanction.timestamp.format('MM/DD/YYYY h:m:s a')
+                      last_updated: sanction.timestamp.format("MM/DD/YYYY h:m:s a")
                     },
-                    url: '/gyms/' + gym.id + '/sanctions/usag/' + item.number
+                    url: "/gyms/" + gym.id + "/sanctions/usag/" + item.number
                   };
                 } else {
                   if (sanction.timestamp > usag_sanctions[item.number].last_updated) {
                     usag_sanctions[item.number].last_updated = sanction.timestamp;
-                    usag_sanctions[item.number].readable.last_updated = sanction.timestamp.format('MM/DD/YYYY h:m:s a');
+                    usag_sanctions[item.number].readable.last_updated = sanction.timestamp.format("MM/DD/YYYY h:m:s a");
                   }
                 }
 
@@ -2353,7 +2357,7 @@ __webpack_require__.r(__webpack_exports__);
         this.current.sanction = 0;
         this.shown = this.current.body === null ? null : this.items[this.current.body][this.current.sanction];
       } catch (error) {
-        this.errorMessage = 'Something went wrong while processing your sanction notification.' + 'Please contact us.<br/>' + '<span class="small"><strong>Error details:</strong> ' + error + '</span>';
+        this.errorMessage = "Something went wrong while processing your sanction notification." + "Please contact us.<br/>" + '<span class="small"><strong>Error details:</strong> ' + error + "</span>";
       }
     }
   },
@@ -2361,26 +2365,26 @@ __webpack_require__.r(__webpack_exports__);
     var _this2 = this;
 
     this.isLoading = true;
-    axios.get('/api/user/sanctions', {
-      'params': {
-        '__managed': this.managed
+    axios.get("/api/user/sanctions", {
+      params: {
+        __managed: this.managed
       }
     }).then(function (result) {
       _this2.gyms = result.data.gyms;
 
       _this2.initialize();
     })["catch"](function (error) {
-      var msg = '';
+      var msg = "";
 
       if (error.response) {
         msg = error.response.data.message;
       } else if (error.request) {
-        msg = 'No server response.';
+        msg = "No server response.";
       } else {
         msg = error.message;
       }
 
-      _this2.errorMessage = 'Failed to load sanction notification. ' + msg;
+      _this2.errorMessage = "Failed to load sanction notification. " + msg;
     })["finally"](function () {
       _this2.isLoading = false;
     });
@@ -7826,7 +7830,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.icon-button[data-v-2a166e8f] {\n    color: var(--white);\n    border: none;\n    background-color: transparent;\n    margin: 0;\n    padding: 0;\n    border-radius: 6px;\n    border: 1px solid transparent;\n    transition-duration: 100ms;\n    outline: none;\n}\n.icon-button[data-v-2a166e8f]:hover {\n    color: var(--gray);\n    background-color: var(--white);\n    border: 1px solid var(--white);\n}\n.icon-button[data-v-2a166e8f]:active {\n    color: var(--dark);\n    background-color: var(--light);\n    border: 1px solid var(--light);\n}\n.type-list-item[data-v-2a166e8f]::after {\n    content: ', ';\n}\n.type-list-item[data-v-2a166e8f]:last-child::after {\n    content: '';\n}\n", ""]);
+exports.push([module.i, "\n.icon-button[data-v-2a166e8f] {\r\n    color: var(--white);\r\n    border: none;\r\n    background-color: transparent;\r\n    margin: 0;\r\n    padding: 0;\r\n    border-radius: 6px;\r\n    border: 1px solid transparent;\r\n    transition-duration: 100ms;\r\n    outline: none;\n}\n.icon-button[data-v-2a166e8f]:hover {\r\n    color: var(--gray);\r\n    background-color: var(--white);\r\n    border: 1px solid var(--white);\n}\n.icon-button[data-v-2a166e8f]:active {\r\n    color: var(--dark);\r\n    background-color: var(--light);\r\n    border: 1px solid var(--light);\n}\n.type-list-item[data-v-2a166e8f]::after {\r\n    content: \", \";\n}\n.type-list-item[data-v-2a166e8f]:last-child::after {\r\n    content: \"\";\n}\r\n", ""]);
 
 // exports
 
@@ -66202,160 +66206,91 @@ var render = function() {
             ? _c("div", [
                 _vm._m(1),
                 _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "row pt-3" },
-                  _vm._l(_vm.items[_vm.current.body], function(item) {
-                    return _c(
-                      "div",
-                      {
-                        staticClass:
-                          "col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1",
-                        staticStyle: { "font-size": "12px" }
-                      },
-                      [
-                        _c(
-                          "div",
-                          {
-                            staticClass: "small-box text-white",
-                            class: [
-                              item.is_un_assigned === true
-                                ? "bg-warning"
-                                : item.is_new
-                                ? "bg-success"
-                                : "bg-danger"
-                            ]
-                          },
-                          [
-                            _c("div", { staticClass: "inner" }, [
-                              _c(
-                                "h5",
-                                {
-                                  staticClass: "mb-3",
-                                  staticStyle: { "font-size": "15px" }
-                                },
-                                [
-                                  item.is_new
-                                    ? _c("span", [
-                                        _c("span", {
-                                          staticClass:
-                                            "fas fa-fw fa-plus-square"
-                                        }),
-                                        _vm._v(
-                                          "\n                                    New " +
-                                            _vm._s(
-                                              _vm.constants.bodies[item.body]
-                                            ) +
-                                            " Reservation  - " +
-                                            _vm._s(
-                                              item.meet
-                                                ? item.meet.name
-                                                : item.meetName
-                                            ) +
-                                            "\n                                "
-                                        )
-                                      ])
-                                    : _c("span", [
-                                        _c("span", {
-                                          staticClass: "fas fa-fw fa-pen-square"
-                                        }),
-                                        _vm._v(
-                                          "\n                                    " +
-                                            _vm._s(
-                                              _vm.constants.bodies[item.body]
-                                            ) +
-                                            " Reservation Update - " +
-                                            _vm._s(
-                                              item.meet
-                                                ? item.meet.name
-                                                : item.meetName
-                                            ) +
-                                            "\n                                "
-                                        )
-                                      ])
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                { staticStyle: { "letter-spacing": "0.5px" } },
-                                [
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Sanction No.:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.sanction) +
-                                        "\n                                "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Gym:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.gym.name) +
-                                        "\n                                "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Category:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.category.name) +
-                                        "\n                                "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Type:")]),
-                                    _vm._v(" "),
-                                    item.is_new
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-success"
-                                          },
-                                          [_vm._v("New Reservation")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    item.has_update
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-warning"
-                                          },
-                                          [_vm._v("Details Updated")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    item.has_deletion
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-danger"
-                                          },
-                                          [_vm._v("Reservation Removed")]
-                                        )
-                                      : _vm._e()
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Last updated:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.readable.last_updated) +
-                                        "\n                                "
-                                    )
-                                  ])
-                                ]
-                              )
-                            ]),
+                _c("table", { staticClass: "table" }, [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.items[_vm.current.body], function(item) {
+                      return _c(
+                        "tr",
+                        { staticStyle: { "font-size": "12px" } },
+                        [
+                          _c("td", [
+                            item.is_new
+                              ? _c("span", [
+                                  _c("span", {
+                                    staticClass: "fas fa-fw fa-plus-square"
+                                  }),
+                                  _vm._v(
+                                    "\n                                New " +
+                                      _vm._s(_vm.constants.bodies[item.body]) +
+                                      " Reservation\n                            "
+                                  )
+                                ])
+                              : _c("span", [
+                                  _c("span", {
+                                    staticClass: "fas fa-fw fa-pen-square"
+                                  }),
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.constants.bodies[item.body]) +
+                                      " Reservation Update\n                            "
+                                  )
+                                ])
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(
+                              _vm._s(item.meet ? item.meet.name : item.meetName)
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.sanction))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.gym.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.category.name))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            item.is_new
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "badge badge-pill badge-success"
+                                  },
+                                  [_vm._v("New Reservation")]
+                                )
+                              : _vm._e(),
                             _vm._v(" "),
+                            item.has_update
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "badge badge-pill badge-warning"
+                                  },
+                                  [_vm._v("Details Updated")]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            item.has_deletion
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass: "badge badge-pill badge-danger"
+                                  },
+                                  [_vm._v("Reservation Removed")]
+                                )
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(_vm._s(item.readable.last_updated))
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
                             item.is_un_assigned === true
                               ? _c(
                                   "a",
@@ -66386,13 +66321,13 @@ var render = function() {
                                     })
                                   ]
                                 )
-                          ]
-                        )
-                      ]
-                    )
-                  }),
-                  0
-                )
+                          ])
+                        ]
+                      )
+                    }),
+                    0
+                  )
+                ])
               ])
             : _vm._e()
         ])
@@ -66417,6 +66352,30 @@ var staticRenderFns = [
     return _c("h5", { staticClass: "border-bottom" }, [
       _c("span", { staticClass: "fas fa-fw fa-receipt" }),
       _vm._v(" Reservations\n            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Reservation")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Meet")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Sanction")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Gym")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Category")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Type")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Last Update")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Action")])
+      ])
     ])
   }
 ]
@@ -66464,175 +66423,109 @@ var render = function() {
             ? _c("div", [
                 _vm._m(1),
                 _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "row pt-3" },
-                  _vm._l(_vm.items[_vm.current.body], function(item) {
-                    return _c(
-                      "div",
-                      {
-                        staticClass:
-                          "col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1",
-                        staticStyle: { "font-size": "12px" }
-                      },
-                      [
-                        _c(
-                          "div",
-                          {
-                            staticClass: "small-box text-white",
-                            class: [item.is_new ? "bg-success" : "bg-danger"]
-                          },
-                          [
-                            _c("div", { staticClass: "inner" }, [
-                              _c(
-                                "h5",
-                                {
-                                  staticClass: "mb-3",
-                                  staticStyle: { "font-size": "15px" }
-                                },
-                                [
-                                  item.is_new
-                                    ? _c("span", [
-                                        _c("span", {
-                                          staticClass:
-                                            "fas fa-fw fa-plus-square"
-                                        }),
-                                        _vm._v(
-                                          "\n                                    New " +
-                                            _vm._s(
-                                              _vm.constants.bodies[item.body]
-                                            ) +
-                                            " Sanction\n                            "
-                                        )
-                                      ])
-                                    : _c("span", [
-                                        _c("span", {
-                                          staticClass: "fas fa-fw fa-pen-square"
-                                        }),
-                                        _vm._v(
-                                          "\n                                    " +
-                                            _vm._s(
-                                              _vm.constants.bodies[item.body]
-                                            ) +
-                                            " Sanction Update\n                            "
-                                        )
-                                      ])
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                { staticStyle: { "letter-spacing": "0.5px" } },
-                                [
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Sanction No.:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.number) +
-                                        "\n                            "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Gym:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.gym.name) +
-                                        "\n                            "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Meet:")]),
-                                    _vm._v(" "),
-                                    item.meet !== null
-                                      ? _c("span", [
-                                          _vm._v(
-                                            "\n                                " +
-                                              _vm._s(item.meet.name) +
-                                              "\n                            "
-                                          )
-                                        ])
-                                      : item.usag_meet_name !== null
-                                      ? _c("span", [
-                                          _vm._v(
-                                            "\n                                " +
-                                              _vm._s(item.usag_meet_name) +
-                                              " (received from USAG)\n                            "
-                                          )
-                                        ])
-                                      : _vm._e()
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Category:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.category.name) +
-                                        "\n                            "
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Type:")]),
-                                    _vm._v(" "),
-                                    item.is_new
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-success"
-                                          },
-                                          [_vm._v("New Sanction")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    item.has_update
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-warning"
-                                          },
-                                          [_vm._v("Details Updated")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    item.has_deletion
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-danger"
-                                          },
-                                          [_vm._v("Sanction Removed")]
-                                        )
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    item.has_vender_change
-                                      ? _c(
-                                          "span",
-                                          {
-                                            staticClass:
-                                              "badge badge-pill badge-dark"
-                                          },
-                                          [_vm._v("Vendor Change")]
-                                        )
-                                      : _vm._e()
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", {}, [
-                                    _c("strong", [_vm._v("Last updated:")]),
-                                    _vm._v(
-                                      " " +
-                                        _vm._s(item.readable.last_updated) +
-                                        "\n                            "
-                                    )
-                                  ])
-                                ]
-                              )
-                            ]),
+                _c("table", { staticClass: "table" }, [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _c(
+                    "tbody",
+                    _vm._l(_vm.items[_vm.current.body], function(item) {
+                      return _c(
+                        "tr",
+                        { staticStyle: { "font-size": "12px" } },
+                        [
+                          _c("td", [
+                            item.is_new
+                              ? _c("span", [
+                                  _c("span", {
+                                    staticClass: "fas fa-fw fa-plus-square"
+                                  }),
+                                  _vm._v(
+                                    "\n                                New " +
+                                      _vm._s(_vm.constants.bodies[item.body]) +
+                                      " Sanction\n                            "
+                                  )
+                                ])
+                              : _c("span", [
+                                  _c("span", {
+                                    staticClass: "fas fa-fw fa-pen-square"
+                                  }),
+                                  _vm._v(
+                                    "\n                                " +
+                                      _vm._s(_vm.constants.bodies[item.body]) +
+                                      " Sanction Update\n                            "
+                                  )
+                                ])
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            item.meet !== null
+                              ? _c("span", [_vm._v(_vm._s(item.meet.name))])
+                              : item.usag_meet_name !== null
+                              ? _c("span", [
+                                  _vm._v(
+                                    "\n                            " +
+                                      _vm._s(item.usag_meet_name) +
+                                      " (received from USAG)\n                            "
+                                  )
+                                ])
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.number))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.gym.name))]),
+                          _vm._v(" "),
+                          _c("td", [_vm._v(_vm._s(item.category.name))]),
+                          _vm._v(" "),
+                          _c("td", [
+                            item.is_new
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "badge badge-pill badge-success"
+                                  },
+                                  [_vm._v("New Sanction")]
+                                )
+                              : _vm._e(),
                             _vm._v(" "),
+                            item.has_update
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass:
+                                      "badge badge-pill badge-warning"
+                                  },
+                                  [_vm._v("Details Updated")]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            item.has_deletion
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass: "badge badge-pill badge-danger"
+                                  },
+                                  [_vm._v("Sanction Removed")]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            item.has_vender_change
+                              ? _c(
+                                  "span",
+                                  {
+                                    staticClass: "badge badge-pill badge-dark"
+                                  },
+                                  [_vm._v("Vendor Change")]
+                                )
+                              : _vm._e()
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
+                            _vm._v(_vm._s(item.readable.last_updated))
+                          ]),
+                          _vm._v(" "),
+                          _c("td", [
                             _c(
                               "a",
                               {
@@ -66647,13 +66540,13 @@ var render = function() {
                                 })
                               ]
                             )
-                          ]
-                        )
-                      ]
-                    )
-                  }),
-                  0
-                )
+                          ])
+                        ]
+                      )
+                    }),
+                    0
+                  )
+                ])
               ])
             : _vm._e()
         ])
@@ -66678,6 +66571,30 @@ var staticRenderFns = [
     return _c("h5", { staticClass: "border-bottom" }, [
       _c("span", { staticClass: "fas fa-fw fa-receipt" }),
       _vm._v(" Sanctions\n            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("thead", [
+      _c("tr", [
+        _c("th", [_vm._v("Sanction")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Meet")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Sanction")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Gym")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Category")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Type")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Last Update")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Action")])
+      ])
     ])
   }
 ]

@@ -24,7 +24,7 @@
             </div>
 
             <div class="col">
-                <div class="alert alert-info">
+                <div class="alert alert-info" id="clickdiv">
                     <span class="fas fa-info-circle"></span>
                     <strong>Note:</strong> Double click fields to edit athletes or coaches Information
                 </div>

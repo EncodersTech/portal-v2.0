@@ -1,0 +1,96 @@
+<div class="row pt-3">
+                    <div
+                        class="col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-1"
+                        style="font-size:12px;"
+                        v-for="item in items[current.body]"
+                    >
+                        <div
+                            class="small-box text-white"
+                            :class="[item.is_new ? 'bg-success' : 'bg-danger']"
+                        >
+                            <div class="inner">
+                                <h5 class="mb-3" style="font-size: 15px;">
+                                    <span v-if="item.is_new">
+                                        <span
+                                            class="fas fa-fw fa-plus-square"
+                                        ></span>
+                                        New
+                                        {{
+                                            constants.bodies[item.body]
+                                        }}
+                                        Sanction
+                                    </span>
+                                    <span v-else>
+                                        <span
+                                            class="fas fa-fw fa-pen-square"
+                                        ></span>
+                                        {{
+                                            constants.bodies[item.body]
+                                        }}
+                                        Sanction Update
+                                    </span>
+                                </h5>
+                                <div class="" style="letter-spacing: 0.5px">
+                                    <div class="">
+                                        <strong>Sanction No.:</strong>
+                                        {{ item.number }}
+                                    </div>
+                                    <div class="">
+                                        <strong>Gym:</strong>
+                                        {{ item.gym.name }}
+                                    </div>
+                                    <div class="">
+                                        <strong>Meet:</strong>
+                                        <span v-if="item.meet !== null">
+                                            {{ item.meet.name }}
+                                        </span>
+                                        <span
+                                            v-else-if="
+                                                item.usag_meet_name !== null
+                                            "
+                                        >
+                                            {{ item.usag_meet_name }} (received
+                                            from USAG)
+                                        </span>
+                                    </div>
+                                    <div class="">
+                                        <strong>Category:</strong>
+                                        {{ item.category.name }}
+                                    </div>
+                                    <div class="">
+                                        <strong>Type:</strong>
+                                        <span
+                                            class="badge badge-pill badge-success"
+                                            v-if="item.is_new"
+                                            >New Sanction</span
+                                        >
+                                        <span
+                                            class="badge badge-pill badge-warning"
+                                            v-if="item.has_update"
+                                            >Details Updated</span
+                                        >
+                                        <span
+                                            class="badge badge-pill badge-danger"
+                                            v-if="item.has_deletion"
+                                            >Sanction Removed</span
+                                        >
+                                        <span
+                                            class="badge badge-pill badge-dark"
+                                            v-if="item.has_vender_change"
+                                            >Vendor Change</span
+                                        >
+                                    </div>
+                                    <div class="">
+                                        <strong>Last updated:</strong>
+                                        {{ item.readable.last_updated }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a :href="item.url" class="small-box-footer mt-2">
+                                <b>View Details &amp; Merge</b>
+                                <i class="fas fa-arrow-circle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>

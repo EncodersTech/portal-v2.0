@@ -80,7 +80,7 @@
                                             :id="'modal-add-athlete-specialist-event' + evt.id"
                                             v-model="add_athlete_events[evt.id].checked">
                                         <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                            {{ evt.name}}
+                                            {{ evt.name }}
                                         </label>
                                     </div>
                                 </div>
@@ -354,32 +354,27 @@
                                             </div>
                                             <div class="small mb-1">
                                                 <div v-if="permissions.scratch" class="btn-group">
-                                                        <button v-if="!level.changes.team && level.team"
-                                                            class="dropdown-item text-danger" style="border: 1px solid;" type="button"
-                                                            @click="toggleTeam(level, false)">
-                                                            <span class="fas fa-fw fa-eraser"></span> Scratch Team
-                                                        </button>
-
-                                                        <button v-else-if="!level.changes.team && !level.team"
-                                                            class="dropdown-item text-success" style="border: 1px solid;" type="button"
-                                                            @click="toggleTeam(level, true)">
-                                                            <span class="fas fa-fw fa-users"></span> Register as Team
-                                                        </button>
-
-                                                        <div v-else>
-                                                            <button class="dropdown-item" type="button" style="border: 1px solid;"
-                                                                @click="revertChanges(level, 'level')">
-                                                                <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
-                                                            </button>
-                                                        </div>
-                                                    <!-- <button type="button" class="btn btm-sm btn-link pt-0"
-                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                        <span class="fas fa-fw fa-ellipsis-v"></span>
+                                                    <button v-if="!level.changes.team && level.team"
+                                                        class="dropdown-item text-danger" style="border: 1px solid;" type="button"
+                                                        @click="toggleTeam(level, false)">
+                                                        <span class="fas fa-fw fa-eraser"></span> Scratch Team
                                                     </button>
-                                                    <div class="dropdown-menu dropdown-menu-right">
-                                                        
-                                                    </div> -->
                                                 </div>
+                                                <div class="btn-group" v-if="level.allow_team">
+                                                    <button v-if="!level.changes.team && !level.team"
+                                                        class="dropdown-item text-success" style="border: 1px solid;" type="button"
+                                                        @click="toggleTeam(level, true)">
+                                                        <span class="fas fa-fw fa-users"></span> Register as Team
+                                                    </button>
+
+                                                    <div v-else>
+                                                        <button class="dropdown-item" type="button" style="border: 1px solid;"
+                                                            @click="revertChanges(level, 'level')">
+                                                            <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                
                                             </div>
 
                                             <div class="small mb-1">
@@ -760,7 +755,7 @@
 
                                             <div class="d-flex flex-row flew-nowrap mt-1 mb-3 p-1 border-top">
                                                 <div class="flex-grow-1">
-                                                    <button v-if="!category.locked && permissions.scratch && (!level.disabled)" class="btn btn-sm btn-success"
+                                                    <button v-if="!category.locked && (!level.disabled)" class="btn btn-sm btn-success"
                                                         @click="showAddModal(level)">
                                                         <span class="fas fa-user-plus"></span> Add Athlete 
                                                     </button>
@@ -1955,7 +1950,7 @@ export default {
 
                 this.level_as_a_team = true;
 
-                if (!this.permissions.scratch)
+                if (!this.permissions.scratch && toggle == false)
                     return;
 
                 level.team = toggle;
@@ -1972,7 +1967,7 @@ export default {
         },
 
         showAddModal(level) {
-            if (!this.permissions.scratch || level.disabled || level.locked)
+            if (level.disabled || level.locked)
                 return;
 
             this.add_athlete_level = level;

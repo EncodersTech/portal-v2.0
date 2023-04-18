@@ -387,7 +387,9 @@
                                                     @click="toggleTeam(l, false)">
                                                     <span class="fas fa-fw fa-eraser"></span> Scratch Team
                                                 </button>
-                                                <button v-else-if="!l.changes.team && !l.has_team"
+                                            </div>
+                                            <div class="btn-group" v-if="l.allow_team">
+                                                <button v-if="!l.changes.team && !l.has_team"
                                                     class="dropdown-item text-success" type="button" style="border: 1px solid;"
                                                     @click="toggleTeam(l, true)">
                                                     <span class="fas fa-fw fa-users"></span> Register as Team
@@ -396,31 +398,6 @@
                                                     @click="revertLevelTeam(l)">
                                                     <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
                                                 </button>
-
-                                                <!-- <button type="button" class="btn btm-sm btn-link pt-0"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <span class="fas fa-fw fa-ellipsis-v"></span>
-                                                </button>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <button v-if="!l.changes.team && l.has_team"
-                                                        class="dropdown-item text-danger" type="button"
-                                                        @click="toggleTeam(l, false)">
-                                                        <span class="fas fa-fw fa-eraser"></span> Scratch Team
-                                                    </button>
-
-                                                    <button v-else-if="!l.changes.team && !l.has_team"
-                                                        class="dropdown-item text-success" type="button"
-                                                        @click="toggleTeam(l, true)">
-                                                        <span class="fas fa-fw fa-users"></span> Register as Team
-                                                    </button>
-
-                                                    <div v-else>
-                                                        <button class="dropdown-item" type="button"
-                                                            @click="revertLevelTeam(l)">
-                                                            <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
-                                                        </button>
-                                                    </div>
-                                                </div> -->
                                             </div>
                                         </div>
 
@@ -1331,7 +1308,7 @@
             },
 
             toggleTeam(level, toggle) {
-                if (!this.permissions.scratch)
+                if (!this.permissions.scratch && toggle == false)
                     return;
 
                 level.has_team = toggle;

@@ -2788,11 +2788,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3609,7 +3604,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       try {
         if (level.athletes.length < 2) throw 'You need to select at least two athletes for register as team.';
         this.level_as_a_team = true;
-        if (!this.permissions.scratch) return;
+        if (!this.permissions.scratch && toggle == false) return;
         level.team = toggle;
         level.changes.team = level.team != level.original_data.team;
         this.calculateWaitlistStatuses();
@@ -3618,7 +3613,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     showAddModal: function showAddModal(level) {
-      if (!this.permissions.scratch || level.disabled || level.locked) return;
+      if (level.disabled || level.locked) return;
       this.add_athlete_level = level;
       this.add_athlete_athlete = '';
       this.add_athlete_specialist = false;
@@ -71417,14 +71412,29 @@ var render = function() {
                                                                                             }
                                                                                           ),
                                                                                           _vm._v(
-                                                                                            " Scratch Team\n                                                        "
+                                                                                            " Scratch Team\n                                                    "
                                                                                           )
                                                                                         ]
                                                                                       )
-                                                                                    : !level
-                                                                                        .changes
-                                                                                        .team &&
-                                                                                      !level.team
+                                                                                    : _vm._e()
+                                                                                ]
+                                                                              )
+                                                                            : _vm._e(),
+                                                                          _vm._v(
+                                                                            " "
+                                                                          ),
+                                                                          level.allow_team
+                                                                            ? _c(
+                                                                                "div",
+                                                                                {
+                                                                                  staticClass:
+                                                                                    "btn-group"
+                                                                                },
+                                                                                [
+                                                                                  !level
+                                                                                    .changes
+                                                                                    .team &&
+                                                                                  !level.team
                                                                                     ? _c(
                                                                                         "button",
                                                                                         {
@@ -71458,7 +71468,7 @@ var render = function() {
                                                                                             }
                                                                                           ),
                                                                                           _vm._v(
-                                                                                            " Register as Team\n                                                        "
+                                                                                            " Register as Team\n                                                    "
                                                                                           )
                                                                                         ]
                                                                                       )
@@ -71498,7 +71508,7 @@ var render = function() {
                                                                                                 }
                                                                                               ),
                                                                                               _vm._v(
-                                                                                                " Revert Changes\n                                                            "
+                                                                                                " Revert Changes\n                                                        "
                                                                                               )
                                                                                             ]
                                                                                           )
@@ -74023,9 +74033,6 @@ var render = function() {
                                                                             },
                                                                             [
                                                                               !category.locked &&
-                                                                              _vm
-                                                                                .permissions
-                                                                                .scratch &&
                                                                               !level.disabled
                                                                                 ? _c(
                                                                                     "button",
@@ -91924,10 +91931,12 @@ $(document).ready(function (e) {
         });
       }, 2500),
       firstStep: function firstStep(registrationData) {
+        $("#clickdiv").hide();
         this.registrationData = registrationData;
         this.step++;
       },
       backToFirstStep: function backToFirstStep() {
+        $("#clickdiv").show();
         this.step--;
       },
       showAlert: function showAlert(msg, title, color, icon) {

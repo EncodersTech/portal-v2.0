@@ -2783,29 +2783,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -3030,7 +3007,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       level.slots_needed_in_waitlist = result;
     },
     toggleTeam: function toggleTeam(level, toggle) {
-      if (!this.permissions.scratch) return;
+      if (!this.permissions.scratch && toggle == false) return;
       level.has_team = toggle;
       level.changes.team = level.has_team != level.original_data.has_team;
       this.calculateSubtotal();
@@ -72455,9 +72432,21 @@ var render = function() {
                                                                     )
                                                                   ]
                                                                 )
-                                                              : !l.changes
-                                                                  .team &&
-                                                                !l.has_team
+                                                              : _vm._e()
+                                                          ]
+                                                        )
+                                                      : _vm._e(),
+                                                    _vm._v(" "),
+                                                    l.allow_team
+                                                      ? _c(
+                                                          "div",
+                                                          {
+                                                            staticClass:
+                                                              "btn-group"
+                                                          },
+                                                          [
+                                                            !l.changes.team &&
+                                                            !l.has_team
                                                               ? _c(
                                                                   "button",
                                                                   {
