@@ -23,7 +23,7 @@ use App\Services\DwollaService;
 use App\Services\DwollaScheduleWithdrawal;
 use App\Mail\Registrant\NotifyMailCheckMailable;
 use Illuminate\Support\Facades\Mail;
-
+use Illuminate\Support\Facades\Hash;
 class UserController extends AppBaseController
 {
     /**
@@ -38,10 +38,8 @@ class UserController extends AppBaseController
 
     public function customUsers()
     {
-        $request['bank_id'] = '63b3180f-009d-4f5e-bcd2-4236c7d71c53';
-        $request['amount'] = '20';
-        $dwollaScheduleWithdrawal = resolve(DwollaScheduleWithdrawal::class);
-        $dwollaScheduleWithdrawal->withdrawBalanceSchedule(auth()->user()->id, $request);
+        dd(Hash::make('A015BGADFE1546FF'));
+
         
     }
 

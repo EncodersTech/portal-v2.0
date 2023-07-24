@@ -228,6 +228,15 @@
                         {{ Form::text('terms_service_link', $settings['terms_service_link'], ['class' => 'form-control','required','autocomplete'=>'off', 'id' => 'termsServiceLink']) }}
                     </div>
                 </div>
+                <div class="form-group col-sm-12 col-md-4 col-lg-3">
+                    {{ Form::label('app_name', 'Competitors {Name : [Admin %, CC %]}') }}
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-link"></i></span>
+                        </div>
+                        {{ Form::text('competitors', $settings['competitors'], ['class' => 'form-control','required','autocomplete'=>'off', 'id' => 'termsServiceLink']) }}
+                    </div>
+                </div>
 
                 <div class="form-group col-sm-12 col-md-4 col-lg-3">
                     {{ Form::label('app_name', 'Enable Featured Meets Fees:') }}

@@ -3674,6 +3674,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     permissions: {
                       scratch: function scratch() {
                         return evt.is_new || vm.permissions.scratch && evt.status == vm.constants.specialists.statuses.Registered;
+                      },
+                      scratch_without_refund: function scratch_without_refund() {
+                        return evt.is_new || !vm.permissions.scratch && !evt.has_pending_events();
                       }
                     },
                     status: _this9.constants.specialists.statuses.Pending,
@@ -3773,7 +3776,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
               var flag = false;
               this.events.some(function (evt) {
-                if (evt.has_changes()) flag = true;
+                if (evt.hasOwnProperty('has_changes') && evt.has_changes()) flag = true;
                 return flag;
               });
               return flag;
@@ -4072,6 +4075,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 permissions: {
                   scratch: function scratch() {
                     return evt.is_new || vm.permissions.scratch && evt.status == vm.constants.specialists.statuses.Registered;
+                  },
+                  scratch_without_refund: function scratch_without_refund() {
+                    return evt.is_new || !vm.permissions.scratch && !evt.has_pending_events();
                   }
                 },
                 status: _this11.constants.specialists.statuses.Pending,
@@ -4282,7 +4288,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                     if (a.is_specialist) {
                       athlete.events = [];
                       a.events.forEach(function (evt) {
-                        if (evt.is_new || evt.has_changes()) {
+                        if (evt.is_new || evt.hasOwnProperty('has_changes') && evt.has_changes()) {
                           athlete.events.push(_objectSpread(_objectSpread({}, _.cloneDeep(evt)), {}, {
                             to_waitlist: a.to_waitlist,
                             original_data: {
@@ -4840,7 +4846,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
           var flag = false;
           this.events.some(function (evt) {
-            if (evt.has_changes()) flag = true;
+            if (evt.hasOwnProperty('has_changes') && evt.has_changes()) flag = true;
             return flag;
           });
           return flag;
@@ -5564,6 +5570,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationEditPayment',
   props: {
@@ -5618,7 +5636,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       gymDetails: null,
       coupon: "",
       couponSuccess: false,
-      couponValue: 0
+      couponValue: 0,
+      display_div: false,
+      competitions: null
     };
   },
   watch: {
@@ -5630,16 +5650,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: {
-    registrationDataChanged: function registrationDataChanged() {
+    getCompetitions: function getCompetitions() {
       var _this = this;
+
+      axios.get('/api/competitions-info/').then(function (result) {
+        _this.competitions = result.data;
+      });
+    },
+    toggleDiv: function toggleDiv() {
+      this.display_div = !this.display_div;
+      if (!this.display_div) $("#caret-div").removeClass("fa-caret-up").addClass("fa-caret-down");else $("#caret-div").removeClass("fa-caret-down").addClass("fa-caret-up");
+    },
+    registrationDataChanged: function registrationDataChanged() {
+      var _this2 = this;
 
       if (this.registrationData == null) return;
       this.meet = this.registrationData.meet;
       this.recalculateTotals();
       axios.get('/api/gym-info/' + this.registrationData.gym).then(function (result) {
-        _this.gymDetails = result.data;
+        _this2.gymDetails = result.data;
       });
-      "";
     },
     showCheckSendingModel: function showCheckSendingModel() {
       $('#modal-check-sending-details').modal('show');
@@ -5663,7 +5693,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         handling: 0,
         used_balance: 0,
         processor: 0,
-        total: 0
+        total: 0,
+        saving: ''
       };
 
       if (this.paymentOptions.defer.handling || this.paymentOptions.is_own) {
@@ -5694,9 +5725,33 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.summary.total = localTotal + this.summary.processor;
 
       if (this.summary.total - coupon < 0) {
-        this.showAlert("Coupon cannot be used if value is greater then total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
+        this.showAlert("Coupon cannot be used if value is greater than total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
       } else {
         this.summary.total = this.summary.total - coupon;
+      }
+
+      var sum_h_p = this.summary.handling + this.summary.processor;
+      var flg = 0;
+
+      if (sum_h_p > 0) {
+        this.summary.saving += 'Saved ';
+
+        for (var key in this.competitions) {
+          var values = this.competitions[key];
+          var _cc = values[0];
+          var _af = values[1];
+
+          var _sf = _cc + _af;
+
+          var _saved_total_fee = this.summary.subtotal * _sf / 100;
+
+          if (_saved_total_fee > sum_h_p) {
+            this.summary.saving += '$' + (_saved_total_fee - sum_h_p).toFixed(2) + ' than ' + key + ',';
+            flg = 1;
+          }
+        }
+
+        if (flg == 1) this.summary.saving = this.summary.saving.slice(0, -1);else this.summary.saving = '';
       }
     },
     applyFeeMode: function applyFeeMode(amount, fee, mode) {
@@ -5748,7 +5803,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       $('#modal-coupon').modal('show');
     },
     checkCoupon: function checkCoupon() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post('/api/registration/register/coupon', {
         '__managed': this.managed,
@@ -5756,13 +5811,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         gym_id: this.registrationData.gym,
         coupon: this.coupon.trim().toUpperCase()
       }).then(function (result) {
-        _this2.couponValue = result.data.value;
+        _this3.couponValue = result.data.value;
 
-        _this2.recalculateTotals();
+        _this3.recalculateTotals();
 
-        _this2.showAlert("Coupon Successfully Applied", 'Success', 'green', 'fas fa-check');
+        _this3.showAlert("Coupon Successfully Applied", 'Success', 'green', 'fas fa-check');
 
-        _this2.couponSuccess = true;
+        _this3.couponSuccess = true;
         $('#couponBtn').hide();
       })["catch"](function (error) {
         var msg = '';
@@ -5775,13 +5830,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           msg = error.message;
         }
 
-        _this2.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+        _this3.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
       })["finally"](function () {
         $('#modal-coupon').modal('hide');
       });
     },
     submitRegistration: function submitRegistration() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (this.chosenMethod.type == 'check') {
         if (!this.checkNo) {
@@ -5794,20 +5849,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
-        _this3.isProcessingPayment = true;
-        axios.post('/api/gym/' + _this3.gymId + '/registration/' + _this3.registrationId + '/edit/pay', {
-          '__managed': _this3.managed,
-          summary: _this3.summary,
-          bodies: _this3.registrationData.bodies,
-          coaches: _this3.registrationData.coaches,
+        _this4.isProcessingPayment = true;
+        axios.post('/api/gym/' + _this4.gymId + '/registration/' + _this4.registrationId + '/edit/pay', {
+          '__managed': _this4.managed,
+          summary: _this4.summary,
+          bodies: _this4.registrationData.bodies,
+          coaches: _this4.registrationData.coaches,
           method: {
-            type: _this3.chosenMethod.type,
-            id: _this3.chosenMethod.id ? _this3.chosenMethod.id : null
+            type: _this4.chosenMethod.type,
+            id: _this4.chosenMethod.id ? _this4.chosenMethod.id : null
           },
-          use_balance: _this3.useBalance,
-          coupon: _this3.coupon.trim().toUpperCase()
+          use_balance: _this4.useBalance,
+          coupon: _this4.coupon.trim().toUpperCase()
         }).then(function (result) {
-          _this3.paymentProcessedMessage = result.data.message;
+          _this4.paymentProcessedMessage = result.data.message;
         })["catch"](function (error) {
           var msg = '';
 
@@ -5819,9 +5874,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             msg = error.message;
           }
 
-          _this3.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+          _this4.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
         })["finally"](function () {
-          _this3.isProcessingPayment = false;
+          _this4.isProcessingPayment = false;
         });
       }, this);
     },
@@ -5867,6 +5922,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
+  },
+  beforeMount: function beforeMount() {
+    this.getCompetitions();
   },
   mounted: function mounted() {
     if (this.registrationData) subtotal = this.registrationData.total;
@@ -72336,6 +72394,7 @@ var render = function() {
                                                                                                                           : _c(
                                                                                                                               "div",
                                                                                                                               [
+                                                                                                                                event.permissions &&
                                                                                                                                 event.permissions.scratch()
                                                                                                                                   ? _c(
                                                                                                                                       "button",
@@ -72376,6 +72435,7 @@ var render = function() {
                                                                                                                                 _vm._v(
                                                                                                                                   " "
                                                                                                                                 ),
+                                                                                                                                event.permissions &&
                                                                                                                                 event.has_changes()
                                                                                                                                   ? _c(
                                                                                                                                       "div",
@@ -73838,7 +73898,10 @@ var render = function() {
                                                                                                                   ),
                                                                                                                   !athlete.is_scratched() &&
                                                                                                                   !athlete.permissions.scratch() &&
-                                                                                                                  athlete.permissions.scratch_without_refund()
+                                                                                                                  athlete.permissions.hasOwnProperty(
+                                                                                                                    "scratch_without_refund"
+                                                                                                                  ) &&
+                                                                                                                    athlete.permissions.scratch_without_refund()
                                                                                                                     ? _c(
                                                                                                                         "button",
                                                                                                                         {
@@ -76461,25 +76524,99 @@ var render = function() {
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.summary.handling > 0
-                              ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(21),
+                            _vm.summary.processor + _vm.summary.handling > 0
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticClass: "row",
+                                    staticStyle: { cursor: "pointer" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.toggleDiv()
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._m(21),
+                                    _vm._v(" "),
+                                    _c("div", { staticClass: "col" }, [
+                                      _vm._v(
+                                        "\n                                $" +
+                                          _vm._s(
+                                            _vm.numberFormat(
+                                              _vm.summary.processor +
+                                                _vm.summary.handling
+                                            )
+                                          ) +
+                                          "\n\n                                "
+                                      ),
+                                      this.summary.saving != ""
+                                        ? _c(
+                                            "span",
+                                            {
+                                              staticClass:
+                                                "alert alert-success",
+                                              staticStyle: {
+                                                padding: "0px 5px"
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                " +
+                                                  _vm._s(this.summary.saving) +
+                                                  "\n                                "
+                                              )
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ])
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.display_div
+                              ? _c("div", [
+                                  _vm.summary.handling > 0
+                                    ? _c("div", { staticClass: "row" }, [
+                                        _vm._m(22),
+                                        _vm._v(" "),
+                                        _c("div", { staticClass: "col" }, [
+                                          _vm._v(
+                                            "\n                                    $" +
+                                              _vm._s(
+                                                _vm.numberFormat(
+                                                  _vm.summary.handling
+                                                )
+                                              ) +
+                                              "\n                                "
+                                          )
+                                        ])
+                                      ])
+                                    : _vm._e(),
                                   _vm._v(" "),
-                                  _c("div", { staticClass: "col" }, [
-                                    _vm._v(
-                                      "\n                                $" +
-                                        _vm._s(
-                                          _vm.numberFormat(_vm.summary.handling)
-                                        ) +
-                                        "\n                            "
-                                    )
-                                  ])
+                                  _vm.summary.processor > 0
+                                    ? _c("div", { staticClass: "row" }, [
+                                        _vm._m(23),
+                                        _vm._v(" "),
+                                        _c("div", { staticClass: "col" }, [
+                                          _vm._v(
+                                            "\n                                    $" +
+                                              _vm._s(
+                                                _vm.numberFormat(
+                                                  _vm.summary.processor
+                                                )
+                                              ) +
+                                              "\n                                "
+                                          )
+                                        ])
+                                      ])
+                                    : _vm._e()
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
                             _vm.summary.used_balance != 0
                               ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(22),
+                                  _vm._m(24),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -76505,24 +76642,6 @@ var render = function() {
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.summary.processor > 0
-                              ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(23),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "col" }, [
-                                    _vm._v(
-                                      "\n                                $" +
-                                        _vm._s(
-                                          _vm.numberFormat(
-                                            _vm.summary.processor
-                                          )
-                                        ) +
-                                        "\n                            "
-                                    )
-                                  ])
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
                             _c(
                               "div",
                               {
@@ -76534,7 +76653,7 @@ var render = function() {
                                   "div",
                                   { staticClass: "flex-grow-1 text-uppercase" },
                                   [
-                                    _vm._m(24),
+                                    _vm._m(25),
                                     _vm._v(" "),
                                     _c(
                                       "span",
@@ -76622,7 +76741,7 @@ var render = function() {
                             ),
                             _vm._v(" "),
                             _vm.summary.total == 0
-                              ? _c("div", [_vm._m(25)])
+                              ? _c("div", [_vm._m(26)])
                               : _vm._e()
                           ])
                         : _c("div", [
@@ -76891,8 +77010,31 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col" }, [
+      _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
+      _vm._v(" Fees \n                                "),
+      _c("span", {
+        staticClass: "fas fa-fw fa-caret-down",
+        attrs: { id: "caret-div" }
+      }),
+      _vm._v(" :\n                            ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col" }, [
       _c("span", { staticClass: "fas fa-fw fa-server" }),
-      _vm._v(" Handling Fee :\n                            ")
+      _vm._v(" Handling Fee :\n                                ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col" }, [
+      _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
+      _vm._v(" Payment Processor Fee :\n                                ")
     ])
   },
   function() {
@@ -76902,15 +77044,6 @@ var staticRenderFns = [
     return _c("div", { staticClass: "col" }, [
       _c("span", { staticClass: "fas fa-fw fa-coins" }),
       _vm._v(" Balance :\n                            ")
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col" }, [
-      _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
-      _vm._v(" Payment Processor Fee :\n                            ")
     ])
   },
   function() {

@@ -57,6 +57,32 @@
     .small-box h3, .small-box p {
         z-index: 5;
     }
+    .savings-info {
+  position: relative;
+  animation-name: excitement;
+  animation-duration: 2s;
+  animation-timing-function: ease-out;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes excitement {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 
 </style>
 
@@ -81,7 +107,19 @@
                 </div>
             </div>
         </div>
-
+        <?php if($h != '') {?>
+        <div class="row  savings-info">
+            <div class="col">
+                <div class="alert alert-success">
+                    <strong>
+                        <span class="fas fa-fw fa-info-circle"></span>
+                        {{ $h }}
+                    </strong> <br/>
+                    Thanks for staying with us!
+                </div>
+            </div>
+        </div>
+        <?php } ?>
         <div class="row mb-3">
             <div class="col">
                 <div class="card-group">

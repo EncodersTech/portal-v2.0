@@ -215,6 +215,22 @@ class ProcessDwollaWebhook implements ShouldQueue
                 case 'withrawal':
                     return $this->withrawalTransferCompletedHandler($txId, $dwollaTx->metadata, $timestamp);
                     break;
+
+                case 'wallet_to_wallet':
+                    return $this->transferCompletedWalletToWalletHandler($txId, $dwollaTx->metadata, $timestamp);
+                    break;
+
+                case 'bank_to_bank':
+                    return  $this->transferCompletedBankToBankHandler($txId, $dwollaTx->metadata, $timestamp);
+                    break;
+
+                case 'bank_to_wallet':
+                    return  $this->transferCompletedBankToWalletHandler($txId, $dwollaTx->metadata, $timestamp);
+                    break;
+
+                case 'wallet_to_bank':
+                    return  $this->transferCompletedWalletToBankHandler($txId, $dwollaTx->metadata, $timestamp);
+                    break;
                 
                 default:
                     break;
@@ -239,7 +255,22 @@ class ProcessDwollaWebhook implements ShouldQueue
                 case 'withrawal':
                     return $this->withrawalTransferFailedOrCanceleddHandler($txId, $dwollaTx->metadata, $failed, $timestamp);
                     break;
-                
+
+                case 'wallet_to_wallet':
+                    return $this->transferCanceledHandler($txId, $dwollaTx->metadata, $failed, $timestamp);
+                    break;
+
+                case 'bank_to_bank':
+                    return $this->transferCanceledHandler($txId, $dwollaTx->metadata, $failed, $timestamp);
+                    break;
+
+                case 'bank_to_wallet':
+                    return $this->transferCanceledHandler($txId, $dwollaTx->metadata, $failed, $timestamp);
+                    break;
+
+                case 'wallet_to_bank':
+                    return $this->transferCanceledHandler($txId, $dwollaTx->metadata, $failed, $timestamp);
+                    break;
                 default:
                     break;
             }
@@ -502,6 +533,264 @@ class ProcessDwollaWebhook implements ShouldQueue
 
             DB::commit();
         } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return true;
+    }
+    /**
+     * @throws CustomBaseException
+     * @throws Throwable
+     */
+    public function transferCompletedWalletToWalletHandler(string $txId, $meta, \DateTime $timestamp): bool
+    {
+        $destinationUser = User::find($meta->destination_id);
+        $sourceUser = User::find($meta->source_id);
+        $amount = $meta->amount;
+        if ($destinationUser == null)
+            throw new CustomBaseException('No User Found.');
+
+        /** @var UserBalanceTransaction $transaction */
+        $transaction = UserBalanceTransaction::where('processor_id', $txId)
+            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+            ->first();
+        if ($transaction == null) {
+            /** @var UserBalanceTransaction $transaction */
+            $transaction = UserBalanceTransaction::where('id', $meta->balance_tx)
+                ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+                ->first();
+
+            if ($transaction == null)
+                throw new CustomBaseException('No pending transaction with id ' . $txId);
+        }
+
+        DB::beginTransaction();
+        try {
+            $destinationUser->balance_transactions()->create([
+                'source_user_id' => $sourceUser->id,
+                'destination_user_id' => $destinationUser->id,
+                'processor_id' => null,
+                'total' => $amount,
+                'description' => 'Dwolla Wallet to Wallet transfer from '.$sourceUser->fullName().' to '.$destinationUser->fullName(),
+                'clears_on' => now(),
+                'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN,
+                'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
+            ]);
+            $destinationUser->pending_balance += $amount;
+            $destinationUser->cleared_balance += $amount;
+            $destinationUser->save();
+            $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
+            $transaction->save();
+
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return true;
+    }
+
+    /**
+     * @throws CustomBaseException
+     * @throws Throwable
+     */
+    public function transferCompletedBankToBankHandler(string $txId, $meta, \DateTime $timestamp): bool
+    {
+        $destinationUser = User::find($meta->destination_id);
+        $sourceUser = User::find($meta->source_id);
+        $amount = $meta->amount;
+        if ($destinationUser == null)
+            throw new CustomBaseException('No User Found.');
+
+        /** @var UserBalanceTransaction $transaction */
+        $transaction = UserBalanceTransaction::where('processor_id', $txId)
+            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+            ->first();
+        $transaction_2 = UserBalanceTransaction::where('processor_id', $txId."_verified")
+            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->first();
+        if ($transaction == null) {
+            /** @var UserBalanceTransaction $transaction */
+            $transaction = UserBalanceTransaction::where('id', $meta->balance_tx)
+                ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+                ->first();
+
+            if ($transaction == null && $transaction_2 == null)
+                throw new CustomBaseException('No pending transaction with id ' . $txId);
+        }
+        if($transaction_2 == null)
+        {
+            $transaction->processor_id = $transaction->processor_id . "_verified";
+            $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
+            $transaction->save();
+        }
+        else
+        {
+            $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
+            $transaction->save();
+        }
+        
+        DB::beginTransaction();
+        try {
+            if($transaction_2 == null)
+            {
+                $destinationUser->balance_transactions()->create([
+                    'source_user_id' => $sourceUser->id,
+                    'destination_user_id' => $destinationUser->id,
+                    'processor_id' => $txId,
+                    'total' => $amount,
+                    'description' => 'Dwolla Bank to Bank transfer from '.$sourceUser->fullName().' to '.$destinationUser->fullName(),
+                    'clears_on' => now(),
+                    'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN,
+                    'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING
+                    // 'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
+                ]);
+                $destinationUser->pending_balance += $amount;
+                $destinationUser->cleared_balance += $amount;
+                $destinationUser->save();
+            }
+            // $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
+            // $transaction->save();
+
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return true;
+    }
+
+    /**
+     * @throws CustomBaseException
+     * @throws Throwable
+     */
+    public function transferCompletedBankToWalletHandler(string $txId, $meta, \DateTime $timestamp): bool
+    {
+        $destinationUser = User::find($meta->destination_id);
+        $sourceUser = User::find($meta->source_id);
+        $amount = $meta->amount;
+        if ($destinationUser == null)
+            throw new CustomBaseException('No User Found.');
+
+        /** @var UserBalanceTransaction $transaction */
+        $transaction = UserBalanceTransaction::where('processor_id', $txId)
+            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+            ->first();
+        if ($transaction == null) {
+            /** @var UserBalanceTransaction $transaction */
+            $transaction = UserBalanceTransaction::where('id', $meta->balance_tx)
+                ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+                ->first();
+
+            if ($transaction == null)
+                throw new CustomBaseException('No pending transaction with id ' . $txId);
+        }
+
+        DB::beginTransaction();
+        try {
+            $destinationUser->balance_transactions()->create([
+                'source_user_id' => $sourceUser->id,
+                'destination_user_id' => $destinationUser->id,
+                'processor_id' => null,
+                'total' => $amount,
+                'description' => 'Dwolla Bank to Wallet transfer from '.$sourceUser->fullName().' to '.$destinationUser->fullName(),
+                'clears_on' => now(),
+                'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN,
+                'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
+            ]);
+            $destinationUser->pending_balance += $amount;
+            $destinationUser->cleared_balance += $amount;
+            $destinationUser->save();
+            $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
+            $transaction->save();
+
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return true;
+    }
+
+    /**
+     * @throws CustomBaseException
+     * @throws Throwable
+     */
+    public function transferCompletedWalletToBankHandler(string $txId, $meta, \DateTime $timestamp): bool
+    {
+        $destinationUser = User::find($meta->destination_id);
+        $sourceUser = User::find($meta->source_id);
+        $amount = $meta->amount;
+        if ($destinationUser == null)
+            throw new CustomBaseException('No User Found.');
+
+        /** @var UserBalanceTransaction $transaction */
+        $transaction = UserBalanceTransaction::where('processor_id', $txId)
+            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+            ->first();
+        if ($transaction == null) {
+            /** @var UserBalanceTransaction $transaction */
+            $transaction = UserBalanceTransaction::where('id', $meta->balance_tx)
+                ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+                ->first();
+
+            if ($transaction == null)
+                throw new CustomBaseException('No pending transaction with id ' . $txId);
+        }
+
+        DB::beginTransaction();
+        try {
+            $destinationUser->balance_transactions()->create([
+                'source_user_id' => $sourceUser->id,
+                'destination_user_id' => $destinationUser->id,
+                'processor_id' => null,
+                'total' => $amount,
+                'description' => 'Dwolla Wallet to Bank transfer from '.$sourceUser->fullName().' to '.$destinationUser->fullName(),
+                'clears_on' => now(),
+                'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN,
+                'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
+            ]);
+            $destinationUser->pending_balance += $amount;
+            $destinationUser->cleared_balance += $amount;
+            $destinationUser->save();
+            $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED;
+            $transaction->save();
+
+            DB::commit();
+        } catch(\Throwable $e) {
+            DB::rollBack();
+            throw $e;
+        }
+        return true;
+    }
+
+    private function transferCanceledHandler(string $txId, $meta, bool $failed = true, \DateTime $timestamp): bool
+    {
+        $sourceUser = User::find($meta->source_id);
+        $amount = $meta->amount;
+        /** @var UserBalanceTransaction $transaction */
+        $transaction = UserBalanceTransaction::where('processor_id', $txId)
+            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+            ->first();
+        if ($transaction == null) {
+            $transaction = UserBalanceTransaction::where('id', $meta->balance_tx)
+                ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+                ->first(); /** @var UserBalanceTransaction $transaction */
+
+            if ($transaction == null)
+                return true;
+                // throw new CustomBaseException('No pending transaction with id ' . $txId);
+        }
+
+        DB::beginTransaction();
+        try {
+            $sourceUser->cleared_balance += $amount;
+            $sourceUser->save();
+            $transaction->status = UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_UNCONFIRMED;
+            $transaction->save();
+
+            DB::commit();
+        } catch(Throwable $e) {
             DB::rollBack();
             throw $e;
         }

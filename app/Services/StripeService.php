@@ -182,6 +182,14 @@ class StripeService {
                         'message' => 'There\'s a problem with your account. Please contact us as soon as possible.',
                         'details' => $error['param'],
                     ];
+                    break;
+                case 'card_declined':
+                    $result = [
+                        'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
+                        'message' => 'Transaction Declined. Please use another payment method or contact us as soon as possible.',
+                        'details' => $error['param'],
+                    ];
+                    break;
             }
     
             if ($e instanceof Card) {
@@ -270,17 +278,40 @@ class StripeService {
         $balance = \Stripe\Balance::retrieve(
             ['stripe_account' => $user_id]
         );
-        print_r($balance);
         if($balance->available[0]->amount >= 0)
         {
             $data = DB::select('select mt.processor_id from meet_transactions as mt 
             join meet_registrations as mr 
             on mt.meet_registration_id = mr.id 
             where mr.gym_id = '.$host->id.' and mt.method = 3 and mt.status = 1');
-
-            print_r($data);
-            
         }
+    }
+    public static function oneTimeACHStripe($amount)
+    {
+        // $stripe = new \Stripe\StripeClient('sk_test_JmdaV1lq9SsSNON8dv3fxTL7');
+        $checkout_session = \Stripe\Checkout\Session::create([
+        'line_items' => [[
+            'price_data' => [
+                'currency' => 'usd',
+                'product_data' => 
+                    [
+                        'name' => 'Repair Invoice',
+                    ],
+                'unit_amount' => (round($amount,2) * 100),
+            ],
+            'quantity' => 1,
+        ]],
+        'mode' => 'payment',
+        'payment_method_types' => ['card', 'us_bank_account'],
+        'payment_method_options' => [
+            'us_bank_account' => [
+                'financial_connections' => ['permissions' => ['payment_method']],
+            ],
+        ],
+        'success_url' => env('APP_URL').'invoice/success?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => env('APP_URL').'invoice/cancel?session_id={CHECKOUT_SESSION_ID}',
+        ]);
+        return $checkout_session;
     }
     public static function updateConnectAccount($payload, $user_id){
 

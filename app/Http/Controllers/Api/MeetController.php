@@ -1866,4 +1866,19 @@ class MeetController extends BaseApiController
 
         return response()->download($path);
     }
+    public function getUSAIGCAthleteCount($igc_no)
+    {
+        $number = DB::SELECT("SELECT count(ra.*) as total_athlete
+        FROM category_meet as cm 
+        JOIN meets as m on m.id = cm.meet_id 
+        join meet_registrations as mr on mr.meet_id = m.id 
+        join level_registration as lr on lr.meet_registration_id = mr.id 
+        join athlete_levels as al on al.id = lr.level_id 
+        join registration_athletes as ra on ra.level_registration_id = lr.id 
+        where cm.sanctioning_body_id = 2 and al.sanctioning_body_id = 2 and cm.sanction_no = 'IGC02665'");
+
+        return $this->success([
+            'total' => $number[0]->total_athlete
+        ]);
+    }
 }

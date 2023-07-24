@@ -42,7 +42,17 @@ class TransferController extends AppBaseController
      */
     public function createTransfer()
     {
-        $users = User::where('email_verified_at', '!=', null)->get()->pluck('full_name', 'id')->toArray();
+        $users = User::where('email_verified_at', '!=', null)
+        ->get()
+        ->pluck('full_name', 'id')
+        ->map(function ($fullName, $id) {
+            $user = User::findOrFail($id);
+            return $fullName . ' (' . $user->email . ')';
+        })
+        ->toArray();
+    
+    return view('admin.transfer.create_transfer', compact('users'));
+    
 
         return view('admin.transfer.create_transfer', compact(['users']));
     }

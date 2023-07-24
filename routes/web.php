@@ -93,6 +93,10 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::post('/gyms/{gym}/picture/upload', 'GymController@changeProfilePicture')->name('gyms.picture.change');
         Route::get('/gyms/{gym}/registration/{registration}', 'MeetRegistrationController@show')->name('gyms.registration');
         Route::resource('gyms', 'GymController');
+
+
+        
+        Route::get('test', 'MeetRegistrationController@show')->name('gyms.registration');
     });
 
     Route::middleware(['permission:manage_roster'])->group(function () {
@@ -164,6 +168,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     });
 
     Route::middleware(['permission:register'])->group(function () {
+        Route::get('/test', 'MeetRegistrationController@test');
         Route::get('/meets/{meet}/register', 'MeetRegistrationController@index')->name('gyms.meets.register');
         Route::post('/gym/{gym}/registration/{registration}/remaining-payment', 'MeetRegistrationController@remainingPayment')->name('gyms.registration.remaining.payment');
         Route::get('/gym/{gym}/registration/{registration}/pay/{transaction}', 'MeetRegistrationController@pay')->name('gyms.registration.pay');

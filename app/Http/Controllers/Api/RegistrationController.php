@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
+use App\Models\Setting;
 use App\Exceptions\CustomBaseException;
 use App\Exceptions\CustomDwollaException;
 use App\Exceptions\CustomStripeException;
@@ -42,7 +42,8 @@ class RegistrationController extends BaseApiController
                 (bool) $request->input('use_balance'),
                 null,
                 $request->input('deposit'),
-                $request->input('coupon')
+                $request->input('coupon'),
+                $request->input('enable_travel_arrangements')
             );
         } catch(CustomBaseException $e) {
             throw $e;
@@ -56,6 +57,15 @@ class RegistrationController extends BaseApiController
                 'message' => 'Something went wrong while processing your registration.'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+    }
+    public function onetimeach(Request $request)
+    {
+        $meetRegistration = resolve(MeetRegistration::class); /** @var MeetRegistration $meetRegistration */
+        $checkout_session = $meetRegistration->oneTimeACH($request->total);
+        return $this->success([
+            'message' => "Coupon Found Successfully",
+            'value' => $checkout_session->url
+        ]);
     }
     public function checkCoupon(Request $request)
     {
@@ -136,7 +146,11 @@ class RegistrationController extends BaseApiController
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-
+    public function competitionsInfo()
+    {
+        $meetRegistration = resolve(MeetRegistration::class); /** @var MeetRegistration $meetRegistration */
+        return $this->success($meetRegistration->competitionsInfo());
+    }
     public function pay(Request $request, string $gym, string $registration,
         string $transaction)
     {

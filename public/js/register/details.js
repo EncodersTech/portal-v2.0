@@ -77091,7 +77091,8 @@ $(document).ready(function (e) {
               Refunds: 'refunds',
               RegistrationDetail: 'registration-detail',
               Scratch: 'scratch',
-              MeetEntry: 'meet-entry'
+              MeetEntry: 'meet-entry',
+              CoachSignin: 'coach-signin'
             }
           }
         };
@@ -77110,6 +77111,7 @@ $(document).ready(function (e) {
             case this.constants.reports.types.RegistrationDetail:
             case this.constants.reports.types.Scratch:
             case this.constants.reports.types.MeetEntry:
+            case this.constants.reports.types.CoachSignin:
               break;
 
             default:

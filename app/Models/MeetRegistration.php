@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Exceptions\CustomBaseException;
 use App\Helper;
 use App\Mail\Host\HostReceiveMeetRegistrationMailable;
+use App\Mail\Host\RegistrationUpdateMailable;
+use App\Mail\Registrant\TransportHelpMailable;
 use App\Mail\Registrant\GymRegisteredMailable;
 use App\Mail\Registrant\GymRegistrationUpdatedMailable;
 use App\Mail\Registrant\HandlingFeeChargeFailedMailable;
@@ -25,6 +27,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\Setting;
 
 class MeetRegistration extends Model
 {
@@ -180,7 +183,7 @@ class MeetRegistration extends Model
     }
 
     public static function register(Meet $meet, Gym $gym, $inputLevels, $inputCoaches, $summary,
-        $method, bool $useBalance, $attachment = null, bool $deposit, $coupon/*, bool $clientWaitlist*/) {
+        $method, bool $useBalance, $attachment = null, bool $deposit, $coupon, bool $enable_travel_arrangements/*, bool $clientWaitlist*/) {
         $chosenMethod = [
             'type' => $method['type'],
             'id' => '',
@@ -189,6 +192,7 @@ class MeetRegistration extends Model
         ];
 
         try {
+            // throw new CustomBaseException(env('MAIL_TRAVEL_ADDRESS'), -1);
             if ($meet->registrationStatus() == Meet::REGISTRATION_STATUS_OPENING_SOON) {
                 throw new CustomBaseException("This meet is not open for registrations yet", -1);
             }
@@ -698,7 +702,7 @@ class MeetRegistration extends Model
 
                                     $snapshotData[] = $snapshotDataEvent;
                                 }
-                            }
+                            } 
                         } else {
                             if (!$a['waitlist']) {
                                 $snapshotData = [
@@ -1253,6 +1257,9 @@ class MeetRegistration extends Model
                 $registration->save();
 
                 $registrationArray = $registration->toArray();
+                $number_of["athletes"] = count($registrationArray['athletes']);
+                $number_of["coaches"] = count($registrationArray['coaches']);
+                $number_of["specialists"] = count($registrationArray['specialists']);
                 unset($registrationArray['athletes']);
                 unset($registrationArray['specialists']);
                 unset($registrationArray['coaches']);
@@ -1318,6 +1325,8 @@ class MeetRegistration extends Model
 
                 Log::debug('when registration complete then host receive mail. => ' . json_encode($mailcc));
                 Mail::to($meet->gym->user->email)->cc($mailcc)->send(new HostReceiveMeetRegistrationMailable($meet, $gym));
+                if($enable_travel_arrangements)
+                    Mail::to(env('MAIL_TRAVEL_ADDRESS'))->cc("hello@allgymnastics.com")->send(new TransportHelpMailable($meet, $gym, $number_of));
 
                 //Send an email to the registrant with a confirmation.
                 // Log::debug('Send an email to the registrant with a confirmation.');
@@ -1869,7 +1878,7 @@ class MeetRegistration extends Model
                 if ($transaction->balance_transaction['fee'] > 0) {
                     $stripeFee = ($transaction->balance_transaction['fee'] / 100);
                 }
-
+                $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['subtotal']);
                 $transaction = $registration->transactions()->create([
                     'processor_id' => $transaction->id,
                     'handling_rate' => Helper::getHandlingFee($meet),
@@ -1881,6 +1890,7 @@ class MeetRegistration extends Model
                     'handling_fee' => $handlingFee,
                     'processor_fee' => $processorFee,
                     'processor_charge_fee' => $stripeFee,
+                    'competitions_saving' => json_encode($savings)
                 ]); /** @var Meettransaction $transaction */
 
                 if ($calculatedFees['host']['total'] != 0) {
@@ -1931,7 +1941,7 @@ class MeetRegistration extends Model
                 // $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");
                 // $result['payment_method_string'] = '(Pending) ' . ucfirst($transaction->payment_method_details->ach_debit->account_holder_type) .
                 //                         ' Bank Account' . $transaction->payment_method_details->ach_debit->bank_name ;
-
+                $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['total']);
                 $transaction = $registration->transactions()->create([ //trackthis
                     'processor_id' => $transaction->id,
                     'handling_rate' => Helper::getHandlingFee($meet),
@@ -1942,6 +1952,7 @@ class MeetRegistration extends Model
                     'status' => MeetTransaction::STATUS_PENDING,
                     'handling_fee' => $handlingFee,
                     'processor_fee' => $processorFee,
+                    'competitions_saving' =>  json_encode($savings)
                 ]); /** @var Meettransaction $transaction */
 
                 // return $transaction;
@@ -1976,18 +1987,21 @@ class MeetRegistration extends Model
 
                     }
                 }
-
+                $_gtotal = $gymSummary['deposit_total'] == 0 ? $gymSummary['total'] : $gymSummary['deposit_total'];
+                $_ghandling = $calculatedFees['gym']['deposit_handling'] == 0 ? $handlingFee : $calculatedFees['gym']['deposit_handling'];
+                $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['total']);
                 $transaction = $registration->transactions()->create([
                     'processor_id' => 'AG-CHECK-' . Helper::uniqueId(),
                     'handling_rate' => Helper::getHandlingFee($meet),
                     'processor_rate' => $meet->check_fee(),
-                    'total' => $gymSummary['deposit_total'] == 0 ? $gymSummary['total'] : $gymSummary['deposit_total'],
+                    'total' => $_gtotal,
                     'breakdown' => $calculatedFees,
                     'method' => MeetTransaction::PAYMENT_METHOD_CHECK,
                     'status' => MeetTransaction::STATUS_PENDING,
-                    'handling_fee' => $calculatedFees['gym']['deposit_handling'] == 0 ? $handlingFee : $calculatedFees['gym']['deposit_handling'],
+                    'handling_fee' => $_ghandling,
                     'processor_fee' => $processorFee,
                     'is_deposit' => $gymSummary['deposit_total'] == 0 ? false : true,
+                    'competitions_saving' => json_encode($savings)
                 ]); /** @var Meettransaction $transaction */
 
                 if ($calculatedFees['defer']['handling'] != false && $meet->defer_handling_fees != false) {
@@ -2055,6 +2069,7 @@ class MeetRegistration extends Model
 
             case self::PAYMENT_OPTION_BALANCE:
                 $result['payment_method_string'] = 'Allgymnastics.com Balance';
+                $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['total']);
                 $transaction = $registration->transactions()->create([
                     'processor_id' => 'AG-BALANCE-' . Helper::uniqueId(),
                     'handling_rate' => Helper::getHandlingFee($meet),
@@ -2065,6 +2080,7 @@ class MeetRegistration extends Model
                     'status' => MeetTransaction::STATUS_COMPLETED,
                     'handling_fee' => $handlingFee,
                     'processor_fee' => $processorFee,
+                    'competitions_saving' => json_encode($savings)
                 ]); /** @var Meettransaction $transaction */
 
                 $athleteStatus = RegistrationAthlete::STATUS_REGISTERED;
@@ -2133,7 +2149,90 @@ class MeetRegistration extends Model
         ];
         return $result;
     }
+    public function competitionsInfo()
+    {
+        // print_r($previous_deposit_remaining);
+        $settings = Setting::find('competitors');
+        $text_array = explode('; ', str_replace(['{', '}'], '', $settings->value));
+        $companys = array();
+        $i = 0;
+        foreach ($text_array as $item) {
+            list($key, $value) = explode(':', $item);
+            $key = trim($key);
+            $value = trim(str_replace(['[', ']'], '', $value));
+            $companys[$key] = array_map('floatval', explode(',', $value));
+            $i++;
+        }
+        return $companys;
+    }
+    public function calculateSavedCharges($handling, $processor, $amount)
+    {
+        $competitions = $this->competitionsInfo();
+        $savedCompetition = [];
+        $_af = 0;
+        $_pf = 0;
+        foreach ($competitions as $key => $value) {
+            $savedAmount = 0;
+            if($handling > 0)
+                $_af = $value[0];
+            if($processor > 0)
+                $_pf = $value[1];
+            $_tf = $_af + $_pf;
+            if($amount > 0 && $_tf > 0)
+            {
+                $compAmount = ($amount * $_tf) / 100;
+                if($compAmount > ($handling + $processor))
+                    $savedAmount = ($compAmount - ($handling + $processor));
+            }
+            $savedCompetition[$key] = $savedAmount;
+        }
+        return $savedCompetition;
+        // return $this->competitionsInfo();
+    }
+    public function getMeetRegistrationSavings($id)
+    {
+        $result = DB::select("select mt.id, mt.competitions_saving
+        from gyms as g 
+        join users as u on g.user_id = u.id
+        join meet_registrations as mr on mr.gym_id = g.id
+        join meet_transactions as mt on mt.meet_registration_id = mr.id
+        where u.id = $id and mt.competitions_saving != 'null'");
 
+
+        $companys = array();
+        foreach ($result as $k => $v) {
+            // print_r($value->competitions_saving);
+            // foreach ($value->competitions_saving as $k => $v) {
+            //     print_r($k . ' ' . $v . '<br>');
+            // }
+            
+            $text_array = explode(',', str_replace(['{', '}'], '', $v->competitions_saving));
+            $i = 0;
+            foreach ($text_array as $item) {
+                list($key, $value) = explode(':', $item);
+                $key = trim($key);
+                $value = trim(str_replace(['[', ']'], '', $value));
+                $pv = isset($companys[$key]) ? $companys[$key] : 0;
+                $companys[$key] = $pv + $value; // array_map('floatval', explode(',', $value));
+                $i++;
+            }
+        }
+        $result = 'AllGymnastics has saved your registrants over ';
+        $flag = 0;
+        $nettotal = 0;
+        foreach ($companys as $key => $value) {
+            if($value > 0)
+                $flag = 1;
+            $nettotal += $value;
+        }
+        $v = number_format((float)$nettotal, 2, '.', '');
+        $result .= "$$v compared to the leading competitors"; 
+
+        return $flag == 0 ? '' : $result;
+        // return $flag == 0 ? '' : substr($result, 0, -2);
+        // print_r(substr($result, 0, -2));
+
+    }
     public static function minusHandlingFeeFromMeetHost($tra_handling_fee, $gym, $meet, $transaction, $userId)
     {
         if ($tra_handling_fee != 0) {
@@ -2399,6 +2498,12 @@ class MeetRegistration extends Model
                 ];
 
                 $count = [];
+                $txScratch = [
+                    'athlete' => [],
+                    'specialist' => [],
+                    'coach' => []
+                ];
+                $sp_move = [];
                 $txAthletes = [
                     'waitlist' => [],
                     'added' => [],
@@ -2438,9 +2543,9 @@ class MeetRegistration extends Model
                                 throw new CustomBaseException('Invalid level format.', -1);
                             }
 
-                            if (!$abilities['scratch'] && $l['changes']['team'] == false) {
-                                throw new CustomBaseException('You are not allowed to modify teams.', -1);
-                            }
+                            // if (!$abilities['scratch'] && $l['changes']['team'] == false) {
+                            //     throw new CustomBaseException('You are not allowed to modify teams.', -1);
+                            // }
 
                             if (!$l['changes']['team'] && (count($l['athletes']) < 1)) {
                                 throw new CustomBaseException('You need to select at least one athlete per each submitted level.', -1);
@@ -2933,7 +3038,7 @@ class MeetRegistration extends Model
                                             if (!$a['changes']['scratch']) {
                                                 if ($a['is_specialist']) {
                                                     $newAthlete['level_registration_id'] = $registrationLevel->id;
-
+                                                    $sp_move[] = $athlete;
                                                     if ($a['to_waitlist']) {
                                                         $count[$registrationLevel->id]['waitlist']++;
                                                     }
@@ -3047,6 +3152,7 @@ class MeetRegistration extends Model
                                                     $event->refund = $event->fee;
                                                     $event->late_refund = $event->late_fee;
                                                     $event->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED;
+                                                    $txScratch['specialist'][] = $athlete;
                                                 } else {
                                                     throw new CustomBaseException('You are not allowed to scratch events.');
                                                 }
@@ -3061,11 +3167,13 @@ class MeetRegistration extends Model
                                                     $event->refund = $event->specialist->registration_level->specialist_registration_fee;
                                                     $event->late_refund = $event->late_fee;
                                                     $event->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED;
+                                                    $txScratch['specialist'][] = $athlete;
                                                 }
                                             } else {
                                                 $newAthlete['refund'] = $athlete->registration_level->registration_fee;
                                                 $newAthlete['late_refund'] = $athlete->late_fee;
                                                 $newAthlete['status'] = RegistrationAthlete::STATUS_SCRATCHED;
+                                                $txScratch['athlete'][] = $athlete;
                                             }
 
                                             $athleteTotal = 0;
@@ -3075,11 +3183,13 @@ class MeetRegistration extends Model
                                                     $event->refund = 0; //$event->specialist->registration_level->specialist_registration_fee;
                                                     $event->late_refund = 0; //$event->late_fee;
                                                     $event->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED;
+                                                    $txScratch['specialist'][] = $athlete;
                                                 }
                                             } else {
                                                 $newAthlete['refund'] = 0; //$athlete->registration_level->registration_fee;
                                                 $newAthlete['late_refund'] = 0; // $athlete->late_fee;
                                                 $newAthlete['status'] = RegistrationAthlete::STATUS_SCRATCHED;
+                                                $txScratch['athlete'][] = $athlete;
                                             }
 
                                             $athleteTotal = 0;
@@ -3513,6 +3623,7 @@ class MeetRegistration extends Model
                         if ($c['changes']['scratch']) {
                             if ($abilities['scratch']) {
                                 $newCoach['status'] = RegistrationCoach::STATUS_SCRATCHED;
+                                $txScratch['coach'][] = $coach;
                             } else {
                                 throw new CustomBaseException('You are not allowed to scratch coaches.');
                             }
@@ -3776,6 +3887,8 @@ class MeetRegistration extends Model
                     'athletes' => [],
                     'specialists' => [],
                     'coaches' => [],
+                    'scratch' => $txScratch,
+                    'sp_move' => $sp_move
                 ];
 
                 foreach ($txAthletes['waitlist'] as $ra) {/** @var RegistrationAthlete $ra */
@@ -3812,6 +3925,7 @@ class MeetRegistration extends Model
                     $e = $rse->toArray();
                     unset($e['specialist'], $e['transaction']);
                     $s['events'][] = $e;
+                    $auditEventSpecialists[$rse->specialist->id]['events'][] = $e;
                 }
                 foreach ($txSpecialists['waitlist'] as $rse) {/** @var RegistrationSpecialistEvent $rse */
                     if (!key_exists($rse->specialist->id, $auditEventSpecialists)) {
@@ -3900,6 +4014,13 @@ class MeetRegistration extends Model
                     $waitlistTransaction !== null
                 ));
 
+                // process_audit_event($auditEvent);
+                Mail::to($meet->gym->user->email)->send(new RegistrationUpdateMailable(
+                    $meet,
+                    $gym,
+                    $this->process_audit_event((object) $auditEvent)
+                ));
+
                 // TODO : Mail to host
 
                 DB::commit();
@@ -3914,7 +4035,180 @@ class MeetRegistration extends Model
             throw $e;
         }
     }
+    public function process_audit_event($auditEvent) // pending specialist and coach
+    {
+        $change_info = [
+            'athlete' => [
+                'new' => [],
+                'moved' => [],
+                'scratched' => []
+            ],
+            'specialist' => [
+                'new' => [],
+                'moved' => [],
+                'scratched' => []
+            ],
+            'coach' => [
+                'new' => [],
+                'scratched' => []
+            ]
+        ];
+        foreach ($auditEvent->athletes as $athlete) {
+            $athlete = (object)$athlete;
+            if(isset($athlete->registration_level))
+            {
+                $previous_level = LevelRegistration::find($athlete->level_registration_id);
+                $bodyId = $previous_level->level->sanctioning_body_id;
+                $current_level = AthleteLevel::find($athlete->registration_level['level_id']);
+                
+                $a_info = [
+                    'first_name' => $athlete->first_name,
+                    'last_name' => $athlete->last_name,
+                    'previous_level' => $previous_level->level->name,
+                    'current_level' => $current_level->name,
+                    'sanction' => $this->getSanctioningBody($bodyId)
+                ];
+                $change_info['athlete']['moved'][] = $a_info;
+            }
+            else
+            {
+                $current_level = LevelRegistration::find($athlete->level_registration_id);
+                $bodyId = $current_level->level->sanctioning_body_id;
+                $a_info = [
+                    'first_name' => $athlete->first_name,
+                    'last_name' => $athlete->last_name,
+                    'current_level' => $current_level->level->name,
+                    'sanction' => $this->getSanctioningBody($bodyId)
+                ];
+                $change_info['athlete']['new'][] = $a_info;
+            }
+        }
+        foreach ($auditEvent->specialists as $specialist) {
+            $specialist = (object)$specialist;
+            $current_level = LevelRegistration::find($specialist->level_registration_id);
+            $bodyId = $current_level->level->sanctioning_body_id;
+            $event_info = [];
+            foreach ($specialist->events as $event) {
+                $event_model = AthleteSpecialistEvents::where('id',$event['event_id'])->first();
+                $event_info[] = [
+                    'name' => $event_model->name,
+                ];
+            }
+            $specialist_info = [
+                'first_name' => $specialist->first_name,
+                'last_name' => $specialist->last_name,
+                'current_level' => $current_level->level->name,
+                'sanction' => $this->getSanctioningBody($bodyId),
+                'event' =>  $event_info
+            ];
+            $change_info['specialist']['new'][] = $specialist_info;
+        }
+        foreach ($auditEvent->sp_move as $specialist) {
+            $specialist = (object)$specialist;
+            $current_level = LevelRegistration::find($specialist->level_registration_id);
+            $bodyId = $current_level->level->sanctioning_body_id;
+            $previous_level = LevelRegistration::find($specialist->events[0]['specialist']['level_registration_id']);
+            $a_info = [
+                'first_name' => $specialist->first_name,
+                'last_name' => $specialist->last_name,
+                'previous_level' => $previous_level->level->name,
+                'current_level' => $current_level->level->name,
+                'sanction' => $this->getSanctioningBody($bodyId)
+            ];
+            $change_info['specialist']['moved'][] = $a_info;
+        }
 
+        foreach ($auditEvent->coaches as $coach) {
+            $coach = (object)$coach;
+            $c_info = [
+                'first_name' => $coach->first_name,
+                'last_name' => $coach->last_name
+            ];
+            $change_info['coach']['new'][] = $c_info;
+        }
+        if(isset($auditEvent->scratch))
+        {
+            foreach($auditEvent->scratch['athlete'] as $scratch)
+            {
+                $scratch = (object) $scratch;
+                $current_level = LevelRegistration::find($scratch->level_registration_id);
+                $bodyId = $current_level->level->sanctioning_body_id;
+                $at_info = [
+                    'first_name' => $scratch->first_name,
+                    'last_name' => $scratch->last_name,
+                    'current_level' => $current_level->level->name,
+                    'sanction' => $this->getSanctioningBody($bodyId)
+                ];
+                $change_info['athlete']['scratched'][] = $at_info;
+            }
+            $rem_me = [];
+            foreach($auditEvent->scratch['specialist'] as $scratch)
+            {
+                $scratch = (object) $scratch;
+                if(in_array($scratch->id, $rem_me))
+                {
+                    continue;
+                }
+                else
+                {
+                    $rem_me[] = $scratch->id;
+                }
+                $current_level = LevelRegistration::find($scratch->level_registration_id);
+                $bodyId = $current_level->level->sanctioning_body_id;
+                $event_info = [];
+                foreach ($scratch->events as $event) {
+                    if($event['status'] == 4)
+                    {
+                        $event_model = AthleteSpecialistEvents::where('id',$event['event_id'])->first();
+                        $event_info[] = [
+                            'name' => $event_model->name,
+                        ];
+                    }
+                }
+                $at_info = [
+                    'first_name' => $scratch->first_name,
+                    'last_name' => $scratch->last_name,
+                    'current_level' => $current_level->level->name,
+                    'sanction' => $this->getSanctioningBody($bodyId),
+                    'event' => $event_info
+                ];
+                $change_info['specialist']['scratched'][] = $at_info;
+            }
+            foreach($auditEvent->scratch['coach'] as $scratch)
+            {
+                $scratch = (object) $scratch;
+                $at_info = [
+                    'first_name' => $scratch->first_name,
+                    'last_name' => $scratch->last_name
+                ];
+                $change_info['coach']['scratched'][] = $at_info;
+            }
+        }
+        // dd($change_info);
+        return $change_info;
+    }
+    private function getSanctioningBody($bodyId)
+    {
+        $sanctionField = '';
+        switch ($bodyId) {
+            case SanctioningBody::USAG:
+                $sanctionField = 'USAG';
+                break;
+
+            case SanctioningBody::USAIGC:
+                $sanctionField = 'USAIGC';
+                break;
+
+            case SanctioningBody::AAU:
+                $sanctionField = 'AAU';
+                break;
+
+            case SanctioningBody::NGA:
+                $sanctionField = 'NGA';
+                break;
+        }
+        return $sanctionField;
+    }
     private function snapshotBegin()
     {
         $snapshot = [
@@ -4158,5 +4452,10 @@ class MeetRegistration extends Model
         }
 
         return $snapshot;
+    }
+    public function oneTimeACH($amount)
+    {
+        // $stripeService = resolve(StripeService::class);
+        return StripeService::oneTimeACHStripe($amount);
     }
 }

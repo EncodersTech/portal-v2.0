@@ -146,7 +146,7 @@
                             </td>
 
                             <td class="col-2">
-                                {{ ($a->usaigc_no ?? $a->usaigc_no ?? $a->usag_no) }}
+                                {{ ($a->usaigc_no ?? $a->usaigc_no ?? $a->usag_no ?? $a->nga_no) }}
                             </td>
 
                             <td class="col-2">

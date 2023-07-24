@@ -512,12 +512,12 @@
                                                                                     </button>
                                                                                 </div>
                                                                                 <div v-else>
-                                                                                    <button v-if="event.permissions.scratch()" class="dropdown-item text-danger"
+                                                                                    <button v-if="event.permissions && event.permissions.scratch()" class="dropdown-item text-danger"
                                                                                         type="button" @click="scratchObject(event, 'event', athlete, level)">
                                                                                         <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                                     </button>
 
-                                                                                    <div v-if="event.has_changes()">
+                                                                                    <div v-if="event.permissions && event.has_changes()">
                                                                                         <button class="dropdown-item" type="button"
                                                                                             @click="revertChanges(event, 'event', athlete, level)">
                                                                                             <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
@@ -724,7 +724,7 @@
                                                                                 type="button" @click="scratchObject(athlete, 'athlete', level)">
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                             </button>
-                                                                            <button v-if="!athlete.is_scratched() && !athlete.permissions.scratch() && athlete.permissions.scratch_without_refund()" class="dropdown-item text-danger"
+                                                                            <button v-if="!athlete.is_scratched() && !athlete.permissions.scratch() && (athlete.permissions.hasOwnProperty('scratch_without_refund') && athlete.permissions.scratch_without_refund())" class="dropdown-item text-danger"
                                                                                 type="button" @click="scratchObject(athlete, 'athlete', level)">
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch Without Refund
                                                                             </button>
@@ -2028,6 +2028,12 @@ export default {
                                             (evt.status == vm.constants.specialists.statuses.Registered)
                                         );
                                     },
+                                    scratch_without_refund: function(){
+                                        return evt.is_new || (
+                                            !vm.permissions.scratch &&
+                                            !evt.has_pending_events()
+                                        );
+                                    }
                                 },
                                 status: this.constants.specialists.statuses.Pending,
                                 was_late: this.late,
@@ -2133,7 +2139,7 @@ export default {
                         }
                         let flag = false;
                         this.events.some(evt => {
-                            if (evt.has_changes())
+                            if (evt.hasOwnProperty('has_changes') && evt.has_changes())
                                 flag = true;
                             return flag;
                         });
@@ -2483,6 +2489,12 @@ export default {
                                         (evt.status == vm.constants.specialists.statuses.Registered)
                                     );
                                 },
+                                scratch_without_refund: function(){
+                                    return evt.is_new || (
+                                        !vm.permissions.scratch &&
+                                        !evt.has_pending_events()
+                                    );
+                                }
                             },
                             status: this.constants.specialists.statuses.Pending,
                             was_late: this.late,
@@ -2671,7 +2683,7 @@ export default {
                                     if (a.is_specialist) {
                                         athlete.events = [];
                                         a.events.forEach(evt => {
-                                            if (evt.is_new || evt.has_changes()) {
+                                            if (evt.is_new || (evt.hasOwnProperty('has_changes') && evt.has_changes())) {
                                                 athlete.events.push({
                                                     ..._.cloneDeep(evt),
                                                     to_waitlist: a.to_waitlist,
@@ -3296,7 +3308,7 @@ export default {
                     }
                     let flag = false;
                     this.events.some(evt => {
-                        if (evt.has_changes())
+                        if (evt.hasOwnProperty('has_changes') && evt.has_changes())
                             flag = true;
                         return flag;
                     });

@@ -88,7 +88,8 @@
                             <strong>
                                 <span class="fas fa-fw fa-phone"></span> Office Phone :
                             </strong>
-                            {{ "+".phone($gym->office_phone, $gym->country->code)->getPhoneNumberInstance()->getCountryCode()." ".phone($gym->office_phone, $gym->country->code)->formatNational() }}
+                            {{ $gym->office_phone }}
+                            <!-- {{ "+".phone($gym->office_phone, $gym->country->code)->getPhoneNumberInstance()->getCountryCode()." ".phone($gym->office_phone, $gym->country->code)->formatNational() }} -->
                         </div>
 
                         @if ($gym->mobile_phone != null)

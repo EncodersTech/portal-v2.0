@@ -272,14 +272,14 @@
                             <th width="8%">Date</th>
                             <th width="8%">Tran's ID</th>
                             <th width="8%">Type:</th>
-                            <th colspan="6" width="60%" class="col-sum-2">Detail</th>
+                            <th colspan="8" width="60%" class="col-sum-2">Detail</th>
                             <th width="8%">Fee</th>
-                            {{--                        <th width="8%">Total Fee</th>--}}
                         <tr>
                     </thead>
                     <tbody>
                         <?php
                     $total_reg_at = 0;
+                    $total_reg_sp_at = 0;
                     $total_reg_fees = 0;
                     $total_participant_fees = 0;
                     $coupon = 0;
@@ -298,39 +298,37 @@
                         
                         ?>
                         <tr>
-                            <td class="col-8">{{$transaction['created_at']->format(Helper::AMERICAN_SHORT_DATE)}}</td>
-                            <td class="col-8">{{$transaction->id}}</td>
-                            <td class="col-8">{{$reg_type}}</td>
+                            <td class="col-4">{{$transaction['created_at']->format(Helper::AMERICAN_SHORT_DATE)}}</td>
+                            <td class="col-4">{{$transaction->id}}</td>
+                            <td class="col-4">{{$reg_type}}</td>
                             <td class="col-1">Level</td>
                             <td class="col-1">Athlete</td>
+                            <td class="col-1">Specialist</td>
                             <td class="col-1">Team</td>
                             <td class="col-1">Entry Fee</td>
+                            <td class="col-1">Specialist Fee</td>
                             <td class="col-1">Team Fee</td>
                             <td class="col-1">Amount</td>
                             <td class="col-8  text-right">
                                 {{number_format( $gym_sub_total,2)}}</td>
-                            {{--                            <td class="col-8  text-right">{{number_format($transaction->breakdown['gym']['total'],2)}}
-                            </td>--}}
                         <tr>
-                            <?php
-                        // dd($transaction->breakdown['level_team_fees']);
-                        ?>
-
-                            @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
-                        <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
-                            <td class="col-8" colspan="3"></td>
-                            <td class="col-8">{{$tr_hi['name']}}</td>
-                            <td class="col-8">{{$symbols}}{{$tr_hi['at_count']}}</td>
-                            <td class="col-1">{{$tr_hi['team_count']}}</td>
-                            <td class="col-1 text-right">{{number_format($tr_hi['entry_fee'],2)}}</td>
-                            <td class="col-1 text-right">{{number_format($tr_hi['team_fee'],2)}}</td>
-                            <td class="col-1 text-right">{{$symbols}}{{number_format($tr_hi['total_fee'],2)}}</td>
-                            {{--                                <td class="col-8" colspan="2"></td>--}}
-                        <tr>
+                        @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
+                            <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
+                                <td class="col-4" colspan="3"></td>
+                                <td class="col-1">{{$tr_hi['name']}}</td>
+                                <td class="col-1">{{$symbols}}{{$tr_hi['at_count']}}</td>
+                                <td class="col-1">{{$tr_hi['specialists']}}</td>
+                                <td class="col-1">{{$tr_hi['team_count']}}</td>
+                                <td class="col-1 text-right">{{number_format($tr_hi['entry_fee'],2)}}</td>
+                                <td class="col-1 text-right">{{number_format($tr_hi['specialist_registration_fee'],2)}}</td>
+                                <td class="col-1 text-right">{{number_format($tr_hi['team_fee'],2)}}</td>
+                                <td class="col-1 text-right">{{$symbols}}{{number_format($tr_hi['total_fee'],2)}}</td>
+                            <tr>
                             <?php
                             $total_reg_at += $tr_hi['at_count'];
+                            $total_reg_sp_at += $tr_hi['specialists'];
                             ?>
-                            @endforeach
+                        @endforeach
                             <?php
                             $total_reg_fees += (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] >0 ) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'];
                             $total_participant_fees = $transaction->breakdown['gym']['total'];
@@ -354,10 +352,9 @@
                             <th class="col-1" colspan="3"></th>
                             <th class="col-1">Total</th>
                             <th class="col-1">{{$total_reg_at}}</th>
+                            <th class="col-1">{{$total_reg_sp_at}}</th>
                             <th class="col-1" colspan="4"></th>
                             <th class="col-1  text-right">{{number_format($total_reg_fees + $coupon,2)}}</th>
-                            {{--                        <th class="col-1  text-right">{{number_format($total_participant_fees,2)}}
-                            </th>--}}
                         <tr>
                     </thead>
                 </table>

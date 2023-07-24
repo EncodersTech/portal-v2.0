@@ -114,6 +114,9 @@ $(document).ready(function () {
       "targets": [3],
       'width': '8%'
     }, {
+      "targets": [3],
+      'width': '10%'
+    }, {
       "targets": [4],
       'width': '10%'
     }, {
@@ -166,7 +169,13 @@ $(document).ready(function () {
       data: 'full_name',
       name: 'full_name'
     }, {
-      data: 'email',
+      data: 'gname',
+      name: 'gname'
+    }, {
+      // data: 'email',
+      data: function data(row) {
+        if (row.member_info != null) return row.email + '<br>Connected: ' + row.member_info;else return row.email;
+      },
       name: 'email'
     }, {
       data: 'job_title',

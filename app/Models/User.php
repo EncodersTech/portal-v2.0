@@ -81,7 +81,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => ['required', 'string', 'min:8', 'confirmed'],
         'first_name' => ['required', 'string', 'max:255'],
         'last_name' => ['required', 'string', 'max:255'],
-        'office_phone' => ['required', 'phone:AUTO,US'],
+        'office_phone' => ['required', 'phone:AUTO,US,UK'],
         'job_title' => ['required', 'string', 'max:255'],
         'terms_of_service_and_privacy_policy' => 'accepted',
         'member_invite' => ['nullable', 'string', 'max:255'],
@@ -91,7 +91,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected static $updateRules = [
         'first_name' => ['required', 'string', 'max:255'],
         'last_name' => ['required', 'string', 'max:255'],
-        'office_phone' => ['required', 'phone:AUTO,US'],
+        'office_phone' => ['required', 'phone:AUTO,US,UK'],
         'job_title' => ['required', 'string', 'max:255'],
     ];
 
@@ -114,7 +114,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public const ADMIN_UPDATE_USER_RULE = [
         'first_name' => ['required', 'string', 'max:255'],
         'last_name' => ['required', 'string', 'max:255'],
-        'office_phone' => ['required', 'phone:AUTO,US'],
+        'office_phone' => ['required', 'phone:AUTO,US,UK'],
         'job_title' => ['required', 'string', 'max:255'],
     ];
 

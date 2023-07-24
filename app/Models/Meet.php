@@ -34,6 +34,7 @@ class Meet extends Model
     public const REPORT_TYPE_ENTRY = 'participation';
     public const REPORT_TYPE_ENTRY_NOT_ATHLETE = 'participation-not-athlete';
     public const REPORT_TYPE_COACHES = 'coaches';
+    public const REPORT_TYPE_USAIGC_COACHES_SIGN_IN = 'coach-signin';
     public const REPORT_TYPE_SPECIALISTS = 'specialists';
     public const REPORT_TYPE_REFUNDS = 'refunds';
     public const REPORT_TYPE_PROSCOREEXPORT = 'proscore-export';
@@ -2338,29 +2339,52 @@ class Meet extends Model
             foreach ($re_gyms as $key => $value) {
                 $k = Gym::where('id',$value->gym_id)->first();
                 $gym_name[] = $k;
-                // $gym_name[] = array(
-                //    'name' => $k[0]['name'],
-                //    'addr_1' => $k[0]['name'],
-                //    'addr_2' => $k[0]['name'],
-                //    'city' => $k[0]['name'],
-                //    'zipcode' => $k[0]['name'],
-                //    'office_phone' => $k[0]['name'],
-                // );
-                // print_r($k[0]['name']);
             }
-            // foreach ($gym_name as $r => $k) {
-            //     print_r($k[0]['name']);
-                
-            // }
             $data = [
                 'host' => $this->gym,
                 'meet' => $this,
                 'gyms' => $gym_name,
                 'cont' => count($gym_name)
             ];
-            // print_r(count($gym_name));
             return PDF::loadView('PDF.host.meet.reports.gyms-report', $data); /** @var PdfWrapper $pdf */
-            // die();
+        }
+        catch(\Throwable $e)
+        {
+            throw $e;
+        }
+    }
+    public function generateUSAIGCCoachSignInReport(Gym $gym = null) : PdfWrapper   {
+        try{
+            $base = $this->registrations()->where('status', MeetRegistration::STATUS_REGISTERED);
+            
+            // print_r($base);
+            if ($gym !== null)
+            {
+                $base_r = $base->where('gym_id', $gym->id);
+                $meet_id = $base_r->select(['me
+                et_id'])->first();
+            }
+            else
+            {
+                $meet_id = $base->select(['meet_id'])->first();
+            }
+            $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
+
+            $gym_name = [];
+            foreach ($re_gyms as $key => $value) {
+                $k = Gym::where('id',$value->gym_id)->first();
+                $coaches = $k->getCoachesFromMeetRegistrations($meet_id->meet_id);
+                $gym_name[$k->id]['gyms'] = $k;
+                $gym_name[$k->id]['coaches'] = $coaches;
+            }
+            // dd($gym_name); die();
+            $data = [
+                'host' => $this->gym,
+                'meet' => $this,
+                'gyms' => $gym_name,
+                'cont' => count($gym_name)
+            ];
+            return PDF::loadView('PDF.host.meet.reports.usaigc-coach-report', $data); /** @var PdfWrapper $pdf */
         }
         catch(\Throwable $e)
         {
@@ -2481,16 +2505,27 @@ class Meet extends Model
                         $team_late = 0;
                         foreach ($levels as $l) { /** @var AthleteLevel $l */
                             $at_count = $l->pivot->athletes->count(); 
+                            $specialist_fee = $l->pivot->specialist_registration_fee;
+                            $sf_total = 0;
+                            foreach ($l->pivot->specialists as $ss) {
+                                foreach ($ss->events as $e) {
+                                    $sf_total += $specialist_fee;
+                                }
+                            }
+                            $speicalist = $l->pivot->specialists->count();
+
                             $reg_fee = $l->pivot->registration_fee;
                             $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee>0 ? 1 : 0);
                             $team_fee = $l->pivot->team_fee;
                             $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
-                            $re_total = $reg_fee * $at_count + $team_fee * $team_count;
+                            $re_total = $reg_fee * $at_count + $team_fee * $team_count + $sf_total;
                             $level_reg_history[$k] = [
                                 'name' => $l->abbreviation,
                                 'at_count' => $at_count,
+                                'specialists' => $speicalist,
                                 'team_count' => $team_count,
                                 'entry_fee' => $reg_fee,
+                                'specialist_registration_fee' => $specialist_fee,
                                 'team_fee' => $team_fee,
                                 'total_fee' => $re_total,
                             ];

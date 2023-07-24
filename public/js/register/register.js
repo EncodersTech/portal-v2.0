@@ -3779,6 +3779,47 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationPayment',
   props: {
@@ -3834,7 +3875,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       deposit: false,
       coupon: "",
       couponSuccess: false,
-      couponValue: 0
+      couponValue: 0,
+      display_div: false,
+      competitions: null,
+      enable_travel_arrangements: 0
     };
   },
   watch: {
@@ -3846,14 +3890,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: {
-    registrationDataChanged: function registrationDataChanged() {
+    getCompetitions: function getCompetitions() {
       var _this = this;
+
+      axios.get('/api/competitions-info/').then(function (result) {
+        _this.competitions = result.data;
+      });
+    },
+    toggleDiv: function toggleDiv() {
+      this.display_div = !this.display_div;
+      if (!this.display_div) $("#caret-div").removeClass("fa-caret-up").addClass("fa-caret-down");else $("#caret-div").removeClass("fa-caret-down").addClass("fa-caret-up");
+    },
+    registrationDataChanged: function registrationDataChanged() {
+      var _this2 = this;
 
       if (this.registrationData == null) return;
       this.waitlist = this.registrationData.waitlist;
       this.recalculateTotals();
       axios.get('/api/gym-info/' + this.registrationData.gym).then(function (result) {
-        _this.gymDetails = result.data;
+        _this2.gymDetails = result.data;
       });
     },
     showCheckSendingModel: function showCheckSendingModel() {
@@ -3883,7 +3938,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         used_balance: 0,
         processor: 0,
         total: 0,
-        discount: this.paymentOptions.discount
+        discount: this.paymentOptions.discount,
+        saving: ''
       };
 
       if (this.paymentOptions.defer.handling || this.paymentOptions.is_own) {
@@ -3914,9 +3970,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.summary.total = localTotal + this.summary.processor;
 
       if (this.summary.total - previous_deposit < 0) {
-        this.showAlert("Coupon cannot be used if value is greater then total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
+        this.showAlert("Coupon cannot be used if value is greater than total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
       } else {
         this.summary.total -= previous_deposit;
+      }
+
+      var sum_h_p = this.summary.handling + this.summary.processor;
+      var flg = 0;
+
+      if (sum_h_p > 0) {
+        var totalsave = 0;
+        this.summary.saving += 'Saved ';
+
+        for (var key in this.competitions) {
+          var values = this.competitions[key];
+          var _cc = values[0];
+          var _af = values[1];
+
+          var _sf = _cc + _af;
+
+          var _saved_total_fee = this.summary.subtotal * _sf / 100;
+
+          if (_saved_total_fee > sum_h_p) {
+            totalsave += _saved_total_fee - sum_h_p; // this.summary.saving += '$'+(_saved_total_fee - sum_h_p).toFixed(2) + ' than ' + key +',';
+
+            flg = 1;
+          }
+        }
+
+        if (flg == 1 && totalsave > 0) {
+          this.summary.saving += '$' + totalsave.toFixed(2) + ' compared to competitors'; // this.summary.saving = this.summary.saving.slice(0, -1);
+        } else this.summary.saving = '';
       }
     },
     applyFeeMode: function applyFeeMode(amount, fee, mode) {
@@ -3939,6 +4023,40 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         type: 'ach'
       });
       this.recalculateTotals();
+    },
+    useOneTimeACH: function useOneTimeACH() {
+      var _this3 = this;
+
+      this.chosenMethod = {
+        accountType: '',
+        name: 'One Time Payment',
+        fee: this.paymentOptions.methods.ach.fee,
+        mode: this.paymentOptions.methods.ach.mode,
+        type: 'ach'
+      };
+      this.recalculateTotals();
+      axios.post('/api/registration/register/onetimeach', {
+        '__managed': this.managed,
+        meet_id: this.registrationData.meet.id,
+        gym_id: this.registrationData.gym,
+        total: this.summary.total
+      }).then(function (result) {
+        // this.couponValue = result.data.value;
+        console.log(result.data.value);
+        window.open(result.data.value, "_blank", "popup=yes");
+      })["catch"](function (error) {
+        var msg = '';
+
+        if (error.response) {
+          msg = error.response.data.message;
+        } else if (error.request) {
+          msg = 'No server response.';
+        } else {
+          msg = error.message;
+        }
+
+        _this3.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+      })["finally"](function () {});
     },
     useCheck: function useCheck() {
       // let ocheck = ($("#deposit").prop("checked") == true ? this.registrationData.meet.deposit_ratio : 100);
@@ -3969,7 +4087,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       $('#modal-coupon').modal('show');
     },
     checkCoupon: function checkCoupon() {
-      var _this2 = this;
+      var _this4 = this;
 
       axios.post('/api/registration/register/coupon', {
         '__managed': this.managed,
@@ -3978,16 +4096,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         coupon: this.coupon.trim().toUpperCase(),
         total: this.summary.total
       }).then(function (result) {
-        _this2.couponValue = result.data.value;
+        _this4.couponValue = result.data.value;
         $('#deposit').prop('checked', false);
         $('#fullAmount').prop('checked', true);
         $('#deposit').attr("disabled", true);
 
-        _this2.recalculateTotals(100, result.data.value);
+        _this4.recalculateTotals(100, result.data.value);
 
-        _this2.showAlert("Coupon Successfully Applied", 'Success', 'green', 'fas fa-check');
+        _this4.showAlert("Coupon Successfully Applied", 'Success', 'green', 'fas fa-check');
 
-        _this2.couponSuccess = true;
+        _this4.couponSuccess = true;
         $('#couponBtn').hide();
       })["catch"](function (error) {
         var msg = '';
@@ -4000,13 +4118,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           msg = error.message;
         }
 
-        _this2.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+        _this4.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
       })["finally"](function () {
         $('#modal-coupon').modal('hide');
       });
     },
     submitRegistration: function submitRegistration() {
-      var _this3 = this;
+      var _this5 = this;
 
       if (this.chosenMethod.type == 'check') {
         if (!this.checkNo) {
@@ -4019,23 +4137,24 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
-        _this3.isProcessingPayment = true;
-        axios.post('/api/registration/register/' + _this3.registrationData.meet.id + '/' + _this3.registrationData.gym, {
-          '__managed': _this3.managed,
-          levels: _this3.registrationData.levels,
-          coaches: _this3.registrationData.coaches,
-          summary: _this3.summary,
+        _this5.isProcessingPayment = true;
+        axios.post('/api/registration/register/' + _this5.registrationData.meet.id + '/' + _this5.registrationData.gym, {
+          '__managed': _this5.managed,
+          levels: _this5.registrationData.levels,
+          coaches: _this5.registrationData.coaches,
+          summary: _this5.summary,
           method: {
-            type: _this3.chosenMethod.type,
-            id: _this3.chosenMethod.id ? _this3.chosenMethod.id : null
+            type: _this5.chosenMethod.type,
+            id: _this5.chosenMethod.id ? _this5.chosenMethod.id : null
           },
-          use_balance: _this3.useBalance,
-          deposit: _this3.deposit,
-          coupon: _this3.coupon.trim().toUpperCase() //waitlist: this.waitlist,
+          use_balance: _this5.useBalance,
+          deposit: _this5.deposit,
+          coupon: _this5.coupon.trim().toUpperCase(),
+          enable_travel_arrangements: _this5.enable_travel_arrangements //waitlist: this.waitlist,
 
         }).then(function (result) {
-          _this3.paymentProcessedMessage = result.data.message;
-          _this3.registrationId = result.data.registration;
+          _this5.paymentProcessedMessage = result.data.message;
+          _this5.registrationId = result.data.registration;
         })["catch"](function (error) {
           var msg = '';
 
@@ -4047,9 +4166,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             msg = error.message;
           }
 
-          _this3.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
+          _this5.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
         })["finally"](function () {
-          _this3.isProcessingPayment = false;
+          _this5.isProcessingPayment = false;
         });
       }, this);
     },
@@ -4095,6 +4214,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
+  },
+  beforeMount: function beforeMount() {
+    this.getCompetitions();
   },
   mounted: function mounted() {}
 });
@@ -71682,7 +71804,22 @@ var render = function() {
                                                   ]
                                                 )
                                               }
-                                            )
+                                            ),
+                                        _vm._v(" "),
+                                        _c("div", [
+                                          _c(
+                                            "button",
+                                            {
+                                              staticClass: "btn btn-primary",
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.useOneTimeACH()
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("One Time ACH Payment")]
+                                          )
+                                        ])
                                       ],
                                       2
                                     )
@@ -72106,25 +72243,122 @@ var render = function() {
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.summary.handling > 0
-                              ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(21),
+                            _vm.summary.processor + _vm.summary.handling > 0
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticClass: "row",
+                                    staticStyle: { cursor: "pointer" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.toggleDiv()
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._m(21),
+                                    _vm._v(" "),
+                                    _c("div", { staticClass: "col" }, [
+                                      _vm._v(
+                                        "\n                                $" +
+                                          _vm._s(
+                                            _vm.numberFormat(
+                                              _vm.summary.processor +
+                                                _vm.summary.handling
+                                            )
+                                          ) +
+                                          "\n                                \n                                "
+                                      ),
+                                      this.summary.saving != ""
+                                        ? _c(
+                                            "span",
+                                            {
+                                              staticClass:
+                                                "alert alert-success",
+                                              staticStyle: {
+                                                padding: "0px 5px"
+                                              }
+                                            },
+                                            [
+                                              _vm._v(
+                                                "\n                                    " +
+                                                  _vm._s(this.summary.saving) +
+                                                  "\n                                "
+                                              )
+                                            ]
+                                          )
+                                        : _vm._e()
+                                    ])
+                                  ]
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.display_div
+                              ? _c("div", [
+                                  _vm.summary.handling > 0
+                                    ? _c("div", { staticClass: "row" }, [
+                                        _c("div", { staticClass: "col" }, [
+                                          _c("span", {
+                                            staticClass: "fas fa-fw fa-server"
+                                          }),
+                                          _vm._v(
+                                            " Handling Fee (" +
+                                              _vm._s(
+                                                this.paymentOptions.handling.fee
+                                              ) +
+                                              "%):\n                                        "
+                                          ),
+                                          _vm._m(22)
+                                        ]),
+                                        _vm._v(" "),
+                                        _c("div", { staticClass: "col" }, [
+                                          _vm._v(
+                                            "\n                                    $" +
+                                              _vm._s(
+                                                _vm.numberFormat(
+                                                  _vm.summary.handling
+                                                )
+                                              ) +
+                                              "\n                                "
+                                          )
+                                        ])
+                                      ])
+                                    : _vm._e(),
                                   _vm._v(" "),
-                                  _c("div", { staticClass: "col" }, [
-                                    _vm._v(
-                                      "\n                                $" +
-                                        _vm._s(
-                                          _vm.numberFormat(_vm.summary.handling)
-                                        ) +
-                                        "\n                            "
-                                    )
-                                  ])
+                                  _vm.summary.processor > 0
+                                    ? _c("div", { staticClass: "row" }, [
+                                        _c("div", { staticClass: "col" }, [
+                                          _c("span", {
+                                            staticClass:
+                                              "fas fa-fw fa-file-invoice"
+                                          }),
+                                          _vm._v(
+                                            " Payment Processor Fee (" +
+                                              _vm._s(this.chosenMethod.fee) +
+                                              "%):\n                                        "
+                                          ),
+                                          _vm._m(23)
+                                        ]),
+                                        _vm._v(" "),
+                                        _c("div", { staticClass: "col" }, [
+                                          _vm._v(
+                                            "\n                                    $" +
+                                              _vm._s(
+                                                _vm.numberFormat(
+                                                  _vm.summary.processor
+                                                )
+                                              ) +
+                                              "\n                                "
+                                          )
+                                        ])
+                                      ])
+                                    : _vm._e()
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
                             _vm.summary.used_balance != 0
                               ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(22),
+                                  _vm._m(24),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -72150,27 +72384,9 @@ var render = function() {
                                 ])
                               : _vm._e(),
                             _vm._v(" "),
-                            _vm.summary.processor > 0
-                              ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(23),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "col" }, [
-                                    _vm._v(
-                                      "\n                                $" +
-                                        _vm._s(
-                                          _vm.numberFormat(
-                                            _vm.summary.processor
-                                          )
-                                        ) +
-                                        "\n                            "
-                                    )
-                                  ])
-                                ])
-                              : _vm._e(),
-                            _vm._v(" "),
                             _vm.summary.discount > 0
                               ? _c("div", { staticClass: "row" }, [
-                                  _vm._m(24),
+                                  _vm._m(25),
                                   _vm._v(" "),
                                   _c("div", { staticClass: "col" }, [
                                     _vm._v(
@@ -72195,7 +72411,7 @@ var render = function() {
                                   "div",
                                   { staticClass: "flex-grow-1 text-uppercase" },
                                   [
-                                    _vm._m(25),
+                                    _vm._m(26),
                                     _vm._v(" "),
                                     _c(
                                       "span",
@@ -72570,9 +72786,46 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col" }, [
-      _c("span", { staticClass: "fas fa-fw fa-server" }),
-      _vm._v(" Handling Fee :\n                            ")
+      _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
+      _vm._v(" Fees \n                                "),
+      _c("span", {
+        staticClass: "fas fa-fw fa-caret-down",
+        attrs: { id: "caret-div" }
+      }),
+      _vm._v(" :\n                            ")
     ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "span",
+      {
+        attrs: {
+          "data-toggle": "tooltip",
+          title:
+            "The Handling Fee is based on a percentage of the fees. The fees range from 0 to 2.75%. These fees cover expenses consistent with running an online business. (Rent, Payroll, Programing/hosting, Insurance, Utilities, Hardware, Professional Services, etc.)"
+        }
+      },
+      [_c("span", { staticClass: "fas fa-info-circle" })]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "span",
+      {
+        attrs: {
+          "data-toggle": "tooltip",
+          title:
+            "The Payment Processor fees cover expenses related to ACH and Credit Card charges. ACH fees are a flat $10 per transaction and Credit Card fees are between 3%-3.25%. Processing fees are added to the Subtotal & Handling Fee. We utilize 3rd Party Processors to facilitate safe and secure payments."
+        }
+      },
+      [_c("span", { staticClass: "fas fa-info-circle" })]
+    )
   },
   function() {
     var _vm = this
@@ -72581,15 +72834,6 @@ var staticRenderFns = [
     return _c("div", { staticClass: "col" }, [
       _c("span", { staticClass: "fas fa-fw fa-coins" }),
       _vm._v(" Balance :\n                            ")
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "col" }, [
-      _c("span", { staticClass: "fas fa-fw fa-file-invoice" }),
-      _vm._v(" Payment Processor Fee :\n                            ")
     ])
   },
   function() {

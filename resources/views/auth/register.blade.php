@@ -114,7 +114,7 @@
         <div class="row">
             <div class="col-lg mb-3">
                 <label for="office_phone">
-                    <span class="fas fa-fw fa-phone"></span> {{ __('messages.office_phone') }} <span class="text-danger">*</span>
+                    <span class="fas fa-fw fa-phone"></span> {{ __('messages.office_phone') }} (with country code) <span class="text-danger">*</span>
                 </label>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">

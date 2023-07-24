@@ -174,7 +174,7 @@
                 step: 1,
                 maxStep: 2,
                 body: null,
-                duplicates: 'ignore',
+                duplicates: 'overwrite',
                 requiresFile: false,
                 chosenFile: null,
                 showFileError: false,

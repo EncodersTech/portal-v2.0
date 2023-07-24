@@ -20,6 +20,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use PDF;
 use Illuminate\Support\Str;
+use App\Models\AuditEvent;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\Host\RegistrationUpdateMailable;
 
 class MeetRegistrationController extends Controller
 {
@@ -201,8 +204,9 @@ class MeetRegistrationController extends Controller
                 break;
             }
         }
-        // print_r($previous_deposit_remaining);
-        
+
+        // $registration->test = "111";
+
         return view('registration.edit', [
             'current_page' => 'gym-' . $gym->id,
             'meet' => $registration->meet,
@@ -212,7 +216,23 @@ class MeetRegistrationController extends Controller
             'previous_remaining' => $previous_deposit_remaining_total
         ]);
     }
+    public function test()
+    {
+        $audit = AuditEvent::get()->last();
+        // dd($audit->event_meta);
+        $mr = resolve(MeetRegistration::class);
+        // $mr->process_audit_event((object)$audit->event_meta);
 
+        $meet = Meet::find(171);
+        $gym = Gym::find(213);
+
+        Mail::to($meet->gym->user->email)->send(new RegistrationUpdateMailable(
+            $meet,
+            $gym,
+            $mr->process_audit_event((object)$audit->event_meta)
+        ));
+
+    }
     public function reportCreate(Request $request, string $gym, string $registration, string $reportType) {
         try {
 //            throw new CustomBaseException('WiP');
@@ -232,6 +252,7 @@ class MeetRegistrationController extends Controller
                 case Meet::REPORT_TYPE_SUMMARY:
                     $pdf = $meet->generateSummaryReport($gym)->setPaper('a4', 'landscape')
                         ->setOption('margin-top', '38mm')
+                        
                         ->setOption('margin-bottom', '10mm')
                         ->setOption('header-html', view('PDF.host.meet.reports.header_footer.meet_summery_header',['meet' => $meet])->render())
                         ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
@@ -268,6 +289,14 @@ class MeetRegistrationController extends Controller
 
                 case Meet::REPORT_TYPE_COACHES:
                     $pdf = $meet->generateGymRegistrationReport($gym)->setPaper('a4')
+                        ->setOption('margin-top', '10mm')
+                        ->setOption('margin-bottom', '10mm')
+                        ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
+
+                    return $pdf->stream($name);
+                    break;
+                case Meet::REPORT_TYPE_USAIGC_COACHES_SIGN_IN:
+                    $pdf = $meet->generateUSAIGCCoachSignInReport($gym)->setPaper('a4')
                         ->setOption('margin-top', '10mm')
                         ->setOption('margin-bottom', '10mm')
                         ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());

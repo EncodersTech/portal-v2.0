@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Exceptions\CustomBaseException;
 use App\Helper;
 use App\Mail\Registrant\GymRegisteredMailable;
+use App\Mail\Registrant\TransportHelpMailable;
 use App\Mail\Registrant\GymRegistrationUpdatedMailable;
 use App\Traits\Excludable;
 use Carbon\Carbon;
@@ -951,7 +952,7 @@ class USAGReservation extends Model
         return $result;
     }
 
-    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon) {
+    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements) {
         DB::beginTransaction();
         try {
             $sanction = USAGSanction::where('number', $sanction)
@@ -1916,6 +1917,11 @@ class USAGReservation extends Model
             $registration->save();
 
             $registrationArray = $registration->toArray();
+
+            $number_of["athletes"] = count($tx['athletes']);
+            $number_of["coaches"] = count($tx['coaches']);
+            $number_of["specialists"] = isset($specialistCount) ? $specialistCount : 0;
+
             unset($registrationArray['athletes']);
             unset($registrationArray['specialists']);
             unset($registrationArray['coaches']);
@@ -1936,6 +1942,10 @@ class USAGReservation extends Model
                     $waitlistTransaction !== null,
                     $sanction
                 ));
+
+                if($enable_travel_arrangements)
+                    Mail::to(env('MAIL_TRAVEL_ADDRESS'))->cc("hello@allgymnastics.com")->send(new TransportHelpMailable($meet, $gym, $number_of));
+
             } else {
                 AuditEvent::registrationUpdated(
                     request()->_managed_account, auth()->user(), $registration, $auditEvent
@@ -1952,6 +1962,8 @@ class USAGReservation extends Model
                     $sanction
                 ));
             }
+
+
             if(isset($prev_deposit) && $prev_deposit != null)
             {
                 $prev_deposit->is_used = true;

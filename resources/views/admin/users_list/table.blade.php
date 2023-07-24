@@ -3,6 +3,7 @@
     <tr>
         <th>Profile</th>
         <th>Name</th>
+        <th>Gym</th>
         <th>Email</th>
         <th>Job Title</th>
         <th>Office Phone</th>

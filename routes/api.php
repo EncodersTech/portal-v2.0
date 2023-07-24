@@ -33,6 +33,7 @@ Route::get('countries', 'ExternalAPIController@countries');
 Route::get('bodies', 'ExternalAPIController@bodies');
 
 Route::get('file-download/{meet}', 'MeetController@download')->name('file.download');
+Route::get('educational-athlete/{igc_no}', 'MeetController@getUSAIGCAthleteCount');
 
 Route::get('web/meets', 'ExternalAPIController@meetsApi');
 Route::get('web/meet/{meet}', 'ExternalAPIController@meetApi');
@@ -106,6 +107,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     });
 
     Route::get('gym-info/{gym}', 'GymController@gymInfo');
+    Route::get('competitions-info', 'RegistrationController@competitionsInfo');
     Route::get('gyms/{gym}', 'GymController@index');
     Route::get('gyms/{gym}/athletes', 'AthleteController@athleteList');
     Route::get('gyms/{gym}/coaches', 'CoachController@coachList');
@@ -142,6 +144,7 @@ Route::middleware(['auth:api', 'verified'])->group(function () {
     Route::middleware(['permission:register'])->group(function () {
         Route::post('/registration/register/{meet}/{gym}', 'RegistrationController@register');
         Route::post('/registration/register/coupon', 'RegistrationController@checkCoupon');
+        Route::post('/registration/register/onetimeach', 'RegistrationController@onetimeach');
         Route::post('/gym/{gym}/registration/{registration}/pay/{transaction}', 'RegistrationController@pay');
         Route::post('/gym/{gym}/registration/{registration}/edit/pay', 'RegistrationController@edit');
         Route::get('/registration/payment/options/{meet}/{gym}', 'RegistrationController@paymentOptions');

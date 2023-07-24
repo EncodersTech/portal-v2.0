@@ -2280,8 +2280,8 @@ class Gym extends Model
                 -1
             );
 
-        if (!$archived && $meet->is_archived)
-            throw new CustomBaseException('You cannot edit archived meets', -1);
+        //if (!$archived && $meet->is_archived)
+        //    throw new CustomBaseException('You cannot edit archived meets', -1);
 
         return $meet;
     }
@@ -2312,7 +2312,17 @@ class Gym extends Model
         from meet_registrations as mr 
         join gyms on mr.gym_id = gyms.id
         join registration_coaches as c on c.meet_registration_id = mr.id
-        where gyms.id = '.$this->id.' and meet_id = '.$meetID;
+        where c.status = 1 and gyms.id = '.$this->id.' and meet_id = '.$meetID;
+        $result = DB::select($query);
+        return $result;
+    }
+    public function getUSAIGCCoachesFromMeetRegistrations($meetID)
+    {
+        $query = 'select c.id,c.first_name,c.last_name,c.usag_no,c.aau_no,c.usaigc_no,c.nga_no 
+        from meet_registrations as mr 
+        join gyms on mr.gym_id = gyms.id
+        join registration_coaches as c on c.meet_registration_id = mr.id
+        where c.status = 1 and c.usaigc_active = true and gyms.id = '.$this->id.' and meet_id = '.$meetID;
         $result = DB::select($query);
         return $result;
     }

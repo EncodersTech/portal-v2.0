@@ -339,15 +339,38 @@
                             </div>
                         </div>
 
-                        <div v-if="summary.handling > 0" class="row">
+                        <div v-if="(summary.processor + summary.handling) > 0" class="row" v-on:click="toggleDiv()" style="cursor: pointer;">
                             <div class="col">
-                                <span class="fas fa-fw fa-server"></span> Handling Fee :
+                                <span class="fas fa-fw fa-file-invoice"></span> Fees 
+                                <span class="fas fa-fw fa-caret-down" id="caret-div" > </span> :
                             </div>
                             <div class="col">
-                                ${{ numberFormat(summary.handling) }}
+                                ${{ numberFormat(summary.processor + summary.handling) }}
+
+                                <span v-if="this.summary.saving != ''" class="alert alert-success" style="padding:0px 5px;">
+                                {{ this.summary.saving }}
+                                </span>
                             </div>
                         </div>
 
+                        <div v-if="display_div">
+                            <div v-if="summary.handling > 0" class="row">
+                                <div class="col">
+                                    <span class="fas fa-fw fa-server"></span> Handling Fee :
+                                </div>
+                                <div class="col">
+                                    ${{ numberFormat(summary.handling) }}
+                                </div>
+                            </div>
+                            <div v-if="summary.processor > 0" class="row">
+                                <div class="col">
+                                    <span class="fas fa-fw fa-file-invoice"></span> Payment Processor Fee :
+                                </div>
+                                <div class="col">
+                                    ${{ numberFormat(summary.processor) }}
+                                </div>
+                            </div>
+                        </div>
                         <div v-if="summary.used_balance != 0" class="row">
                             <div class="col">
                                 <span class="fas fa-fw fa-coins"></span> Balance :
@@ -356,17 +379,6 @@
                                 ${{ numberFormat(-summary.used_balance) }}
                             </div>
                         </div>
-
-                        <div v-if="summary.processor > 0" class="row">
-                            <div class="col">
-                                <span class="fas fa-fw fa-file-invoice"></span> Payment Processor Fee :
-                            </div>
-                            <div class="col">
-                                ${{ numberFormat(summary.processor) }}
-                            </div>
-                        </div>
-                        
-
                         <div class="d-flex flex-row flew-nowrap mt-3 mb-2 p-3 rounded bg-primary">
                             <div class="flex-grow-1 text-uppercase">
                                 <span class="text-secondary mr-1">
@@ -474,7 +486,9 @@
                 gymDetails: null,
                 coupon: "",
                 couponSuccess : false,
-                couponValue: 0
+                couponValue: 0,
+                display_div: false,
+                competitions: null
             }
         },
         watch: {
@@ -487,6 +501,18 @@
             }
         },
         methods: {
+            getCompetitions: function(){
+                axios.get('/api/competitions-info/').then(result => {
+                    this.competitions = result.data;
+                });
+            },
+            toggleDiv: function() {
+                this.display_div = !this.display_div;
+                if(!this.display_div)
+                    $("#caret-div").removeClass("fa-caret-up").addClass("fa-caret-down");
+                else
+                    $("#caret-div").removeClass("fa-caret-down").addClass("fa-caret-up");
+            },
             registrationDataChanged() {
                 if (this.registrationData == null)
                     return;
@@ -494,7 +520,7 @@
                 this.recalculateTotals();
                 axios.get('/api/gym-info/'+this.registrationData.gym).then(result => {
                     this.gymDetails = result.data;
-                });``
+                });
             },
 
             showCheckSendingModel() {
@@ -525,6 +551,7 @@
                     used_balance: 0,
                     processor: 0,
                     total: 0,
+                    saving: ''
                 };
 
                 if (this.paymentOptions.defer.handling || this.paymentOptions.is_own) {
@@ -565,16 +592,38 @@
                         );
                     }
                 }
+                
                 this.summary.total = localTotal + this.summary.processor;
 
                 if(this.summary.total - coupon < 0)
                 {
-                    this.showAlert("Coupon cannot be used if value is greater then total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
+                    this.showAlert("Coupon cannot be used if value is greater than total", 'Whoops', 'red', 'fas fa-exclamation-triangle');
                 }
                 else
                 {
                     this.summary.total = this.summary.total - coupon;
+                }
 
+                let sum_h_p = this.summary.handling + this.summary.processor;
+                var flg = 0;
+                if (sum_h_p > 0) {
+                    this.summary.saving += 'Saved ' ;
+                    for(let key in this.competitions){
+                        let values = this.competitions[key];
+                        let _cc = values[0];
+                        let _af = values[1];
+                        let _sf = _cc + _af;
+                        let _saved_total_fee = (this.summary.subtotal * _sf) / 100; 
+                        if(_saved_total_fee > sum_h_p)
+                        {
+                        this.summary.saving += '$'+(_saved_total_fee - sum_h_p).toFixed(2) + ' than ' + key +',';
+                        flg = 1;
+                        }
+                    }
+                    if(flg == 1)
+                    this.summary.saving = this.summary.saving.slice(0, -1);
+                    else
+                    this.summary.saving = '';
                 }
             },
 
@@ -765,6 +814,9 @@
                 if (typeof s !== 'string') return ''
                 return s.charAt(0).toUpperCase() + s.slice(1)
             }
+        },
+        beforeMount(){
+            this.getCompetitions();
         },
         mounted() {
             if (this.registrationData)

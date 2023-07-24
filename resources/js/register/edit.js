@@ -22,7 +22,6 @@ $(document).ready(e => {
             registrationData: null,
             paymentOptions: null,
             paymentOptionsLoading: false,
-
             hit: 0
         },
         methods: {
@@ -53,7 +52,7 @@ $(document).ready(e => {
 
             firstStep(registrationData) {
                 $("#clickdiv").hide();
-                this.registrationData = registrationData;
+                this.registrationData = registrationData; 
                 this.step++;
             },
 

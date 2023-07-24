@@ -24,6 +24,30 @@
             </div>
 
             <div class="col">
+                @if($meet->id == 168)
+                    <div class="alert alert-info">
+                        <div class="d-flex flex-row flex-nowrap">
+                            <div class="flex-grow-1">
+                                <span class="fas fa-info-circle"></span>
+                                Having trouble registering event specialists in a level different from their AA level? 
+                                <a target="__blank" class="btn btn-success" href="https://allgymnastics.zendesk.com/hc/en-us/articles/17671901030937-Registering-USAIGC-Event-Specialists">
+                                    Click here for instructions
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+                @if($meet->id == 322)
+                    <div class="alert alert-info">
+                        <div class="d-flex flex-row flex-nowrap">
+                            <div class="flex-grow-1">
+                                <span class="fas fa-info-circle"></span>
+                                If you are registering as an Even Specialist, the fee is the same. Register as AA and email support@allgymnastics.com with Gym Name, Athlete Name, Level and Events
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 @if ($meet->registrationStatus() == App\Models\Meet::REGISTRATION_STATUS_LATE)
                     <div class="alert alert-warning">
                         <span class="fas fa-exclamation-circle"></span> This meet is open for LATE registations.
