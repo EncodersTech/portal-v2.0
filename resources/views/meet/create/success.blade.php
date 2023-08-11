@@ -41,7 +41,6 @@
 <script src="{{ asset('assets/admin/js/party.min.js') }}"></script>
 <script>
     function makeItRain() {
-        console.log("hi");
         elt = document.getElementById("makeItRain");
         elt2 = document.getElementById("makeItRain2");
         var end = Date.now() + (2 * 1000);

@@ -2361,8 +2361,7 @@ class Meet extends Model
             if ($gym !== null)
             {
                 $base_r = $base->where('gym_id', $gym->id);
-                $meet_id = $base_r->select(['me
-                et_id'])->first();
+                $meet_id = $base_r->select(['meet_id'])->first();
             }
             else
             {
