@@ -161,14 +161,35 @@ class Helper {
             
             $result[$body->initialism]['categories'][$category->name]['levels'][] = $level;
         }
-
+        
         $newLevels = $result[$body->initialism]['categories'][$category->name]['levels'];
         $levelReturn = [];
         $silverLevel = AthleteLevel::with(['levelMeets'])
             ->where('id', AthleteLevel::NGA_WOMEN_GYMNASTICS_SILVER)
             ->first();
+
+        $registration_updated_fee = null;
         if ($meet != null) {
             $silverLevel = $silverLevel->levelMeets()->where('meet_id', $meet->id)->first();
+            if($silverLevel != null)
+            {
+                if($meet->registration_third_discount_is_enable)
+                {
+                    if(strtotime($meet->registration_third_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) > 0)
+                        $registration_updated_fee = $level->pivot->registration_fee_third;
+                }
+                if($meet->registration_second_discount_is_enable)
+                {
+                    if(strtotime($meet->registration_second_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) > 0)
+                        $registration_updated_fee =  $level->pivot->registration_fee_second;
+                }
+                if($meet->registration_first_discount_is_enable)
+                {
+                    if(strtotime($meet->registration_first_discount_end_date->format('Y-m-d')) - strtotime(date('Y-m-d')) > 0)
+                        $registration_updated_fee =  $level->pivot->registration_fee_first;
+                }
+                $silverLevel->pivot->registration_fee_update = $registration_updated_fee;
+            }
         }
 
         $index = 0;
