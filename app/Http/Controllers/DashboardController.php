@@ -34,12 +34,12 @@ class DashboardController extends AppBaseController
         $managed = $request->_managed_account;
         /** @var User $managed */
         $showSanctionNotifications = $managed->isCurrentUser() || $managed->pivot->can_manage_gyms;
-        $meetRegistrationSavings = resolve(MeetRegistration::class)->getMeetRegistrationSavings($managed->id);
+        
         return view('dashboard', [
             '_managed' => $managed,
             'current_page' => 'dashboard',
             'showSanctionNotifications' => $showSanctionNotifications,
-            'h'=> $meetRegistrationSavings
+            
         ]);
     }
 

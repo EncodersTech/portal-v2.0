@@ -22,6 +22,7 @@ use App\Models\UserBalanceTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use App\Models\MeetRegistration;
 
 class UserAccountController extends Controller
 {
@@ -191,9 +192,12 @@ class UserAccountController extends Controller
     }
     public function showBalanceTransactions()
     {
+        $user = auth()->user();
+        $meetRegistrationSavings = resolve(MeetRegistration::class)->getMeetRegistrationSavings($user->id);
         return view('user.balance_transactions', [
             'current_page' => 'profile',
-            'isDwollaVerified' => $this->isDwollaVerified()
+            'isDwollaVerified' => $this->isDwollaVerified(),
+            'h'=> $meetRegistrationSavings
         ]);
     }
     public function get_min_max_withdraw_limit($user)

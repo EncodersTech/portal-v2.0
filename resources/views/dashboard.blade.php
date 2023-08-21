@@ -58,13 +58,13 @@
         z-index: 5;
     }
     .savings-info {
-  position: relative;
-  animation-name: excitement;
-  animation-duration: 2s;
-  animation-timing-function: ease-out;
-  animation-delay: 1s;
-  animation-fill-mode: forwards;
-}
+        position: relative;
+        animation-name: excitement;
+        animation-duration: 2s;
+        animation-timing-function: ease-out;
+        animation-delay: 1s;
+        animation-fill-mode: forwards;
+    }
 
 @keyframes excitement {
   0% {
@@ -107,19 +107,7 @@
                 </div>
             </div>
         </div>
-        <?php if($h != '') {?>
-        <div class="row  savings-info">
-            <div class="col">
-                <div class="alert alert-success">
-                    <strong>
-                        <span class="fas fa-fw fa-info-circle"></span>
-                        {{ $h }}
-                    </strong> <br/>
-                    Thanks for staying with us!
-                </div>
-            </div>
-        </div>
-        <?php } ?>
+
         <div class="row mb-3">
             <div class="col">
                 <div class="card-group">
