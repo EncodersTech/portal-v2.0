@@ -12,19 +12,6 @@
         @php ($active_tab = 'balance_transactions')
         @include('include.user.profile_nav')
     </div>
-    <?php if($h != '') {?>
-        <div class="row  savings-info">
-            <div class="col">
-                <div class="alert alert-success">
-                    <strong>
-                        <span class="fas fa-fw fa-info-circle"></span>
-                        {{ $h }}
-                    </strong> <br/>
-                    Thanks for staying with us!
-                </div>
-            </div>
-        </div>
-        <?php } ?>
     <div class="p-3">
         <div class="modal fade" id="modal-payment-options-info" tabindex="-1" role="dialog"
             aria-labelledby="modal-payment-options-info" aria-hidden="true">
@@ -345,7 +332,19 @@
                 </div>
             </div>
         </div>
-
+        <?php if($h != '') {?>
+            <div class="row savings-info">
+                <div class="col">
+                    <div class="alert alert-success">
+                        <strong>
+                            <span class="fas fa-fw fa-info-circle"></span>
+                            {{ $h }}
+                        </strong> <br/>
+                        Thanks for staying with us!
+                    </div>
+                </div>
+            </div>
+        <?php } ?>
         <div class="row" id="ag-balance">
             <div class="col">
                 @if(Auth::user()->cleared_balance > 0 && Auth::user()->withdrawal_freeze)
