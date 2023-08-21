@@ -226,9 +226,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div>
+                                <!-- <div>
                                     <button class="btn btn-primary" @click="useOneTimeACH()">One Time ACH Payment</button>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 
@@ -393,7 +393,7 @@
                                 <div class="col">
                                     <span class="fas fa-fw fa-server"></span> Handling Fee ({{this.paymentOptions.handling.fee}}%):
                                         <span data-toggle="tooltip"
-                                            title="The Handling Fee is based on a percentage of the fees. The fees range from 0 to 2.75%. These fees cover expenses consistent with running an online business. (Rent, Payroll, Programing/hosting, Insurance, Utilities, Hardware, Professional Services, etc.)"> 
+                                            :title="'The Handling Fee is based on a percentage of the fees. The fees range from 0 to '+ this.paymentOptions.handling.fee +'% . These fees cover expenses consistent with running an online business. (Rent, Payroll, Programing/hosting, Insurance, Utilities, Hardware, Professional Services, etc.)'"> 
                                             <span class="fas fa-info-circle"></span>
                                         </span>
                                 </div>
