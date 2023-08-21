@@ -75,13 +75,27 @@
                                 </div>
 
                                 <div v-if="add_athlete_specialist" class="ml-3">
+                                    <b>Women's Event</b>
                                     <div v-for="evt in add_athlete_events" :key="evt.id" class="form-check">
-                                        <input class="form-check-input" type="checkbox"
-                                            :id="'modal-add-athlete-specialist-event' + evt.id"
-                                            v-model="add_athlete_events[evt.id].checked">
-                                        <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                            {{ evt.name }}
-                                        </label>
+                                        <span v-if="evt.female">
+                                            <input class="form-check-input" type="checkbox"
+                                                :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                v-model="add_athlete_events[evt.id].checked">
+                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
+                                            </label>
+                                        </span>
+                                    </div>
+                                    <b>Men's Event</b>
+                                    <div v-for="evt in add_athlete_events" :key="evt.id" class="form-check">
+                                        <span v-if="evt.male">
+                                            <input class="form-check-input" type="checkbox"
+                                                :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                v-model="add_athlete_events[evt.id].checked">
+                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
+                                            </label>
+                                        </span>
                                     </div>
                                 </div>
                             </div>

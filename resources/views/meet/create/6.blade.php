@@ -56,7 +56,7 @@
                     $is_disable2 = 0;
 
             ?>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col mb-1">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="accept_mailed_check"
@@ -81,7 +81,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+             <div class="row">
                 <div class="col-lg mb-3 ml-3">
                     <label for="mailed_check_instructions" class="mb-1">
                         <span class="fas fa-fw fa-info-circle"></span>
@@ -126,7 +126,7 @@
                         class="form-control form-control-sm @error('deposit_ratio') is-invalid @enderror"
                         value="{{ $tm->oldOrValue('deposit_ratio') }}" type="number" min="0" max="100">
                 </div>
-            </div>
+            </div> -->
 
             
 
