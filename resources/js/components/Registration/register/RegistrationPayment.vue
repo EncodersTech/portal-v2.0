@@ -391,7 +391,8 @@
                         <div v-if="display_div">
                             <div v-if="summary.handling > 0" class="row">
                                 <div class="col">
-                                    <span class="fas fa-fw fa-server"></span> Handling Fee ({{this.paymentOptions.handling.fee}}%):
+                                    <span class="fas fa-fw fa-server"></span> 
+                                    Handling Fee ({{this.paymentOptions.handling.fee}}%):
                                         <span data-toggle="tooltip"
                                             :title="'The Handling Fee is based on a percentage of the fees. The fees range from 0 to '+ this.paymentOptions.handling.fee +'% . These fees cover expenses consistent with running an online business. (Rent, Payroll, Programing/hosting, Insurance, Utilities, Hardware, Professional Services, etc.)'"> 
                                             <span class="fas fa-info-circle"></span>
@@ -404,7 +405,8 @@
 
                             <div v-if="summary.processor > 0" class="row">
                                 <div class="col">
-                                    <span class="fas fa-fw fa-file-invoice"></span> Payment Processor Fee ({{this.chosenMethod.fee}}%):
+                                    <span class="fas fa-fw fa-file-invoice"></span> 
+                                        Payment Processor Fee ({{this.chosenMethod.fee}} {{this.chosenMethod.type == 'ach' ? '' : '%'}}):
                                         <span data-toggle="tooltip"
                                             title="The Payment Processor fees cover expenses related to ACH and Credit Card charges. ACH fees are a flat $10 per transaction and Credit Card fees are between 3%-3.25%. Processing fees are added to the Subtotal & Handling Fee. We utilize 3rd Party Processors to facilitate safe and secure payments."> 
                                             <span class="fas fa-info-circle"></span>
