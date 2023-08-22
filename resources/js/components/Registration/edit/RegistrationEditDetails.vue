@@ -83,7 +83,7 @@
                                                     :id="'modal-add-athlete-specialist-event' + evt.id"
                                                     v-model="add_athlete_events[evt.id].checked">
                                                 <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                                    {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
+                                                    {{ evt.name }}
                                                 </label>
                                             </span>
                                         </div>
@@ -96,7 +96,7 @@
                                                     :id="'modal-add-athlete-specialist-event' + evt.id"
                                                     v-model="add_athlete_events[evt.id].checked">
                                                 <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                                    {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
+                                                    {{ evt.name }}
                                                 </label>
                                             </span>
                                         </div>
