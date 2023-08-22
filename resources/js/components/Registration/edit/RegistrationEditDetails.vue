@@ -65,7 +65,7 @@
                                 </select>
                             </div>
 
-                            <div v-if="add_athlete_level.has_specialist" class="mt-1">
+                            <div v-if="add_athlete_level.has_specialist && add_athlete_athlete" class="mt-1">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="modal-add-athlete-specialist"
                                         v-model="add_athlete_specialist">
@@ -75,27 +75,31 @@
                                 </div>
 
                                 <div v-if="add_athlete_specialist" class="ml-3">
-                                    <b>Women's Event</b>
-                                    <div v-for="evt in add_athlete_events" :key="evt.id" class="form-check">
-                                        <span v-if="evt.female">
-                                            <input class="form-check-input" type="checkbox"
-                                                :id="'modal-add-athlete-specialist-event' + evt.id"
-                                                v-model="add_athlete_events[evt.id].checked">
-                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                                {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
-                                            </label>
-                                        </span>
+                                    <div v-if="add_athlete_athlete.gender == 'female'">
+                                        <b v-if="getFilteredSpecialistEvents(0).length > 0">Women's Event</b>
+                                        <div v-for="evt in getFilteredSpecialistEvents(0)" :key="evt.id" class="form-check">
+                                            <span v-if="evt.female">
+                                                <input class="form-check-input" type="checkbox"
+                                                    :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                    v-model="add_athlete_events[evt.id].checked">
+                                                <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                    {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
+                                                </label>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <b>Men's Event</b>
-                                    <div v-for="evt in add_athlete_events" :key="evt.id" class="form-check">
-                                        <span v-if="evt.male">
-                                            <input class="form-check-input" type="checkbox"
-                                                :id="'modal-add-athlete-specialist-event' + evt.id"
-                                                v-model="add_athlete_events[evt.id].checked">
-                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                                {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
-                                            </label>
-                                        </span>
+                                    <div v-else>
+                                        <b v-if="getFilteredSpecialistEvents(1).length > 0">Men's Event</b>
+                                        <div v-for="evt in getFilteredSpecialistEvents(1)" :key="evt.id" class="form-check">
+                                            <span v-if="evt.male">
+                                                <input class="form-check-input" type="checkbox"
+                                                    :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                    v-model="add_athlete_events[evt.id].checked">
+                                                <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                    {{ evt.name }} - {{ evt.sanctioning_body.initialism }}
+                                                </label>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1378,11 +1382,28 @@ export default {
     watch: {
     },
     methods: {
-
+        getFilteredSpecialistEvents(gender){
+            let maleEvents = [];
+            let femaleEvents = [];
+            if(this.add_athlete_events != null)
+            {
+                for (let event in this.add_athlete_events)
+                {
+                    let evt = this.add_athlete_events[event];
+                    if(evt.male)
+                        maleEvents.push(evt);
+                    if(evt.female)
+                        femaleEvents.push(evt);
+                }
+            }
+            if(gender == 1)
+                return maleEvents;
+            else
+                return femaleEvents;
+        },
         hasSpecialist(body, category) {
-            return (body.id == this.constants.bodies.USAIGC)
-                && (category.id == this.constants.categories.GYMNASTICS_WOMEN
-                || body.id == this.constants.bodies.NGA);
+            return (((body.id == this.constants.bodies.USAIGC) && (category.id == this.constants.categories.GYMNASTICS_WOMEN))
+             || body.id == this.constants.bodies.NGA);
         },
 
         numberFormat(n) {
@@ -1990,10 +2011,14 @@ export default {
             this.add_athlete_events = {};
             for (let i in this.specialist_events) {
                 let evt = this.specialist_events[i];
-                Vue.set(this.add_athlete_events, evt.id, {
-                    ... _.cloneDeep(evt),
-                    checked: false,
-                });
+                if(level.sanctioning_body.id == evt.sanctioning_body.id)
+                {
+                    Vue.set(this.add_athlete_events, evt.id, {
+                        ... _.cloneDeep(evt),
+                        checked: false,
+                    });
+                }
+                
             }
             $('#modal-registration-add-athlete').modal('show');
         },
