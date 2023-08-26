@@ -23,7 +23,7 @@
                     <div class="col">
                         <h5 class="border-bottom">
                             <span class="fas fa-fw fa-clipboard-check"></span>
-                            Categories and Sanctions z
+                            Categories and Sanctions
                             <span class="text-danger">*</span>
                         </h5>
                     </div>

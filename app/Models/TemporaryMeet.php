@@ -894,7 +894,7 @@ class TemporaryMeet extends Model
                 $meet->admissions()->create([
                     'name' => $admission->name,
                     'type' => $admission->type,
-                    'amount' => $admission->amount,
+                    'amount' => $admission->amount == null ? 0 : $admission->amount,
                 ]);
             }
 
