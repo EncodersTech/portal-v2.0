@@ -271,9 +271,9 @@ class MeetController extends BaseApiController
 
             if ($meet !== null)
                 $query->where('id', $meet);
-            if ($query->first()->show_participate_clubs == true) {
-                $query->with('registrations');
-            }
+            // if ($query->first()->show_participate_clubs == true) {
+            //     $query->with('registrations');
+            // }
             if ($state !== null) {
                 $state = State::where('code', $state)->first();
                 /** @var \App\Models\State $state */
@@ -1879,6 +1879,77 @@ class MeetController extends BaseApiController
 
         return $this->success([
             'total' => $number[0]->total_athlete
+        ]);
+    }
+    public function calendar()
+    {
+        $meets = Meet::where('end_date','>=','2021-07-07')->get();
+        $events = [];
+        foreach ($meets as $key => $meet) {
+            $categories = [];
+            foreach ($meet->categories as $category) {/** @var LevelCategory $category */
+                switch ($category->pivot->sanctioning_body_id) {
+                    case SanctioningBody::USAG:
+                        $categories[] = 'USAG';
+                        break;
+
+                    case SanctioningBody::USAIGC:
+                        $categories[] = 'USAIGC';
+                        break;
+
+                    case SanctioningBody::AAU:
+                        $categories[] = 'AAU';
+                        break;
+
+                    case SanctioningBody::NGA:
+                        $categories[] = 'NGA';
+                        break;
+                }
+            }
+
+            $events[] = array(
+                'id'=> $meet->id,
+                'calendarId'=> $meet->registrationStatus() - 1,
+                'title'=> $meet->name,
+                'start'=> $meet->start_date,
+                'end'=> $meet->end_date,
+                'isAllday'=> true,
+                'category'=> 'allday',
+                'location'=> $meet->venue_name.','.$meet->venue_addr_1.','.$meet->venue_city.','.$meet->venue_state->name.','.$meet->venue_zipcode,
+                'attendees'=> array_values(array_unique($categories)),
+                'state'=> $meet->gym->name
+            );
+        }
+        // $events = array([
+        //         'id'=> 'event1',
+        //         'calendarId'=> '0',
+        //         'title'=> 'Weekly meeting',
+        //         'start'=> '2023-08-07T09:00:00',
+        //         'end'=> '2023-08-07T10:00:00',
+        //     ],
+        //     [
+        //         'id'=> 'event2',
+        //         'calendarId'=> '1',
+        //         'title'=> 'Lunch appointment',
+        //         'start'=> '2023-08-08T12:00:00',
+        //         'end'=> '2023-08-08T13:00:00',
+        //     ],
+        //     [
+        //         'id'=> 'event3',
+        //         'calendarId'=> '2',
+        //         'title'=> 'Vacation',
+        //         'start'=> '2023-08-08',
+        //         'end'=> '2023-08-10',
+        //         'isAllday'=> true,
+        //         'category'=> 'allday',
+        //         'location'=> 'Meeting Room A',
+        //         'attendees'=> ['A', 'B', 'C'],
+        //         'category'=> 'time',
+        //         'state'=> 'Free',
+        //     ]
+        //     );
+        return $this->success([
+            'events' => $events
         ]);
     }
 }

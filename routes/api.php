@@ -33,6 +33,8 @@ Route::get('countries', 'ExternalAPIController@countries');
 Route::get('bodies', 'ExternalAPIController@bodies');
 
 Route::get('file-download/{meet}', 'MeetController@download')->name('file.download');
+Route::get('calendar', 'MeetController@calendar');
+
 Route::get('educational-athlete/{igc_no}', 'MeetController@getUSAIGCAthleteCount');
 
 Route::get('web/meets', 'ExternalAPIController@meetsApi');

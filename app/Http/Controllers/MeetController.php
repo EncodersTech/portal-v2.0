@@ -121,6 +121,12 @@ class MeetController extends AppBaseController
             'today' => now()->setTime(0, 0) 
         ]);
     }
+    public function calendar()
+    {
+        return view('meet.calendar', [
+            'current_page' => 'calendar'
+        ]);
+    }
     public function getMiniLevel($levels)
     {
         foreach ($levels as $k => $lbl) {

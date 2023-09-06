@@ -3,7 +3,7 @@
 /public/storage
 /storage
 /storage/*.key
-vendor
+/vendor
 laravel-echo-server.lock
 .env
 .phpunit.result.cache
