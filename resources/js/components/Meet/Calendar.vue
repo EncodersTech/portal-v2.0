@@ -23,12 +23,11 @@
 </style>
 <template>
   <div>
-    <h1>📅 Meet Calendar</h1>
     <div style="display: inline-block;">
       <input v-model="searchQuery" @input="filterEvents" placeholder="Search events" class="view-select form-control" style="width: 20em; display: inline-block;"/>
       <div v-if="showFilteredEvents" class="popup">
       <div v-for="event in filteredEvents" :key="event.id" class="popup-item form-control" @click="selectEvent(event)">
-        {{ event.title }}
+        {{ cleanUrlFromTitle(event.title) }}
       </div>
     </div>
     </div>
@@ -224,6 +223,10 @@ export default {
     });
   },
   methods: {
+    cleanUrlFromTitle(title) {
+      const titleWithoutUrl = title.replace(/<a [^>]*>.*<\/a>/, ''); // Remove URLs
+      return titleWithoutUrl.trim();
+    },
     filterEvents() {
       this.filteredEvents = this.events.filter(e =>
         e.title.toLowerCase().includes(this.searchQuery.toLowerCase())
@@ -234,14 +237,17 @@ export default {
       // Update the calendar view and date based on the clicked event
       const eventDate = new Date(event.start); // Adjust this based on your event data structure
       this.calendarInstance.setDate(eventDate);
-      this.calendarInstance.changeView('month');
+      // this.calendarInstance.changeView('month');
       this.showFilteredEvents = false;
+      this.calendarInstance.changeView('day');
+      this.showFilteredEvents = false;
+      this.setDateRangeText();
     },
     getTemplateForMilestone(event) {
-      return `<span style="color: #fff; background-color: ${event.backgroundColor};">${event.title}</span>`;
+      return `<span style="color: #fff; background-color: ${event.backgroundColor};">${this.cleanUrlFromTitle(event.title)}</span>`;
     },
     getTemplateForAllday(event) {
-      return `[All day] ${event.title}`;
+      return `[All day] ${this.cleanUrlFromTitle(event.title)}`;
     },
     getTimeTemplate(schedule, isAllDay) {
         var html = [];
@@ -313,20 +319,21 @@ export default {
     //   console.groupEnd();
     // },
     onClickDayName({ date }) {
-      console.group('onClickDayName');
-      console.log('Date : ', date);
-      console.groupEnd();
+      // console.group('onClickDayName');
+      // console.log('Date : ', date);
+      // console.groupEnd();
     },
     onClickEvent({ nativeEvent, event }) {
-      console.group('onClickEvent');
-      console.log('MouseEvent : ', nativeEvent);
-      console.log('Event Info : ', event);
-      console.groupEnd();
+      // event.title = 'CLICKED';
+      // console.group('onClickEvent');
+      // console.log('MouseEvent : ', nativeEvent);
+      // console.log('Event Info : ', event);
+      // console.groupEnd();
     },
     onClickTimezonesCollapseBtn(timezoneCollapsed) {
-      console.group('onClickTimezonesCollapseBtn');
-      console.log('Is Timezone Collapsed?: ', timezoneCollapsed);
-      console.groupEnd();
+      // console.group('onClickTimezonesCollapseBtn');
+      // console.log('Is Timezone Collapsed?: ', timezoneCollapsed);
+      // console.groupEnd();
 
       const newTheme = {
         'week.daygridLeft.width': '100px',
@@ -367,33 +374,6 @@ export default {
           this.dateRangeText = `${start.getDate()}/${monthNames[start.getMonth() + 1]} - ${end.getDate()}/${monthNames[end.getMonth() + 1]} 
           ${startYear} ${ startYear !== endYear ? ` - ${endYear}.` : ''} `;
       }
-      // switch (this.selectedView) {
-      //   case 'month':
-      //     const monthNames = [
-      //       'January', 'February', 'March', 'April', 'May', 'June',
-      //       'July', 'August', 'September', 'October', 'November', 'December'
-      //     ];
-      //     this.dateRangeText = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-      //     break;
-
-      //   case 'day':
-      //     this.dateRangeText = `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-      //     break;
-
-      //   default:
-      //     const startMonthName = monthNames[start.getMonth()];
-      //     const endMonthName = monthNames[end.getMonth()];
-
-      //     this.dateRangeText = `${start.getDate()} ${startMonthName} ${startYear} - ${
-      //       startYear !== endYear ? `${endYear} ` : ''
-      //     }${end.getDate()} ${endMonthName} ${endYear}`;
-      //     break;
-      // }
-
-
-
-
-
     },
   },
 };

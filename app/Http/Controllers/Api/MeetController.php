@@ -410,7 +410,7 @@ class MeetController extends BaseApiController
                 return $m;
             });
             $meetsList = [];
-            if(count($meets) > 1)
+            if(count($meets) > 1 && $status != Meet::REGISTRATION_STATUS_CLOSED && $status != null)
             {
                 foreach ($meets as $key => $value) {
                     if($value->registration_status != Meet::REGISTRATION_STATUS_CLOSED)
@@ -418,6 +418,10 @@ class MeetController extends BaseApiController
                         $meetsList[] = $value;
                     }
                 }
+            }
+            else
+            {
+                $meetsList = $meets;
             }
             return $this->success([
                 'total' => $count,
@@ -1883,7 +1887,10 @@ class MeetController extends BaseApiController
     }
     public function calendar()
     {
-        $meets = Meet::where('end_date','>=','2021-07-07')->get();
+        // $meets = Meet::where('end_date','>=','2021-07-07')->get();
+        $meets = Meet::where('is_published', true)
+        ->where('end_date', '>=', '2021-07-07')
+        ->where('is_archived', false)->get();
         $events = [];
         foreach ($meets as $key => $meet) {
             $categories = [];
@@ -1906,11 +1913,13 @@ class MeetController extends BaseApiController
                         break;
                 }
             }
-
+            $url = '';
+            if($meet->registrationStatus() == Meet::REGISTRATION_STATUS_OPEN)
+                $url = '<a class="btn btn-sm btn-success text-right float-right"  target="_blank" href="meets/'.$meet->id.'/register">Register</a>';
             $events[] = array(
                 'id'=> $meet->id,
                 'calendarId'=> $meet->registrationStatus() - 1,
-                'title'=> $meet->name,
+                'title'=> $meet->name . $url,
                 'start'=> $meet->start_date,
                 'end'=> $meet->end_date,
                 'isAllday'=> true,
@@ -1920,34 +1929,6 @@ class MeetController extends BaseApiController
                 'state'=> $meet->gym->name
             );
         }
-        // $events = array([
-        //         'id'=> 'event1',
-        //         'calendarId'=> '0',
-        //         'title'=> 'Weekly meeting',
-        //         'start'=> '2023-08-07T09:00:00',
-        //         'end'=> '2023-08-07T10:00:00',
-        //     ],
-        //     [
-        //         'id'=> 'event2',
-        //         'calendarId'=> '1',
-        //         'title'=> 'Lunch appointment',
-        //         'start'=> '2023-08-08T12:00:00',
-        //         'end'=> '2023-08-08T13:00:00',
-        //     ],
-        //     [
-        //         'id'=> 'event3',
-        //         'calendarId'=> '2',
-        //         'title'=> 'Vacation',
-        //         'start'=> '2023-08-08',
-        //         'end'=> '2023-08-10',
-        //         'isAllday'=> true,
-        //         'category'=> 'allday',
-        //         'location'=> 'Meeting Room A',
-        //         'attendees'=> ['A', 'B', 'C'],
-        //         'category'=> 'time',
-        //         'state'=> 'Free',
-        //     ]
-        //     );
         return $this->success([
             'events' => $events
         ]);
