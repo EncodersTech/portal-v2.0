@@ -30,8 +30,8 @@ use Illuminate\Support\Str;
 class USAGService {
     public const API_BASE_DEV = 'test.usagym.org';
     public const API_BASE_PROD = 'api.usagym.org';
-    // public const API_PATH = '/app/api/v3/';
     public const API_PATH = '/v4/';
+    // public const API_PATH = '/v4/';
 
     public const WEBHOOK_TYPE_SANCTION = 'Sanction';
     public const WEBHOOK_TYPE_RESERVATION = 'Reservation';
@@ -200,7 +200,6 @@ class USAGService {
 
                         $responseJSON = (string) $this->guzzle->request('GET', $memberpath)->getBody();
                         $response = json_decode($responseJSON, true);
-                        print_r($response); die();
                         if ($response === null) {
                             $issues[] = "USAG servers returned an invalid response\n" . $response;
                         } else if ($response['status'] != 'success') {
@@ -321,7 +320,10 @@ class USAGService {
                     $valid = [];
 
                     foreach ($sanctions as $sanction => $discipline) {
-                        $path = 'sanctions/' . $sanction . '/verification/c/' . $discipline . '/' . $number;
+                        // https://api.usagym.org/v4/sanctions/87945/verification/c/w/2137605
+
+                        // https://usagym.org/app/api/v4/sanction/sanctionID/verification/memberType
+                        $path = 'sanction/' . $sanction . '/verification/coach?people='.$number;
                         
                         $responseJSON = (string) $this->guzzle->request('GET', $path)->getBody();
                         $response = json_decode($responseJSON, true);
@@ -331,10 +333,10 @@ class USAGService {
 
                         if ($response === null) {
                             $issues[$sanction][] = "USAG servers returned an invalid response" . $response;
-                        } else if (count($response) != 1) {
+                        } else if ($response['status'] != 'success') {
                             $issues[$sanction][] = "Invalid USAG sanction number '". $sanction . "' or coach number '". $number . "'";
                         } else {
-                            $response = $response[0];
+                            $response = $response['data']['members'][0];
 
                             $elligible = ($response['Eligible'] == 1);
                             if (!$elligible) {
