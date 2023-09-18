@@ -239,7 +239,8 @@ export default {
       this.calendarInstance.setDate(eventDate);
       // this.calendarInstance.changeView('month');
       this.showFilteredEvents = false;
-      this.calendarInstance.changeView('day');
+      this.selectedView = 'day';
+      // this.calendarInstance.changeView('day');
       this.showFilteredEvents = false;
       this.setDateRangeText();
     },
