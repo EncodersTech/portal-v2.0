@@ -18,7 +18,7 @@ $(document).ready(function () {
                 'width': '13%',
             },
             {
-                "targets": [3],
+                "targets": [1],
                 'width': '8%',
             },
             {

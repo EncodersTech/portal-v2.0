@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Mail\MassMailerNotification;
 use Mail;
+use Illuminate\Support\Facades\Log;
 class SendEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -19,6 +20,9 @@ class SendEmailJob implements ShouldQueue
      * @return void
      */
     protected $mail_ids, $template, $subject, $input;
+    public $tries = 3;
+    public $retryAfter = 3600;
+
     public function __construct($mail_ids,$template,$subject,$input)
     {
         $this->mail_ids = $mail_ids;
@@ -35,6 +39,7 @@ class SendEmailJob implements ShouldQueue
     public function handle()
     {
         $email = new MassMailerNotification($this->template,$this->subject,$this->input);
+        Log::debug('JOB FAILED : ' . $this->mail_ids);
         Mail::to($this->mail_ids)->send($email);
     }
 }

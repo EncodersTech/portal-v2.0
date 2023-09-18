@@ -989,12 +989,11 @@ class MeetController extends AppBaseController
         $input = $request->all();
         $meet = Meet::find($input['meet_id']);
         $gymEmails = Gym::with('user')->whereIn('id',$input['registerGym'])->get()->pluck('user.email');
-
         if (isset($input['attachments']) && ! empty($input['attachments'])) {
             $input['attachments'] = Storage::url(Storage::putFile('public/'.Meet::MEET_MASS_MAILER,$input['attachments']));
         }
-        $input['attachments'] = (isset($input['attachments'])) ? env('APP_URL').$input['attachments'] : null;
-
+        $input['attachments'] = (isset($input['attachments'])) ? $input['attachments'] : null; # correction needed
+        $input['attachments'] = str_replace('/storage', 'storage', $input['attachments']);
         if(!$meet){
             throw new CustomBaseException("Meet not found.");
         }

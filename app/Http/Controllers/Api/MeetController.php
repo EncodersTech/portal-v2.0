@@ -42,6 +42,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use stdClass;
 
 class MeetController extends BaseApiController
 {
@@ -85,19 +86,30 @@ class MeetController extends BaseApiController
             if ($archived !== null)
                 $meets = $meets->where('is_archived', $archived);
 
-            $meets = $meets->get();
+            $meets = $meets->orderBy('updated_at', 'DESC')->get();
 
+            $meet_list = [];
             foreach ($meets as $meet) { /** @var Meet $meet */
-                $meet->can_be_edited = $meet->canBeEdited();
-                $meet->can_be_deleted = $meet->canBeDeleted();
-                $meet->registration_status = $meet->registrationStatus();
+                $net_meet = new stdClass();
+                $net_meet->id = $meet->id;
+                $net_meet->name = $meet->name;
+                $net_meet->start_date = $meet->start_date;
+                $net_meet->end_date = $meet->end_date;
+                $net_meet->profile_picture = $meet->profile_picture;
+                $net_meet->is_archived = $meet->is_archived;
+                $net_meet->is_featured = $meet->is_featured;
+                $net_meet->is_published = $meet->is_published;
+                $net_meet->can_be_edited = $meet->canBeEdited();    
+                $net_meet->can_be_deleted = $meet->canBeDeleted();
+                $net_meet->registration_status = $meet->registrationStatus();
+                $meet_list[] = $net_meet;
             }
 
             $can_create =  ($request->_managed_account->isCurrentUser() || $request->_managed_account->pivot->can_create_meet);
             $can_edit = ($request->_managed_account->isCurrentUser() || $request->_managed_account->pivot->can_edit_meet);
 
             return $this->success([
-                'meets' => $meets,
+                'meets' => $meet_list,
                 'permissions' => [
                     'create' => $can_create,
                     'edit' => $can_edit
@@ -112,7 +124,7 @@ class MeetController extends BaseApiController
                 'Throwable' => $e
             ]);
             return $this->error([
-                'message' => 'Something went wrong while fetching meets.'
+                'message' => 'Something went wrong while fetching meets.'.$e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
