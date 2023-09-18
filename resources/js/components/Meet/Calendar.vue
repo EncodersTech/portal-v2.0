@@ -211,14 +211,14 @@ export default {
 
     axios.get('/api/calendar', {
     }).then(result => {
-        console.log(result.data.events);
+        // console.log(result.data.events);
         this.events = result.data.events;
     }).catch(error => {
-        console.log("error");
+        console.log("calendar api error");
         // this.errorMessage = msg + '<br/>Please reload this page.';
         // this.isError = true;
     }).finally(() => {
-        console.log("Done");
+        // console.log("Done");
         // this.isLoading = false;
     });
   },
