@@ -101,7 +101,7 @@
 //   @beforeDeleteEvent="onBeforeDeleteEvent"
 //   @afterRenderEvent="onAfterRenderEvent"
 // import Calendar from '@toast-ui/vue-calendar';
-import Calendar from '../../../../public/assets/admin/js/toast-ui/vue-calendar';
+import Calendar from '../../../../public/assets/admin/js/toast-ui/vue-calendar/dist/toastui-vue-calendar.js';
 import '../../../../public/assets/admin/js/toast-ui/calendar/dist/toastui-calendar.css';
 
 // import { events } from '../../../../public/assets/admin/js/toast-ui/mock-data';
@@ -122,35 +122,52 @@ export default {
         isReadOnlyCalendar: true,
         useDetailPopup: true,
         useFormPopup: false,
+        // Have color-coordination depending on organization. 
+        // NGA only= light red, USAIGC only = purple, USAG only = blue, multi-organization = light green
         calendars: [
             {
             id: 0,
-            name: 'Registration Closed',
-            backgroundColor: '#d61e11',
-            borderColor: '#d61e11',
-            dragBackgroundColor: '#d61e11',
+            name: 'Multiple',
+            backgroundColor: '#5fd876',
+            borderColor: '#5fd876',
+            dragBackgroundColor: '#5fd876',
             },
             {
             id: 1,
-            name: 'Registration Open',
-            backgroundColor: '#299406',
-            borderColor: '#299406',
-            dragBackgroundColor: '#299406',
+            name: 'USAG',
+            backgroundColor: '#6684f0',
+            borderColor: '#6684f0',
+            dragBackgroundColor: '#6684f0',
             },
             {
             id: 2,
-            name: 'Registration Late',
+            name: 'USAIGC',
+            backgroundColor: '#b366f0',
+            borderColor: '#b366f0',
+            dragBackgroundColor: '#b366f0',
+            },
+            {
+            id: 3,
+            name: 'AAU',
             backgroundColor: '#42188f',
             borderColor: '#42188f',
             dragBackgroundColor: '#42188f',
             },
             {
-            id: 3,
-            name: 'Registration Opening Soon',
-            backgroundColor: '#21a9b8',
-            borderColor: '#21a9b8',
-            dragBackgroundColor: '#21a9b8',
+            id: 4,
+            name: 'NGA',
+            backgroundColor: '#f17f77',
+            borderColor: '#f17f77',
+            dragBackgroundColor: '#f17f77',
+            },
+            {
+            id: 5,
+            name: 'Registration Closed',
+            backgroundColor: '#b1b1b1',
+            borderColor: '#b1b1b1',
+            dragBackgroundColor: '#b1b1b1',
             }
+
         ],
         events : [],
         zones: [
@@ -208,6 +225,29 @@ export default {
   },
   mounted() {
     this.setDateRangeText();
+    this.calendarInstance.setTheme({
+      common: {
+        saturday: {
+          color: '#000000',
+        },
+        sunday: {
+          color: '#000000',
+        },
+        holiday: {
+          color: '#000000',
+        }
+      },
+      month:{
+        weekend: {
+          backgroundColor: 'rgba(177, 177, 177, .4)'
+        }
+      },
+      week: {
+        weekend: {
+          backgroundColor: 'rgba(177, 177, 177, .4)'
+        }
+      }
+    });
 
     axios.get('/api/calendar', {
     }).then(result => {
@@ -364,15 +404,15 @@ export default {
                 ];
       switch (this.selectedView) {
         case 'month':
-          this.dateRangeText = `${monthNames[date.getMonth() + 1]} - ${date.getFullYear()}`;
+          this.dateRangeText = `${monthNames[date.getMonth()]} - ${date.getFullYear()}`;
 
           return;
         case 'day':
-          this.dateRangeText = `${date.getDate()}-${monthNames[date.getMonth() + 1]}-${date.getFullYear()}`;
+          this.dateRangeText = `${date.getDate()}-${monthNames[date.getMonth()]}-${date.getFullYear()}`;
 
           return;
         default:
-          this.dateRangeText = `${start.getDate()}/${monthNames[start.getMonth() + 1]} - ${end.getDate()}/${monthNames[end.getMonth() + 1]} 
+          this.dateRangeText = `${start.getDate()}/${monthNames[start.getMonth()]} - ${end.getDate()}/${monthNames[end.getMonth()]} 
           ${startYear} ${ startYear !== endYear ? ` - ${endYear}.` : ''} `;
       }
     },

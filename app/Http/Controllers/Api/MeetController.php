@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use stdClass;
-
+use DateTime;
 class MeetController extends BaseApiController
 {
     public function meetList(Request $request, string $gym)
@@ -1948,12 +1948,30 @@ class MeetController extends BaseApiController
             $url = '';
             if($meet->registrationStatus() == Meet::REGISTRATION_STATUS_OPEN)
                 $url = '<a class="btn btn-sm btn-success text-right float-right"  target="_blank" href="meets/'.$meet->id.'/register">Register</a>';
+            
+            $meet_c_u = array_unique($categories);
+
+            $calendarId = 0;
+            if(count($meet_c_u) == 1 && $meet_c_u[0] == 'USAG')
+                $calendarId = 1;
+            else if(count($meet_c_u) == 1 && $meet_c_u[0] == 'USAIGC')
+                $calendarId = 2;
+            else if(count($meet_c_u) == 1 && $meet_c_u[0] == 'AAU')
+                $calendarId = 3;
+            else if(count($meet_c_u) == 1 && $meet_c_u[0] == 'NGA')
+                $calendarId = 4;
+
+            if($meet->registrationStatus() == Meet::REGISTRATION_STATUS_CLOSED)
+                $calendarId = 5;
+            $deadline = $meet->allow_late_registration ? $meet->late_registration_end_date : $meet->registration_end_date;
+            $deadline = new \DateTime($deadline);
             $events[] = array(
                 'id'=> $meet->id,
-                'calendarId'=> $meet->registrationStatus() - 1,
+                'calendarId'=>  $calendarId, // $meet->registrationStatus() - 1,
                 'title'=> $meet->name . $url,
                 'start'=> $meet->start_date,
                 'end'=> $meet->end_date,
+                'deadline' => 'Deadline: '.$deadline->format('m.d.Y'),
                 'isAllday'=> true,
                 'category'=> 'allday',
                 'location'=> $meet->venue_name.','.$meet->venue_addr_1.','.$meet->venue_city.','.$meet->venue_state->name.','.$meet->venue_zipcode,

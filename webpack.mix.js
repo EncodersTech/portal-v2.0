@@ -139,8 +139,8 @@ mix.babel('node_modules/party-js/bundle/party.min.js',
     'public/assets/admin/js/party.min.js');
 
         
-mix.copy('node_modules/@toast-ui/',
-'public/assets/admin/js/toast-ui/');
+// mix.copy('node_modules/@toast-ui/',
+// 'public/assets/admin/js/toast-ui/');
 
 
 mix.js('resources/js/meet/meet-calendar.js', 'public/js/meet')

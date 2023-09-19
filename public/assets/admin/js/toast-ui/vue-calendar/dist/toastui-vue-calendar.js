@@ -6600,6 +6600,14 @@
     return hour;
   }
   const tokenFunc = {
+    MMDDYYYY(date2)
+    {
+      return [
+        leadingZero(date2.getMonth() + 1, 2),
+        leadingZero(date2.getDate(), 2),
+        date2.getFullYear()
+      ].join("");
+    },
     YYYYMMDD(date2) {
       return [
         date2.getFullYear(),
@@ -6906,6 +6914,7 @@
       this.comingDuration = 0;
       this.location = "";
       this.attendees = [];
+      this.deadline = "";
       this.category = "time";
       this.dueDateClass = "";
       this.recurrenceRule = "";
@@ -6933,6 +6942,7 @@
       comingDuration = 0,
       location: location2 = "",
       attendees = [],
+      deadline = "",
       category = "time",
       dueDateClass = "",
       recurrenceRule = "",
@@ -6958,6 +6968,7 @@
       this.comingDuration = comingDuration;
       this.location = location2;
       this.attendees = attendees;
+      this.deadline = deadline;
       this.category = category;
       this.dueDateClass = dueDateClass;
       this.recurrenceRule = recurrenceRule;
@@ -7092,6 +7103,7 @@
         comingDuration: this.comingDuration,
         location: this.location,
         attendees: this.attendees,
+        deadline: this.deadline,
         category: this.category,
         dueDateClass: this.dueDateClass,
         recurrenceRule: this.recurrenceRule,
@@ -7906,8 +7918,12 @@
     popupDetailTitle({ title }) {
       return title;
     },
+    popupDeadlineEvent({deadline}){
+      return deadline;
+    },
     popupDetailDate({ isAllday: isAllday2, start, end }) {
-      const dayFormat = "YYYY.MM.DD";
+      // const dayFormat = "YYYY.MM.DD";
+      const dayFormat = "MM.DD.YYYY";
       const timeFormat = "hh:mm tt";
       const detailFormat = `${dayFormat} ${timeFormat}`;
       const startDate = toFormat(start, isAllday2 ? dayFormat : timeFormat);
@@ -11382,11 +11398,13 @@
     repeatIcon: cls("icon", "ic-repeat-b"),
     userIcon: cls("icon", "ic-user-b"),
     stateIcon: cls("icon", "ic-state-b"),
-    calendarDotIcon: cls("icon", "calendar-dot")
+    calendarDotIcon: cls("icon", "calendar-dot"),
+    deadline: cls("icon", "ic-date"),
+
   };
   function EventDetailSectionDetail({ event }) {
     var _a, _b;
-    const { location: location2, recurrenceRule, attendees, state, calendarId, body } = event;
+    const { location: location2, recurrenceRule, attendees, deadline, state, calendarId, body } = event;
     const calendar = useCalendarById(calendarId);
     return /* @__PURE__ */ h$3("div", {
       className: classNames$j.sectionDetail
@@ -11410,7 +11428,7 @@
       template: "popupDetailRecurrenceRule",
       param: event,
       as: "span"
-    }))), attendees && /* @__PURE__ */ h$3("div", {
+    }))), (attendees.length > 1 || calendarId == 5) && attendees && /* @__PURE__ */ h$3("div", {
       className: classNames$j.detailItemIndent
     }, /* @__PURE__ */ h$3("span", {
       className: classNames$j.userIcon
@@ -11418,6 +11436,16 @@
       className: classNames$j.content
     }, /* @__PURE__ */ h$3(Template, {
       template: "popupDetailAttendees",
+      param: event,
+      as: "span"
+    }))), calendarId != 5 && deadline && /* @__PURE__ */ h$3("div", {
+      className: classNames$j.detailItemIndent
+    }, /* @__PURE__ */ h$3("span", {
+      className: classNames$j.deadline
+    }), /* @__PURE__ */ h$3("span", {
+      className: classNames$j.content
+    }, /* @__PURE__ */ h$3(Template, {
+      template: "popupDeadlineEvent",
       param: event,
       as: "span"
     }))), state && /* @__PURE__ */ h$3("div", {
