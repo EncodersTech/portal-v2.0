@@ -435,12 +435,32 @@ class MeetController extends BaseApiController
             {
                 $meetsList = $meets;
             }
+            $meet_list = [];
+            foreach ($meetsList as $meet) { /** @var Meet $meet */
+                $net_meet = new stdClass();
+                $net_meet->id = $meet->id;
+                $net_meet->name = $meet->name;
+                $net_meet->start_date = $meet->start_date;
+                $net_meet->end_date = $meet->end_date;
+                $net_meet->profile_picture = $meet->profile_picture;
+                $net_meet->is_archived = $meet->is_archived;
+                $net_meet->is_featured = $meet->is_featured;
+                $net_meet->is_published = $meet->is_published;
+                $net_meet->categories = $meet->categories;
+                $net_meet->venue_state = $meet->venue_state;
+                $net_meet->venue_name = $meet->venue_name;
+                $net_meet->venue_city = $meet->venue_city;
+                $net_meet->show_participate_clubs = $meet->show_participate_clubs;
+                $net_meet->gym = $meet->gym;
+                $net_meet->registration_status = $meet->registrationStatus();
+                $meet_list[] = $net_meet;
+            }
             return $this->success([
                 'total' => $count,
                 'page' => $page,
                 'limit' => $limit,
-                // 'meets' => $meets,
-                'meets' => count($meets) > 1 ? $meetsList : $meets,
+                // 'meets' => $meet_list,
+                'meets' => count($meets) > 1 ? $meet_list : $meets,
             ]);
         } catch(ValidationException $e) {
             throw $e;
