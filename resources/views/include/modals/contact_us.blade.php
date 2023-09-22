@@ -24,7 +24,43 @@
                                     autocomplete="email" autofocus>
                         </div>
                     </div>
-
+                    <div class="row p-1 d-none" id="live_chat_div">
+                        <div class="col-4">
+                            <i class="fas fa-comment-dots"></i>
+                            Live Chat
+                        </div>
+                        <div class="col-8 text-right">
+                            <a href="javascript:void(Tawk_API.toggle())" class="btn btn-success"> Start Chat </a>
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-4">
+                            <i class="fas fa-phone"></i>
+                            Call Us :
+                        </div>
+                        <div class="col-8">
+                            <a href="tel:"> 844-425-5496 </a>
+                            <span>(Available from Mon-Fri 08:30am-05:00pm EST)</span>
+                        </div>
+                        <div class="col-12">
+                            
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-4">
+                            <i class="fa fa-envelope" aria-hidden="true"></i>
+                            Mail Us: 
+                        </div>
+                        <div class="col-8 text-right">
+                            <a href="mailto:" > support@allgymnastics.com </a>
+                        </div>
+                    </div>
+                    <div class="row p-1">
+                        <div class="col-12">
+                            <hr>
+                            Or, send a message ...
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col">
                             <label for="modal-contact-us-message">
