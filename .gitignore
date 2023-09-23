@@ -26,6 +26,7 @@ db.sql
 /config/database.php
 /config/app.php
 /config/logging.php
+
 composer-setup.php
 composer-temp.phar
 package-lock.json
