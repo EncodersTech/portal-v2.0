@@ -189,12 +189,12 @@
                     @else
                     <tr>
                         <td class="">Participant Refund</td>
-                        <td class="">Menaully Outside AllGymnastics</td>
+                        <td class="">Manually Outside AllGymnastics</td>
                         <td class="  text-right">{{number_format($feeArr[$index]['refund_fees'],2)}}</td>
                     </tr>
                     <tr>
                         <td class="">Meet Host Refund</td>
-                        <td class="">Menaully Outside AllGymnastics</td>
+                        <td class="">Manually Outside AllGymnastics</td>
                         <td class="  text-right">{{number_format($feeArr[$index]['refund_meet_fees'],2)}}</td>
                     </tr>
                     @endif

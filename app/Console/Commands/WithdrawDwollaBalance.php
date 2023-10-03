@@ -83,7 +83,7 @@ class WithdrawDwollaBalance extends Command
                     $user = User::find($k->user_id);
                     if(!$user->withdrawal_freeze)
                     {
-                        if($k->frequency == 1) // && $interval->d >= 7)
+                        if($k->frequency == 1 && $interval->d >= 7)
                         {
                             DB::table('withdraw_scheduler')
                                 ->where('id', $k->id)

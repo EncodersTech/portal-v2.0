@@ -192,7 +192,15 @@ class DwollaService {
             Configuration::$access_token = $this->authenticate();
             $fundingSourcesApi = new FundingsourcesApi(new ApiClient($this->host));
             $fundingSources = $fundingSourcesApi->getCustomerFundingSources($customerId, $removed);
-            return $fundingSources->_embedded->{'funding-sources'};
+            $funds = $fundingSources->_embedded->{'funding-sources'};
+            $total_funding_source = [];
+            foreach ($funds as $key => $value) {
+                if (isset($value->bankAccountType) && $value->bankAccountType != 'balance') {
+                    $total_funding_source[] = $value;
+                }
+            }
+            return $total_funding_source; 
+            //return $fundingSources->_embedded->{'funding-sources'};
         } catch (ApiException $e) {
             Log::error($e->getMessage());
             $this->_handleDwollaException($e, 'funding_source_list');
