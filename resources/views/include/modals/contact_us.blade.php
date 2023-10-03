@@ -30,8 +30,8 @@
                                 Available from Mon-Fri 8:30am-5:00pm EST</a>
                         </div>
                     </div>
-                    <div class="collapse" id="chat_div">
-                        <div class="row p-1 d-none" id="live_chat_div">
+                    <div class="collapse show" id="chat_div">
+                        <div class="row p-1" id="live_chat_div">
                             <div class="col-4">
                                 <i class="fas fa-comment-dots"></i>
                                 Live Chat
@@ -57,7 +57,7 @@
                             <a href="#all_time_support" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="chat_div">24/7 Support</a>
                         </div>
                     </div>
-                    <div class="collapse" id="all_time_support">
+                    <div class="collapse show" id="all_time_support">
                         <div class="row p-1">
                             <div class="col-4">
                                 <i class="fa fa-envelope" aria-hidden="true"></i>
