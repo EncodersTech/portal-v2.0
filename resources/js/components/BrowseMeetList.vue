@@ -368,10 +368,10 @@
                     current: 1,
                     total: 1
                 },
-                limit: 5,
+                limit: 10,
                 sortColumn: 'start_date',
                 sortDirection: 'down',
-                limitMultiplier: 5,
+                limitMultiplier: 10,
                 debounce_delay: 1000,
                 states: [],
                 filters: {

@@ -395,7 +395,7 @@ class MeetController extends BaseApiController
             if($enddate != null)
                 $query->where('end_date','>=',$enddate);
             $meets = $query->orderBy('is_featured', 'DESC')
-                ->orderBy('start_date', 'DESC')
+                ->orderBy('start_date', 'ASC')
                 ->get()
                 ->makeHidden([
                     'gym_id', 'tshirt_size_chart_id', 'leo_size_chart_id', 'mso_meet_id',
