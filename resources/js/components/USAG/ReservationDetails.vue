@@ -918,7 +918,7 @@
                                     </div>
                                     <div v-else class="form-check">
                                         <input class="form-check-input" type="checkbox" id="use_balance"
-                                            v-model="useBalance" @change="recalculateTotals">
+                                            v-model="useBalance" @change="recalculateTotals()">
                                         <label class="form-check-label" for="use_balance">
                                             <span class="fas fa-fw fa-coins"></span>
                                             Use my Allgymnastics.com balance towards this payment
