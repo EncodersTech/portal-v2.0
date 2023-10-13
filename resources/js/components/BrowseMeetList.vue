@@ -214,7 +214,7 @@
                                     </thead>
                                     <tbody>
                                         <tr v-for="item in items" :key="item.id">
-                                            <td class="meet-picture-column align-middle" v-bind:class="(item.is_featured)?'corner-cut corner-red':'' " v-bind:title="(item.is_featured)?'Featured Meet':''">
+                                            <td class="meet-picture-column align-middle" v-bind:class="(item.is_featured)?'corner-cut corner-red background-feature':'' " v-bind:title="(item.is_featured)?'Featured Meet':''">
                                                 <img class="meet-picture rounded-circle ml-2" alt="Meet Picture"
                                                         :src="item.profile_picture" title="Meet Picture">
                                             </td>

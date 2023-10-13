@@ -1371,7 +1371,8 @@ class USAGReservation extends Model
                             if ($leoSize == null)
                                 throw new CustomBaseException('Invalid Leo size for this meet.', -1);
                         }
-
+                        $leoSizeId = isset($leoSize->id) ? $leoSize->id : null;
+                        $tshirtSizeId = isset($tshirtSize->id) ? $tshirtSize->id : null;
                         $athlete = [
                             'level_registration_id' => $registrationLevel->id,
                             'first_name' => $a['first_name'],
@@ -1379,8 +1380,8 @@ class USAGReservation extends Model
                             'gender' => $a['gender'],
                             'dob' => $a['dob'],
                             'is_us_citizen' => $a['is_us_citizen'],
-                            'tshirt_size_id' => ($tshirtRequired ? $tshirtSize->id : null),
-                            'leo_size_id' => ($leoRequired ? $leoSize->id : null),
+                            'tshirt_size_id' => ($tshirtRequired ? $tshirtSizeId : null),
+                            'leo_size_id' => ($leoRequired ? $leoSizeId : null),
                             'usag_no' => $usag_no,
                             'usag_active' => true,
                             'was_late' => $late,

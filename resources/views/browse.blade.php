@@ -4,6 +4,9 @@
         position: relative;
         overflow: hidden;
     }
+    .background-feature{
+        background-image: linear-gradient(190deg, #e71010, #ffff0f, #248c24);
+    }
 
     .corner-cut:after {
         content: '';
