@@ -952,7 +952,7 @@ class USAGReservation extends Model
         return $result;
     }
 
-    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements) {
+    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements, $onetimeach = null) {
         DB::beginTransaction();
         try {
             $sanction = USAGSanction::where('number', $sanction)
@@ -998,7 +998,17 @@ class USAGReservation extends Model
                     $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
                     $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
                     break;
-
+                case MeetRegistration::PAYMENT_OPTION_ONETIMEACH:
+                    $chosenMethod = [
+                        'type' => MeetRegistration::PAYMENT_OPTION_ONETIMEACH,
+                        'id' => $method['id'],
+                        'fee' => $meet->ach_fee(),
+                        'mode' => MeetRegistration::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
+                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
+                    $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
+                    break;
                 case MeetRegistration::PAYMENT_OPTION_PAYPAL:
                     $chosenMethod = [
                         'type' => MeetRegistration::PAYMENT_OPTION_PAYPAL,
@@ -1857,7 +1867,8 @@ class USAGReservation extends Model
                     $chosenMethod,
                     $registration,
                     $host,
-                    $registrant
+                    $registrant,
+                    $onetimeach
                 );
                 $transaction = $executedTransactionResult['transaction']; /** @var MeetTransaction $transaction */
                 $athleteStatus = $executedTransactionResult['athlete_status'];

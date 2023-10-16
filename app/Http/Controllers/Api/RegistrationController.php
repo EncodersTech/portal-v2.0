@@ -43,7 +43,8 @@ class RegistrationController extends BaseApiController
                 null,
                 $request->input('deposit'),
                 $request->input('coupon'),
-                $request->input('enable_travel_arrangements')
+                $request->input('enable_travel_arrangements'),
+                $request->input('onetimeach')
             );
         } catch(CustomBaseException $e) {
             throw $e;
@@ -131,7 +132,8 @@ class RegistrationController extends BaseApiController
                 $request->input('method'),
                 (bool) $request->input('use_balance'),
                 $previous_deposit_remaining_total,
-                $request->input('coupon')
+                $request->input('coupon'),
+                $request->input('onetimeach')
             );
         } catch(CustomBaseException $e) {
             throw $e;
@@ -176,7 +178,8 @@ class RegistrationController extends BaseApiController
                 $gym, $transaction,
                 $request->input('summary'),
                 $request->input('method'),
-                (bool) $request->input('use_balance')
+                (bool) $request->input('use_balance'),
+                $request->input('onetimeach')
             );
         } catch(CustomBaseException $e) {
             throw $e;

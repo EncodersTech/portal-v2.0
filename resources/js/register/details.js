@@ -47,11 +47,13 @@ $(document).ready(e => {
                             3: 'ACH',
                             4: 'Mailed Check',
                             5: 'Allgymnastics.com Balance',
+                            6: 'One Time ACH',
                             Card: 1,
                             Paypal: 2,
                             Ach: 3,
                             Check: 4,
                             Balance: 5,
+                            OneTimeAch: 6,
                         },
                         statuses: {
                             1: 'Pending',

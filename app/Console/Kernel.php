@@ -52,8 +52,11 @@ class Kernel extends ConsoleKernel
        
         $schedule->command('withdraw-dwolla-balance:start')
             ->twiceDaily(0, 12)
-            // ->everyFiveMinutes();
-            // ->everyMinute()
+            ->withoutOverlapping()
+            ->sendOutputTo($logFile);
+
+        $schedule->command('cleare-onetimeach:start')
+            ->twiceDaily(10, 22)
             ->withoutOverlapping()
             ->sendOutputTo($logFile);
     }

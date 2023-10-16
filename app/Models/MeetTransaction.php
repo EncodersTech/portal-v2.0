@@ -23,13 +23,15 @@ class MeetTransaction extends Model
     public const PAYMENT_METHOD_ACH = 3;
     public const PAYMENT_METHOD_CHECK = 4;
     public const PAYMENT_METHOD_BALANCE = 5;
+    public const PAYMENT_METHOD_ONETIMEACH = 6;
 
     public const PAYMENT_METHOD_STRINGS = [
         self::PAYMENT_METHOD_CC => 'Credit Card',
         self::PAYMENT_METHOD_PAYPAL => 'PayPal',
         self::PAYMENT_METHOD_ACH => 'ACH',
         self::PAYMENT_METHOD_CHECK => 'Mailed Check',
-        self::PAYMENT_METHOD_BALANCE => 'Allgymnastics.com Balance'
+        self::PAYMENT_METHOD_BALANCE => 'Allgymnastics.com Balance',
+        self::PAYMENT_METHOD_ONETIMEACH => 'One Time ACH'
     ];
 
     public const STATUS_PENDING = 1;

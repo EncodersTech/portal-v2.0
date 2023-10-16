@@ -872,6 +872,42 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- one time ach payment -->
+                                <div class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
+
+                                    <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'onetimeach')}"
+                                        @click="optionsExpanded = 'onetimeach'">
+                                        <span class="fas fa-fw fa-money-check-alt"></span> One Time ACH
+                                        <span :class="'fas fa-fw fa-caret-' + (optionsExpanded == 'onetimeach' ? 'down' : 'right')"></span>
+                                    </h6>
+
+                                    <div v-if="optionsExpanded == 'onetimeach'">
+                                        <div>
+                                            <div>
+                                                <label for="routingNumber">Routing Number:</label>
+                                                <input type="text" class="form-control" id="routingNumber" v-model="routingNumber" required>
+                                            </div>
+
+                                            <div>
+                                                <label for="accountNumber">Account Number:</label>
+                                                <input type="text"  class="form-control" id="accountNumber" v-model="accountNumber" required>
+                                            </div>
+
+                                            <div>
+                                                <label for="accountType">Account Type:</label>
+                                                <select id="accountType"  class="form-control" v-model="accountType" required>
+                                                    <option value="c" selected="selected">Checking</option>
+                                                    <option value="s">Savings</option>
+                                                </select>
+                                            </div>
+
+                                            <div>
+                                                <label for="accountName">Account Name:</label>
+                                                <input type="text"  class="form-control" id="accountName" v-model="accountName" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div v-if="paymentOptions.methods.paypal"
                                     class="py-1 px-2 mb-2 border bg-white rounded">
@@ -1226,7 +1262,12 @@
                 couponValue: 0,   
                 display_div: false,             
                 competitions: null,
-                enable_travel_arrangements: 0
+                enable_travel_arrangements: 0,
+                onetimeach: null,
+                routingNumber: '',
+                accountNumber: '',
+                accountType: 's', // Default to savings
+                accountName: '',
             }
         },
         methods: {
@@ -1980,6 +2021,16 @@
                 };
                 this.recalculateTotals();
             },
+            useOneTimeACH(){
+                this.chosenMethod = {
+                    accountType: '',
+                    name: 'One Time Payment',
+                    fee: this.paymentOptions.methods.ach.fee,
+                    mode: this.paymentOptions.methods.ach.mode,
+                    type: 'onetimeach'
+                };
+                this.recalculateTotals();
+            },
 
             usePaypal() {
                 this.chosenMethod = {
@@ -2114,6 +2165,16 @@
                     this.chosenMethod.id = this.checkNo;
                 }
 
+                if(this.chosenMethod.type == 'onetimeach')
+                {
+                    this.onetimeach = {
+                        routingNumber: this.routingNumber,
+                        accountNumber: this.accountNumber,
+                        accountType: this.accountType,
+                        accountName: this.accountName
+                    }
+                }
+
                 this.confirmAction(
                     'Are you sure you want to proceed with the payment ?',
                     'orange',
@@ -2132,7 +2193,8 @@
                                 data: this.state.final,
                                 use_balance: this.useBalance,
                                 coupon: this.coupon.trim().toUpperCase(),
-                                enable_travel_arrangements: this.enable_travel_arrangements
+                                enable_travel_arrangements: this.enable_travel_arrangements,
+                                onetimeach: this.onetimeach,
                             }
                         ).then(result => {
                             this.registrationUrl = result.data.url;
