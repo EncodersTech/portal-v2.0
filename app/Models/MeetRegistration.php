@@ -2014,7 +2014,7 @@ class MeetRegistration extends Model
 
                 // $transaction = $dwollaService->getACHTransfer($transaction);
                 $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH One Time payment has been initiated.") .
-                ' Bank Account' . $onetimeach['accountName'];
+                ' Bank Account ' . $onetimeach['accountName'];
                 
                 // dd($result['payment_method_string']);
                 // $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");

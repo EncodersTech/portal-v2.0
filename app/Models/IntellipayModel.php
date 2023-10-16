@@ -65,13 +65,13 @@ class IntellipayModel extends Model
                 }
                 else
                 {
-                    Log::info('Onetime ACH Payment Status Failed : ' . $d->id . ' :: ' . $response['data']['message']);
+                    Log::info('Onetime ACH Payment Status Failed : ' . $d->id . ' :: ' . json_encode($response['data']));
                 }
                 
             }
             else
             {
-                Log::info('Onetime ACH Payment Status Failed : ' . $d->id . ' :: ' . $response['data']);
+                Log::info('Onetime ACH Payment Status Failed : ' . $d->id . ' :: ' . json_encode($response['data']));
             }
         }
     }
