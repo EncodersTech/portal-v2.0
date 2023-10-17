@@ -2535,9 +2535,6 @@ class MeetRegistration extends Model
                         'fee' => $meet->ach_fee(),
                         'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
                     ];
-                    $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
-                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
-                    $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
                     break;
                 case self::PAYMENT_OPTION_CHECK:
                     $chosenMethod = [
@@ -3976,7 +3973,7 @@ class MeetRegistration extends Model
                     $paymentMethodString = $executedTransactionResult['payment_method_string'];
                     $result['message'] = $executedTransactionResult['message'];
                 }
-
+                
                 $auditEvent = [
                     'registration' => [],
                     'athletes' => [],

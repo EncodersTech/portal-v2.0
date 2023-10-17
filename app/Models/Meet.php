@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\USAIGCService;
 use Throwable;
+use App\Models\MeetTransaction;
 
 class Meet extends Model
 {
@@ -2476,6 +2477,7 @@ class Meet extends Model
                 }
 //                $data['refund_meet_fees'] += $refund_meet_fees;
                 $registrations[$i]['transactions'] = $registration->transactions()
+                ->where('status', MeetTransaction::STATUS_COMPLETED)
                 ->orderBy('created_at', 'ASC')
                 ->get();
                 $team_late = 0;

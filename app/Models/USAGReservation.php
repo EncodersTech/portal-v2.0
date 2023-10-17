@@ -1006,7 +1006,6 @@ class USAGReservation extends Model
                         'mode' => MeetRegistration::PAYMENT_OPTION_FEE_MODE[$method['type']],
                     ];
                     $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
-                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
                     $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
                     break;
                 case MeetRegistration::PAYMENT_OPTION_PAYPAL:
