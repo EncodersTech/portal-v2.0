@@ -724,12 +724,20 @@
                                                                         <span class="fas fa-fw fa-ellipsis-v"></span>
                                                                     </button>
                                                                     <div class="dropdown-menu dropdown-menu-right">
-                                                                        <button v-if="(registration.transactions[0].status == 6) && athlete.in_waitlist"
+                                                                        <!-- <button v-if="(registration.transactions[0].status == 6) && athlete.in_waitlist"
                                                                             class="dropdown-item text-primary" type="button"
                                                                             @click="level.pinUnpin(athlete)">
                                                                             <span class="fas fa-fw fa-thumbtack"></span>
                                                                             <span v-if="!athlete.pin_out_of_waitlist">Pin Out Of Waitlist</span>
                                                                             <span v-else>Unpin</span>
+                                                                        </button> -->
+                                                                        <button v-if="!meet.is_waitlist && athlete.is_new &&
+                                                                                ((level.waitlist_slots > 0) || (meet.waitlist_slots > 0))"
+                                                                                class="dropdown-item text-primary" type="button"
+                                                                                @click="level.pinUnpin(athlete)">
+                                                                                <span class="fas fa-fw fa-thumbtack"></span>
+                                                                                <span v-if="!athlete.pin_out_of_waitlist">Pin Out Of Waitlist</span>
+                                                                                <span v-else>Unpin</span>
                                                                         </button>
                                                                         <div v-if="athlete.is_new">
                                                                             <button class="dropdown-item text-danger"
@@ -3064,7 +3072,9 @@ export default {
                 };
 
                 level.pinUnpin = function(athlete) {
-                    if (vm.registration.transactions[0].status != 6)
+                    // if (vm.registration.transactions[0].status != 6)
+                    //     return;
+                    if (vm.meet.is_waitlist)
                         return;
 
                     athlete.pin_out_of_waitlist = !athlete.pin_out_of_waitlist;

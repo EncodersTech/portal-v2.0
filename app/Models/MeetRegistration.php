@@ -2200,7 +2200,7 @@ class MeetRegistration extends Model
             $balanceTransaction = $registration->user_balance_transaction()->create([
                 'user_id' => $meet->gym->user->id,
                 'processor_id' => null,
-                'total' => $gymSummary['used_balance'],
+                'total' => $transaction->breakdown['host']['total'],
                 'description' => $description,
                 'clears_on' => now(),
                 'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT,
