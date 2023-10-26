@@ -21,6 +21,8 @@ use Illuminate\Database\Eloquent\Collection;
 use App\Services\USAIGCService;
 use Throwable;
 use App\Models\MeetTransaction;
+use App\Models\MeetRegistration;
+// use App\Models\AuditEvent;
 
 class Meet extends Model
 {
@@ -2391,7 +2393,17 @@ class Meet extends Model
             throw $e;
         }
     }
-
+    public function mergeValue($data, $result = [])
+    {
+        foreach ($data as $key => $value) {
+            foreach ($value as $subkey => $subvalue) {
+                if (is_array($subvalue)) {
+                    $result[$key][$subkey] = array_merge($result[$key][$subkey], $subvalue);
+                }
+            }
+        }
+        return $result;
+    }
     public function generateRegistrationDetailReport(Gym $gym = null) : PdfWrapper   {
         try {
             $base = $this->registrations()
@@ -2442,7 +2454,39 @@ class Meet extends Model
             ];
 
             $alreadGone = array();
+            $meetRegistration = resolve(MeetRegistration::class);
+            // $result = [];
+            $registrationAuditReport = [
+                'athlete' => [
+                    'new' => [],
+                    'moved' => [],
+                    'scratched' => []
+                ],
+                'specialist' => [
+                    'new' => [],
+                    'moved' => [],
+                    'scratched' => []
+                ],
+                'coach' => [
+                    'new' => [],
+                    'scratched' => []
+                ]
+            ];
+
             foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
+                // dd($registration->levels()->get());
+                $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
+                foreach ($auditEvent as $key => $value) {
+                    // echo '<br>' . $value->id .'<br>';
+                    $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
+                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
+                }
+            }
+            // dd($registrationAuditReport);
+            // process_audit_event
+            // die();
+            foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
+                // print_r($registration->id);
                 $adminFee = 0;
                 $cardFees = 0;
                 $adminMeetFee = 0;
@@ -2460,22 +2504,13 @@ class Meet extends Model
                         }
                     }
                 }
-
-//                $data['reg_fees'] += $registration->athletes->sum('fee');
                 $reg_meet_fees = 0;
                 $teamFee = 0;
-                foreach ($registration->levels as $level) { /** @var AthleteLevel $level */
-                    // $reg_meet_fees += $level->pivot->team_fee; //trackthis
-                    $teamFee += $level->pivot->team_fee;
-                }
-//                $data['reg_meet_fees'] += $reg_meet_fees;
-
-//                $data['refund_fees'] += $registration->athletes->sum('refund');
                 $refund_meet_fees = 0;
                 foreach ($registration->levels as $level) { /** @var AthleteLevel $level */
+                    $teamFee += $level->pivot->team_fee;
                     $refund_meet_fees += $level->pivot->team_refund;
                 }
-//                $data['refund_meet_fees'] += $refund_meet_fees;
                 $registrations[$i]['transactions'] = $registration->transactions()
                 ->where('status', MeetTransaction::STATUS_COMPLETED)
                 ->orderBy('created_at', 'ASC')
@@ -2499,12 +2534,13 @@ class Meet extends Model
                             else 
                                 continue;
                         }
-                        $levels = $registration->levels()->wherePivotIn('id', $newarr)->get();
+                        $levels = $registration->levels()->get();
                         
                         $k = 0;
                         $level_reg_history = [];
                         $team_late = 0;
                         foreach ($levels as $l) { /** @var AthleteLevel $l */
+                            dd($l->pivot);
                             $at_count = $l->pivot->athletes->count(); 
                             $specialist_fee = $l->pivot->specialist_registration_fee;
                             $sf_total = 0;
@@ -2566,8 +2602,8 @@ class Meet extends Model
             }
             $data['total_fees'] = $data['reg_fees'] + $data['admin_fees'] + $data['card_fees'];// - $data['refund_fees'];
             $data['total_meet_fees'] = $data['reg_meet_fees'] + $data['admin_meet_fees'] + $data['card_meet_fees'] + $data['team_meet_fees'];// - $data['refund_meet_fees'];
-           
-            
+            $data['changes'] = $registrationAuditReport;
+            // dd($data['changes']);
 
             return PDF::loadView('PDF.host.meet.reports.registration-detail', $data);
         } catch(\Throwable $e) {
