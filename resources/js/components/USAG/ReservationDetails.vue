@@ -2374,14 +2374,15 @@
                         for (const usag_no in l.athletes) {
                             if (l.athletes.hasOwnProperty(usag_no)) {
                                 let a = l.athletes[usag_no];
+                                
+                                let added = 0
+                                if (final.ids.added.athletes.hasOwnProperty(usag_no))
+                                    added = final.ids.added.athletes[usag_no];
 
                                 let old_level = null;
                                 if (final.ids.moved.hasOwnProperty(usag_no))
                                     old_level = final.ids.moved[usag_no];
 
-                                let added = 0
-                                if (final.ids.added.athletes.hasOwnProperty(usag_no))
-                                    added = final.ids.added.athletes[usag_no];
 
                                 let scratched = 0
                                 if (final.ids.scratched.athletes.hasOwnProperty(usag_no))
@@ -2426,7 +2427,8 @@
                                 //#endregion
 
                                 let tmp = added - scratched;
-                                if ((old_level !== null) && (old_level != lid) && (tmp < 1)) { // If athlete was moved to a different level and is not a new addition
+
+                                if ((old_level !== null) && (old_level != lid) && (tmp > 0)) { // If athlete was moved to a different level and is not a new addition
                                     athlete.include_in_calculation = true;
                                     athlete.was_late = athlete.was_late || this.late;
 
