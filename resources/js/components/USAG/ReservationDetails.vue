@@ -97,7 +97,7 @@
 
                             <div v-if="expanded.initial" class="ml-3">
                                 <div v-for="(l, lid) in state.initial.levels" :key="'initial-level-' + lid" class="mb-2">
-                                    <div class="btn btn-sm btn-secondary btn-block text-left" @click="l.expanded = !l.expanded">
+                                    <div class="btn btn-sm btn-secondary btn-block text-left" @click="l.expanded = !l.expanded"> 
                                         <div class="d-flex flex-no-wrap flex-row">
                                             <div class="flex-grow-1">
                                                 <span>
@@ -339,7 +339,7 @@
                                 </div>
 
                                 <div v-for="(l, lid) in state.final.levels" :key="'final-level-' + lid" class="mb-2">
-                                    <div class="btn btn-sm btn-secondary btn-block text-left" @click="l.expanded = !l.expanded">
+                                    <div class="btn btn-sm btn-secondary btn-block text-left" @click="changeExpand(lid)">
                                         <div class="d-flex flex-no-wrap flex-row">
                                             <div class="flex-grow-1">
                                                 <span>
@@ -362,12 +362,11 @@
                                                         No limit
                                                     </span>
                                                 </span>
-                                                <span :class="'fas fa-fw fa-caret-' + (l.expanded ? 'down' : 'right')"></span>
+                                                <span :id="'expand_'+lid" :class="'fas fa-fw fa-caret-down'"></span>
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div v-if="l.expanded" class="ml-3 mb-1">
+                                    <div :id="'level_'+lid" class="ml-3 mb-1" > 
                                         <div v-if="l.allow_team" class="d-flex flex-row flex-no-wrap mt-2 mb-1">
                                             <div>
                                                 <div v-if="l.has_team" class="text-info">
@@ -1271,6 +1270,10 @@
             }
         },
         methods: {
+            changeExpand: function (lid) {
+                $("#expand_" + lid).toggleClass("fa-caret-down fa-caret-right");
+                $("#level_" + lid).toggleClass("d-none");
+            },
             getCompetitions: function(){
                 axios.get('/api/competitions-info/').then(result => {
                     this.competitions = result.data;
