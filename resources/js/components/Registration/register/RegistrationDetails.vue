@@ -1006,7 +1006,7 @@
                         if(jt.sanctioning_body_id == 1 && jt.sanction_no != null && this.gym.usag_membership != null) //come
                         {
                             this.usag_route = true;
-                            this.usag_url = "https://usagym.org/app/AddMeetRegistration.html?id="+jt.sanction_no+"&clubId="+this.gym.usag_membership;
+                            this.usag_url = "https://members.usagym.org/app/AddMeetRegistration.html?id="+jt.sanction_no+"&clubId="+this.gym.usag_membership;
                         }
                     }
                 }).catch(error => {

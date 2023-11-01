@@ -163,7 +163,7 @@ class USAGReservation extends Model
         ];
         $detailedSteps = [];
         $reservation_ids = [];
-
+        $scratchAthletesList = [];
         $reservations = $gym->usag_reservations()
                         ->whereHas('usag_sanction', function (Builder $q0) use ($sanction) {
                             $q0->where('number', $sanction)
@@ -340,10 +340,10 @@ class USAGReservation extends Model
 
                                 $finalState['ids']['scratched']['athletes'][$a['USAGID']] = (
                                     isset($finalState['ids']['scratched']['athletes'][$a['USAGID']]) ?
-                                    $finalState['ids']['scratched']['athletes'][$a['USAGID']]++ :
+                                    $finalState['ids']['scratched']['athletes'][$a['USAGID']] += 1 :
                                     1
                                 );
-
+                                $scratchAthletesList[$a['USAGID']][$athlete->registration_level->_uid()] = true;
                                 $detailedStep['scratched']['athletes'][$athlete->registration_level->_uid()][$a['USAGID']] = [
                                     'id' => $athlete->id,
                                     'first_name' => $athlete->first_name,
@@ -520,16 +520,16 @@ class USAGReservation extends Model
 
                         foreach ($athletes as $a) {
                             $hasChanges = true;
-
                             $athlete = $registration->athletes()
                                                     ->where('usag_no', $a['USAGID'])
-                                                    ->where('status', '!=', RegistrationAthlete::STATUS_SCRATCHED)
+                                                    // ->where('status', '!=', RegistrationAthlete::STATUS_SCRATCHED)
                                                     ->first(); /** @var RegistrationAthlete $athlete */
-
-                            if ($athlete !== null) {
-                                $detailedStep['issues'][] = 'Trying to add athlete with USAG No. ' . $a['USAGID'] . ' that already exists in local database.';
-                                continue;
-                            }
+                            
+                            // if ($athlete !== null) {
+                            //     dd($athlete);
+                            //     $detailedStep['issues'][] = 'Trying to add athlete with USAG No. ' . $a['USAGID'] . ' that already exists in local database.';
+                            //     continue;
+                            // }
 
                             $athlete = [
                                 'issues' => [],
@@ -633,6 +633,28 @@ class USAGReservation extends Model
                                 $athlete['issues'][] = 'Missing US citizen field for athlete with USAG No. ' . $a['USAGID'];
                             }
 
+                            if(isset($scratchAthletesList[$a['USAGID']])
+                            && isset($scratchAthletesList[$a['USAGID']][$registrationLevel->_uid()])
+                            && $scratchAthletesList[$a['USAGID']][$registrationLevel->_uid()] == true)
+                            {
+                                foreach ($detailedSteps as $key => $value) {
+                                    $scr = $value['scratched']['athletes'];
+                                    if(isset($scr[$registrationLevel->_uid()]) && isset($scr[$registrationLevel->_uid()][$a['USAGID']]))
+                                    {
+                                        $finalState['ids']['scratched']['athletes'][$a['USAGID']] -= 1 ;
+                                        unset($detailedSteps[$key]['scratched']['athletes'][$registrationLevel->_uid()][$a['USAGID']]);
+                                        break;
+                                    }
+                                }
+                                $scratchAthletesList[$a['USAGID']][$registrationLevel->_uid()] = false;
+                                $athlete_to_update = $registration->athletes()
+                                                    ->where('usag_no', $a['USAGID'])
+                                                    ->first(); /** @var RegistrationAthlete $athlete */
+                                $athlete_to_update->status = RegistrationAthlete::STATUS_REGISTERED;
+                                $athlete_to_update->save();
+                                continue;
+                            }
+
                             if (count($athlete['issues']) < 1) {
                                 unset($athlete['issues']);
                                 $athleteData = $athlete;
@@ -646,7 +668,7 @@ class USAGReservation extends Model
                                 $athlete->save();
 
                                 $athleteData['id'] = $athlete->id;
-
+                                
                                 if (!isset($detailedStep['added']['athletes'][$registrationLevel->_uid()])) {
                                     $detailedStep['added']['athletes'][$athlete->registration_level->_uid()] = [
                                         'code' => $athlete->registration_level->level->code,
@@ -825,7 +847,8 @@ class USAGReservation extends Model
                 if ($hasChanges)
                     $detailedSteps[] = $detailedStep;
             }
-
+            // dd($detailedSteps);
+            // dd($finalState);
             // calculate final state
             $registration->fresh();
 
@@ -856,7 +879,7 @@ class USAGReservation extends Model
 
                 $athletes = $registrationLevel->athletes()
                                             ->whereNotNull('usag_no')
-                                            ->get();
+                                            ->get();                        
                 foreach ($athletes as $athlete) { /** @var RegistrationAthlete $athlete */
                     $tshirt = null;
                     $leo = null;
