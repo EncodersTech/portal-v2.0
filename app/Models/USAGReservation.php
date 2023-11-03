@@ -1871,7 +1871,7 @@ class USAGReservation extends Model
             }
 
             $transaction = null;
-            if ($needRegularTransaction && $gymSummary['total'] > 0) {
+            if ($needRegularTransaction) {
                 if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
                     $chosenMethod = [
                         'type' => MeetRegistration::PAYMENT_OPTION_BALANCE,
@@ -1907,7 +1907,7 @@ class USAGReservation extends Model
                 'specialists' => [],
                 'coaches' => [],
             ];
-
+            
             foreach ($tx['athletes'] as $ra) { /** @var RegistrationAthlete $ra */
                 if (in_array($ra->id, $shouldGoIntoWaitlist)) {
                     $ra->in_waitlist = true;
@@ -1923,7 +1923,7 @@ class USAGReservation extends Model
                 unset($a['transaction']);
                 $auditEvent['athletes'][] = $a;
             }
-
+           
             foreach ($tx['coaches'] as $rc) { /** @var RegistrationCoach $rc */
                 if ($transaction !== null) {
                     $rc->in_waitlist = false;

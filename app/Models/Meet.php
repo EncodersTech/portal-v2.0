@@ -2540,7 +2540,6 @@ class Meet extends Model
                         $level_reg_history = [];
                         $team_late = 0;
                         foreach ($levels as $l) { /** @var AthleteLevel $l */
-                            dd($l->pivot);
                             $at_count = $l->pivot->athletes->count(); 
                             $specialist_fee = $l->pivot->specialist_registration_fee;
                             $sf_total = 0;
