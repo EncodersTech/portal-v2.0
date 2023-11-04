@@ -56,6 +56,7 @@
                 <div class="text-info small mb-3">
                     <span class="fas fa-info-circle"></span> All dates and times are in EST.
                 </div>
+                
 
                 <div class="alert alert-danger" :class="{'d-block': isError}" style="display: none">
                     <span class="fas fa-fw fa-times-circle"></span> Whoops !<br/>
@@ -73,6 +74,9 @@
                             </span> Loading payment options, please wait ...
                         </div>
                         <div :class="{'d-none': paymentOptionsLoading}">
+                        <div class="alert alert-info small mb-3">
+                            <span class="fas fa-info-circle"></span> ACH (Saved Account Info) and One Time ACH (Easy Pay)
+                        </div>
                             @include('registration.register.payment')
                         </div>
                     </div>

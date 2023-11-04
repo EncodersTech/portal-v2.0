@@ -55,6 +55,9 @@
                             </span> Loading payment options, please wait ...
                         </div>
                         <div :class="{'d-none': paymentOptionsLoading}">
+                            <div class="alert alert-info small mb-3">
+                                <span class="fas fa-info-circle"></span> ACH (Saved Account Info) and One Time ACH (Easy Pay)
+                            </div>
                             @include('registration.edit.payment')
                         </div>
                     </div>
