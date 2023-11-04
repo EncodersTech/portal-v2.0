@@ -155,7 +155,7 @@
                         @break
 
                     @case(\App\Services\DwollaService::STATUS_RETRY)
-                        <span class="text-warning font-weight-bold">Verification Failed.</span><br/>
+                        <span class="text-warning font-weight-bold">Verification Failed.</span> @{{ $reason }}<br/>
                         Please try again.
                         @break
 
