@@ -49,6 +49,9 @@
         </div>
         <div v-else-if="state !== null">
             <div>
+                <div class="alert alert-info small mb-3">
+                    <span class="fas fa-info-circle"></span> ACH (Saved Account Info) and One Time ACH (Easy Pay)
+                </div>
                 <h5 class="pb-1 border-bottom border-secondary font-weight-bold">
                     <span class="fas fa-fw fa-info-circle"></span>
                     Reservation Info
