@@ -23,6 +23,21 @@ class UserDataTable
         LEFT JOIN member_user ON member_user.user_id = users.id
         WHERE users.id != ".Auth::id()." ORDER BY users.email ASC");
 
-        return $query;
+        $data = [];
+        foreach ($query as $key => $value) {
+            // dd($value); die();
+            if(isset($data[$value->id]))
+            {
+                $data[$value->id]->gname .= ', '.$value->gname;
+            }
+            else
+            {
+                $data[$value->id] = $value;
+            }
+        }
+        
+
+        return $data;
+        // return $query;
     }
 }

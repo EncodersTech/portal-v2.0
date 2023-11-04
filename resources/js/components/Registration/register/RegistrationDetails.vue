@@ -15,8 +15,8 @@
 
                     <div class="modal-body">
                         <div>
-                            <select class="form-control form-control-sm" v-model="add_athlete_athlete">
-                                <option value="">(Choose ...)</option>
+                            <select class="form-control form-control-sm" v-model="add_athlete_athlete" multiple size='10'>
+                                
                                 <option v-for="athlete in filtreredAthletesForAddModal" :key="'modal-' + athlete.id"
                                     :value="athlete">
                                     {{ athlete.first_name }} {{ athlete.last_name }}
@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="text-right mt-3">
-                            <button v-if="this.add_athlete_athlete"
+                            <button v-if="this.add_athlete_athlete.length > 0"
                                 class="btn btn-sm btn-success" @click="addModalAthlete()">
                                 <span class="fas fa-user-plus"></span> Add
                             </button>
@@ -723,7 +723,7 @@
                 available_athletes: [],
                 coaches: [],
                 add_athlete_level: null,
-                add_athlete_athlete: '',
+                add_athlete_athlete: [],
                 showAthletes: true,
                 showCoaches: false,
                 usag_route: false,
@@ -1006,7 +1006,7 @@
                         if(jt.sanctioning_body_id == 1 && jt.sanction_no != null && this.gym.usag_membership != null) //come
                         {
                             this.usag_route = true;
-                            this.usag_url = "https://usagym.org/app/AddMeetRegistration.html?id="+jt.sanction_no+"&clubId="+this.gym.usag_membership;
+                            this.usag_url = "https://members.usagym.org/app/AddMeetRegistration.html?id="+jt.sanction_no+"&clubId="+this.gym.usag_membership;
                         }
                     }
                 }).catch(error => {
@@ -1210,28 +1210,48 @@
 
             showAddModal(level) {
                 this.add_athlete_level = level;
-                this.add_athlete_athlete = '';
+                this.add_athlete_athlete = [];
                 $('#modal-registration-add-athlete').modal('show');
             },
 
             addModalAthlete() {
                 $('#modal-registration-add-athlete').modal('hide');
-
-                if (this.add_athlete_athlete) {
-                    let exists = this.add_athlete_level.athletes
-                                    .filter(a => a.id == (this.add_athlete_athlete.id))
-                                    .length > 0;
-                    if (exists) {
-                        this.showAlert(
-                            'This athlete is already added to this level.',
-                            'Whoops !',
-                            'red',
-                            'fas fa-times-circle'
-                        );
-                        return;
+                if (this.add_athlete_athlete.length > 0)
+                {
+                    for(let a in this.add_athlete_athlete)
+                    {
+                        let athlete = this.add_athlete_athlete[a];
+                        let exists = this.add_athlete_level.athletes
+                                        .filter(a => a.id == (athlete.id))
+                                        .length > 0;
+                        if (exists) {
+                            this.showAlert(
+                                'This athlete is already added to this level.',
+                                'Whoops !',
+                                'red',
+                                'fas fa-times-circle'
+                            );
+                            return;
+                        }
+                        this.addAthleteToLevel(athlete, this.add_athlete_level);
                     }
-                    this.addAthleteToLevel(this.add_athlete_athlete, this.add_athlete_level);
                 }
+                
+                // if (this.add_athlete_athlete) {
+                //     let exists = this.add_athlete_level.athletes
+                //                     .filter(a => a.id == (this.add_athlete_athlete.id))
+                //                     .length > 0;
+                //     if (exists) {
+                //         this.showAlert(
+                //             'This athlete is already added to this level.',
+                //             'Whoops !',
+                //             'red',
+                //             'fas fa-times-circle'
+                //         );
+                //         return;
+                //     }
+                //     this.addAthleteToLevel(this.add_athlete_athlete, this.add_athlete_level);
+                // }
             },
 
             addAthleteToLevel(athlete, level) {

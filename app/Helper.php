@@ -195,35 +195,43 @@ class Helper {
         $index = 0;
         $silverIndex = null;
 
-        $collect = collect($newLevels)->map(function ($value, $i) use (
-            &$levelReturn,
-            &$index,
-            &$silverIndex,
-            $silverExists
-        ) {
-            $bodyType = $value['sanctioning_body_id'];
-            if ($value['name'] == 'Silver' && SanctioningBody::SANCTION_BODY[$bodyType] == 'NGA') {
-                return;
-            }
+        // $collect = collect($newLevels)->map(function ($value, $i) use (
+        //     &$levelReturn,
+        //     &$index,
+        //     &$silverIndex,
+        //     $silverExists
+        // ) {
+        //     $bodyType = $value['sanctioning_body_id'];
+        //     if ($value['name'] == 'Silver' && SanctioningBody::SANCTION_BODY[$bodyType] == 'NGA') {
+        //         return;
+        //     }
 
-            if ($value['id'] == AthleteLevel::NGA_WOMEN_GYMNASTICS_LEVEL_0) {
-                $levelReturn[$index] = $value;
-                if ($silverExists) {
-                    $index++;
-                    $silverIndex = $index;
-                    $levelReturn[$index] = null;
-                }
-            } else {
-                $levelReturn[$index] = $value;
-            }
-            $index++;
-        });
+        //     if ($value['id'] == AthleteLevel::NGA_WOMEN_GYMNASTICS_LEVEL_0) {
+        //         $levelReturn[$index] = $value;
+        //         if ($silverExists) {
+        //             $index++;
+        //             $silverIndex = $index;
+        //             $levelReturn[$index] = null;
+        //         }
+        //     } else {
+        //         $levelReturn[$index] = $value;
+        //     }
+        //     $index++;
+        // });
 
-        if ($silverExists) {
-            $levelReturn[$silverIndex] = $silverLevel;
+        // if ($silverExists) {
+        //     $levelReturn[$silverIndex] = $silverLevel;
+        // }
+
+        if(isset($result['NGA']) && isset($result['NGA']['categories'][$category->name]))
+        {
+            foreach ( $result['NGA']['categories'][$category->name]['levels'] as $key => $value) {
+                if($value->name == 'Silver')
+                $result['NGA']['categories'][$category->name]['levels'][$key] = $silverLevel;
+            }
         }
 
-        $result[$body->initialism]['categories'][$category->name]['levels'] = $levelReturn;
+        // $result[$body->initialism]['categories'][$category->name]['levels'] = $levelReturn;
 
         return $result;
     }

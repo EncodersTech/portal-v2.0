@@ -3,7 +3,7 @@
 /public/storage
 /storage
 /storage/*.key
-vendor
+/vendor
 laravel-echo-server.lock
 .env
 .phpunit.result.cache
@@ -25,6 +25,8 @@ db.sql
 
 /config/database.php
 /config/app.php
+/config/logging.php
+
 composer-setup.php
 composer-temp.phar
 package-lock.json

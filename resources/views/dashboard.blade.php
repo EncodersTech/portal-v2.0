@@ -156,7 +156,7 @@
         @endif
     </div>
 @endsection
-
+<!-- c -->
 @section('scripts-main')
     <script>
         window.show_sanction_notifications = {{ $showSanctionNotifications ? 'true' : 'false' }};

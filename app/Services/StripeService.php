@@ -180,14 +180,14 @@ class StripeService {
                     $result = [
                         'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                         'message' => 'There\'s a problem with your account. Please contact us as soon as possible.',
-                        'details' => $error['param'],
+                        'details' => $error['message'],
                     ];
                     break;
                 case 'card_declined':
                     $result = [
                         'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                         'message' => 'Transaction Declined. Please use another payment method or contact us as soon as possible.',
-                        'details' => $error['param'],
+                        'details' => $error['message'],
                     ];
                     break;
             }
@@ -196,41 +196,41 @@ class StripeService {
                 $result = [
                     'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                     'message' => $e->getMessage(),
-                    'details' => $error['param'],
+                    'details' => $error['message'],
                 ];
             } elseif ($e instanceof RateLimit) {
                 $result = [
                     'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                     'message' => $e->getMessage(),
-                    'details' => $error['param'],
+                    'details' => $error['message'],
                 ];
     
             } elseif ($e instanceof InvalidRequest) {
                 $result = [
                     'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                     'message' => $e->getMessage(),
-                    'details' => $error['param'],
+                    'details' => $error['message'],
                 ];
     
             } elseif ($e instanceof Authentication) {
                 $result = [
                     'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                     'message' => $e->getMessage(),
-                    'details' => $error['param'],
+                    'details' => $error['message'],
                 ];
     
             } elseif ($e instanceof ApiConnection) {
                 $result = [
                     'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                     'message' => $e->getMessage(),
-                    'details' => $error['param'],
+                    'details' => $error['message'],
                 ];
     
             } else {    // Stripe\Error\Base
                 $result = [
                     'code' => ErrorCodeCategory::getCategoryBase('Stripe') + 1,
                     'message' => $e->getMessage(),
-                    'details' => $error['param'],
+                    'details' => $error['message'],
                 ];
             }
     

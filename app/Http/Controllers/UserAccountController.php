@@ -93,6 +93,12 @@ class UserAccountController extends Controller
                 ($dwollaAttempts[0]->status != DwollaVerificationAttempt::STATUS_PENDING)
             );
 
+            
+            $reason = null;
+            if($dwollaCustomer->status == 'retry')
+            {
+                $reason = $dwollaService->getDocumentStatus($user->dwolla_customer_id);
+            }
             $bankAccounts = $user->getBankAccounts(true);
             
             if ($bankAccounts != null) {
@@ -121,6 +127,7 @@ class UserAccountController extends Controller
 
         return view('user.payment_options', [
             'dwolla' => $dwollaCustomer,
+            'reason' => $reason,
             'dwollaCanVerify' => $dwollaCanVerify,
             'dwollaAttempts' => $dwollaAttempts,
             'cards' => $cards,

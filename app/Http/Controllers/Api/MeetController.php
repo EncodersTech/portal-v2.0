@@ -42,7 +42,8 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
-
+use stdClass;
+use DateTime;
 class MeetController extends BaseApiController
 {
     public function meetList(Request $request, string $gym)
@@ -85,19 +86,30 @@ class MeetController extends BaseApiController
             if ($archived !== null)
                 $meets = $meets->where('is_archived', $archived);
 
-            $meets = $meets->get();
+            $meets = $meets->orderBy('updated_at', 'DESC')->get();
 
+            $meet_list = [];
             foreach ($meets as $meet) { /** @var Meet $meet */
-                $meet->can_be_edited = $meet->canBeEdited();
-                $meet->can_be_deleted = $meet->canBeDeleted();
-                $meet->registration_status = $meet->registrationStatus();
+                $net_meet = new stdClass();
+                $net_meet->id = $meet->id;
+                $net_meet->name = $meet->name;
+                $net_meet->start_date = $meet->start_date;
+                $net_meet->end_date = $meet->end_date;
+                $net_meet->profile_picture = $meet->profile_picture;
+                $net_meet->is_archived = $meet->is_archived;
+                $net_meet->is_featured = $meet->is_featured;
+                $net_meet->is_published = $meet->is_published;
+                $net_meet->can_be_edited = $meet->canBeEdited();    
+                $net_meet->can_be_deleted = $meet->canBeDeleted();
+                $net_meet->registration_status = $meet->registrationStatus();
+                $meet_list[] = $net_meet;
             }
 
             $can_create =  ($request->_managed_account->isCurrentUser() || $request->_managed_account->pivot->can_create_meet);
             $can_edit = ($request->_managed_account->isCurrentUser() || $request->_managed_account->pivot->can_edit_meet);
 
             return $this->success([
-                'meets' => $meets,
+                'meets' => $meet_list,
                 'permissions' => [
                     'create' => $can_create,
                     'edit' => $can_edit
@@ -112,7 +124,7 @@ class MeetController extends BaseApiController
                 'Throwable' => $e
             ]);
             return $this->error([
-                'message' => 'Something went wrong while fetching meets.'
+                'message' => 'Something went wrong while fetching meets.'.$e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -271,9 +283,9 @@ class MeetController extends BaseApiController
 
             if ($meet !== null)
                 $query->where('id', $meet);
-            if ($query->first()->show_participate_clubs == true) {
-                $query->with('registrations');
-            }
+            // if ($query->first()->show_participate_clubs == true) {
+            //     $query->with('registrations');
+            // }
             if ($state !== null) {
                 $state = State::where('code', $state)->first();
                 /** @var \App\Models\State $state */
@@ -383,7 +395,7 @@ class MeetController extends BaseApiController
             if($enddate != null)
                 $query->where('end_date','>=',$enddate);
             $meets = $query->orderBy('is_featured', 'DESC')
-                ->orderBy('start_date', 'DESC')
+                ->orderBy('start_date', 'ASC')
                 ->get()
                 ->makeHidden([
                     'gym_id', 'tshirt_size_chart_id', 'leo_size_chart_id', 'mso_meet_id',
@@ -410,7 +422,7 @@ class MeetController extends BaseApiController
                 return $m;
             });
             $meetsList = [];
-            if(count($meets) > 1)
+            if(count($meets) > 1 && $status != Meet::REGISTRATION_STATUS_CLOSED && $status != null)
             {
                 foreach ($meets as $key => $value) {
                     if($value->registration_status != Meet::REGISTRATION_STATUS_CLOSED)
@@ -419,12 +431,36 @@ class MeetController extends BaseApiController
                     }
                 }
             }
+            else
+            {
+                $meetsList = $meets;
+            }
+            $meet_list = [];
+            foreach ($meetsList as $meet) { /** @var Meet $meet */
+                $net_meet = new stdClass();
+                $net_meet->id = $meet->id;
+                $net_meet->name = $meet->name;
+                $net_meet->start_date = $meet->start_date;
+                $net_meet->end_date = $meet->end_date;
+                $net_meet->profile_picture = $meet->profile_picture;
+                $net_meet->is_archived = $meet->is_archived;
+                $net_meet->is_featured = $meet->is_featured;
+                $net_meet->is_published = $meet->is_published;
+                $net_meet->categories = $meet->categories;
+                $net_meet->venue_state = $meet->venue_state;
+                $net_meet->venue_name = $meet->venue_name;
+                $net_meet->venue_city = $meet->venue_city;
+                $net_meet->show_participate_clubs = $meet->show_participate_clubs;
+                $net_meet->gym = $meet->gym;
+                $net_meet->registration_status = $meet->registrationStatus();
+                $meet_list[] = $net_meet;
+            }
             return $this->success([
                 'total' => $count,
                 'page' => $page,
                 'limit' => $limit,
-                // 'meets' => $meets,
-                'meets' => count($meets) > 1 ? $meetsList : $meets,
+                // 'meets' => $meet_list,
+                'meets' => count($meets) > 1 ? $meet_list : $meets,
             ]);
         } catch(ValidationException $e) {
             throw $e;
@@ -1879,6 +1915,72 @@ class MeetController extends BaseApiController
 
         return $this->success([
             'total' => $number[0]->total_athlete
+        ]);
+    }
+    public function calendar()
+    {
+        // $meets = Meet::where('end_date','>=','2021-07-07')->get();
+        $meets = Meet::where('is_published', true)
+        ->where('end_date', '>=', '2021-07-07')
+        ->where('is_archived', false)->get();
+        $events = [];
+        foreach ($meets as $key => $meet) {
+            $categories = [];
+            foreach ($meet->categories as $category) {/** @var LevelCategory $category */
+                switch ($category->pivot->sanctioning_body_id) {
+                    case SanctioningBody::USAG:
+                        $categories[] = 'USAG';
+                        break;
+
+                    case SanctioningBody::USAIGC:
+                        $categories[] = 'USAIGC';
+                        break;
+
+                    case SanctioningBody::AAU:
+                        $categories[] = 'AAU';
+                        break;
+
+                    case SanctioningBody::NGA:
+                        $categories[] = 'NGA';
+                        break;
+                }
+            }
+            $url = '';
+            if($meet->registrationStatus() == Meet::REGISTRATION_STATUS_OPEN)
+                $url = '<a class="btn btn-sm btn-success text-right float-right"  target="_blank" href="meets/'.$meet->id.'/register">Register</a>';
+            
+            $meet_c_u = array_unique($categories);
+
+            $calendarId = 0;
+            if(count($meet_c_u) == 1 && $meet_c_u[0] == 'USAG')
+                $calendarId = 1;
+            else if(count($meet_c_u) == 1 && $meet_c_u[0] == 'USAIGC')
+                $calendarId = 2;
+            else if(count($meet_c_u) == 1 && $meet_c_u[0] == 'AAU')
+                $calendarId = 3;
+            else if(count($meet_c_u) == 1 && $meet_c_u[0] == 'NGA')
+                $calendarId = 4;
+
+            if($meet->registrationStatus() == Meet::REGISTRATION_STATUS_CLOSED)
+                $calendarId = 5;
+            $deadline = $meet->allow_late_registration ? $meet->late_registration_end_date : $meet->registration_end_date;
+            $deadline = new \DateTime($deadline);
+            $events[] = array(
+                'id'=> $meet->id,
+                'calendarId'=>  $calendarId, // $meet->registrationStatus() - 1,
+                'title'=> $meet->name . $url,
+                'start'=> $meet->start_date,
+                'end'=> $meet->end_date,
+                'deadline' => 'Deadline: '.$deadline->format('m.d.Y'),
+                'isAllday'=> true,
+                'category'=> 'allday',
+                'location'=> $meet->venue_name.','.$meet->venue_addr_1.','.$meet->venue_city.','.$meet->venue_state->name.','.$meet->venue_zipcode,
+                'attendees'=> array_values(array_unique($categories)),
+                'state'=> $meet->gym->name
+            );
+        }
+        return $this->success([
+            'events' => $events
         ]);
     }
 }

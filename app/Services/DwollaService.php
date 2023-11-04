@@ -7,6 +7,7 @@ use DwollaSwagger\Configuration;
 use DwollaSwagger\ApiException;
 use DwollaSwagger\ApiClient;
 use DwollaSwagger\CustomersApi;
+use DwollaSwagger\DocumentsApi;
 use GuzzleHttp\Client as Guzzle;
 use App\Exceptions\CustomDwollaException;
 use DwollaSwagger\FundingsourcesApi;
@@ -192,7 +193,15 @@ class DwollaService {
             Configuration::$access_token = $this->authenticate();
             $fundingSourcesApi = new FundingsourcesApi(new ApiClient($this->host));
             $fundingSources = $fundingSourcesApi->getCustomerFundingSources($customerId, $removed);
-            return $fundingSources->_embedded->{'funding-sources'};
+            $funds = $fundingSources->_embedded->{'funding-sources'};
+            $total_funding_source = [];
+            foreach ($funds as $key => $value) {
+                if (isset($value->bankAccountType) && $value->bankAccountType != 'balance') {
+                    $total_funding_source[] = $value;
+                }
+            }
+            return $total_funding_source; 
+            //return $fundingSources->_embedded->{'funding-sources'};
         } catch (ApiException $e) {
             Log::error($e->getMessage());
             $this->_handleDwollaException($e, 'funding_source_list');
@@ -407,7 +416,39 @@ class DwollaService {
             return false;
         }
     }
+    public function getDocumentStatus($customerId)
+    {
+        try {
+            $token = $this->authenticate();
+            $client = new Guzzle();
+            $url = $this->host . 'customers/'.$customerId.'/documents';
+            $response = $client->request('GET', $url, [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $token,
+                    'Accept'        => 'application/vnd.dwolla.v1.hal+json',
+                ]
+            ]);
+            $data = $response->getBody()->getContents();
+            $data = json_decode($data, true);
+            $reason = '';
 
+            if(isset($data['_embedded']) && isset($data['_embedded']['documents']))
+            {
+                if($data['total'] > 0)
+                {
+                    $document = $data['_embedded']['documents'][$data['total'] - 1];
+                    if($document['documentVerificationStatus'] == 'rejected')
+                    {
+                        $reason = $document['allFailureReasons'][0]['description'];
+                    }
+                }
+            }
+            return $reason;
+        } catch (ApiException $e) {
+            $this->_handleDwollaException($e, 'customer_retrieve');
+        }
+        
+    }
     public function uploadDocument(string $url, UploadedFile $document, string $type)
     {
         try {

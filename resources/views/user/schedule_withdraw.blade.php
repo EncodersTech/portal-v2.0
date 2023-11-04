@@ -185,16 +185,17 @@
                     $bank_array[$ba->id] = $ba->name;
                 }
                 foreach ($withdraw_table as $k) {
+                    $bank_s = isset($bank_array[$k->bank_id]) ? $bank_array[$k->bank_id] : "N/A";
                     $dts = $k->last_attempt == null ? "None" : date("d/m/Y", strtotime($k->last_attempt));
                     $status = $k->is_active ? "<button class='btn btn-sm btn-danger' onclick='setbtnaction(".$k->id.", this);'>Disable</button>" : "<button class='btn btn-sm btn-success' onclick='setbtnaction(".$k->id.", this);'>Enable</button>";
-                 echo '<tr>
-                 <td>'.$bank_array[$k->bank_id].'</td>
-                 <td>$'.$k->amount.'</td>
-                 <td>'.$frq[$k->frequency].'</td>
-                 <td>'.$k->attempt.'</td>
-                 <td>'.$dts.'</td>
-                 <td>'.$status.'</td>
-                 </tr>';   
+                    echo '<tr>
+                    <td>'.$bank_s.'</td>
+                    <td>$'.$k->amount.'</td>
+                    <td>'.$frq[$k->frequency].'</td>
+                    <td>'.$k->attempt.'</td>
+                    <td>'.$dts.'</td>
+                    <td>'.$status.'</td>
+                    </tr>';   
                 }
                 ?>
             </table>

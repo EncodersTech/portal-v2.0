@@ -134,6 +134,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     });
 
     Route::get('/meets/{meet}', 'MeetController@details')->name('gyms.meets.details');
+    Route::get('/calendar', 'MeetController@calendar')->name('meets.calendar');
     
     Route::get('/meet/success', 'MeetController@afterMeetSuccessPage')->name('meet.success');
 

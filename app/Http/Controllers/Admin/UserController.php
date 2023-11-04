@@ -38,7 +38,12 @@ class UserController extends AppBaseController
 
     public function customUsers()
     {
-        dd(Hash::make('A015BGADFE1546FF'));
+        // dd(Hash::make('A015BGADFE1546FF'));
+        // $data = DB::table('usag_sanctions')->where('gym_id',391)->where('number',88573)->get();
+        // DB::table('usag_sanctions')
+        //     ->where('id', 375)
+        //     ->update(['gym_id' => "Updated Title",'gym_usag_no'=>'000000']);
+        // dd($data);
 
         
     }
@@ -64,7 +69,8 @@ class UserController extends AppBaseController
         $ur = User::where('id',$input['user_id'])->first();
         if(isset($input['isGatewayOn']) && $input['isGatewayOn'] == 'on')
         {
-            if(strpos($ur['stripe_customer_id'], 'fake_stripe_') !== FALSE && strpos($ur['dwolla_customer_id'], 'fake_dwolla_') !== FALSE )
+            if((strpos($ur['stripe_customer_id'], 'fake_stripe_') !== FALSE && strpos($ur['dwolla_customer_id'], 'fake_dwolla_') !== FALSE)
+                || ($ur['stripe_customer_id'] == null && $ur['dwolla_customer_id'] == null))
             {
                 try{
                     $input['stripe_customer_id'] = StripeService::createCustomer(

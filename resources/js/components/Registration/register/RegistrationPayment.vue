@@ -232,6 +232,44 @@
                             </div>
                         </div>
 
+                        <!-- one time ach payment -->
+                        <div class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
+
+                            <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'onetimeach')}"
+                                @click="optionsExpanded = 'onetimeach'">
+                                <span class="fas fa-fw fa-money-check-alt"></span> One Time ACH
+                                <span :class="'fas fa-fw fa-caret-' + (optionsExpanded == 'onetimeach' ? 'down' : 'right')"></span>
+                            </h6>
+
+                            <div v-if="optionsExpanded == 'onetimeach'">
+                                <div>
+                                    <div>
+                                        <label for="routingNumber">Routing Number:</label>
+                                        <input type="text" class="form-control" id="routingNumber" v-model="routingNumber" required>
+                                    </div>
+
+                                    <div>
+                                        <label for="accountNumber">Account Number:</label>
+                                        <input type="text"  class="form-control" id="accountNumber" v-model="accountNumber" required>
+                                    </div>
+
+                                    <div>
+                                        <label for="accountType">Account Type:</label>
+                                        <select id="accountType"  class="form-control" v-model="accountType" required>
+                                            <option value="c" selected="selected">Checking</option>
+                                            <option value="s">Savings</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label for="accountName">Account Name:</label>
+                                        <input type="text"  class="form-control" id="accountName" v-model="accountName" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+
 <!--                        <div v-if="paymentOptions.methods.paypal"-->
 <!--                            class="py-1 px-2 mb-2 border bg-white rounded">-->
 
@@ -545,7 +583,12 @@
                 couponValue: 0,
                 display_div: false,
                 competitions: null,
-                enable_travel_arrangements: 0
+                enable_travel_arrangements: 0,
+                onetimeach: null,
+                routingNumber: '',
+                accountNumber: '',
+                accountType: 's', // Default to savings
+                accountName: '',
             }
         },
         watch: {
@@ -731,35 +774,9 @@
                     name: 'One Time Payment',
                     fee: this.paymentOptions.methods.ach.fee,
                     mode: this.paymentOptions.methods.ach.mode,
-                    type: 'ach'
+                    type: 'onetimeach'
                 };
                 this.recalculateTotals();
-
-                axios.post(
-                    '/api/registration/register/onetimeach',
-                    {
-                        '__managed': this.managed,
-                        meet_id:this.registrationData.meet.id,
-                        gym_id:this.registrationData.gym,
-                        total:this.summary.total
-                    }
-                ).then(result => {
-                    // this.couponValue = result.data.value;
-                    window.open(result.data.value, "_blank", "popup=yes");
-                    
-                }).catch(error => {
-                    let msg = '';
-                    if (error.response) {
-                        msg = error.response.data.message;
-                    } else if (error.request) {
-                        msg = 'No server response.';
-                    } else {
-                        msg = error.message;
-                    }
-                    this.showAlert(msg, 'Whoops', 'red', 'fas fa-exclamation-triangle');
-                }).finally(() => {
-
-                });
             },
             useCheck() {
                 // let ocheck = ($("#deposit").prop("checked") == true ? this.registrationData.meet.deposit_ratio : 100);
@@ -835,6 +852,15 @@
 
                     this.chosenMethod.id = this.checkNo;
                 }
+                if(this.chosenMethod.type == 'onetimeach')
+                {
+                    this.onetimeach = {
+                        routingNumber: this.routingNumber,
+                        accountNumber: this.accountNumber,
+                        accountType: this.accountType,
+                        accountName: this.accountName
+                    }
+                }
 
                 this.confirmAction(
                     'Are you sure you want to proceed with the payment ?',
@@ -857,7 +883,8 @@
                                 use_balance: this.useBalance,
                                 deposit: this.deposit,
                                 coupon: this.coupon.trim().toUpperCase(),
-                                enable_travel_arrangements: this.enable_travel_arrangements
+                                enable_travel_arrangements: this.enable_travel_arrangements,
+                                onetimeach: this.onetimeach,
                                 //waitlist: this.waitlist,
                             }
                         ).then(result => {

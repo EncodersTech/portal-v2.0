@@ -163,7 +163,7 @@ class USAGReservation extends Model
         ];
         $detailedSteps = [];
         $reservation_ids = [];
-
+        $scratchAthletesList = [];
         $reservations = $gym->usag_reservations()
                         ->whereHas('usag_sanction', function (Builder $q0) use ($sanction) {
                             $q0->where('number', $sanction)
@@ -340,10 +340,10 @@ class USAGReservation extends Model
 
                                 $finalState['ids']['scratched']['athletes'][$a['USAGID']] = (
                                     isset($finalState['ids']['scratched']['athletes'][$a['USAGID']]) ?
-                                    $finalState['ids']['scratched']['athletes'][$a['USAGID']]++ :
+                                    $finalState['ids']['scratched']['athletes'][$a['USAGID']] += 1 :
                                     1
                                 );
-
+                                $scratchAthletesList[$a['USAGID']][$athlete->registration_level->_uid()] = true;
                                 $detailedStep['scratched']['athletes'][$athlete->registration_level->_uid()][$a['USAGID']] = [
                                     'id' => $athlete->id,
                                     'first_name' => $athlete->first_name,
@@ -520,16 +520,16 @@ class USAGReservation extends Model
 
                         foreach ($athletes as $a) {
                             $hasChanges = true;
-
                             $athlete = $registration->athletes()
                                                     ->where('usag_no', $a['USAGID'])
-                                                    ->where('status', '!=', RegistrationAthlete::STATUS_SCRATCHED)
+                                                    // ->where('status', '!=', RegistrationAthlete::STATUS_SCRATCHED)
                                                     ->first(); /** @var RegistrationAthlete $athlete */
-
-                            if ($athlete !== null) {
-                                $detailedStep['issues'][] = 'Trying to add athlete with USAG No. ' . $a['USAGID'] . ' that already exists in local database.';
-                                continue;
-                            }
+                            
+                            // if ($athlete !== null) {
+                            //     dd($athlete);
+                            //     $detailedStep['issues'][] = 'Trying to add athlete with USAG No. ' . $a['USAGID'] . ' that already exists in local database.';
+                            //     continue;
+                            // }
 
                             $athlete = [
                                 'issues' => [],
@@ -633,6 +633,28 @@ class USAGReservation extends Model
                                 $athlete['issues'][] = 'Missing US citizen field for athlete with USAG No. ' . $a['USAGID'];
                             }
 
+                            if(isset($scratchAthletesList[$a['USAGID']])
+                            && isset($scratchAthletesList[$a['USAGID']][$registrationLevel->_uid()])
+                            && $scratchAthletesList[$a['USAGID']][$registrationLevel->_uid()] == true)
+                            {
+                                foreach ($detailedSteps as $key => $value) {
+                                    $scr = $value['scratched']['athletes'];
+                                    if(isset($scr[$registrationLevel->_uid()]) && isset($scr[$registrationLevel->_uid()][$a['USAGID']]))
+                                    {
+                                        $finalState['ids']['scratched']['athletes'][$a['USAGID']] -= 1 ;
+                                        unset($detailedSteps[$key]['scratched']['athletes'][$registrationLevel->_uid()][$a['USAGID']]);
+                                        break;
+                                    }
+                                }
+                                $scratchAthletesList[$a['USAGID']][$registrationLevel->_uid()] = false;
+                                $athlete_to_update = $registration->athletes()
+                                                    ->where('usag_no', $a['USAGID'])
+                                                    ->first(); /** @var RegistrationAthlete $athlete */
+                                $athlete_to_update->status = RegistrationAthlete::STATUS_REGISTERED;
+                                $athlete_to_update->save();
+                                continue;
+                            }
+
                             if (count($athlete['issues']) < 1) {
                                 unset($athlete['issues']);
                                 $athleteData = $athlete;
@@ -646,7 +668,7 @@ class USAGReservation extends Model
                                 $athlete->save();
 
                                 $athleteData['id'] = $athlete->id;
-
+                                
                                 if (!isset($detailedStep['added']['athletes'][$registrationLevel->_uid()])) {
                                     $detailedStep['added']['athletes'][$athlete->registration_level->_uid()] = [
                                         'code' => $athlete->registration_level->level->code,
@@ -825,7 +847,8 @@ class USAGReservation extends Model
                 if ($hasChanges)
                     $detailedSteps[] = $detailedStep;
             }
-
+            // dd($detailedSteps);
+            // dd($finalState);
             // calculate final state
             $registration->fresh();
 
@@ -856,7 +879,7 @@ class USAGReservation extends Model
 
                 $athletes = $registrationLevel->athletes()
                                             ->whereNotNull('usag_no')
-                                            ->get();
+                                            ->get();                        
                 foreach ($athletes as $athlete) { /** @var RegistrationAthlete $athlete */
                     $tshirt = null;
                     $leo = null;
@@ -952,7 +975,7 @@ class USAGReservation extends Model
         return $result;
     }
 
-    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements) {
+    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements, $onetimeach = null) {
         DB::beginTransaction();
         try {
             $sanction = USAGSanction::where('number', $sanction)
@@ -998,7 +1021,16 @@ class USAGReservation extends Model
                     $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
                     $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
                     break;
-
+                case MeetRegistration::PAYMENT_OPTION_ONETIMEACH:
+                    $chosenMethod = [
+                        'type' => MeetRegistration::PAYMENT_OPTION_ONETIMEACH,
+                        'id' => $method['id'],
+                        'fee' => $meet->ach_fee(),
+                        'mode' => MeetRegistration::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
+                    $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
+                    break;
                 case MeetRegistration::PAYMENT_OPTION_PAYPAL:
                     $chosenMethod = [
                         'type' => MeetRegistration::PAYMENT_OPTION_PAYPAL,
@@ -1371,7 +1403,8 @@ class USAGReservation extends Model
                             if ($leoSize == null)
                                 throw new CustomBaseException('Invalid Leo size for this meet.', -1);
                         }
-
+                        $leoSizeId = isset($leoSize->id) ? $leoSize->id : null;
+                        $tshirtSizeId = isset($tshirtSize->id) ? $tshirtSize->id : null;
                         $athlete = [
                             'level_registration_id' => $registrationLevel->id,
                             'first_name' => $a['first_name'],
@@ -1379,8 +1412,8 @@ class USAGReservation extends Model
                             'gender' => $a['gender'],
                             'dob' => $a['dob'],
                             'is_us_citizen' => $a['is_us_citizen'],
-                            'tshirt_size_id' => ($tshirtRequired ? $tshirtSize->id : null),
-                            'leo_size_id' => ($leoRequired ? $leoSize->id : null),
+                            'tshirt_size_id' => ($tshirtRequired ? $tshirtSizeId : null),
+                            'leo_size_id' => ($leoRequired ? $leoSizeId : null),
                             'usag_no' => $usag_no,
                             'usag_active' => true,
                             'was_late' => $late,
@@ -1838,7 +1871,7 @@ class USAGReservation extends Model
             }
 
             $transaction = null;
-            if ($needRegularTransaction && $gymSummary['total'] > 0) {
+            if ($needRegularTransaction) {
                 if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
                     $chosenMethod = [
                         'type' => MeetRegistration::PAYMENT_OPTION_BALANCE,
@@ -1856,7 +1889,8 @@ class USAGReservation extends Model
                     $chosenMethod,
                     $registration,
                     $host,
-                    $registrant
+                    $registrant,
+                    $onetimeach
                 );
                 $transaction = $executedTransactionResult['transaction']; /** @var MeetTransaction $transaction */
                 $athleteStatus = $executedTransactionResult['athlete_status'];
@@ -1873,7 +1907,7 @@ class USAGReservation extends Model
                 'specialists' => [],
                 'coaches' => [],
             ];
-
+            
             foreach ($tx['athletes'] as $ra) { /** @var RegistrationAthlete $ra */
                 if (in_array($ra->id, $shouldGoIntoWaitlist)) {
                     $ra->in_waitlist = true;
@@ -1889,7 +1923,7 @@ class USAGReservation extends Model
                 unset($a['transaction']);
                 $auditEvent['athletes'][] = $a;
             }
-
+           
             foreach ($tx['coaches'] as $rc) { /** @var RegistrationCoach $rc */
                 if ($transaction !== null) {
                     $rc->in_waitlist = false;

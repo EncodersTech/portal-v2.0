@@ -56,8 +56,7 @@
                         <div v-if="add_athlete_level">
                             <p>Please select which athlete to add</p>
                             <div>
-                                <select class="form-control form-control-sm" v-model="add_athlete_athlete">
-                                    <option value="">(Choose ...)</option>
+                                <select class="form-control form-control-sm" v-model="add_athlete_athlete" multiple size='10'>
                                     <option v-for="athlete in filtreredAthletesForAddModal" :key="'modal-' + athlete.id"
                                         :value="athlete">
                                         {{ athlete.first_name }} {{ athlete.last_name }}
@@ -65,7 +64,7 @@
                                 </select>
                             </div>
 
-                            <div v-if="add_athlete_level.has_specialist && add_athlete_athlete" class="mt-1">
+                            <div v-if="add_athlete_level.has_specialist && add_athlete_athlete.length > 0" class="mt-1">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="modal-add-athlete-specialist"
                                         v-model="add_athlete_specialist">
@@ -75,37 +74,48 @@
                                 </div>
 
                                 <div v-if="add_athlete_specialist" class="ml-3">
-                                    <div v-if="add_athlete_athlete.gender == 'female'">
-                                        <b v-if="getFilteredSpecialistEvents(0).length > 0">Women's Event</b>
-                                        <div v-for="evt in getFilteredSpecialistEvents(0)" :key="evt.id" class="form-check">
-                                            <span v-if="evt.female">
-                                                <input class="form-check-input" type="checkbox"
-                                                    :id="'modal-add-athlete-specialist-event' + evt.id"
-                                                    v-model="add_athlete_events[evt.id].checked">
-                                                <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                                    {{ evt.name }}
-                                                </label>
-                                            </span>
-                                        </div>
+                                    <b v-if="getFilteredSpecialistEvents(0).length > 0">Women's Event</b>
+                                    <div v-for="evt in getFilteredSpecialistEvents(0)" :key="evt.id" class="form-check">
+                                        <span v-if="evt.female">
+                                            <input class="form-check-input" type="checkbox"
+                                                :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                v-model="add_athlete_events[evt.id].checked">
+                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                {{ evt.name }}
+                                            </label>
+                                        </span>
+                                    </div>
+                                    <b v-if="getFilteredSpecialistEvents(1).length > 0">Men's Event</b>
+                                    <div v-for="evt in getFilteredSpecialistEvents(1)" :key="evt.id" class="form-check">
+                                        <span v-if="evt.male">
+                                            <input class="form-check-input" type="checkbox"
+                                                :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                v-model="add_athlete_events[evt.id].checked">
+                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                {{ evt.name }}
+                                            </label>
+                                        </span>
+                                    </div>
+                                    <b v-if="getFilteredSpecialistEvents(2).length > 0">Common Event</b>
+                                    <div v-for="evt in getFilteredSpecialistEvents(2)" :key="evt.id" class="form-check">
+                                        <span v-if="evt.female">
+                                            <input class="form-check-input" type="checkbox"
+                                                :id="'modal-add-athlete-specialist-event' + evt.id"
+                                                v-model="add_athlete_events[evt.id].checked">
+                                            <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
+                                                {{ evt.name }}
+                                            </label>
+                                        </span>
+                                    </div>
+                                    <!-- <div v-if="add_athlete_athlete.gender == 'female'">
                                     </div>
                                     <div v-else>
-                                        <b v-if="getFilteredSpecialistEvents(1).length > 0">Men's Event</b>
-                                        <div v-for="evt in getFilteredSpecialistEvents(1)" :key="evt.id" class="form-check">
-                                            <span v-if="evt.male">
-                                                <input class="form-check-input" type="checkbox"
-                                                    :id="'modal-add-athlete-specialist-event' + evt.id"
-                                                    v-model="add_athlete_events[evt.id].checked">
-                                                <label class="form-check-label" :for="'modal-add-athlete-specialist-event' + evt.id">
-                                                    {{ evt.name }}
-                                                </label>
-                                            </span>
-                                        </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
 
                             <div class="text-right mt-3">
-                                <button v-if="this.add_athlete_athlete"
+                                <button v-if="this.add_athlete_athlete.length > 0"
                                     class="btn btn-sm btn-success" @click="addModalAthlete()">
                                     <span class="fas fa-user-plus"></span> Add
                                 </button>
@@ -210,7 +220,7 @@
                         </div>
 
                         <div class="text-right mt-3">
-                            <button v-if="this.add_athlete_athlete"
+                            <button v-if="this.add_athlete_athlete.length > 0"
                                 class="btn btn-sm btn-success" @click="addModalEvents()">
                                 <span class="fas fa-user-plus"></span> Add
                             </button>
@@ -1354,7 +1364,7 @@ export default {
             add_coach_coach: null,
 
             add_athlete_level: null,
-            add_athlete_athlete: '',
+            add_athlete_athlete: [],
             add_athlete_specialist: false,
             add_athlete_events: {},
 
@@ -1393,21 +1403,26 @@ export default {
         getFilteredSpecialistEvents(gender){
             let maleEvents = [];
             let femaleEvents = [];
+            let common = [];
             if(this.add_athlete_events != null)
             {
                 for (let event in this.add_athlete_events)
                 {
                     let evt = this.add_athlete_events[event];
-                    if(evt.male)
+                    if(evt.male && !evt.female)
                         maleEvents.push(evt);
-                    if(evt.female)
+                    if(evt.female && !evt.male)
                         femaleEvents.push(evt);
+                    if(evt.male && evt.female)
+                        common.push(evt);
                 }
             }
             if(gender == 1)
                 return maleEvents;
-            else
+            else if(gender == 0)
                 return femaleEvents;
+            else if(gender == 2)
+                return common;
         },
         hasSpecialist(body, category) {
             return (((body.id == this.constants.bodies.USAIGC) && (category.id == this.constants.categories.GYMNASTICS_WOMEN))
@@ -2014,18 +2029,26 @@ export default {
                 return;
 
             this.add_athlete_level = level;
-            this.add_athlete_athlete = '';
+            this.add_athlete_athlete = [];
             this.add_athlete_specialist = false;
             this.add_athlete_events = {};
             for (let i in this.specialist_events) {
                 let evt = this.specialist_events[i];
-                if(level.sanctioning_body.id == evt.sanctioning_body.id)
-                {
+                if (!this.add_athlete_events[evt.id]) {
+                    // If the entry with evt.id doesn't exist, add it
                     Vue.set(this.add_athlete_events, evt.id, {
-                        ... _.cloneDeep(evt),
+                        ..._.cloneDeep(evt),
                         checked: false,
                     });
                 }
+
+                // if(level.sanctioning_body.id == evt.sanctioning_body.id)
+                // {
+                //     Vue.set(this.add_athlete_events, evt.id, {
+                //         ... _.cloneDeep(evt),
+                //         checked: false,
+                //     });
+                // }
                 
             }
             $('#modal-registration-add-athlete').modal('show');
@@ -2034,7 +2057,7 @@ export default {
         addModalAthlete() {
             $('#modal-registration-add-athlete').modal('hide');
 
-            if (this.add_athlete_athlete) {
+            if (this.add_athlete_athlete.length > 0) {
                 let vm = this;
                 let events = [];
                 if (this.add_athlete_specialist) {
@@ -2100,237 +2123,240 @@ export default {
                         return;
                     }
                 }
+                for(let atl in this.add_athlete_athlete)
+                {
+                    let athlete = _.cloneDeep(this.add_athlete_athlete[atl]);
+                    this.status == vm.constants.athletes.statuses.NonReserved;
 
-                let athlete = _.cloneDeep(this.add_athlete_athlete);
-                this.status == vm.constants.athletes.statuses.NonReserved;
-
-                athlete.is_scratched = function() {
-                    return this.status == vm.constants.athletes.statuses.Scratched
-                };
-
-                athlete.original_id = athlete.id;
-                athlete.id = uuidv4();
-                athlete.is_new = true;
-                athlete.to_waitlist = false;
-                athlete.is_specialist = this.add_athlete_specialist;
-                athlete.pin_out_of_waitlist = false;
-                athlete.events = (athlete.is_specialist ? events : null);
-                athlete.was_late = this.late;
-                athlete.fee = 0;
-                athlete.refund = 0;
-                athlete.late_fee = 0;
-                athlete.late_refund = 0;
-                athlete.gender_display = athlete.gender.charAt(0).toUpperCase() + athlete.gender.slice(1)
-                athlete.dob = Moment(athlete.dob);
-                athlete.dob_display = athlete.dob.format('MM/DD/YYYY');
-                athlete.sanction_no = this.constants.bodies[
-                                            this.add_athlete_level.sanctioning_body_id
-                                        ].toLowerCase() + '_no';
-
-                let exists = this.add_athlete_level.athletes.filter(a => {
-                                    return (a[a.sanction_no] == athlete[athlete.sanction_no]) && !a.is_scratched();
-                                }).length > 0;
-                if (exists) {
-                    this.showAlert(
-                        'An athlete with the same number already exists in this level',
-                        'Whoops !',
-                        'red',
-                        'fas fa-times-circle'
-                    );
-                    return;
-                }
-
-                if (this.meet.tshirt_chart != null) {
-                    if ((athlete.tshirt == null) ||
-                        (this.meet.tshirt_chart.id != athlete.tshirt.clothing_size_chart_id)) {
-                        athlete.tshirt_size_id = -1;
-                        athlete.tshirt = null;
-                    }
-                }
-
-                if (this.meet.leo_chart != null) {
-                    if ((athlete.leo == null) ||
-                        (this.meet.leo_chart.id != athlete.leo.clothing_size_chart_id)) {
-                        athlete.leo_size_id = -1;
-                        athlete.leo = null;
-                    }
-                }
-
-                if (athlete.is_specialist) {
-                    athlete.editing = {
-                        first_name: false,
-                        last_name: false,
-                        dob: false,
-                        sanction_no: false,
-                        tshirt: false,
-                        leo: false,
+                    athlete.is_scratched = function() {
+                        return this.status == vm.constants.athletes.statuses.Scratched
                     };
 
-                    athlete.changes = {
-                        events: false,
-                        scratch: false,
-                        moved_to: false,
-                        first_name: false,
-                        last_name: false,
-                        dob: false,
-                        sanction_no: false,
-                        tshirt: false,
-                        leo: false,
-                    };
+                    athlete.original_id = athlete.id;
+                    athlete.id = uuidv4();
+                    athlete.is_new = true;
+                    athlete.to_waitlist = false;
+                    athlete.is_specialist = this.add_athlete_specialist;
+                    athlete.pin_out_of_waitlist = false;
+                    athlete.events = (athlete.is_specialist ? events : null);
+                    athlete.was_late = this.late;
+                    athlete.fee = 0;
+                    athlete.refund = 0;
+                    athlete.late_fee = 0;
+                    athlete.late_refund = 0;
+                    athlete.gender_display = athlete.gender.charAt(0).toUpperCase() + athlete.gender.slice(1)
+                    athlete.dob = Moment(athlete.dob);
+                    athlete.dob_display = athlete.dob.format('MM/DD/YYYY');
+                    athlete.sanction_no = this.constants.bodies[
+                                                this.add_athlete_level.sanctioning_body_id
+                                            ].toLowerCase() + '_no';
 
-                    athlete.has_changes = function() {
-                        for (let i in this.changes) {
-                            let c = this.changes[i];
-                            if ((c !== null) && (c !== false))
-                                return true;
+                    let exists = this.add_athlete_level.athletes.filter(a => {
+                                        return (a[a.sanction_no] == athlete[athlete.sanction_no]) && !a.is_scratched();
+                                    }).length > 0;
+                    if (exists) {
+                        this.showAlert(
+                            'An athlete with the same number already exists in this level',
+                            'Whoops !',
+                            'red',
+                            'fas fa-times-circle'
+                        );
+                        return;
+                    }
+
+                    if (this.meet.tshirt_chart != null) {
+                        if ((athlete.tshirt == null) ||
+                            (this.meet.tshirt_chart.id != athlete.tshirt.clothing_size_chart_id)) {
+                            athlete.tshirt_size_id = -1;
+                            athlete.tshirt = null;
                         }
-                        let flag = false;
-                        this.events.some(evt => {
-                            if (evt.hasOwnProperty('has_changes') && evt.has_changes())
-                                flag = true;
+                    }
+
+                    if (this.meet.leo_chart != null) {
+                        if ((athlete.leo == null) ||
+                            (this.meet.leo_chart.id != athlete.leo.clothing_size_chart_id)) {
+                            athlete.leo_size_id = -1;
+                            athlete.leo = null;
+                        }
+                    }
+
+                    if (athlete.is_specialist) {
+                        athlete.editing = {
+                            first_name: false,
+                            last_name: false,
+                            dob: false,
+                            sanction_no: false,
+                            tshirt: false,
+                            leo: false,
+                        };
+
+                        athlete.changes = {
+                            events: false,
+                            scratch: false,
+                            moved_to: false,
+                            first_name: false,
+                            last_name: false,
+                            dob: false,
+                            sanction_no: false,
+                            tshirt: false,
+                            leo: false,
+                        };
+
+                        athlete.has_changes = function() {
+                            for (let i in this.changes) {
+                                let c = this.changes[i];
+                                if ((c !== null) && (c !== false))
+                                    return true;
+                            }
+                            let flag = false;
+                            this.events.some(evt => {
+                                if (evt.hasOwnProperty('has_changes') && evt.has_changes())
+                                    flag = true;
+                                return flag;
+                            });
                             return flag;
-                        });
-                        return flag;
-                    };
+                        };
 
-                    athlete.deduceStatus = function() {
-                        let statuses = [];
-                        this.events.forEach(e => {
-                            if (!statuses.includes(e.status))
-                                statuses.push(e.status);
-                        });
-                        if (statuses.length > 1)
-                            this.status = vm.constants.specialists.statuses.Mixed;
-                        else
-                            this.status = statuses[0];
-                    }
-
-                    athlete.has_pending_events = function() {
-                        return this.events
-                                    .filter(e => e.status == vm.constants.specialists.statuses.Pending)
-                                    .length > 0;
-                    }
-
-                    athlete.permissions = {
-                        change_details: function() {
-                            return athlete.is_new || (
-                                vm.permissions.change_details &&
-                                (athlete.status != vm.constants.specialists.statuses.Scratched)
-                            );
-                        },
-                        change_level: function() {
-                            return athlete.is_new || (
-                                vm.permissions.change_level &&
-                                (athlete.status == vm.constants.specialists.statuses.Registered)
-                            );
-                        },
-                        change_number: function() {
-                            return athlete.is_new || vm.permissions.change_number;
-                        },
-                        add_specialist_events: function() {
-                            return athlete.is_new || (
-                                vm.permissions.add_specialist_events &&
-                                (athlete.status != vm.constants.specialists.statuses.Scratched)
-                            );
-                        },
-                        scratch: function() {
-                            return athlete.is_new || (
-                                vm.permissions.scratch &&
-                                !athlete.has_pending_events()
-                            );
-                        },
-                        scratch_without_refund: function(){
-                            return athlete.is_new || (
-                                !vm.permissions.scratch &&
-                                !athlete.has_pending_events()
-                            );
+                        athlete.deduceStatus = function() {
+                            let statuses = [];
+                            this.events.forEach(e => {
+                                if (!statuses.includes(e.status))
+                                    statuses.push(e.status);
+                            });
+                            if (statuses.length > 1)
+                                this.status = vm.constants.specialists.statuses.Mixed;
+                            else
+                                this.status = statuses[0];
                         }
-                    };
 
-                    athlete.original_data = _.cloneDeep(athlete);
-                    athlete.deduceStatus();
-
-                    athlete.total = 0;
-                    athlete.events.forEach(evt => {
-                        athlete.total += Utils.toFloat(evt.new_fee) + Utils.toFloat(evt.new_late_fee)
-                                            - Utils.toFloat(evt.new_refund) - Utils.toFloat(evt.new_late_refund);
-                    });
-
-                } else {
-                    athlete.editing = {
-                        first_name: false,
-                        last_name: false,
-                        dob: false,
-                        sanction_no: false,
-                        tshirt: false,
-                        leo: false,
-                    };
-
-                    athlete.changes = {
-                        scratch: false,
-                        moved_to: false,
-                        first_name: false,
-                        last_name: false,
-                        dob: false,
-                        sanction_no: false,
-                        tshirt: false,
-                        leo: false,
-                    };
-
-                    athlete.has_changes = function() {
-                        for (let i in this.changes) {
-                            let c = this.changes[i];
-                            if ((c !== null) && (c !== false))
-                                return true;
+                        athlete.has_pending_events = function() {
+                            return this.events
+                                        .filter(e => e.status == vm.constants.specialists.statuses.Pending)
+                                        .length > 0;
                         }
-                        return false;
-                    };
 
-                    athlete.permissions = {
-                        change_details: function() {
-                            return athlete.is_new || (
-                                vm.permissions.change_details &&
-                                (athlete.status != vm.constants.athletes.statuses.Scratched)
-                            );
-                        },
-                        change_level: function() {
-                            return athlete.is_new || (
-                                vm.permissions.change_level &&
-                                (athlete.status == vm.constants.athletes.statuses.Registered)
-                            );
-                        },
-                        change_number: function() {
-                            return athlete.is_new || vm.permissions.change_number;
-                        },
-                        add_specialist_events: function() {
+                        athlete.permissions = {
+                            change_details: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.change_details &&
+                                    (athlete.status != vm.constants.specialists.statuses.Scratched)
+                                );
+                            },
+                            change_level: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.change_level &&
+                                    (athlete.status == vm.constants.specialists.statuses.Registered)
+                                );
+                            },
+                            change_number: function() {
+                                return athlete.is_new || vm.permissions.change_number;
+                            },
+                            add_specialist_events: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.add_specialist_events &&
+                                    (athlete.status != vm.constants.specialists.statuses.Scratched)
+                                );
+                            },
+                            scratch: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.scratch &&
+                                    !athlete.has_pending_events()
+                                );
+                            },
+                            scratch_without_refund: function(){
+                                return athlete.is_new || (
+                                    !vm.permissions.scratch &&
+                                    !athlete.has_pending_events()
+                                );
+                            }
+                        };
+
+                        athlete.original_data = _.cloneDeep(athlete);
+                        athlete.deduceStatus();
+
+                        athlete.total = 0;
+                        athlete.events.forEach(evt => {
+                            athlete.total += Utils.toFloat(evt.new_fee) + Utils.toFloat(evt.new_late_fee)
+                                                - Utils.toFloat(evt.new_refund) - Utils.toFloat(evt.new_late_refund);
+                        });
+
+                    } else {
+                        athlete.editing = {
+                            first_name: false,
+                            last_name: false,
+                            dob: false,
+                            sanction_no: false,
+                            tshirt: false,
+                            leo: false,
+                        };
+
+                        athlete.changes = {
+                            scratch: false,
+                            moved_to: false,
+                            first_name: false,
+                            last_name: false,
+                            dob: false,
+                            sanction_no: false,
+                            tshirt: false,
+                            leo: false,
+                        };
+
+                        athlete.has_changes = function() {
+                            for (let i in this.changes) {
+                                let c = this.changes[i];
+                                if ((c !== null) && (c !== false))
+                                    return true;
+                            }
                             return false;
-                        },
-                        scratch: function() {
-                            return athlete.is_new || (
-                                vm.permissions.scratch &&
-                                (athlete.status == vm.constants.athletes.statuses.Registered)
-                            );
-                        },
-                        scratch_without_refund: function(){
-                            return athlete.is_new || (
-                                !vm.permissions.scratch &&
-                                (athlete.status == vm.constants.athletes.statuses.Registered)
-                            );
-                        }
-                    };
+                        };
 
-                    athlete.new_fee = this.add_athlete_level.registration_fee;
-                    athlete.new_refund = 0;
-                    athlete.new_late_fee = this.late ? this.add_athlete_level.late_registration_fee : 0;
-                    athlete.new_late_refund = 0;
+                        athlete.permissions = {
+                            change_details: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.change_details &&
+                                    (athlete.status != vm.constants.athletes.statuses.Scratched)
+                                );
+                            },
+                            change_level: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.change_level &&
+                                    (athlete.status == vm.constants.athletes.statuses.Registered)
+                                );
+                            },
+                            change_number: function() {
+                                return athlete.is_new || vm.permissions.change_number;
+                            },
+                            add_specialist_events: function() {
+                                return false;
+                            },
+                            scratch: function() {
+                                return athlete.is_new || (
+                                    vm.permissions.scratch &&
+                                    (athlete.status == vm.constants.athletes.statuses.Registered)
+                                );
+                            },
+                            scratch_without_refund: function(){
+                                return athlete.is_new || (
+                                    !vm.permissions.scratch &&
+                                    (athlete.status == vm.constants.athletes.statuses.Registered)
+                                );
+                            }
+                        };
 
-                    athlete.original_data = _.cloneDeep(athlete);
-                    athlete.total = Utils.toFloat(athlete.new_fee) + Utils.toFloat(athlete.new_late_fee)
-                            - Utils.toFloat(athlete.new_refund) - Utils.toFloat(athlete.new_late_refund);
+                        athlete.new_fee = this.add_athlete_level.registration_fee;
+                        athlete.new_refund = 0;
+                        athlete.new_late_fee = this.late ? this.add_athlete_level.late_registration_fee : 0;
+                        athlete.new_late_refund = 0;
+
+                        athlete.original_data = _.cloneDeep(athlete);
+                        athlete.total = Utils.toFloat(athlete.new_fee) + Utils.toFloat(athlete.new_late_fee)
+                                - Utils.toFloat(athlete.new_refund) - Utils.toFloat(athlete.new_late_refund);
+                    }
+
+                    this.add_athlete_level.athletes.push(athlete);
+                    this.calculateWaitlistStatuses();
                 }
-
-                this.add_athlete_level.athletes.push(athlete);
-                this.calculateWaitlistStatuses();
+                
             }
         },
 

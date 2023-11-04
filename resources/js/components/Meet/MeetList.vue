@@ -266,8 +266,8 @@
                     current: 1,
                     total: 1
                 },
-                limit: 5,
-                limitMultiplier: 5,
+                limit: 10,
+                limitMultiplier: 10,
                 debounce_delay: 500,
                 sortColumn: 'start_date',
                 sortDirection: 'down',
@@ -559,7 +559,7 @@
 
             loadSavedSettings() {
                 let itemsPerPage = Utils.toInt(Cookies.get(this.prefix + 'items-per-page'));
-                this.limit = ((itemsPerPage != NaN) && (itemsPerPage > 0) ? itemsPerPage : 5);
+                this.limit = ((itemsPerPage != NaN) && (itemsPerPage > 0) ? itemsPerPage : 10);
             }
         },
         mounted() {

@@ -15,6 +15,7 @@ use App\Mail\Registrant\TransactionExecutedMailable;
 use App\Models\Deposit;
 use App\Models\MeetTransaction;
 use App\Services\DwollaService;
+use App\Services\IntellipayService;
 use App\Services\StripeService;
 use App\Traits\Excludable;
 use DwollaSwagger\models\FundingSource;
@@ -40,6 +41,8 @@ class MeetRegistration extends Model
     public const PAYMENT_OPTION_CARD = 'card';
     public const PAYMENT_OPTION_PAYPAL = 'paypal';
     public const PAYMENT_OPTION_ACH = 'ach';
+    public const PAYMENT_OPTION_ONETIMEACH = 'onetimeach';
+    
     public const PAYMENT_OPTION_CHECK = 'check';
     public const PAYMENT_OPTION_BALANCE = 'balance';
 
@@ -52,6 +55,7 @@ class MeetRegistration extends Model
         self::PAYMENT_OPTION_CARD => self::FEE_MODE_PERCENTAGE,
         self::PAYMENT_OPTION_PAYPAL => self::FEE_MODE_PERCENTAGE,
         self::PAYMENT_OPTION_ACH => self::FEE_MODE_FLAT,
+        self::PAYMENT_OPTION_ONETIMEACH => self::FEE_MODE_FLAT,
         self::PAYMENT_OPTION_CHECK => self::FEE_MODE_FLAT,
         self::PAYMENT_OPTION_BALANCE => self::FEE_MODE_FLAT,
     ];
@@ -183,7 +187,8 @@ class MeetRegistration extends Model
     }
 
     public static function register(Meet $meet, Gym $gym, $inputLevels, $inputCoaches, $summary,
-        $method, bool $useBalance, $attachment = null, bool $deposit, $coupon, bool $enable_travel_arrangements/*, bool $clientWaitlist*/) {
+        $method, bool $useBalance, $attachment = null, bool $deposit, $coupon, bool $enable_travel_arrangements, $onetimeach/*, bool $clientWaitlist*/) {
+
         $chosenMethod = [
             'type' => $method['type'],
             'id' => '',
@@ -250,6 +255,17 @@ class MeetRegistration extends Model
                 case self::PAYMENT_OPTION_ACH:
                     $chosenMethod = [
                         'type' => self::PAYMENT_OPTION_ACH,
+                        'id' => $method['id'],
+                        'fee' => $meet->ach_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
+                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
+                    $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
+                    break;
+                case self::PAYMENT_OPTION_ONETIMEACH:
+                    $chosenMethod = [
+                        'type' => self::PAYMENT_OPTION_ONETIMEACH,
                         'id' => $method['id'],
                         'fee' => $meet->ach_fee(),
                         'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
@@ -1177,14 +1193,13 @@ class MeetRegistration extends Model
                         $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
                         $coachStatus = RegistrationCoach::STATUS_REGISTERED;
                     }
-
                     $executedTransactionResult = self::executePayment(
                         $calculatedFees,
                         $chosenMethod,
                         $registration,
                         $host,
                         $registrant,
-                        $deposit
+                        $onetimeach
                     );
 
                     $transaction = $executedTransactionResult['transaction']; /** @var MeetTransaction $transaction */
@@ -1350,7 +1365,7 @@ class MeetRegistration extends Model
     }
 
     public function pay(Gym $gym, MeetTransaction $oldTx, array $summary,
-        array $method, bool $useBalance) {
+        array $method, bool $useBalance, $onetimeach = null) {
 
         DB::beginTransaction();
         $transaction = null;
@@ -1389,7 +1404,17 @@ class MeetRegistration extends Model
                         'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
                     ];
                     break;
-
+                case self::PAYMENT_OPTION_ONETIMEACH:
+                    $chosenMethod = [
+                        'type' => self::PAYMENT_OPTION_ONETIMEACH,
+                        'id' => $method['id'],
+                        'fee' => $meet->ach_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
+                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
+                    $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
+                    break;
 //                case self::PAYMENT_OPTION_PAYPAL:
                 //                    $chosenMethod = [
                 //                        'type' => self::PAYMENT_OPTION_PAYPAL,
@@ -1484,7 +1509,7 @@ class MeetRegistration extends Model
                 ];
             }
 
-            $result = self::executePayment($calculatedFees, $chosenMethod, $this, $host, $registrant);
+            $result = self::executePayment($calculatedFees, $chosenMethod, $this, $host, $registrant, $onetimeach);
             $transaction = $result['transaction']; /** @var MeetTransaction $transaction */
             $athleteStatus = $result['athlete_status'];
             $specialistStatus = $result['specialist_status'];
@@ -1510,7 +1535,7 @@ class MeetRegistration extends Model
                 '\'s registration in ' . $meet->name;
 
                 $btxStatus = (
-                    $chosenMethod['type'] == self::PAYMENT_OPTION_ACH ?
+                    $chosenMethod['type'] == (self::PAYMENT_OPTION_ACH || self::PAYMENT_OPTION_ONETIMEACH) ?
                     UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_UNCONFIRMED :
                     UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
                 );
@@ -1818,10 +1843,11 @@ class MeetRegistration extends Model
     }
 
     public static function executePayment(array $calculatedFees, array $chosenMethod,
-        MeetRegistration $registration, User $host, User $registrant) {
+        MeetRegistration $registration, User $host, User $registrant, $onetimeach = null) {
+            
         $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
         $stripeService = resolve(StripeService::class); /** @var DwollaService $dwollaService */
-
+        $intellipayService = resolve(IntellipayService::class); /** @var IntellipayService $intellipayService */
         $meet = $registration->meet;
         $gym = $registration->gym;
 
@@ -1937,7 +1963,7 @@ class MeetRegistration extends Model
                 $transaction = $dwollaService->getACHTransfer($transaction);
 
                 $result['payment_method_string'] = '(Pending) ' . ucfirst($fundingSource->bank_account_type) .
-                ' Bank Account' . $fundingSource->name . '"';
+                ' Bank Account ' . $fundingSource->name . '"';
                 // $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");
                 // $result['payment_method_string'] = '(Pending) ' . ucfirst($transaction->payment_method_details->ach_debit->account_holder_type) .
                 //                         ' Bank Account' . $transaction->payment_method_details->ach_debit->bank_name ;
@@ -1962,6 +1988,63 @@ class MeetRegistration extends Model
                 $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
 
                 $result['message'] = 'Your ACH payment is currently being processed. ' .
+                    'You will receive a status update within the next ' .
+                    '7 days.';
+
+                break;
+            case self::PAYMENT_OPTION_ONETIMEACH:
+
+                $comment =  'Gym : '. $gym->name . ', registration for: ' . $meet->name . ', registration id: ' . $registration->id;
+                $transaction_response = $intellipayService->make_payment($onetimeach['routingNumber'],$onetimeach['accountNumber'],
+                                        $onetimeach['accountType'],$onetimeach['accountName'],$gymSummary['total'], $comment );
+
+                                       
+                // $fundingSource = $dwollaService->getFundingSource($chosenMethod['id']); /** @var FundingSource $fundingSource */
+                // $transaction = self::payWithACH(
+                //     $gym->user->dwolla_customer_id,
+                //     $fundingSource,
+                //     $gymSummary['total'],
+                //     [
+                //         'type' => 'registration',
+                //         'registration' => $registration->id,
+                //         'meet' => $gym->name,
+                //         'gym' => $meet->name,
+                //     ]
+                // );
+
+                // $transaction = $dwollaService->getACHTransfer($transaction);
+                $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH One Time payment has been initiated.") .
+                ' Bank Account ' . $onetimeach['accountName'];
+                
+                // dd($result['payment_method_string']);
+                // $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");
+                // $result['payment_method_string'] = '(Pending) ' . ucfirst($transaction->payment_method_details->ach_debit->account_holder_type) .
+                //                         ' Bank Account' . $transaction->payment_method_details->ach_debit->bank_name ;
+                
+
+
+                $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['total']);
+                // dd($savings);
+                $transaction = $registration->transactions()->create([ //trackthis
+                    'processor_id' => $transaction_response['paymentid'],
+                    'handling_rate' => Helper::getHandlingFee($meet),
+                    'processor_rate' => $meet->ach_fee(),
+                    'total' => $gymSummary['total'],
+                    'breakdown' => $calculatedFees,
+                    'method' => MeetTransaction::PAYMENT_METHOD_ONETIMEACH,
+                    'status' => MeetTransaction::STATUS_PENDING,
+                    'handling_fee' => $handlingFee,
+                    'processor_fee' => $processorFee,
+                    'competitions_saving' =>  json_encode($savings)
+                ]); /** @var Meettransaction $transaction */
+
+                // return $transaction;
+
+                $athleteStatus = RegistrationAthlete::STATUS_PENDING_RESERVED;
+                $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
+                $coachStatus = RegistrationCoach::STATUS_PENDING_RESERVED;
+
+                $result['message'] = 'Your One Time ACH payment is currently being processed. ' .
                     'You will receive a status update within the next ' .
                     '7 days.';
 
@@ -2117,7 +2200,7 @@ class MeetRegistration extends Model
             $balanceTransaction = $registration->user_balance_transaction()->create([
                 'user_id' => $meet->gym->user->id,
                 'processor_id' => null,
-                'total' => $gymSummary['used_balance'],
+                'total' => $transaction->breakdown['host']['total'],
                 'description' => $description,
                 'clears_on' => now(),
                 'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT,
@@ -2390,7 +2473,7 @@ class MeetRegistration extends Model
     }
 
     public function edit(Meet $meet, Gym $gym,
-        $inputBodies, $inputCoaches, $summary, $method, bool $useBalance, $previous_deposit_remaining_total, $coupon) {
+        $inputBodies, $inputCoaches, $summary, $method, bool $useBalance, $previous_deposit_remaining_total, $coupon, $onetimeach = null) {
 
         $chosenMethod = [
             'type' => $method['type'],
@@ -2440,6 +2523,14 @@ class MeetRegistration extends Model
                 case self::PAYMENT_OPTION_ACH:
                     $chosenMethod = [
                         'type' => self::PAYMENT_OPTION_ACH,
+                        'id' => $method['id'],
+                        'fee' => $meet->ach_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    break;
+                case self::PAYMENT_OPTION_ONETIMEACH:
+                    $chosenMethod = [
+                        'type' => self::PAYMENT_OPTION_ONETIMEACH,
                         'id' => $method['id'],
                         'fee' => $meet->ach_fee(),
                         'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
@@ -3869,7 +3960,8 @@ class MeetRegistration extends Model
                         $chosenMethod,
                         $this,
                         $host,
-                        $registrant
+                        $registrant,
+                        $onetimeach
                     );
                     // Log::channel('slack-warning')->warning($executedTransactionResult);
                     // die();
@@ -3881,7 +3973,7 @@ class MeetRegistration extends Model
                     $paymentMethodString = $executedTransactionResult['payment_method_string'];
                     $result['message'] = $executedTransactionResult['message'];
                 }
-
+                
                 $auditEvent = [
                     'registration' => [],
                     'athletes' => [],

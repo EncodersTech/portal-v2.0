@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ContactForm;
+use App\Mail\ContactReply;
 use Illuminate\Support\Facades\Auth;
 
 class ContactController extends BaseApiController
@@ -21,7 +22,11 @@ class ContactController extends BaseApiController
         $attr = request()->validate($rules);
 
         if ($apiGuard->check())
+        {
             $attr['email'] = $apiGuard->user()->email;
+            $attr['name'] = $apiGuard->user()->fullName();
+        }
         Mail::to('support@allgymnastics.com')->send(new ContactForm($attr['email'], $attr['message']));
+        Mail::to($attr['email'])->send(new ContactReply($attr['name']));
     }
 }
