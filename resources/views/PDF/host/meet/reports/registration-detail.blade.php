@@ -279,7 +279,7 @@
                 </thead>
             </table>
         </div>
-        <div class="float-parent" style="padding-top: 20px !important;">
+        <div class="float-parent" style="padding-top: 20px !important; page-break-after: always;">
             <span><strong>Refund</strong> : By Check* - all refunds are processed directly between meet host and
                 registrant</span><br>
             <table class="table-0 full-width">

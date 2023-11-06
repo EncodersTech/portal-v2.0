@@ -2473,15 +2473,15 @@ class Meet extends Model
                 ]
             ];
 
-            foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
-                // dd($registration->levels()->get());
-                $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
-                foreach ($auditEvent as $key => $value) {
-                    // echo '<br>' . $value->id .'<br>';
-                    $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
-                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
-                }
-            }
+            // foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
+            //     // dd($registration->levels()->get());
+            //     $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
+            //     foreach ($auditEvent as $key => $value) {
+            //         // echo '<br>' . $value->id .'<br>';
+            //         $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
+            //         $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
+            //     }
+            // }
             // dd($registrationAuditReport);
             // process_audit_event
             // die();
