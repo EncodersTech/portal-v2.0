@@ -39,7 +39,6 @@ class IntellipayService {
         {
             $this->host = 'https://test.cpteller.com/api/26/webapi.cfc';
         }
-        $this->host = 'https://test.cpteller.com/api/26/webapi.cfc';
         $this->marchant_key = env('INTELLIPAY_MARCHANT_KEY');
         $this->api_key = env('INTELLIPAY_API_KEY');
     }
