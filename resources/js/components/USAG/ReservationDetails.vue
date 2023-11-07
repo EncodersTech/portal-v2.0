@@ -875,7 +875,7 @@
                                     </div>
                                 </div>
                                 <!-- one time ach payment -->
-                                <div class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
+                                <div v-if="paymentOptions.methods.onetimeach" class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
 
                                     <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'onetimeach')}"
                                         @click="optionsExpanded = 'onetimeach'">

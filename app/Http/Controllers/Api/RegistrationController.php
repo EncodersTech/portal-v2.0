@@ -322,7 +322,7 @@ class RegistrationController extends BaseApiController
                 }
                 
             }
-
+            $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ONETIMEACH] = env('ENABLE_ONETIMEACH');
             return $available_payment_options;
 
         } catch(CustomBaseException $e) {
