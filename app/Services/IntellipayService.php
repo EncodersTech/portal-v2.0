@@ -45,6 +45,10 @@ class IntellipayService {
     public function make_payment($routing,$account_number,$type,$account_name,$amount, $comment)
     {
         try{
+            if(trim($routing) == '' || trim($account_number) == '' || trim($type) == '' || trim($account_name) == '' )
+            {
+                throw new CustomBaseException("All fields are required for one time ach payment",400);
+            }
             $user = auth()->user();
             $data = [
                 'method'=>'bank_payment',
