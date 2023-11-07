@@ -38,11 +38,11 @@ class Kernel extends ConsoleKernel
             ->sendOutputTo($logFile)
             ->emailOutputOnFailure(config('admin_email'));
 
-        $schedule->command('withdraw-balance:clear')
-            ->twiceDaily(0, 12)
-            ->withoutOverlapping()
-            ->sendOutputTo($logFile)
-            ->emailOutputOnFailure(config('admin_email'));
+        // $schedule->command('withdraw-balance:clear')
+        //     ->twiceDaily(0, 12)
+        //     ->withoutOverlapping()
+        //     ->sendOutputTo($logFile)
+        //     ->emailOutputOnFailure(config('admin_email'));
 
         $schedule->command('usag:remind')
             ->twiceDaily(8, 20)

@@ -322,7 +322,8 @@ class RegistrationController extends BaseApiController
                 }
                 
             }
-
+            $onetimeach_enabled = Setting::select('value')->where('key','one_time_ach')->first();
+            $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ONETIMEACH] = $onetimeach_enabled->value == 0 ? false : true; //env('ENABLE_ONETIMEACH');
             return $available_payment_options;
 
         } catch(CustomBaseException $e) {

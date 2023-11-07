@@ -224,7 +224,7 @@
                         </div>
 
                         <!-- one time ach payment -->
-                        <div class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
+                        <div v-if="paymentOptions.methods.onetimeach" class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
 
                             <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'onetimeach')}"
                                 @click="optionsExpanded = 'onetimeach'">
@@ -660,6 +660,7 @@
                 let sum_h_p = this.summary.handling + this.summary.processor;
                 var flg = 0;
                 if (sum_h_p > 0) {
+                    let totalsave = 0;
                     this.summary.saving += 'Saved ' ;
                     for(let key in this.competitions){
                         let values = this.competitions[key];
@@ -669,12 +670,16 @@
                         let _saved_total_fee = (this.summary.subtotal * _sf) / 100; 
                         if(_saved_total_fee > sum_h_p)
                         {
-                        this.summary.saving += '$'+(_saved_total_fee - sum_h_p).toFixed(2) + ' than ' + key +',';
-                        flg = 1;
+                            totalsave += _saved_total_fee - sum_h_p;
+                            // this.summary.saving += '$'+(_saved_total_fee - sum_h_p).toFixed(2) + ' than ' + key +',';
+                            flg = 1;
                         }
                     }
-                    if(flg == 1)
-                    this.summary.saving = this.summary.saving.slice(0, -1);
+                    if(flg == 1 && totalsave > 0)
+                    {
+                        this.summary.saving += '$'+totalsave.toFixed(2) + ' compared to competitors';
+                        // this.summary.saving = this.summary.saving.slice(0, -1);
+                    }
                     else
                     this.summary.saving = '';
                 }

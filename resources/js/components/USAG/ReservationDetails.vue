@@ -875,7 +875,7 @@
                                     </div>
                                 </div>
                                 <!-- one time ach payment -->
-                                <div class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
+                                <div v-if="paymentOptions.methods.onetimeach" class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeACH()">
 
                                     <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'onetimeach')}"
                                         @click="optionsExpanded = 'onetimeach'">
@@ -2433,8 +2433,7 @@
                                 //#endregion
 
                                 let tmp = added - scratched;
-
-                                if ((old_level !== null) && (old_level != lid) && (tmp > 0)) { // If athlete was moved to a different level and is not a new addition
+                                if ((old_level !== null) && (old_level != lid) && (tmp < 1)) { // If athlete was moved to a different level and is not a new addition
                                     athlete.include_in_calculation = true;
                                     athlete.was_late = athlete.was_late || this.late;
 

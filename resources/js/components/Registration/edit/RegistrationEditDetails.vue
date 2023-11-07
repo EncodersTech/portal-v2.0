@@ -748,7 +748,7 @@
                                                                                 <span class="fas fa-fw fa-thumbtack"></span>
                                                                                 <span v-if="!athlete.pin_out_of_waitlist">Pin Out Of Waitlist</span>
                                                                                 <span v-else>Unpin</span>
-                                                                        </button>
+                                                                            </button>
                                                                         <div v-if="athlete.is_new">
                                                                             <button class="dropdown-item text-danger"
                                                                                 type="button" @click="scratchObject(athlete, 'athlete', level)">

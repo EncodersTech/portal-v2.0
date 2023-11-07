@@ -267,6 +267,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group col-sm-12 col-md-4 col-lg-3">
+                    {{ Form::label('app_name', 'One Time ACH:') }}
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" name="one_time_ach" class="custom-control-input" value="1" id="customSwitch3" {{ ($settings['one_time_ach'] == true)?'checked':'' }}>
+                            <label class="custom-control-label" for="customSwitch3"></label>
+                        </div>
+                    </div>
+                </div>
 
             </div>
             <div class="text-right">
