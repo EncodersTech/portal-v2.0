@@ -41,4 +41,9 @@ class DashboardController extends AppBaseController
 
         return $pdf->stream('pending_withdrawal_balace_report.'.time().'.pdf');
     }
+    public function errorNotice()
+    {
+        $data = [];
+        return view('admin.error_report.report')->with($data);
+    }
 }

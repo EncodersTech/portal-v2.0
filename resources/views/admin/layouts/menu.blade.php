@@ -99,5 +99,13 @@
                 <p>Settings</p>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a href="{{ route('admin.errortracing') }}"
+                class="nav-link {{ Request::is('admin/errortracing') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cog"></i>
+                <p>Error Notice</p>
+            </a>
+        </li>
     </ul>
 </nav>

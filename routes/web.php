@@ -235,6 +235,9 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::get('settings', 'SettingController@index')->name('admin.settings');
         Route::post('settings','SettingController@update')->name('admin.settings.update');
 
+
+        Route::get('admin/errortracing','DashboardController@errorNotice')->name('admin.errortracing');
+
         Route::get('dashboard','DashboardController@index')->name('admin.dashboard');
 
         Route::get('reports-gym-balance','GymBalanceReportController@index')->name('admin.gym.balance.reports');
