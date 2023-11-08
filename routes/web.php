@@ -236,7 +236,9 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::post('settings','SettingController@update')->name('admin.settings.update');
 
 
-        Route::get('admin/errortracing','DashboardController@errorNotice')->name('admin.errortracing');
+        Route::get('errortracing','DashboardController@errorNotice')->name('admin.errortracing');
+        Route::post('errortracing/update-usag-levels','DashboardController@usagLevelsUpdate')->name('admin.error_report.update_usag_level');
+        Route::post('errortracing/insert-usag-levels','DashboardController@usagLevelsAdd')->name('admin.error_report.insert_usag_level');
 
         Route::get('dashboard','DashboardController@index')->name('admin.dashboard');
 
