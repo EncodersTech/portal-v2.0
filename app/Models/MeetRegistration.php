@@ -3938,10 +3938,10 @@ class MeetRegistration extends Model
                     ]); /** @var Meettransaction $transaction */
                 }
 
-                if ($gymSummary['total'] > 0) {
-                    $needRegularTransaction = true;
-                }
-                if ($needRegularTransaction && $gymSummary['total'] > 0) {
+                // if ($gymSummary['total'] > 0) {
+                //     $needRegularTransaction = true;
+                // }
+                if ($needRegularTransaction) {
                     if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
                         $chosenMethod = [
                             'type' => self::PAYMENT_OPTION_BALANCE,
