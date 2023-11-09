@@ -1632,6 +1632,8 @@
                     let athleteLevel = this.genderAwareMeetLevelMatrix[
                         this.registrationLevelToMeetLevelMatrix[athlete.registration_level.id]
                     ];
+                    if(athleteLevel == null)
+                        continue;
                     athleteLevel.team_fee = Utils.toFloat(athlete.registration_level.team_fee);
                     athleteLevel.team_late_fee = Utils.toFloat(athlete.registration_level.team_late_fee);
                     athleteLevel.team_refund = Utils.toFloat(athlete.registration_level.team_refund);
