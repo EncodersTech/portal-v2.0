@@ -77,8 +77,8 @@
                 </div>
             </div> 
             <div class="float-child" style="padding: 0 !important;">
-                <div>
-                    @if (!$meet || count($re_leo_size) < 1)
+            <div>
+                    @if (!$meet || count($r->leo_size) < 1)
                         {{'No Size Distribution Summary.'}}
                     @else
                         <span><strong>Size Distribution Summary </strong></span><br>
@@ -91,11 +91,9 @@
                             </thead>
                             <tbody>
                             <?php
-                            $re_les_total = 0;
+                            $re_les_total = 0; 
                             ?>
-                            {{-- {{ dd($re_leo_size) }}--}}
-                            @foreach ($re_leo_size as $re_les)
-                                {{-- @foreach ($re_les as $r)--}}
+                            @foreach ($r->leo_size as $re_les)
                                 @if(isset($re_les['name']))
                                     <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
                                         <td>{{$re_les['name']}}</td>
