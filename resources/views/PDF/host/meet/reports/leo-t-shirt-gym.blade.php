@@ -32,89 +32,82 @@
     @foreach ($registrations as $i => $r)
         <div class="float-parent">
             <div class="float-child" style="padding: 0 10px 0 0  !important;">
-                <div>
-                    <span><strong>Gym Details</strong></span><br>
-                    <table class="table-0  full-width">
-                        <thead>
-                            <tr>
-                                <th class="col-1">Gym Name</th>
-                                <th class="col-1">{{$r->gym->short_name}}</th>
-                            <tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td  class="col-1">Address</td>
-                                <td  class="col-1">
-                                    {{ $r->gym->addr_1 }},
+                <span><strong>Gym Details</strong></span><br>
+                <table class="table-0  full-width">
+                    <thead>
+                        <tr>
+                            <th class="col-1">Gym Name</th>
+                            <th class="col-1">{{$r->gym->short_name}}</th>
+                        <tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td  class="col-1">Address</td>
+                            <td  class="col-1">
+                                {{ $r->gym->addr_1 }},
 
-                                    @if ($r->gym->addr_2)
-                                        {{ $r->gym->addr_2 }},
-                                    @endif
+                                @if ($r->gym->addr_2)
+                                    {{ $r->gym->addr_2 }},
+                                @endif
 
-                                    {{ $r->gym->city }}, {{ $r->gym->state->code }},
-                                    {{ $r->gym->zipcode }}
-                                    {{ $r->gym->country->name }}
-                                </td>
-                            <tr>
-                            <tr>
-                                <td  class="col-1">Contact Person</td>
-                                <td  class="col-1"> {{ $r->gym->user->first_name }}</td>
-                            <tr>
-                            <tr>
-                                <td  class="col-1">USAG Club #</td>
-                                <td  class="col-1"> {{ $r->gym->usag_membership }}</td>
-                            <tr>
-                            <tr>
-                                <td  class="col-1">Email Address</td>
-                                <td  class="col-1"> {{ $r->gym->user->email }}</td>
-                            <tr>
-                            <tr>
-                                <td  class="col-1">Office No.</td>
-                                <td  class="col-1">{{ $r->gym->office_phone }}</td>
-                            <tr>
-                        </tbody>
-                    </table>
-                </div>
+                                {{ $r->gym->city }}, {{ $r->gym->state->code }},
+                                {{ $r->gym->zipcode }}
+                                {{ $r->gym->country->name }}
+                            </td>
+                        <tr>
+                        <tr>
+                            <td  class="col-1">Contact Person</td>
+                            <td  class="col-1"> {{ $r->gym->user->first_name }}</td>
+                        <tr>
+                        <tr>
+                            <td  class="col-1">USAG Club #</td>
+                            <td  class="col-1"> {{ $r->gym->usag_membership }}</td>
+                        <tr>
+                        <tr>
+                            <td  class="col-1">Email Address</td>
+                            <td  class="col-1"> {{ $r->gym->user->email }}</td>
+                        <tr>
+                        <tr>
+                            <td  class="col-1">Office No.</td>
+                            <td  class="col-1">{{ $r->gym->office_phone }}</td>
+                        <tr>
+                    </tbody>
+                </table>
             </div> 
             <div class="float-child" style="padding: 0 !important;">
-                <div>
-                    @if (!$meet || count($re_leo_size) < 1)
-                        {{'No Size Distribution Summary.'}}
-                    @else
-                        <span><strong>Size Distribution Summary </strong></span><br>
-                        <table class="table-0  full-width">
-                            <thead>
-                            <tr>
-                                <th class="col-1">Leotard Size</th>
-                                <th class="col-1">Qty</th>
-                            <tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                            $re_les_total = 0;
-                            ?>
-                            {{-- {{ dd($re_leo_size) }}--}}
-                            @foreach ($re_leo_size as $re_les)
-                                {{-- @foreach ($re_les as $r)--}}
-                                @if(isset($re_les['name']))
-                                    <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
-                                        <td>{{$re_les['name']}}</td>
-                                        <td class="meet-subheader-text">{{($re_les['count'] != 0)?$re_les['count']:'-'}}</td>
-                                        <?php
-                                        $re_les_total = $re_les_total + $re_les['count'];
-                                        ?>
-                                    </tr>
-                                @endif
-                            @endforeach
-                            <tr>
-                                <td class="meet-subheader-text"><strong>Total</strong></td>
-                                <td class="meet-subheader-text">{{ $re_les_total }}</td>
-                            <tr>
-                            {{-- @endforeach--}}
-                            </tbody>
-                        </table>
-                    @endif
-                </div>
+                @if (!$meet || count($r->leo_size) < 1)
+                    {{'No Size Distribution Summary.'}}
+                @else
+                    <span><strong>Size Distribution Summary </strong></span><br>
+                    <table class="table-0  full-width">
+                        <thead>
+                        <tr>
+                            <th class="col-1">Leotard Size</th>
+                            <th class="col-1">Qty</th>
+                        <tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $re_les_total = 0; 
+                        ?>
+                        @foreach ($r->leo_size as $re_les)
+                            @if(isset($re_les['name']))
+                                <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
+                                    <td>{{$re_les['name']}}</td>
+                                    <td class="meet-subheader-text">{{($re_les['count'] != 0)?$re_les['count']:'-'}}</td>
+                                    <?php
+                                    $re_les_total = $re_les_total + $re_les['count'];
+                                    ?>
+                                </tr>
+                            @endif
+                        @endforeach
+                        <tr>
+                            <td class="meet-subheader-text"><strong>Total</strong></td>
+                            <td class="meet-subheader-text">{{ $re_les_total }}</td>
+                        <tr>
+                        </tbody>
+                    </table>
+                @endif
             </div>
         </div>
         <div class="float-parent" style="padding-top: 20px !important; page-break-after: always;">

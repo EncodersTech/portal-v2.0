@@ -2787,16 +2787,32 @@ class Meet extends Model
             if($this->leo_chart && $registrations){
                 $leo_size = $this->leo_chart->sizes->pluck('size','id')->toArray();
 
-                foreach ($leo_size as $le_s_id => $val) {
-                    $data = [];
-                    $data['count'] = 0;
-                    foreach ($registrations as $i => $registration) {
+                foreach ($registrations as $i => $registration) {
+                    $data_merge = [];
+                    foreach ($leo_size as $le_s_id => $val) {
+                        $data['count'] = 0;
                         $data['name'] = $val;
                         $count =  $registration->athletes->where('leo_size_id', $le_s_id)->count();
-                        $data['count'] += $count;
+                        if($count == 0)
+                            continue;
+                        $data['count'] = $count;
+                        $data_merge[] = $data;
                     }
-                    $re_leo_size[] = $data;
+                    $registrations[$i]['leo_size'] = $data_merge;
                 }
+
+                // foreach ($leo_size as $le_s_id => $val) {
+                //     $data = [];
+                //     foreach ($registrations as $i => $registration) {
+                //         $data['count'] = 0;
+                //         $data['name'] = $val;
+                //         $count =  $registration->athletes->where('leo_size_id', $le_s_id)->count();
+                //         $data['count'] += $count;
+                //         // $re_leo_size[] = $data;
+                //         $registrations[$i]['leo_size'] = $data;
+                //     }
+                    
+                // }
             }
             $data = [
                 'host' => $this->gym,

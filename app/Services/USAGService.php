@@ -159,6 +159,15 @@ class USAGService {
             // return $results;
             return $isValid ? true : $issues;
         }catch (\Throwable $e) {
+            if($e->getCode() == 403)
+            {
+                $response = json_decode($e->getResponse()->getBody()->getContents(), true);
+                if(isset($response['message']))
+                {
+                    $response = $response['message'];
+                    throw new CustomBaseException($response, $e->getCode());
+                }
+            }
             logger()->error(self::class . '::verifyAthletes() : ' . $e->getMessage());
             throw new CustomBaseException('Something went wrong with the USAG verification.'. $e->getMessage(),-1);
         }

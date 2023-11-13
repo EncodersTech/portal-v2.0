@@ -2435,7 +2435,7 @@
                                 //#endregion
 
                                 let tmp = added - scratched;
-                                if ((old_level !== null) && (old_level != lid) && (tmp < 1)) { // If athlete was moved to a different level and is not a new addition
+                                if ((old_level !== null) && (old_level != lid) && (tmp > 0 )) { // If athlete was moved to a different level and is not a new addition
                                     athlete.include_in_calculation = true;
                                     athlete.was_late = athlete.was_late || this.late;
 
