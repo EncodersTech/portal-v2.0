@@ -48,6 +48,7 @@ class DashboardController extends AppBaseController
     public function errorNotice()
     {
         $data = [];
+        $data['log_errors'] = $this->getLoggedError();
         $data['usag_levels'] = AthleteLevel::where('sanctioning_body_id', SanctioningBody::USAG)->orderBy('id','ASC')->get();
         $data['label_categories'] = LevelCategory::get();
         return view('admin.error_report.index')->with($data);
@@ -88,8 +89,6 @@ class DashboardController extends AppBaseController
     public function usagLevelsAdd(Request $request)
     {
         try{
-
-
             $data = $request->all();
             // validate the data
             $request->validate([
@@ -144,5 +143,45 @@ class DashboardController extends AppBaseController
             );
             return response()->json($response , 500);
         }
+    }
+    public function getLoggedError()
+    {
+        $logFiles = glob(storage_path('logs/laravel-www-data-*.log'));
+        $data_merged = [];
+        foreach($logFiles as $logFile)
+        {
+            $data = [
+                'id' => random_int(1, 1000000),
+                'name' => $logFile,
+                'last_modified' =>  \Datetime::createFromFormat('U', filemtime($logFile))->format('Y-m-d H:i:s'),
+                'date' => preg_match('/\d{4}-\d{2}-\d{2}/', $logFile, $dates) ? $dates[0] : date('Y-m-d', filemtime($logFile))
+            ];
+            
+
+            $result = [];
+            $file = file_get_contents($logFile);
+            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] production\.ERROR:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/s';
+            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] production\.ERROR:/s';
+            $date_only_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/s';
+            preg_match_all($pattern, $file, $matches);
+            foreach ($matches as $key => $value) {
+                foreach ($value as $k => $v) {
+                    $temp = substr($v, 0, strpos($v, '[stacktrace]'));
+                    $temp = str_replace('\n','',$temp);
+                    if(trim($temp) != "")
+                    {
+                        preg_match_all($date_pattern, $temp, $matches_string);
+                        $temp = str_replace($matches_string[0],'',$temp);
+                        $result[$key][$k]['heading'] = $temp;
+                        $result[$key][$k]['details'] = $v;
+                    }
+                }
+            }
+            $data['errors'] = $result[0];
+            
+            $data_merged[] = $data;
+        }
+        // dd($data_merged);
+        return $data_merged;
     }
 }
