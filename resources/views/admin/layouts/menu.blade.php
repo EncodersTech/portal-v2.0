@@ -101,6 +101,13 @@
         </li>
 
         <li class="nav-item">
+            <a href="{{ route('admin.usag_level') }}"
+                class="nav-link {{ Request::is('admin/usag_level') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cog"></i>
+                <p>USAG Levels</p>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="{{ route('admin.errortracing') }}"
                 class="nav-link {{ Request::is('admin/errortracing') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-cog"></i>

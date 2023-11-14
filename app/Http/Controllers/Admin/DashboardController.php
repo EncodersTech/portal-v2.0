@@ -45,12 +45,22 @@ class DashboardController extends AppBaseController
 
         return $pdf->stream('pending_withdrawal_balace_report.'.time().'.pdf');
     }
+    public function usagLevel()
+    {
+        $data = [];
+        $data['log_errors'] = $this->getLoggedError();
+        $data['usag_levels'] = AthleteLevel::where('sanctioning_body_id', SanctioningBody::USAG)->orderBy('id','ASC')->get();
+        $data['label_categories'] = LevelCategory::get();
+        $data['page'] = 'usag_level';
+        return view('admin.error_report.index')->with($data);
+    }
     public function errorNotice()
     {
         $data = [];
         $data['log_errors'] = $this->getLoggedError();
         $data['usag_levels'] = AthleteLevel::where('sanctioning_body_id', SanctioningBody::USAG)->orderBy('id','ASC')->get();
         $data['label_categories'] = LevelCategory::get();
+        $data['page'] = 'error_notice';
         return view('admin.error_report.index')->with($data);
     }
     public function usagLevelsUpdate(Request $request)
@@ -150,9 +160,10 @@ class DashboardController extends AppBaseController
         $data_merged = [];
         foreach($logFiles as $logFile)
         {
+            $filename = basename($logFile);
             $data = [
                 'id' => random_int(1, 1000000),
-                'name' => $logFile,
+                'name' => $filename,
                 'last_modified' =>  \Datetime::createFromFormat('U', filemtime($logFile))->format('Y-m-d H:i:s'),
                 'date' => preg_match('/\d{4}-\d{2}-\d{2}/', $logFile, $dates) ? $dates[0] : date('Y-m-d', filemtime($logFile))
             ];
