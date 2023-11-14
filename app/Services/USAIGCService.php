@@ -15,7 +15,7 @@ use GuzzleHttp\Client as Guzzle;
 class USAIGCService {
     public const API_BASE_DEV = 'igcdev.com';
     public const API_BASE_PROD = 'usaigc.com';
-    public const API_PATH = 'app/API/V1/';
+    public const API_PATH = '/app/API/V1/';
 
     public const API_DATE_FORMAT = 'n/j/Y';
 
