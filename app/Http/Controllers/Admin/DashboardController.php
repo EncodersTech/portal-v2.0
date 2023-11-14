@@ -156,6 +156,7 @@ class DashboardController extends AppBaseController
     }
     public function getLoggedError()
     {
+        $env = env('APP_ENV', 'local');
         $logFiles = glob(storage_path('logs/laravel-www-data-*.log'));
         $data_merged = [];
         foreach($logFiles as $logFile)
@@ -171,8 +172,8 @@ class DashboardController extends AppBaseController
 
             $result = [];
             $file = file_get_contents($logFile);
-            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] production\.ERROR:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/s';
-            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] production\.ERROR:/s';
+            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.ERROR:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/s';
+            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.ERROR:/s';
             $date_only_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/s';
             preg_match_all($pattern, $file, $matches);
             foreach ($matches as $key => $value) {
@@ -188,11 +189,13 @@ class DashboardController extends AppBaseController
                     }
                 }
             }
-            $data['errors'] = $result[0];
+            if(count($result) > 0)
+                $data['errors'] = $result[0];
+            else
+                continue;
             
             $data_merged[] = $data;
         }
-        // dd($data_merged);
         return $data_merged;
     }
 }
