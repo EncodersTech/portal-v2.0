@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\CustomBaseException;
 use App\Helper;
 use App\Mail\Host\USAG\USAGSanctionReceivedMailable;
+use App\Mail\USAG\USAGLevelIssue;
 use App\Mail\Registrant\USAG\USAGReservationReceivedMailable;
 use App\Models\AuditEvent;
 use App\Models\ErrorCodeCategory;
@@ -17,6 +18,8 @@ use App\Models\RegistrationCoach;
 use App\Models\RegistrationCoachVerification;
 use App\Models\USAGReservation;
 use App\Models\USAGSanction;
+use App\Models\AthleteLevel;
+use App\Models\SanctioningBody;
 use GuzzleHttp\Client as Guzzle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -454,6 +457,15 @@ class USAGService {
                 $contactName = $host->user->fullName();
                 $contactEmail = $host->user->email;
             }
+            $data_to_send = array(
+                'gym_id' => (!$unassigned ? $host->id : null),
+                'gym_usag_no' => $data->OrganizationID,
+                'usag_sanction_id' => $data->SanctionID,
+                'action' => 3, // usag sanction add mail action
+                'contact_name' => $contactName,
+                'contact_email' => strtolower($contactEmail),
+            );
+            $this->checkForExistingLevelsInSanction($payload, $data_to_send);
 
             $sanction = [
                 'gym_id' => (!$unassigned ? $host->id : null),
@@ -496,6 +508,17 @@ class USAGService {
                                     ->first();  /** @var USAGSanction $parent */
             if ($parent !== null) {
                 $unassigned = ($parent->gym_id === null);
+
+                $data_to_send = array(
+                    'gym_id' => $parent->gym_id,
+                    'gym_usag_no' => $parent->gym_usag_no,
+                    'usag_sanction_id' => $data->SanctionID,
+                    'action' => 4, // usag sanction update mail action
+                    'contact_name' => $parent->contact_name,
+                    'contact_email' => strtolower($parent->contact_email),
+                );
+                $this->checkForExistingLevelsInSanction($payload, $data_to_send);
+
                 $sanction = [
                     'number' => $parent->number,
                     'gym_id' => $parent->gym_id,
@@ -570,7 +593,7 @@ class USAGService {
                 })->where('action', USAGReservation::RESERVATION_ACTION_ADD)
                 ->first();  /** @var USAGReservation $reservation */
                 
-                if ($reservation !== null) {                
+                if ($reservation !== null) {
                     switch ($reservation->status) {
                         case USAGSanction::SANCTION_STATUS_UNASSIGNED:
                         case USAGReservation::RESERVATION_STATUS_PENDING:
@@ -608,7 +631,15 @@ class USAGService {
                 $contactName = $gym->user->fullName();
                 $contactEmail = $gym->user->email;
             }
-
+            $data_to_send = array(
+                'gym_id' => (!$unassigned ? $gym->id : null),
+                'gym_usag_no' => $data->ClubUSAGID,
+                'usag_sanction_id' => $sanction->id,
+                'action' => USAGReservation::RESERVATION_ACTION_ADD,
+                'contact_name' => $contactName,
+                'contact_email' => strtolower($contactEmail),
+            );
+            $this->checkForExistingLevels($payload, $data_to_send);
             $reservation = [
                 'gym_id' => (!$unassigned ? $gym->id : null),
                 'gym_usag_no' => $data->ClubUSAGID,
@@ -693,7 +724,16 @@ class USAGService {
             throw new CustomBaseException('test', -1);
             */
       
-            if ($parent !== null) {                
+            if ($parent !== null) {       
+                $data_to_send = array(
+                    'gym_id' => $parent->gym_id,
+                    'gym_usag_no' => $parent->gym_usag_no,
+                    'usag_sanction_id' => $parent->usag_sanction->id,
+                    'action' => USAGReservation::RESERVATION_ACTION_UPDATE,
+                    'contact_name' => $parent->contact_name,
+                    'contact_email' => strtolower($parent->contact_email),
+                );
+                $this->checkForExistingLevels($payload, $data_to_send);         
                 $reservation = [
                     'gym_id' => $parent->gym_id,
                     'gym_usag_no' => $parent->gym_usag_no,
@@ -726,5 +766,103 @@ class USAGService {
             DB::rollBack();
             throw $e;
         }        
+    }
+    public function checkForExistingLevelsInSanction($payload, $data_to_send)
+    {   
+        if(typeof($payload) == 'object')
+        {
+            $payload = json_decode(json_encode($payload), true); // convert object to array
+        }
+        $athlete_levels = $payload['Sanction']['Levels']['Add'];
+        $gender = $payload['Sanction']['DisciplineType'];
+        $dff_level_male = [];
+        $dff_level_female = [];
+        if($gender == 'Women')
+        {
+            $data = AthleteLevel::select('code')->whereIn('code', $athlete_levels)
+            ->where('sanctioning_body_id', SanctioningBody::USAG)
+            ->where('level_category_id',LevelCategory::GYMNASTICS_WOMEN)
+            ->get()->pluck('code')->toArray();
+            $dff_level_female = array_diff($athlete_levels, $data);
+        }
+        else
+        {
+            $data = AthleteLevel::select('code')->whereIn('code', $athlete_levels)
+            ->where('sanctioning_body_id', SanctioningBody::USAG)
+            ->where('level_category_id',LevelCategory::GYMNASTICS_MEN)
+            ->get()->pluck('code')->toArray();
+            $dff_level_male = array_diff($athlete_levels, $data);
+        }
+
+        if(count($dff_level_female) == 0 && count($dff_level_male) == 0)
+        {
+            echo 'all done';
+            // everything is ok and levels are found in our db. No need to do anything
+        }
+        else
+        {
+            $level_need['male'] = [];
+            $level_need['female'] = [];
+
+            foreach ($dff_level_female as $key => $value) {
+                $level_need['female'][] = $value;
+            }
+            foreach ($dff_level_male as $key => $value) {
+                $level_need['male'][] = $value;
+            }
+            Mail::to(env('MAIL_ADMIN_ADDRESS'))->cc("zawad.sharif93@gmail.com")
+                ->send(new USAGLevelIssue($level_need, $data_to_send));
+        }
+    }
+    public function checkForExistingLevels($payload, $data_to_send) // $payload, $data_to_send
+    {
+        if(typeof($payload) == 'object')
+        {
+            $payload = json_decode(json_encode($payload), true); // convert object to array
+        }
+        $athlete_levels = $payload['Reservation']['Details']['Gymnasts']['Add'];
+        $levels['male'] = [];
+        $levels['female'] = [];
+        foreach ($athlete_levels as $key => $value) {
+            if($value['Gender'] == 'female')
+                $levels['female'][] = $value['Level'];
+            else
+                $levels['male'][] = $value['Level'];
+        }
+        $levels_male = array_unique($levels['male']);
+        $levels_female = array_unique($levels['female']);
+        if(count($levels_male) > 0)
+        {
+            $data = AthleteLevel::select('code')->whereIn('code', $levels_male)
+            ->where('sanctioning_body_id', SanctioningBody::USAG)
+            ->where('level_category_id',LevelCategory::GYMNASTICS_MEN)
+            ->get()->pluck('code')->toArray();
+            $dff_level_male = array_diff($levels_male, $data);
+        }
+        if(count($levels_female) > 0)
+        {
+            $data = AthleteLevel::select('code')->whereIn('code', $levels_female)
+            ->where('sanctioning_body_id', SanctioningBody::USAG)
+            ->where('level_category_id',LevelCategory::GYMNASTICS_WOMEN)
+            ->get()->pluck('code')->toArray();
+            $dff_level_female = array_diff($levels_female, $data);
+        }
+        if(count($dff_level_female) == 0 && count($dff_level_male) == 0)
+        {
+            // everything is ok and levels are found in our db. No need to do anything
+        }
+        else
+        {
+            $level_need['male'] = [];
+            $level_need['female'] = [];
+
+            foreach ($dff_level_female as $key => $value) {
+                $level_need['female'][] = $value;
+            }
+            foreach ($dff_level_male as $key => $value) {
+                $level_need['male'][] = $value;
+            }
+            Mail::to(env('MAIL_ADMIN_ADDRESS'))->cc("zawad.sharif93@gmail.com")->send(new USAGLevelIssue($level_need, $data_to_send));
+        }
     }
 }

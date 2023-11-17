@@ -241,6 +241,8 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::post('errortracing/update-usag-levels','DashboardController@usagLevelsUpdate')->name('admin.error_report.update_usag_level');
         Route::post('errortracing/insert-usag-levels','DashboardController@usagLevelsAdd')->name('admin.error_report.insert_usag_level');
 
+        Route::get('usag_check','DashboardController@usag_check')->name('admin.usag_check');
+
         Route::get('dashboard','DashboardController@index')->name('admin.dashboard');
 
         Route::get('reports-gym-balance','GymBalanceReportController@index')->name('admin.gym.balance.reports');

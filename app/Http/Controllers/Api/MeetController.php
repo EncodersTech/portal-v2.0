@@ -44,6 +44,12 @@ use Illuminate\Support\Facades\Mail;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use stdClass;
 use DateTime;
+// import File
+use Illuminate\Support\Facades\File;
+// import Storage
+use Illuminate\Support\Facades\Storage;
+
+
 class MeetController extends BaseApiController
 {
     public function meetList(Request $request, string $gym)
@@ -1897,10 +1903,10 @@ class MeetController extends BaseApiController
      */
     public function download($meetId): BinaryFileResponse
     {
-        $file_name = substr(json_decode(Meet::where('id', $meetId)->first()['schedule'])->path,9);
-        $path = storage_path().'/'.'app'.'/public/'.$file_name;
-
-        return response()->download($path);
+        $file_name = json_decode(Meet::where('id', $meetId)->first()['schedule'])->path;
+        $base_path = env('APP_URL') . '/storage';
+        $file_name = str_replace($base_path, '', $file_name);
+        return Storage::download($file_name); 
     }
     public function getUSAIGCAthleteCount($igc_no)
     {
