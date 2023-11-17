@@ -192,10 +192,16 @@ class DashboardController extends AppBaseController
                         $result[$key][$k]['heading'] = $temp;
                         $result[$key][$k]['details'] = $v;
                     }
+                    else
+                    {
+                        preg_match_all($date_only_pattern, $v, $matches_string);
+                        $temp = str_replace($matches_string[0],'',$v);
+                        $result[$key][$k]['heading'] = $v;
+                    }
                 }
             }
 
-            // $info_result = [];
+            $matches = [];
             $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.INFO:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/'.$s;
             $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.INFO:/'.$s;
             $date_only_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/'.$s;
@@ -210,6 +216,12 @@ class DashboardController extends AppBaseController
                         $temp = str_replace($matches_string[0],'',$temp);
                         $result[$key][$k]['heading'] = $temp;
                         $result[$key][$k]['details'] = $v;
+                    }
+                    else
+                    {
+                        preg_match_all($date_only_pattern, $v, $matches_string);
+                        $temp = str_replace($matches_string[0],'',$v);
+                        $result[$key][$k]['heading'] = $v;
                     }
                 }
             }
