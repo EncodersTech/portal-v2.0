@@ -157,7 +157,9 @@ class DashboardController extends AppBaseController
     public function getLoggedError()
     {
         $env = env('APP_ENV', 'local');
-        $s = $env == 'production' ? '' : 's';
+        $env = 'production';
+        $s = 's';
+        // $s = $env == 'production' ? '' : 's';
         $logFiles = glob(storage_path('logs/laravel-www-data-*.log'));
         $data_merged = [];
         foreach($logFiles as $logFile)
@@ -171,53 +173,44 @@ class DashboardController extends AppBaseController
             ];
             $result = [];
             $file = file_get_contents($logFile);
-            $file = str_replace("\n","\llm",$file);
 
-            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.ERROR:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/'.$s;
-            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.ERROR:/'.$s;
-            $date_only_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/'.$s;
+            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] \w+\.ERROR:\s.*?(?=\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] \w+\.\w+:|$)/s';
+            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] \w+\.ERROR:/s';
             preg_match_all($pattern, $file, $matches);
             foreach ($matches as $key => $value) {
                 foreach ($value as $k => $v) {
                     $temp = substr($v, 0, strpos($v, '[stacktrace]'));
                     if(trim($temp) != "")
                     {
-                        preg_match_all($date_pattern, $temp, $matches_string);
-                        $temp = str_replace($matches_string[0],'',$temp);
-                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$temp);
-                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
+                        $result[$key][$k]['heading'] = $temp;
+                        $result[$key][$k]['details'] = $v;
                     }
                     else
                     {
-                        preg_match_all($date_pattern, $v, $matches_string);
-                        $temp = str_replace($matches_string[0],'',$v);
-                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$v);
-                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
+                        $result[$key][$k]['heading'] = $v;
+                        $result[$key][$k]['details'] = $v;
                     }
                 }
             }
 
             $matches = [];
-            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.INFO:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/'.$s;
-            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.INFO:/'.$s;
-            $date_only_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]/'.$s;
+            $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] \w+\.INFO:\s.*?(?=\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] \w+\.\w+:|$)/s';
+            $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] \w+\.INFO:/s';
             preg_match_all($pattern, $file, $matches);
             foreach ($matches as $key => $value) {
                 foreach ($value as $k => $v) {
                     $temp = substr($v, 0, strpos($v, '[stacktrace]'));
                     if(trim($temp) != "")
                     {
-                        preg_match_all($date_pattern, $temp, $matches_string);
-                        $temp = str_replace($matches_string[0],'',$temp);
-                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$temp);
-                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
+                        $result[$key][$k]['heading'] = $temp;
+                        $result[$key][$k]['details'] = $v;
                     }
                     else
                     {
                         preg_match_all($date_pattern, $v, $matches_string);
                         $temp = str_replace($matches_string[0],'',$v);
-                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$v);
-                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
+                        $result[$key][$k]['heading'] = $temp;
+                        $result[$key][$k]['details'] = $v;
                     }
                 }
             }
