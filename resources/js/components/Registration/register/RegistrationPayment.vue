@@ -383,6 +383,9 @@
                                 <div v-else-if="chosenMethod.type == 'ach'">
                                     {{ capitalize(chosenMethod.accountType) }} bank account "{{ chosenMethod.name }}"
                                 </div>
+                                <div v-else-if="chosenMethod.type == 'onetimeach'">
+                                    One Time ACH Payment
+                                </div>
 
 <!--                                <div v-else-if="chosenMethod.type == 'paypal'">-->
 <!--                                    PayPal-->
@@ -444,7 +447,7 @@
                             <div v-if="summary.processor > 0" class="row">
                                 <div class="col">
                                     <span class="fas fa-fw fa-file-invoice"></span> 
-                                        Payment Processor Fee ({{this.chosenMethod.fee}} {{this.chosenMethod.type == 'ach' ? '' : '%'}}):
+                                        Payment Processor Fee ({{this.chosenMethod.fee}}{{(this.chosenMethod.type == 'ach' || this.chosenMethod.type == 'onetimeach') ? '' : '%'}}):
                                         <span data-toggle="tooltip"
                                             title="The Payment Processor fees cover expenses related to ACH and Credit Card charges. ACH fees are a flat $10 per transaction and Credit Card fees are between 3%-3.25%. Processing fees are added to the Subtotal & Handling Fee. We utilize 3rd Party Processors to facilitate safe and secure payments."> 
                                             <span class="fas fa-info-circle"></span>

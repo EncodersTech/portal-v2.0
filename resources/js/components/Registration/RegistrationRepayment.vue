@@ -209,6 +209,9 @@
                                 <div v-else-if="chosenMethod.type == 'ach'">
                                     {{ capitalize(chosenMethod.accountType) }} bank account "{{ chosenMethod.name }}"
                                 </div>
+                                <div v-else-if="chosenMethod.type == 'onetimeach'">
+                                    One Time ACH Payment
+                                </div>
 
                                 <div v-else-if="chosenMethod.type == 'paypal'">
                                     PayPal
