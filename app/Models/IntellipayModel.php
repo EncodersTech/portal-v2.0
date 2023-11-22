@@ -55,7 +55,7 @@ class IntellipayModel extends Model
                         $this->registrationTransferCompletedHandler($d->processor_id);
                         Log::info('Onetime ACH Payment Status Cleared : ' . $d->id);
                     }
-                    else if($response['data']['state'] == 3)
+                    else if($response['data']['state'] == 3 || $response['data']['state'] == 6)
                     {
                         // $d->status = MeetTransaction::STATUS_FAILED;
                         $this->registrationTransferFailedOrCanceleddHandler($d->processor_id);
