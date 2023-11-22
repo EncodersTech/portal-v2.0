@@ -1901,7 +1901,7 @@ class MeetController extends BaseApiController
      *
      * @return BinaryFileResponse
      */
-    public function download($meetId): BinaryFileResponse
+    public function download($meetId)
     {
         $file_name = json_decode(Meet::where('id', $meetId)->first()['schedule'])->path;
         $base_path = env('APP_URL') . '/storage';

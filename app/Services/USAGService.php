@@ -768,101 +768,121 @@ class USAGService {
         }        
     }
     public function checkForExistingLevelsInSanction($payload, $data_to_send)
-    {   
-        if(typeof($payload) == 'object')
-        {
-            $payload = json_decode(json_encode($payload), true); // convert object to array
-        }
-        $athlete_levels = $payload['Sanction']['Levels']['Add'];
-        $gender = $payload['Sanction']['DisciplineType'];
-        $dff_level_male = [];
-        $dff_level_female = [];
-        if($gender == 'Women')
-        {
-            $data = AthleteLevel::select('code')->whereIn('code', $athlete_levels)
-            ->where('sanctioning_body_id', SanctioningBody::USAG)
-            ->where('level_category_id',LevelCategory::GYMNASTICS_WOMEN)
-            ->get()->pluck('code')->toArray();
-            $dff_level_female = array_diff($athlete_levels, $data);
-        }
-        else
-        {
-            $data = AthleteLevel::select('code')->whereIn('code', $athlete_levels)
-            ->where('sanctioning_body_id', SanctioningBody::USAG)
-            ->where('level_category_id',LevelCategory::GYMNASTICS_MEN)
-            ->get()->pluck('code')->toArray();
-            $dff_level_male = array_diff($athlete_levels, $data);
-        }
-
-        if(count($dff_level_female) == 0 && count($dff_level_male) == 0)
-        {
-            echo 'all done';
-            // everything is ok and levels are found in our db. No need to do anything
-        }
-        else
-        {
-            $level_need['male'] = [];
-            $level_need['female'] = [];
-
-            foreach ($dff_level_female as $key => $value) {
-                $level_need['female'][] = $value;
+    {  
+        try{
+            if(gettype($payload) == 'object')
+            {
+                $payload = json_decode(json_encode($payload), true); // convert object to array
             }
-            foreach ($dff_level_male as $key => $value) {
-                $level_need['male'][] = $value;
+            if(!isset($payload['Sanction']['Levels']) || !isset($payload['Sanction']['Levels']['Add']))
+                return true;
+
+            $athlete_levels = $payload['Sanction']['Levels']['Add'];
+            $gender = $payload['Sanction']['DisciplineType'];
+            $dff_level_male = [];
+            $dff_level_female = [];
+            if($gender == 'Women')
+            {
+                $data = AthleteLevel::select('code')->whereIn('code', $athlete_levels)
+                ->where('sanctioning_body_id', SanctioningBody::USAG)
+                ->where('level_category_id',LevelCategory::GYMNASTICS_WOMEN)
+                ->get()->pluck('code')->toArray();
+                $dff_level_female = array_diff($athlete_levels, $data);
             }
-            Mail::to(env('MAIL_ADMIN_ADDRESS'))->cc("zawad.sharif93@gmail.com")
-                ->send(new USAGLevelIssue($level_need, $data_to_send));
+            else
+            {
+                $data = AthleteLevel::select('code')->whereIn('code', $athlete_levels)
+                ->where('sanctioning_body_id', SanctioningBody::USAG)
+                ->where('level_category_id',LevelCategory::GYMNASTICS_MEN)
+                ->get()->pluck('code')->toArray();
+                $dff_level_male = array_diff($athlete_levels, $data);
+            }
+    
+            if(count($dff_level_female) == 0 && count($dff_level_male) == 0)
+            {
+                // everything is ok and levels are found in our db. No need to do anything
+            }
+            else
+            {
+                $level_need['male'] = [];
+                $level_need['female'] = [];
+    
+                foreach ($dff_level_female as $key => $value) {
+                    $level_need['female'][] = $value;
+                }
+                foreach ($dff_level_male as $key => $value) {
+                    $level_need['male'][] = $value;
+                }
+                Mail::to(env('MAIL_ADDRESS_IRLA'))->cc(env('MAIL_ADDRESS_CC'))
+                    ->send(new USAGLevelIssue($level_need, $data_to_send));
+            }
+        }
+        catch(Exception $e)
+        {
+            logger()->error(self::class . '::checkForExistingLevelsInSanction() : ' . $e->getMessage());
         }
     }
     public function checkForExistingLevels($payload, $data_to_send) // $payload, $data_to_send
     {
-        if(typeof($payload) == 'object')
-        {
-            $payload = json_decode(json_encode($payload), true); // convert object to array
-        }
-        $athlete_levels = $payload['Reservation']['Details']['Gymnasts']['Add'];
-        $levels['male'] = [];
-        $levels['female'] = [];
-        foreach ($athlete_levels as $key => $value) {
-            if($value['Gender'] == 'female')
-                $levels['female'][] = $value['Level'];
+        try{
+            if(gettype($payload) == 'object')
+            {
+                $payload = json_decode(json_encode($payload), true); // convert object to array
+            }
+            if(!isset($payload['Reservation']['Details']['Gymnasts']) || !isset($payload['Reservation']['Details']['Gymnasts']['Add']))
+                return true;
+            
+            $athlete_levels = $payload['Reservation']['Details']['Gymnasts']['Add'];
+            $levels['male'] = [];
+            $levels['female'] = [];
+            $dff_level_male = [];
+            $dff_level_female = [];
+            
+            foreach ($athlete_levels as $key => $value) {
+                if($value['Gender'] == 'female')
+                    $levels['female'][] = $value['Level'];
+                else
+                    $levels['male'][] = $value['Level'];
+            }
+            $levels_male = array_unique($levels['male']);
+            $levels_female = array_unique($levels['female']);
+            if(count($levels_male) > 0)
+            {
+                $data = AthleteLevel::select('code')->whereIn('code', $levels_male)
+                ->where('sanctioning_body_id', SanctioningBody::USAG)
+                ->where('level_category_id',LevelCategory::GYMNASTICS_MEN)
+                ->get()->pluck('code')->toArray();
+                $dff_level_male = array_diff($levels_male, $data);
+            }
+            if(count($levels_female) > 0)
+            {
+                $data = AthleteLevel::select('code')->whereIn('code', $levels_female)
+                ->where('sanctioning_body_id', SanctioningBody::USAG)
+                ->where('level_category_id',LevelCategory::GYMNASTICS_WOMEN)
+                ->get()->pluck('code')->toArray();
+                $dff_level_female = array_diff($levels_female, $data);
+            }
+            if(count($dff_level_female) == 0 && count($dff_level_male) == 0)
+            {
+                // everything is ok and levels are found in our db. No need to do anything
+            }
             else
-                $levels['male'][] = $value['Level'];
-        }
-        $levels_male = array_unique($levels['male']);
-        $levels_female = array_unique($levels['female']);
-        if(count($levels_male) > 0)
-        {
-            $data = AthleteLevel::select('code')->whereIn('code', $levels_male)
-            ->where('sanctioning_body_id', SanctioningBody::USAG)
-            ->where('level_category_id',LevelCategory::GYMNASTICS_MEN)
-            ->get()->pluck('code')->toArray();
-            $dff_level_male = array_diff($levels_male, $data);
-        }
-        if(count($levels_female) > 0)
-        {
-            $data = AthleteLevel::select('code')->whereIn('code', $levels_female)
-            ->where('sanctioning_body_id', SanctioningBody::USAG)
-            ->where('level_category_id',LevelCategory::GYMNASTICS_WOMEN)
-            ->get()->pluck('code')->toArray();
-            $dff_level_female = array_diff($levels_female, $data);
-        }
-        if(count($dff_level_female) == 0 && count($dff_level_male) == 0)
-        {
-            // everything is ok and levels are found in our db. No need to do anything
-        }
-        else
-        {
-            $level_need['male'] = [];
-            $level_need['female'] = [];
-
-            foreach ($dff_level_female as $key => $value) {
-                $level_need['female'][] = $value;
+            {
+                $level_need['male'] = [];
+                $level_need['female'] = [];
+    
+                foreach ($dff_level_female as $key => $value) {
+                    $level_need['female'][] = $value;
+                }
+                foreach ($dff_level_male as $key => $value) {
+                    $level_need['male'][] = $value;
+                }
+                Mail::to(env('MAIL_ADDRESS_IRLA'))->cc(env('MAIL_ADDRESS_CC'))->send(new USAGLevelIssue($level_need, $data_to_send));
             }
-            foreach ($dff_level_male as $key => $value) {
-                $level_need['male'][] = $value;
-            }
-            Mail::to(env('MAIL_ADMIN_ADDRESS'))->cc("zawad.sharif93@gmail.com")->send(new USAGLevelIssue($level_need, $data_to_send));
+        }
+        catch(Exception $e)
+        {
+            logger()->error(self::class . '::checkForExistingLevels() : ' . $e->getMessage());
         }
     }
 }

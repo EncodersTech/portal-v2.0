@@ -49,7 +49,6 @@ class DashboardController extends AppBaseController
     public function usagLevel()
     {
         $data = [];
-        $data['log_errors'] = $this->getLoggedError();
         $data['usag_levels'] = AthleteLevel::where('sanctioning_body_id', SanctioningBody::USAG)->orderBy('id','ASC')->get();
         $data['label_categories'] = LevelCategory::get();
         $data['page'] = 'usag_level';
@@ -158,9 +157,7 @@ class DashboardController extends AppBaseController
     public function getLoggedError()
     {
         $env = env('APP_ENV', 'local');
-        // $env = 'production';
         $s = $env == 'production' ? '' : 's';
-
         $logFiles = glob(storage_path('logs/laravel-www-data-*.log'));
         $data_merged = [];
         foreach($logFiles as $logFile)
@@ -172,10 +169,9 @@ class DashboardController extends AppBaseController
                 'last_modified' =>  \Datetime::createFromFormat('U', filemtime($logFile))->format('Y-m-d H:i:s'),
                 'date' => preg_match('/\d{4}-\d{2}-\d{2}/', $logFile, $dates) ? $dates[0] : date('Y-m-d', filemtime($logFile))
             ];
-            
-
             $result = [];
             $file = file_get_contents($logFile);
+            $file = str_replace("\n","\llm",$file);
 
             $pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.ERROR:(?:(?!\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\]).)*/'.$s;
             $date_pattern = '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] '.$env.'\.ERROR:/'.$s;
@@ -184,19 +180,19 @@ class DashboardController extends AppBaseController
             foreach ($matches as $key => $value) {
                 foreach ($value as $k => $v) {
                     $temp = substr($v, 0, strpos($v, '[stacktrace]'));
-                    $temp = str_replace('\n','',$temp);
                     if(trim($temp) != "")
                     {
                         preg_match_all($date_pattern, $temp, $matches_string);
                         $temp = str_replace($matches_string[0],'',$temp);
-                        $result[$key][$k]['heading'] = $temp;
-                        $result[$key][$k]['details'] = $v;
+                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$temp);
+                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
                     }
                     else
                     {
-                        preg_match_all($date_only_pattern, $v, $matches_string);
+                        preg_match_all($date_pattern, $v, $matches_string);
                         $temp = str_replace($matches_string[0],'',$v);
-                        $result[$key][$k]['heading'] = $v;
+                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$v);
+                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
                     }
                 }
             }
@@ -209,19 +205,19 @@ class DashboardController extends AppBaseController
             foreach ($matches as $key => $value) {
                 foreach ($value as $k => $v) {
                     $temp = substr($v, 0, strpos($v, '[stacktrace]'));
-                    $temp = str_replace('\n','',$temp);
                     if(trim($temp) != "")
                     {
                         preg_match_all($date_pattern, $temp, $matches_string);
                         $temp = str_replace($matches_string[0],'',$temp);
-                        $result[$key][$k]['heading'] = $temp;
-                        $result[$key][$k]['details'] = $v;
+                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$temp);
+                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
                     }
                     else
                     {
-                        preg_match_all($date_only_pattern, $v, $matches_string);
+                        preg_match_all($date_pattern, $v, $matches_string);
                         $temp = str_replace($matches_string[0],'',$v);
-                        $result[$key][$k]['heading'] = $v;
+                        $result[$key][$k]['heading'] = str_replace("\llm","\n",$v);
+                        $result[$key][$k]['details'] = str_replace("\llm","\n",$v);
                     }
                 }
             }
