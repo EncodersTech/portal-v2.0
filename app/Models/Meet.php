@@ -2534,7 +2534,7 @@ class Meet extends Model
                             else 
                                 continue;
                         }
-                        $levels = $registration->levels()->get();
+                        $levels = $registration->levels()->wherePivotIn('id', $newarr)->get();
                         
                         $k = 0;
                         $level_reg_history = [];
