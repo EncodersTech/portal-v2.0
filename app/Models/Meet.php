@@ -2473,15 +2473,15 @@ class Meet extends Model
                 ]
             ];
 
-            // foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
-            //     // dd($registration->levels()->get());
-            //     $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
-            //     foreach ($auditEvent as $key => $value) {
-            //         // echo '<br>' . $value->id .'<br>';
-            //         $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
-            //         $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
-            //     }
-            // }
+            foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
+                // dd($registration->levels()->get());
+                $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
+                foreach ($auditEvent as $key => $value) {
+                    // echo '<br>' . $value->id .'<br>';
+                    $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
+                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
+                }
+            }
             // dd($registrationAuditReport);
             // process_audit_event
             // die();
@@ -2534,8 +2534,9 @@ class Meet extends Model
                             else 
                                 continue;
                         }
-                        $levels = $registration->levels()->get();
-                        
+                        // $levels = $registration->levels()->get();
+                        $levels = $registration->levels()->wherePivotIn('id', $newarr)->get();
+                        // dd($transaction);
                         $k = 0;
                         $level_reg_history = [];
                         $team_late = 0;
@@ -2571,7 +2572,7 @@ class Meet extends Model
                         $registrations[$i]['transactions'][$j]['level_reg_history'] = $level_reg_history;
                     }
                 }
-
+                // dd($registrations[$i]['transactions'][$j]['level_reg_history']);
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {
                     $adminFee += (isset($transaction->breakdown['gym']['deposit_handling']) && $transaction->breakdown['gym']['deposit_handling'] > 0) ? $transaction->breakdown['gym']['deposit_handling'] : $transaction->breakdown['gym']['handling'];
                     $cardFees += $transaction->breakdown['gym']['processor'];
