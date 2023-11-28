@@ -4146,6 +4146,7 @@ class MeetRegistration extends Model
                 'scratched' => []
             ]
         ];
+        if(isset($auditEvent->athletes))
         foreach ($auditEvent->athletes as $athlete) {
             $athlete = (object)$athlete;
             if(isset($athlete->registration_level))
@@ -4178,6 +4179,7 @@ class MeetRegistration extends Model
                 $change_info['athlete']['new'][] = $a_info;
             }
         }
+        if(isset($auditEvent->specialists))
         foreach ($auditEvent->specialists as $specialist) {
             $specialist = (object)$specialist;
             $current_level = LevelRegistration::find($specialist->level_registration_id);
@@ -4200,6 +4202,7 @@ class MeetRegistration extends Model
             ];
             $change_info['specialist']['new'][] = $specialist_info;
         }
+        if(isset($auditEvent->sp_move))
         foreach ($auditEvent->sp_move as $specialist) {
             $specialist = (object)$specialist;
             $current_level = LevelRegistration::find($specialist->level_registration_id);
@@ -4225,7 +4228,7 @@ class MeetRegistration extends Model
             ];
             $change_info['specialist']['moved'][] = $a_info;
         }
-
+        if(isset($auditEvent->coaches))
         foreach ($auditEvent->coaches as $coach) {
             $coach = (object)$coach;
             $c_info = [
