@@ -64,7 +64,7 @@
                                 </select>
                             </div>
 
-                            <div v-if="add_athlete_level.has_specialist && add_athlete_athlete.length > 0" class="mt-1">
+                            <div v-if="add_athlete_level.allow_specialist && add_athlete_level.has_specialist && add_athlete_athlete.length > 0" class="mt-1">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="modal-add-athlete-specialist"
                                         v-model="add_athlete_specialist">
@@ -220,7 +220,7 @@
                         </div>
 
                         <div class="text-right mt-3">
-                            <button v-if="this.add_athlete_athlete.length > 0"
+                            <button v-if="this.add_athlete_events"
                                 class="btn btn-sm btn-success" @click="addModalEvents()">
                                 <span class="fas fa-user-plus"></span> Add
                             </button>
@@ -1656,8 +1656,11 @@ export default {
                         Utils.remove(parent.athletes, obj);
                     } else if (obj.is_specialist) {
                         obj.events.forEach(evt => {
-                            this.scratchObject(evt, 'event', obj, parent);
+                            if(evt.status != this.constants.athletes.statuses.Scratched)
+                                this.scratchObject(evt, 'event', obj, parent);
                         });
+                        obj.status = this.constants.athletes.statuses.Scratched;
+                        obj.changes.scratch = true;
                     } else {
                         obj.status = this.constants.athletes.statuses.Scratched;
                         obj.changes.scratch = true;
@@ -1679,10 +1682,10 @@ export default {
                         obj.status = this.constants.specialists.statuses.Scratched;
                         obj.changes.scratch = true;
                     }
-                    parent.deduceStatus();
-                    if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
-                        parent.changes.scratch = true;
-                    }
+                    // parent.deduceStatus();
+                    // if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
+                    //     parent.changes.scratch = true;
+                    // }
                     break;
 
                 case 'coach':
@@ -1981,7 +1984,7 @@ export default {
                                 moveSpecialistNewFee = 0;
                             }
                             evt.new_fee = moveSpecialistNewFee;
-                            evt.new_late_fee = this.late ? newLevel.specialist_late_registration_fee : 0;
+                            evt.new_late_fee = 0; //already registered - do not charge late fee ::: this.late ? newLevel.specialist_late_registration_fee : 0;
                         }
                     });
                 } else {
