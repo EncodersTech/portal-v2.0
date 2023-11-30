@@ -149,7 +149,7 @@ class IntellipayService {
                                 'settlementdate' => $value['settlementdate'],
                                 'name' => $value['firstname'] . ' ' . $value['lastname'],
                                 'amount' => $value['amount'],
-                                'paymentstatus' => $this->payment_status[$value['paymentstatus']] . ($value['returnreason'] != '' ? '': ' (return: '.$value['returnreason'].')')
+                                'paymentstatus' => $this->payment_status[$value['paymentstatus']] . ($value['returnreason'] == '' ? '': ' ('.$value['returnreason'].')')
                             ];
                         }
                     }
