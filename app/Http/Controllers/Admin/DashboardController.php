@@ -10,6 +10,7 @@ use App\Models\LevelCategory;
 use App\Repositories\DashboardRepository;
 use Illuminate\Http\Request;
 use App\Services\USAGService;
+use App\Services\IntellipayService;
 
 class DashboardController extends AppBaseController
 {
@@ -61,6 +62,29 @@ class DashboardController extends AppBaseController
         $data['usag_levels'] = AthleteLevel::where('sanctioning_body_id', SanctioningBody::USAG)->orderBy('id','ASC')->get();
         $data['label_categories'] = LevelCategory::get();
         $data['page'] = 'error_notice';
+        return view('admin.error_report.index')->with($data);
+    }
+    public function onetimeach_report_postdddd(Request $request)
+    {
+        dd($request);
+    }
+    public function onetimeach_report()
+    {
+        $from_date = date('m/d/Y',strtotime('-1 month'));
+        $to_date = date('m/d/Y');
+        if(isset($_POST['from_date']) && isset($_POST['to_date']))
+        {
+            $from_date = $_POST['from_date'];
+            $to_date = $_POST['to_date'];
+        }
+        $data = [];
+        $intellipay = resolve(IntellipayService::class);
+        $data['items'] = $intellipay->get_ach_payment_list($from_date,$to_date);
+        // dd($data['items']);
+        $data['label_categories'] = LevelCategory::get();
+        $data['page'] = 'onetimeach_report';
+        $data['from_date'] = $from_date;
+        $data['to_date'] = $to_date;
         return view('admin.error_report.index')->with($data);
     }
     public function usagLevelsUpdate(Request $request)
@@ -229,4 +253,5 @@ class DashboardController extends AppBaseController
         $usag->checkForExistingLevelsInSanction();
         // $usag->checkForExistingLevels();
     }
+
 }

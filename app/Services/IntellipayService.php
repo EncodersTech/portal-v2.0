@@ -26,7 +26,7 @@ class IntellipayService {
     private $marchant_key;
     private $api_key;
     private $host;
-
+    private $payment_status = ['unprocessed', 'queued', 'pending', 'declined', 'settled', 'completed', 'voided', 'refunded', 'awaiting ack'];
     public function __construct()
     {
         // https=>//test.cpteller.com/api/26/webapi.cfc
@@ -39,6 +39,7 @@ class IntellipayService {
         {
             $this->host = 'https://test.cpteller.com/api/26/webapi.cfc';
         }
+        $this->host = 'https://test.cpteller.com/api/26/webapi.cfc';
         $this->marchant_key = env('INTELLIPAY_MARCHANT_KEY');
         $this->api_key = env('INTELLIPAY_API_KEY');
     }
@@ -119,6 +120,63 @@ class IntellipayService {
             );
         }
         
+    }
+    public function get_ach_payment_list($start_date,$end_date)
+    {
+        try{
+            $data = [
+                'method' => 'list_payments',
+                'merchantkey'=> $this->marchant_key,
+                'apikey'=> $this->api_key,
+                'filter' => 'all',
+                'datefilter' => 'prc',
+                'fromdate' => $start_date,
+                'todate' => $end_date
+            ];
+            $client = new Guzzle();
+            $response = $client->post($this->host, ['form_params' => $data]);
+            if ($response->getStatusCode() === 200) {
+                $responseBody = $response->getBody()->getContents();
+                $responseBody = json_decode($responseBody,true);
+                $data = [];
+                if($responseBody["status"] > 0)
+                {
+                    if(count($responseBody['items'])>0)
+                    {
+                        foreach ($responseBody['items'] as $key => $value) {
+                            $data[] = [
+                                'paymentid' => $value['paymentid'],
+                                'paymentdate' => $value['paymentdate'],
+                                'settlementdate' => $value['settlementdate'],
+                                'name' => $value['firstname'] . ' ' . $value['lastname'],
+                                'amount' => $value['amount'],
+                                'paymentstatus' => $this->payment_status[$value['paymentstatus']]
+                            ];
+                        }
+                    }
+                }
+                // sort data based on payment date desc
+                usort($data, function($a, $b) {
+                    return $b['paymentdate'] <=> $a['paymentdate'];
+                });
+                return array(
+                    'status' => 200,
+                    'data' => $data
+                );
+            } else {
+                return array(
+                    'status' => 400,
+                    'data' => "Guzzle status return error"
+                );
+            }
+        }
+        catch(\Exception $e)
+        {
+            return array(
+                'status' => 400,
+                'data' => $e->getMessage()
+            );
+        }
     }
 
 }

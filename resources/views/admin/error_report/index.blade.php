@@ -33,8 +33,10 @@
             @endif
             @if($page == 'usag_level')
                 @include('admin.error_report.usag_level')
-            @else
+            @elseif($page == 'error_notice')
                 @include('admin.error_report.report')
+            @elseif($page == 'onetimeach_report')
+                @include('admin.error_report.achreport')
             @endif
         </div>
     </section>
