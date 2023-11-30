@@ -8,7 +8,7 @@
     @include('PDF.styles.reboot')
     @include('PDF.styles.reports')
 </head>
-
+<!-- page-break-after: always; -->
 <body>
     <div class="header">
         <div class="header-text">
@@ -93,46 +93,41 @@
                             <tr>
                                 <th class="">Description</th>
                                 <th class="">Participant Fees</th>
-                                <th class="">Meet Host Fees</th>
+                                <!-- <th class="">Meet Host Fees</th> -->
                             <tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td class="">Individual Fees</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['reg_fees'], 2)}}</td>
-                                <td class=" text-right">{{number_format($feeArr[$index]['reg_meet_fees'], 2)}}</td>
+                                <!-- <td class=" text-right">{{number_format($feeArr[$index]['reg_meet_fees'], 2)}}</td> -->
                             <tr>
                             <tr>
                                 <td class="">Team Fees</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['team_fees'], 2)}}</td>
-                                <td class=" text-right">{{number_format($feeArr[$index]['team_meet_fees'], 2)}}</td>
+                                <!-- <td class=" text-right">{{number_format($feeArr[$index]['team_meet_fees'], 2)}}</td> -->
                             <tr>
                             <tr>
                                 <td class="">Admin Fee*</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['admin_fees'], 2)}}</td>
-                                <td class=" text-right">{{number_format($feeArr[$index]['admin_meet_fees'], 2)}}</td>
+                                <!-- <td class=" text-right">{{number_format($feeArr[$index]['admin_meet_fees'], 2)}}</td> -->
                             <tr>
                             <tr>
                                 <td class="">Card Fee*</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['card_fees'], 2)}}</td>
-                                <td class=" text-right">{{number_format($feeArr[$index]['card_meet_fees'], 2)}}</td>
+                                <!-- <td class=" text-right">{{number_format($feeArr[$index]['card_meet_fees'], 2)}}</td> -->
                             <tr>
                             <tr>
                                 <td class="">Late Fee*</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['late_fee'], 2)}}</td>
-                                <td class=" text-right">0.00</td>
+                                <!-- <td class=" text-right">0.00</td> -->
                             <tr>
-                                <!-- <tr>
-                                <td class="">Refunds</td>
-                                <td class=" text-right">{{number_format($feeArr[$index]['refund_fees'], 2)}}</td>
-                                <td class=" text-right">{{number_format($feeArr[$index]['refund_meet_fees'], 2)}}</td>
-                            <tr> -->
                         </tbody>
                         <thead>
                             <tr>
                                 <th class="col-1">Total</th>
                                 <th class="col-1  text-right">{{number_format($feeArr[$index]['total_fees'], 2)}}</th>
-                                <th class="col-1  text-right">{{number_format($feeArr[$index]['total_meet_fees'], 2)}}</th>
+                                <!-- <th class="col-1  text-right">{{number_format($feeArr[$index]['total_meet_fees'], 2)}}</th> -->
                             <tr>
                         </thead>
                     </table>
@@ -165,7 +160,8 @@
                         ?>
                         @foreach ($registration->transactions as $transaction)
                             <?php
-                                $reg_type = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? 'MODIFICATION' : 'Reg.';
+                                // MODIFICATION => Mod. 
+                                $reg_type = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? 'Mod.' : 'Reg.';
                                 $symbols = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? '-' : '';
                                 $coupon = (isset($transaction->breakdown['gym']['coupon']) && $transaction->breakdown['gym']['coupon'] > 0) ? $transaction->breakdown['gym']['coupon'] : 0;
                                 if ($transaction->breakdown['gym']['subtotal'] == 0 && $transaction->breakdown['gym']['coupon'] > 0) {
@@ -186,8 +182,8 @@
                                 <td class="col-1">Specialist Fee</td>
                                 <td class="col-1">Team Fee</td>
                                 <td class="col-1">Amount</td>
-                                <td class="col-8  text-right">
-                                    {{number_format( $gym_sub_total,2)}}</td>
+                                <td class="col-1  text-right">
+                                    {{number_format( $gym_sub_total,3)}}</td>
                             <tr>
                             @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
                                 <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
@@ -223,7 +219,7 @@
                             <th class="col-1">Total</th>
                             <th class="col-1">{{$total_reg_at}}</th>
                             <th class="col-1">{{$total_reg_sp_at}}</th>
-                            <th class="col-1" colspan="4"></th>
+                            <th class="col-1" colspan="5"></th>
                             <th class="col-1  text-right">{{number_format($total_reg_fees + $coupon,2)}}</th>
                         <tr>
                     </thead>
@@ -279,7 +275,7 @@
                 </thead>
             </table>
         </div>
-        <div class="float-parent" style="padding-top: 20px !important; page-break-after: always;">
+        <div class="float-parent" style="padding-top: 20px !important;">
             <span><strong>Refund</strong> : By Check* - all refunds are processed directly between meet host and
                 registrant</span><br>
             <table class="table-0 full-width">
@@ -323,6 +319,103 @@
         </div>
     @endforeach
     <hr><br>
+    @foreach($changes as $index => $change)
+        @if($index == "athlete" && count($change) > 0)
+        <div class="float-parent" style="padding-top: 20px !important; ">
+            <span><strong>Athlete Changes</strong></span><br>
+            <table class="table-0 full-width">
+                <thead>
+                <tr>
+                    <th >First Name</th>
+                    <th >Last Name</th>
+                    <th >Current Level</th>
+                    <th >Previous Level</th>
+                    <th >Sanction</th>
+                    <th >Status</th>
+                    <th >Fee</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($change as $key => $value) 
+                    @foreach($value as $k => $v)
+                        <tr>
+                            <td >{{$v['first_name']}}</td>
+                            <td>{{$v['last_name']}}</td>
+                            <td>{{$v['current_level']}}</td>
+                            <td>{{$v['previous_level']}}</td>
+                            <td>{{$v['sanction']}}</td>
+                            <td>{{$key}}</td>
+                            <td>{{number_format($v['fee'],2)}}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+                </tbody>
+            </table>
+        </div>                           
+        @endif
+        @if($index == "specialist" && count($change) > 0)
+        <div class="float-parent" style="padding-top: 20px !important; ">
+            <span><strong>Specialist Changes</strong></span><br>
+            <table class="table-0 full-width">
+                <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Current Level</th>
+                    <th>Previous Level</th>
+                    <th>Sanction</th>
+                    <th>Status</th>
+                    <th>Event</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($change as $key => $value) 
+                    @foreach($value as $k => $v)
+                        <tr>
+                            <td>{{$v['first_name']}}</td>
+                            <td>{{$v['last_name']}}</td>
+                            <td>{{$v['current_level']}}</td>
+                            <td>{{$v['previous_level']}}</td>
+                            <td>{{$v['sanction']}}</td>
+                            <td>{{$key}}</td>
+                            <td>
+                            @foreach($v['event'] as $s => $t)
+                                    {{ $t['name']  .': '. number_format($t['fee'],2)}} </br>
+                            @endforeach
+                            </td>
+                        </tr>
+                    @endforeach
+                @endforeach
+                </tbody>
+            </table>
+        </div>                           
+        @endif
+        @if($index == "coach" && count($change) > 0)
+        <div class="float-parent" style="padding-top: 20px !important; ">
+            <span><strong>Coach Changes</strong></span><br>
+            <table class="table-0 full-width">
+                <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach($change as $key => $value) 
+                    @foreach($value as $k => $v)
+                        <tr>
+                            <td>{{$v['first_name']}}</td>
+                            <td>{{$v['last_name']}}</td>
+                            <td>{{$key}}</td>
+                        </tr>
+                    @endforeach
+                @endforeach
+                </tbody>
+            </table>
+        </div>                           
+        @endif
+    @endforeach
 </body>
 
 <div style="position: absolute;  bottom: -10em;  vertical-align: bottom">
