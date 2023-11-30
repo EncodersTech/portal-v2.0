@@ -2646,24 +2646,36 @@ class Meet extends Model
                     break;
                 }
             }
+            $sanctions = [];
+            $santion_class = [
+                SanctioningBody::USAG => 'usag',
+                SanctioningBody::USAIGC => 'usaigc',
+                SanctioningBody::AAU => 'aau',
+                SanctioningBody::NGA => 'nga'
+            ];
+            
 
-//            foreach ($registrations as $i => $registration) {
-//                /** @var MeetRegistration $registration */
-//                foreach ($this->levels as $l) {
-//                    if ($registration->levels->find($l->id)->pivot->athletes->count() < 1){
-//                        unset($registrations[$i]->levels);
-//                        continue;
-//                    }
-//                }
-//            }
+            // sort $this->levels by sanctioning body and sort sanctions based on it
+            $this->levels = $this->levels->sortBy(function($level) {
+                return $level->sanctioning_body_id;
+            });
+
+            foreach($this->levels as $level) {
+                $sanction = SanctioningBody::find($level->sanctioning_body_id)->initialism;
+                if(isset($sanctions[$sanction]))
+                    $sanctions[$sanction] += 1;
+                else
+                    $sanctions[$sanction] = 1;
+            }
 
             $data = [
                 'meet' => $this,
                 'registrations' => $registrations,
                 'levels' => $this->levels,
+                'sanctions' => $sanctions,
                 'esExists' => $esExists,
+                'sanction_class' => $santion_class
             ];
-
             return PDF::loadView('PDF.host.meet.reports.summary', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
             throw $e;

@@ -30,6 +30,18 @@
     .margin-top {
         padding-top: 10px !important;
     }
+    .usag{
+        background-color: #657daa;
+    }
+    .nga{
+        background-color: #b6c5d6;
+    }
+    .aau{
+        background-color: #c4bbaf;
+    }
+    .usaigc{
+        background-color: #d1b3e9;
+    }
 </style>
 <body>
 @if ($registrations->count() < 1)
@@ -54,6 +66,11 @@
                         <thead>
                         <tr>
                             <th colspan="{{$levels->count()+1}}" class="p-0">Level</th>
+                        </tr>
+                        <tr>
+                            @foreach($sanctions as $k => $s)
+                                <th colspan="{{$s}}" class="p-0">{{$k}}</th>
+                            @endforeach
                         </tr>
                         <tr>
                             @foreach ($levels as $l)
@@ -91,7 +108,7 @@
             $esC = 0;
             ?>
             <tr>
-                <td class="col-sum-1 text-center">{{$loop->iteration}}
+                <td class="col-sum-1 text-left">{{$loop->iteration}}
                     &nbsp;&nbsp;&nbsp;&nbsp;{{ $r->gym->short_name }}</td>
                 @if ($levels->count() > 0)
                     @foreach ($levels as $l)
@@ -103,9 +120,9 @@
                             $esC = $r->levels->find($l->id)->pivot->specialists->count() + $esC;
                             $lAt = $r->levels->find($l->id)->pivot->athletes->count() + $r->levels->find($l->id)->pivot->specialists->count();
                             ?>
-                            <td class="col-sum-3 text-center">{{$lAt}}</td>
+                            <td class="col-sum-3 text-center {{ $sanction_class[$l->sanctioning_body_id] }} ">{{$lAt}}</td>
                         @else
-                            <td class="col-sum-3"></td>
+                            <td class="col-sum-3  {{ $sanction_class[$l->sanctioning_body_id] }}"></td>
                         @endif
                         <?php
                         if (!isset($totLavels[$l->id])) {
@@ -137,7 +154,7 @@
             <td colspan="{{$levels->count()+(($esExists)?3:2)}}"></td>
         </tr>
         <tr>
-            <td class="col-sum-1 text-center">#&nbsp;&nbsp;&nbsp;Total Gyms: {{ count($registrations) }}</td>
+            <td class="col-sum-1 text-left">#&nbsp;&nbsp;&nbsp;Total Gyms: {{ count($registrations) }}</td>
             @if ($levels->count() > 0)
                 @foreach ($levels as $l)
                     <?PHP
