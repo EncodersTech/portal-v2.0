@@ -32,7 +32,7 @@
                             Understanding and managing your funds on AllGymnastics is very simple.
                             Your funds can be in one of two statuses :<br /><br />
 
-                            <strong><span class="fas fa-fw fa-clock"></span> Total Funds</strong>: This amount
+                            <strong><span class="fas fa-fw fa-clock"></span> All Funds Cleared and Pending</strong>: This amount
                             is on-hold on your AllGymnastics account. Funds are automatically put on-hold for 6
                             days when received. After that, they will be added to your available funds.<br /><br />
 
@@ -395,7 +395,7 @@
 
             <div class="col-lg mb-3">
                 <label for="pending_funds" class="mb-1">
-                    <span class="fas fa-fw fa-clock"></span> Total Funds
+                    <span class="fas fa-fw fa-clock"></span> All Funds Cleared and Pending
                 </label>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">
