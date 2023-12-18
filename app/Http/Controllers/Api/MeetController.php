@@ -220,7 +220,8 @@ class MeetController extends BaseApiController
                 'aau' => ['sometimes', 'nullable', 'boolean'],
                 'nga' => ['sometimes', 'nullable', 'boolean'],
                 'name' =>  ['sometimes', 'nullable', 'string', 'max:255'],
-                'open' => ['sometimes', 'nullable', 'boolean']
+                'open' => ['sometimes', 'nullable', 'boolean'],
+                'featured' => ['sometimes', 'nullable', 'boolean'],
             ];
 
             $filters = $request->validate($browseMeetsRules);
@@ -238,7 +239,7 @@ class MeetController extends BaseApiController
             $name = (isset($filters['name']) ? $filters['name'] : null);
             $enddate = (isset($filters['enddate']) ? new \DateTime($filters['enddate']) : null);
             $open = (isset($filters['open']) && $filters['open'] ? true : false);
-
+            $featured = (isset($filters['featured']) && $filters['featured'] ? true : false);
             $query = Meet::with([
                 'gym' => function ($q) {
                     $q->exclude([
@@ -347,6 +348,11 @@ class MeetController extends BaseApiController
             if ($to !== null)
                 $query->where('end_date', '<=', $to);
 
+            if($featured)
+            {
+                $query->where('is_featured', 1);
+            }
+        
             if ($usag || $usaigc || $aau || $nga) {
                 $subquery = ' in (
                     SELECT sanctioning_body_id
@@ -459,6 +465,7 @@ class MeetController extends BaseApiController
                 $net_meet->show_participate_clubs = $meet->show_participate_clubs;
                 $net_meet->gym = $meet->gym;
                 $net_meet->registration_status = $meet->registrationStatus();
+                $net_meet->description = $meet->description;
                 $meet_list[] = $net_meet;
             }
             return $this->success([

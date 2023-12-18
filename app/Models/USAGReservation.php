@@ -1871,6 +1871,9 @@ class USAGReservation extends Model
             }
 
             $transaction = null;
+            if ($gymSummary['total'] == 0 && !$useBalance) {
+                $needRegularTransaction = false;
+            }
             if ($needRegularTransaction) {
                 if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
                     $chosenMethod = [

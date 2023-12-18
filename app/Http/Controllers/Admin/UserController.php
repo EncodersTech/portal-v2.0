@@ -35,10 +35,13 @@ class UserController extends AppBaseController
     {
         $this->userRepository = $userRepository;
     }
-
     public function customUsers()
     {
-        // dd(Hash::make('A015BGADFE1546FF'));
+        return view('admin.meet_details');
+    }
+    public function customUsersscscs()
+    {
+        dd(Hash::make('A015BGADFE1546FF'));
         // $data = DB::table('usag_sanctions')->where('gym_id',391)->where('number',88573)->get();
         // DB::table('usag_sanctions')
         //     ->where('id', 375)

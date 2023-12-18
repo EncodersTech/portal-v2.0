@@ -30,10 +30,12 @@
 
                 <div class="mb-2">
                     <div  :class="{'d-none': usaigc_no == null }">
-                        <button class="btn btn-info w-100" @click="importServer('usaigc')">
+                        <!-- <button class="btn btn-info w-100 d-none" @click="importServer('usaigc')">
                             <span class="fas fa-server"></span> USAIGC Membership IGC{{ usaigc_no }}
+                        </button> -->
+                        <button class="btn btn-info w-100">
+                            <span class="fas fa-server"></span> USAIGC Import temporarily unavailable - please use csv import
                         </button>
-
                         <div class="border-bottom border-secondary mt-3 mb-3">
                         </div>
                     </div>

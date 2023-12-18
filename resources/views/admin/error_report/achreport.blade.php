@@ -138,6 +138,10 @@
             autoclose: true
         });
         $('#todate').datepicker('setDate', <?php echo isset($to_date) ? "'".$to_date."'" : "new Date()" ?>);
+
+        $('#usag_level_table').DataTable({
+            "ordering": false
+        });
     });
 </script>
 @endsection

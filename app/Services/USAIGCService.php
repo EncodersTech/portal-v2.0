@@ -23,7 +23,9 @@ class USAIGCService {
     private $guzzle = null; /** @var Guzzle $guzzle */
 
     public function __construct(bool $useDev = false) {
+        throw new CustomBaseException('USAIGC server is temporarily down, please try again later or contact support in case of emergency.',-1);
         try {
+            throw 
             // trackthis => 
             // $this->apiBase = 'https://' . ($useDev ? self::API_BASE_DEV : self::API_BASE_PROD) . self::API_PATH;
             $this->apiBase = 'https://' . self::API_BASE_PROD . self::API_PATH; // this line was written to get the usaigc.com
