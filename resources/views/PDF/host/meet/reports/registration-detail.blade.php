@@ -318,11 +318,11 @@
                 {{"Meet host must pay the refund directly to club"}} @endif
         </div>
         @if(isset($registration->audit_report))                            
-        @foreach($registration->audit_report as $index => $change)
+        @foreach($registration->audit_report as $indexs => $change)
             @php
                 $count_change = count($change["new"]) + count($change["moved"]) + count($change["scratched"]);
             @endphp
-            @if($index == "athlete" && $count_change > 0)
+            @if($indexs == "athlete" && $count_change > 0)
             <div class="float-parent" style="padding-top: 20px !important; ">
                 <span><strong>Athlete Changes</strong></span><br>
                 <table class="table-0 full-width">
@@ -355,7 +355,7 @@
                 </table>
             </div>                           
             @endif
-            @if($index == "specialist" && $count_change > 0)
+            @if($indexs == "specialist" && $count_change > 0)
             <div class="float-parent" style="padding-top: 20px !important; ">
                 <span><strong>Specialist Changes</strong></span><br>
                 <table class="table-0 full-width">
@@ -392,7 +392,7 @@
                 </table>
             </div>                           
             @endif
-            @if($index == "coach" && $count_change > 0)
+            @if($indexs == "coach" && $count_change > 0)
             <div class="float-parent" style="padding-top: 20px !important; ">
                 <span><strong>Coach Changes</strong></span><br>
                 <table class="table-0 full-width">

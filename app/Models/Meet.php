@@ -2474,14 +2474,6 @@ class Meet extends Model
             ];
 
             foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
-                $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
-                foreach ($auditEvent as $key => $value) {
-                    $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
-                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
-                    $registrations[$i]['audit_report'] = $registrationAuditReport;
-                }
-            }
-            foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
                 $adminFee = 0;
                 $cardFees = 0;
                 $adminMeetFee = 0;
@@ -2492,6 +2484,15 @@ class Meet extends Model
                 $specialistRefundFee = 0;
                 $specialistLateRefundFee = 0;
                 $speicalist_total_fee = 0;
+
+                $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
+                foreach ($auditEvent as $key => $value) {
+                    $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
+                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
+                    $registrations[$i]['audit_report'] = $registrationAuditReport;
+                }
+
+
                 if(count($registration->specialists) > 0){
                     foreach ($registration->specialists as $specialist) {
                         if(count($specialist->events) > 0){

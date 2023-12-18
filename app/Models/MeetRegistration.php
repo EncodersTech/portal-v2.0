@@ -4143,6 +4143,7 @@ class MeetRegistration extends Model
             ],
             'coach' => [
                 'new' => [],
+                'moved' => [],
                 'scratched' => []
             ]
         ];
