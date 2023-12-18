@@ -2468,6 +2468,7 @@ class Meet extends Model
                 ],
                 'coach' => [
                     'new' => [],
+                    'moved' => [],
                     'scratched' => []
                 ]
             ];
@@ -2477,6 +2478,7 @@ class Meet extends Model
                 foreach ($auditEvent as $key => $value) {
                     $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
                     $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
+                    $registrations[$i]['audit_report'] = $registrationAuditReport;
                 }
             }
             foreach ($registrations as $i => $registration) {/** @var MeetRegistration $registration */
@@ -2605,7 +2607,7 @@ class Meet extends Model
             }
             $data['total_fees'] = $data['reg_fees'] + $data['admin_fees'] + $data['card_fees'];// - $data['refund_fees'];
             $data['total_meet_fees'] = $data['reg_meet_fees'] + $data['admin_meet_fees'] + $data['card_meet_fees'] + $data['team_meet_fees'];// - $data['refund_meet_fees'];
-            $data['changes'] = $registrationAuditReport;
+            // $data['changes'] = $registrationAuditReport;
             // dd($data['changes']);
             // dd($data);
             return PDF::loadView('PDF.host.meet.reports.registration-detail', $data);

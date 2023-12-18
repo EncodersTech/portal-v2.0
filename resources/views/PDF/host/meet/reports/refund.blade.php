@@ -45,9 +45,9 @@
                 <tr>
                     <th class="col-1">Club</th>
                     <th class="col-2">Name</th>
-                    <th class="col-3">Event</th>
+                    <!-- <th class="col-3">Event</th>
                     <th class="col-6">DoB</th>
-                    <th class="col-7">Sex</th>
+                    <th class="col-7">Sex</th> -->
                     <th class="col-4">Date</th>
                     <th class="col-5">Action</th>
                     <th class="text-right">Amount</th>
@@ -84,7 +84,7 @@
                                                 {{ $a->fullName() }}
                                             </td>
 
-                                            <td class="col-3">
+                                            <!-- <td class="col-3">
                                                 -
                                             </td>
 
@@ -94,7 +94,7 @@
 
                                             <td class="col-7">
                                                 {{ $a->gender == 'male' ? 'M' : 'F' }}
-                                            </td>
+                                            </td> -->
 
                                             <td class="col-4">
                                                 {{ $a->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}

@@ -920,7 +920,7 @@
                                     </h6>
                                 </div>
 
-                                <div v-if="paymentOptions.methods.check"
+                                <!-- <div v-if="paymentOptions.methods.check"
                                     class="py-1 px-2 mb-2 border bg-white rounded">
                                     <div @click="useCheck()">
                                         <h6 class="clickable m-0 py-2"  :class="{'border-bottom': (optionsExpanded == 'check')}"
@@ -946,7 +946,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div v-if="paymentOptions.methods.balance && (paymentOptions.methods.balance.current > 0)"
                                     class="py-1 px-2 mb-2 border bg-white rounded">

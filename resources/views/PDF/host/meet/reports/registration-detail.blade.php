@@ -317,108 +317,115 @@
                 {{ "Club must pay the refund directly to meet host" }} @else
                 {{"Meet host must pay the refund directly to club"}} @endif
         </div>
+        @if(isset($registration->audit_report))                            
+        @foreach($registration->audit_report as $index => $change)
+            @php
+                $count_change = count($change["new"]) + count($change["moved"]) + count($change["scratched"]);
+            @endphp
+            @if($index == "athlete" && $count_change > 0)
+            <div class="float-parent" style="padding-top: 20px !important; ">
+                <span><strong>Athlete Changes</strong></span><br>
+                <table class="table-0 full-width">
+                    <thead>
+                    <tr>
+                        <th >First Name</th>
+                        <th >Last Name</th>
+                        <th >Current Level</th>
+                        <th >Previous Level</th>
+                        <th >Sanction</th>
+                        <th >Status</th>
+                        <th >Fee</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($change as $key => $value) 
+                        @foreach($value as $k => $v)
+                            <tr>
+                                <td >{{$v['first_name']}}</td>
+                                <td>{{$v['last_name']}}</td>
+                                <td>{{$v['current_level']}}</td>
+                                <td>{{$v['previous_level']}}</td>
+                                <td>{{$v['sanction']}}</td>
+                                <td>{{$key}}</td>
+                                <td>{{number_format($v['fee'],2)}}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>                           
+            @endif
+            @if($index == "specialist" && $count_change > 0)
+            <div class="float-parent" style="padding-top: 20px !important; ">
+                <span><strong>Specialist Changes</strong></span><br>
+                <table class="table-0 full-width">
+                    <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Current Level</th>
+                        <th>Previous Level</th>
+                        <th>Sanction</th>
+                        <th>Status</th>
+                        <th>Event</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($change as $key => $value) 
+                        @foreach($value as $k => $v)
+                            <tr>
+                                <td>{{$v['first_name']}}</td>
+                                <td>{{$v['last_name']}}</td>
+                                <td>{{$v['current_level']}}</td>
+                                <td>{{$v['previous_level']}}</td>
+                                <td>{{$v['sanction']}}</td>
+                                <td>{{$key}}</td>
+                                <td>
+                                @foreach($v['event'] as $s => $t)
+                                        {{ $t['name']  .': '. number_format($t['fee'],2)}} </br>
+                                @endforeach
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>                           
+            @endif
+            @if($index == "coach" && $count_change > 0)
+            <div class="float-parent" style="padding-top: 20px !important; ">
+                <span><strong>Coach Changes</strong></span><br>
+                <table class="table-0 full-width">
+                    <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($change as $key => $value) 
+                        @foreach($value as $k => $v)
+                            <tr>
+                                <td>{{$v['first_name']}}</td>
+                                <td>{{$v['last_name']}}</td>
+                                <td>{{$key}}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>                           
+            @endif
+        @endforeach
+        @endif
+        <div style="page-break-after: always;"></div>
     @endforeach
     <hr><br>
-    @foreach($changes as $index => $change)
-        @if($index == "athlete" && count($change) > 0)
-        <div class="float-parent" style="padding-top: 20px !important; ">
-            <span><strong>Athlete Changes</strong></span><br>
-            <table class="table-0 full-width">
-                <thead>
-                <tr>
-                    <th >First Name</th>
-                    <th >Last Name</th>
-                    <th >Current Level</th>
-                    <th >Previous Level</th>
-                    <th >Sanction</th>
-                    <th >Status</th>
-                    <th >Fee</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($change as $key => $value) 
-                    @foreach($value as $k => $v)
-                        <tr>
-                            <td >{{$v['first_name']}}</td>
-                            <td>{{$v['last_name']}}</td>
-                            <td>{{$v['current_level']}}</td>
-                            <td>{{$v['previous_level']}}</td>
-                            <td>{{$v['sanction']}}</td>
-                            <td>{{$key}}</td>
-                            <td>{{number_format($v['fee'],2)}}</td>
-                        </tr>
-                    @endforeach
-                @endforeach
-                </tbody>
-            </table>
-        </div>                           
-        @endif
-        @if($index == "specialist" && count($change) > 0)
-        <div class="float-parent" style="padding-top: 20px !important; ">
-            <span><strong>Specialist Changes</strong></span><br>
-            <table class="table-0 full-width">
-                <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Current Level</th>
-                    <th>Previous Level</th>
-                    <th>Sanction</th>
-                    <th>Status</th>
-                    <th>Event</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($change as $key => $value) 
-                    @foreach($value as $k => $v)
-                        <tr>
-                            <td>{{$v['first_name']}}</td>
-                            <td>{{$v['last_name']}}</td>
-                            <td>{{$v['current_level']}}</td>
-                            <td>{{$v['previous_level']}}</td>
-                            <td>{{$v['sanction']}}</td>
-                            <td>{{$key}}</td>
-                            <td>
-                            @foreach($v['event'] as $s => $t)
-                                    {{ $t['name']  .': '. number_format($t['fee'],2)}} </br>
-                            @endforeach
-                            </td>
-                        </tr>
-                    @endforeach
-                @endforeach
-                </tbody>
-            </table>
-        </div>                           
-        @endif
-        @if($index == "coach" && count($change) > 0)
-        <div class="float-parent" style="padding-top: 20px !important; ">
-            <span><strong>Coach Changes</strong></span><br>
-            <table class="table-0 full-width">
-                <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach($change as $key => $value) 
-                    @foreach($value as $k => $v)
-                        <tr>
-                            <td>{{$v['first_name']}}</td>
-                            <td>{{$v['last_name']}}</td>
-                            <td>{{$key}}</td>
-                        </tr>
-                    @endforeach
-                @endforeach
-                </tbody>
-            </table>
-        </div>                           
-        @endif
-    @endforeach
+
 </body>
 
-<div style="position: absolute;  bottom: -10em;  vertical-align: bottom">
+<div style="position: absolute;  bottom: -10em;  vertical-align: bottom" >
     * Admin and CC/ACH fees are non-refundable
 </div>
 </html>
