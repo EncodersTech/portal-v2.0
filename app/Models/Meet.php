@@ -2488,8 +2488,7 @@ class Meet extends Model
                 $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
                 foreach ($auditEvent as $key => $value) {
                     $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
-                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
-                    $registrations[$i]['audit_report'] = $registrationAuditReport;
+                    $registrations[$i]['audit_report'] = $this->mergeValue($vs,$registrationAuditReport);
                 }
 
 
