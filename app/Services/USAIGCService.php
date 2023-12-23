@@ -23,9 +23,7 @@ class USAIGCService {
     private $guzzle = null; /** @var Guzzle $guzzle */
 
     public function __construct(bool $useDev = false) {
-        throw new CustomBaseException('USAIGC server is temporarily down, please try again later or contact support in case of emergency.',-1);
         try {
-            throw 
             // trackthis => 
             // $this->apiBase = 'https://' . ($useDev ? self::API_BASE_DEV : self::API_BASE_PROD) . self::API_PATH;
             $this->apiBase = 'https://' . self::API_BASE_PROD . self::API_PATH; // this line was written to get the usaigc.com
@@ -41,6 +39,7 @@ class USAIGCService {
 
     public function getClub(string $clubId)
     {
+        throw new CustomBaseException('USAIGC server is temporarily down, please try again later or contact support in case of emergency.',-1);
         $clubId = str_replace("IGC","",$clubId);
         $path = 'getClub?ID=IGC' . $clubId;
         try {
@@ -58,6 +57,7 @@ class USAIGCService {
     }
     public function getCoach(string $clubId)
     {
+        throw new CustomBaseException('USAIGC server is temporarily down, please try again later or contact support in case of emergency.',-1);
         $clubId = str_replace("IGC","",$clubId);
         $path = 'getClubCoach?ID=IGC' . $clubId;
         try {
@@ -75,6 +75,7 @@ class USAIGCService {
     }
     public function setSanction($igcno, $url)
     {
+        throw new CustomBaseException('USAIGC server is temporarily down, please try again later or contact support in case of emergency.',-1);
         $path = 'setSanctionUrl/'.$igcno.'?data='.$url;
         try {
             $responseJSON = (string) $this->guzzle->request('GET', $path)->getBody();
@@ -91,6 +92,7 @@ class USAIGCService {
     }
     public function verifyAthlete($athlete, bool $throw = false)
     {
+        return true;
         $path = 'getAthleteStatus?ID=IGC';
         try {
             $issues = [];
@@ -159,6 +161,7 @@ class USAIGCService {
 
     public function verifyAthletes(RegistrationAthleteVerification $verification) : array
     {
+        return true;
         $path = 'getAthleteStatus?ID=IGC';
         try {
             $registration = $verification->meet_registration; /** @var MeetRegistration $registration */
