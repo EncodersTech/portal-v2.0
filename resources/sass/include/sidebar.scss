@@ -1,0 +1,304 @@
+
+$sidebar-hover: rgba($color: $white, $alpha: 0.05);
+
+.animate-collapse, .animate-collapse div, .animate-collapse img {
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s;
+}
+
+.sidebar {
+    width: 248px;
+    min-height: 100vh;
+    height: 100%;//max-content;
+    background-color: $gray-900;
+    color: $white;
+    display: flex;
+    align-content: flex-start;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    flex-grow: 0;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0px;
+    left: 0px;
+
+    a {
+        color: inherit;
+    }
+
+    .sidebar-brand-and-collapse {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        padding: 1rem;
+    
+        .sidebar-brand {
+            flex-grow: 1;
+
+            .logo {
+                height: 40px;
+            }
+        }
+
+        .sidebar-collapse-button {
+            align-self: flex-end;
+            background-color: transparent;
+            color: $gray-400;
+            border: none;
+            border-radius: $border-radius;
+            padding: 0;
+            margin-top: auto;
+            margin-bottom: auto;
+            transition: all 0.5s;
+            outline: 0;
+
+            &:hover {
+                color: $white;
+                transition: all 1.0s;
+            }
+        }
+    }
+
+    .sidebar-collapsible {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        flex-grow: 1;
+
+        .sidebar-pushdown {
+            margin-top: auto;
+            justify-self: end;
+        }
+
+        .sidebar-item {
+            padding: 0.5rem;
+            transition: all 0.25s;
+            background-color: transparent;
+            color: $gray-400;
+    
+            &:hover {
+                background-color: $sidebar-hover;
+                color: $white;
+                transition: all 0.5s;
+            }
+
+            .sidebar-link {
+                display: block;
+            }
+        }
+
+        .sidebar-dropdown {
+            padding: 0;
+
+            &:hover {
+                background-color: transparent;
+            }
+            
+            .sidebar-dropdown-toggle {
+                padding: 0.5rem;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-items: center;
+
+                .sidebar-item-text {
+                    flex-grow: 1;
+                }
+                
+                .sidebar-dropdown-caret {
+                    margin-right: auto;
+                    &::after {
+                        content: '\f0d7'
+                    }
+                }
+
+                &.collapsed {
+                    .sidebar-dropdown-caret {
+                        &::after {
+                            content: '\f0d9'
+                        }
+                    }
+                }
+            }
+
+            .sidebar-submenu {
+                background-color: $sidebar-hover;
+                font-size: 0.8rem;
+                padding: 0.5rem 0;
+
+                .sidebar-item {
+                    padding-left: 1rem;
+                }
+            }
+        }
+
+        .profile-picture {
+            display: inline-block;
+            height: 36px;
+            width: 36px;
+            margin-right: 0.5rem;
+        }
+    }
+
+    &.sidebar-collapsed {
+        width: 52px;
+    
+        .sidebar-brand {
+            width: 0;
+    
+            .logo {
+                height: 0;
+            }
+        }
+    
+        .sidebar-brand-and-collapse {
+            padding: 0.5rem;
+            
+            .sidebar-collapse-button {
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+    
+        .sidebar-collapsible {
+            
+            .sidebar-item {
+                padding: 0.5rem;
+                font-size: 1.4em;
+    
+                .sidebar-link, .sidebar-text {
+                    display: block;
+                    text-align: center;
+    
+                    .sidebar-item-text {
+                        display: none;
+                    }
+                }
+            }
+
+            .sidebar-dropdown {
+    
+                &:hover {
+                    background-color: $sidebar-hover;
+                }
+
+                .sidebar-dropdown-toggle {
+                    padding: 0;
+                }
+            }
+
+            .profile-picture {
+                margin-right: 0;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .sidebar {
+        &.sidebar-collapsed { 
+            .sidebar-collapse-hidden {
+                display: none;
+            }
+
+            .sidebar-dropdown {
+                &.active {
+                    padding-left: calc( (1rem - 5px) / 2);
+                    padding-right: calc( (1rem - 5px) / 2);
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+
+    .animate-collapse, .animate-collapse div, .animate-collapse img {
+        -webkit-transition: all 0.5s;
+        -moz-transition: all 0.5s;
+        -o-transition: all 0.5s;
+        transition: all 0.5s;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        height: auto;
+        display: block;
+        position: static;
+    
+        .sidebar-brand-and-collapse {
+            padding: 1rem;
+
+            .sidebar-brand {
+
+                .logo {
+                    height: 32px;
+                }
+            }
+        }
+
+        .sidebar-collapsible {
+            padding: 0;
+            border: none;
+            display: none;
+
+            .sidebar-pushdown {
+                justify-self: normal;
+            }
+
+            .sidebar-dropdown {
+                padding: 0 !important;
+    
+                &:hover {
+                    background-color: transparent !important;
+                }
+                
+                .sidebar-dropdown-toggle {
+                    padding: 0.5rem !important;
+                    display: flex !important;
+                }
+            }
+
+            .profile-picture {
+                margin-right: 0.5rem !important;
+            }
+        }
+    }
+    
+    .sidebar.sidebar-collapsed {
+        width: 100%;
+
+        .sidebar-brand-and-collapse {
+            padding: 1rem;
+        }
+
+        .sidebar-collapsible {
+            border-top: 1px $gray-800 solid;
+            padding-top: 0.25rem;
+            display: flex;
+
+            .sidebar-item {
+                font-size: 1.0em;
+
+                .sidebar-link, .sidebar-text {
+                    text-align: left;
+    
+                    .sidebar-item-text {
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.sidebar {
+
+    .active {
+        border-left: 5px $white solid;
+        color: $white !important;
+    }
+}

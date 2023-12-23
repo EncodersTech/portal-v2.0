@@ -1,0 +1,37 @@
+// Body
+$body-bg: #f8fafc;
+
+// Typography
+$font-family-sans-serif: 'Montserrat', sans-serif;
+$font-size-base: 0.9rem;
+$line-height-base: 1.6;
+
+// Colors
+$blue: #0A5B7A;
+$indigo: #6574cd;
+$purple: #9561e2;
+$pink: #f66d9b;
+$red: #DC3545;
+$orange: #f6993f;
+$yellow: #FFC107;
+$green: #28A745;
+$teal: #4dc0b5;
+$cyan: #17A2B8;
+
+// Theme
+$primary:       $blue;
+$secondary:     #CED4DA;
+$success:       $green;
+$info:          $cyan;
+$warning:       $yellow;
+$danger:        $red;
+$light:         #F8F9FA;
+$dark:          #343A40;
+
+// Links
+$link-hover-decoration:                   none !default;
+
+// Alerts
+$alert-bg-level:                    2 !default;
+$alert-border-level:                3 !default;
+$alert-color-level:                 -12 !default;

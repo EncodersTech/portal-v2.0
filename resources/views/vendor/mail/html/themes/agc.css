@@ -1,0 +1,317 @@
+/* Base */
+
+body,
+body *:not(html):not(style):not(br):not(tr):not(code) {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #74787e;
+    height: 100%;
+    hyphens: auto;
+    line-height: 1.4;
+    margin: 0;
+    -moz-hyphens: auto;
+    -ms-word-break: break-all;
+    width: 100% !important;
+    -webkit-hyphens: auto;
+    -webkit-text-size-adjust: none;
+    word-break: break-all;
+    word-break: break-word;
+}
+
+p,
+ul,
+ol,
+blockquote {
+    line-height: 1.4;
+    text-align: left;
+}
+
+a {
+    color: #0F85B3;
+}
+
+a img {
+    border: none;
+}
+
+/* Typography */
+
+h1 {
+    color: #3d4852;
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: 0;
+    text-align: left;
+}
+
+h2 {
+    color: #3d4852;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 0;
+    text-align: left;
+}
+
+h3 {
+    color: #3d4852;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 0;
+    text-align: left;
+}
+
+p {
+    color: #3d4852;
+    font-size: 16px;
+    line-height: 1.5em;
+    margin-top: 0;
+    text-align: left;
+}
+
+p.sub {
+    font-size: 12px;
+}
+
+img {
+    max-width: 100%;
+}
+
+/* Layout */
+
+.wrapper {
+    background-color: #f8fafc;
+    background-image: url('https://portal.allgymnastics.com/static/dist/img/bg-login.jpg');
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.content {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+/* Header */
+
+.header {
+    padding: 0 0;
+    text-align: center;
+}
+
+.header a {
+    color: #bbbfc3;
+    font-size: 19px;
+    font-weight: bold;
+    text-decoration: none;
+    text-shadow: 0 1px 0 white;
+}
+
+.logo-container {
+    display: block;
+}
+
+.logo {
+    width: 50vmax;
+    min-width: 64px;
+    max-width: 160px;
+}
+
+.header .p {
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center !important;
+    font-size: 12px;
+    color: #818A91;
+}
+
+/* Body */
+
+.body {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid #edeff2;
+    border-top: 1px solid #edeff2;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.inner-body {
+    background-color: transparent;
+    margin: 0 auto;
+    padding: 0;
+    width: 570px;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 570px;
+}
+
+/* Subcopy */
+
+.subcopy {
+    color: #CED4DA;
+    border-top: 1px solid #edeff2;
+    margin-top: 25px;
+    padding-top: 25px;
+}
+
+.subcopy p {
+    font-size: 12px;
+}
+
+/* Footer */
+
+.footer-container {
+    background-color: transparent;
+}
+
+.footer {
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    width: 570px;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 570px;
+}
+
+.footer p {
+    color: #818A91;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Tables */
+
+.table table {
+    margin: 30px auto;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.table th {
+    border-bottom: 1px solid #edeff2;
+    padding-bottom: 8px;
+    margin: 0;
+}
+
+.table td {
+    color: #74787e;
+    font-size: 15px;
+    line-height: 18px;
+    padding: 10px 0;
+    margin: 0;
+}
+
+.content-cell {
+    padding: 35px;
+}
+
+/* Buttons */
+
+.action {
+    margin: 30px auto;
+    padding: 0;
+    text-align: center;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.button {
+    border-radius: 3px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.16);
+    color: #fff;
+    display: inline-block;
+    text-decoration: none;
+    -webkit-text-size-adjust: none;
+}
+
+.button-blue,
+.button-primary {
+    background-color: #0A5B7A;
+    border-top: 10px solid #0A5B7A;
+    border-right: 18px solid #0A5B7A;
+    border-bottom: 10px solid #0A5B7A;
+    border-left: 18px solid #0A5B7A;
+}
+
+.button-green,
+.button-success {
+    background-color: #28A745;
+    border-top: 10px solid #28A745;
+    border-right: 18px solid #28A745;
+    border-bottom: 10px solid #28A745;
+    border-left: 18px solid #28A745;
+}
+
+.button-red,
+.button-error {
+    background-color: #DC3545;
+    border-top: 10px solid #DC3545;
+    border-right: 18px solid #DC3545;
+    border-bottom: 10px solid #DC3545;
+    border-left: 18px solid #DC3545;
+}
+
+/* Panels */
+
+.panel {
+    margin: 0 0 21px;
+}
+
+.panel-content {
+    background-color: #f1f5f8;
+    padding: 16px;
+}
+
+.panel-item {
+    padding: 0;
+}
+
+.panel-item p:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+/* Promotions */
+
+.promotion {
+    background-color: #ffffff;
+    border: 2px dashed #9ba2ab;
+    margin: 0;
+    margin-bottom: 25px;
+    margin-top: 25px;
+    padding: 24px;
+    width: 100%;
+    -premailer-cellpadding: 0;
+    -premailer-cellspacing: 0;
+    -premailer-width: 100%;
+}
+
+.promotion h1 {
+    text-align: center;
+}
+
+.promotion p {
+    font-size: 15px;
+    text-align: center;
+}

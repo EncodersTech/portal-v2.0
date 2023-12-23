@@ -1,0 +1,40 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,700,700i');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+// Font Awesome 5.8
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/brands';
+
+.invalid-feedback {
+    display: block;
+}
+
+body {
+    background-image: url('/img/bg.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.no-background {
+    background: initial;
+}
+
+@each $intensity, $color in $grays {
+    .text-gray-#{$intensity} {
+        color: #{$color};
+    }
+
+    .bg-gray-#{$intensity} {
+        background-color: #{$color};
+    }
+}
