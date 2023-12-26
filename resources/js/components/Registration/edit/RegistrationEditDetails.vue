@@ -54,7 +54,11 @@
 
                     <div class="modal-body">
                         <div v-if="add_athlete_level">
-                            <p>Please select which athlete to add</p>
+                            <p>Please select which athlete to add  <br>
+                            <span class="fas fa-exclamation-circle"></span>
+                            <span style="color:blue;">Drag and hold down <strong>Command</strong> or <strong>Control</strong> and click to select multiple athletes</span> 
+                            </p>
+
                             <div>
                                 <select class="form-control form-control-sm" v-model="add_athlete_athlete" multiple size='10'>
                                     <option v-for="athlete in filtreredAthletesForAddModal" :key="'modal-' + athlete.id"
@@ -1336,8 +1340,13 @@ export default {
                     let gender = (this.add_athlete_level.male && (a.gender == 'male')) ||
                             (this.add_athlete_level.female && (a.gender == 'female'));
 
-                    return sanction && gender;
+                    var level = false;
+                    if(sanction)
+                        level = a[body + '_level'].id == this.add_athlete_level.id;
+                    return sanction && gender && level;
                 });
+                // filter by levels
+                
             }
 
             return result;
