@@ -40,196 +40,183 @@
     @if ($registrations->count() < 1)
         No Refunds.
     @else
-        <table class="table-0">
-            <thead>
-                <tr>
-                    <th class="col-1">Club</th>
-                    <th class="col-2">Name</th>
-                    <!-- <th class="col-3">Event</th>
-                    <th class="col-6">DoB</th>
-                    <th class="col-7">Sex</th> -->
-                    <th class="col-4">Date</th>
-                    <th class="col-5">Action</th>
-                    <th class="text-right">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($registrations as $r)
+
+        @for($i=0; $i<=1;$i++)
+            @foreach ($registrations as $r)
+                <table class="table-0" style="margin-bottom:5em;">
+                    <thead>
                     <tr>
-                        <td  class="col-1">
-                            <strong>{{ $r->gym->name }}</strong><br/>
+                        <th class="col-1">Club</th>
+                        <th class="col-2">Name</th>
+                        <th class="col-3">Event</th>
+                        <th class="col-4">Date</th>
+                        <th class="col-5">Action</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td  class="col-1">
+                                <strong>{{ $r->gym->name }}</strong><br/>
 
-                            <address>
-                                <strong>Address: </strong>
-                                {{ $r->gym->addr_1 }}<br/>
+                                <address>
+                                    <strong>Address: </strong>
+                                    {{ $r->gym->addr_1 }}<br/>
 
-                                @if ($r->gym->addr_2)
-                                    {{ $r->gym->addr_2 }}<br/>
-                                @endif
-
-                                {{ $r->gym->city }}, {{ $r->gym->state->code }},
-                                {{ $r->gym->zipcode }}<br/>
-                                {{ $r->gym->country->name }}
-                            </address>
-
-                            <strong>Phone:</strong> {{ $r->gym->office_phone }}
-                        </td>
-
-                        <td colspan="7" class="p-0">
-                            <table class="table-1">
-                                <tbody>
-                                    @foreach ($r->athletes as $a)
-                                        <tr>
-                                            <td class="col-2">
-                                                {{ $a->fullName() }}
-                                            </td>
-
-                                            <!-- <td class="col-3">
-                                                -
-                                            </td>
-
-                                            <td class="col-6">
-                                                {{ $a->dob->format(Helper::AMERICAN_SHORT_DATE) }}
-                                            </td>
-
-                                            <td class="col-7">
-                                                {{ $a->gender == 'male' ? 'M' : 'F' }}
-                                            </td> -->
-
-                                            <td class="col-4">
-                                                {{ $a->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
-                                            </td>
-
-                                            <td class="col-5">
-                                                @switch($a->status)
-                                                    @case(\App\Models\RegistrationAthlete::STATUS_SCRATCHED)
-                                                        Scratched
-                                                        @break
-
-                                                    @default
-                                                        Moved
-                                                @endswitch
-                                            </td>
-
-                                            <td class="text-right">
-                                                $ {{ number_format($a->refund_fee(), 2) }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                                    @foreach ($r->specialists as $s)
-                                        <tr>
-                                            <td class="col-2">
-                                                {{ $s->fullName() }}
-                                            </td>
-
-                                            <td colspan="6" class="p-0">
-                                                <table class="table-2">
-                                                    <tbody>
-                                                        @foreach ($s->events as $evt)
-                                                            <tr>
-                                                                <td class="col-3">
-                                                                    {{ $evt->specialist_event->name }}
-                                                                </td>
-
-                                                                <td class="col-6">
-                                                                    {{ $s->dob->format(Helper::AMERICAN_SHORT_DATE) }}
-                                                                </td>
-
-                                                                <td class="col-7">
-                                                                    {{ $s->gender == 'male' ? 'M' : 'F' }}
-                                                                </td>
-
-                                                                <td class="col-4">
-                                                                    {{ $evt->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
-                                                                </td>
-
-                                                                <td class="col-5">
-                                                                    @switch($evt->status)
-                                                                        @case(\App\Models\RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED)
-                                                                            Scratched
-                                                                            @break
-
-                                                                        @default
-                                                                            Moved
-                                                                    @endswitch
-                                                                </td>
-
-                                                                <td class="text-right">
-                                                                    $ {{ number_format($evt->refund_fee(), 2) }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                                    @foreach ($r->levels as $l)
-                                        <tr>
-                                            <td colspan="4">
-                                                <strong>
-                                                    {{ $l->sanctioning_body->initialism }} |
-                                                    {{ $l->level_category->name }} |
-                                                    {{ $l->name }}
-
-                                                    @if ($l->pivot->disabled)
-                                                        (disabled))
-                                                    @endif
-                                                </strong>
-                                            </td>
-
-                                            <td class="col-4">
-                                                {{ $l->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
-                                            </td>
-
-                                            <td class="col-5">
-                                                Team Refund
-                                            </td>
-
-                                            <td class="text-right">
-                                                $ {{ number_format($l->pivot->refund_fee(), 2) }}
-                                            </td>
-                                        </tr>
-                                    @endforeach
-
-                                    @if ($r->late_refund > 0)
-                                        <tr>
-                                            <td colspan="4">
-                                                <strong>
-                                                    Late Registration Refund
-                                                </strong>
-                                            </td>
-
-                                            <td class="col-4">
-                                                {{ $l->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
-                                            </td>
-
-                                            <td class="col-5">
-                                                Late Refund
-                                            </td>
-
-                                            <td class="text-right">
-                                                $ {{ number_format($r->late_refund, 2) }}
-                                            </td>
-                                        </tr>
+                                    @if ($r->gym->addr_2)
+                                        {{ $r->gym->addr_2 }}<br/>
                                     @endif
 
-                                    <tr>
-                                        <td colspan="4"></td>
-                                        <td colspan="2" class="total">Total</td>
-                                        <td class="text-right total">
-                                            $ {{ number_format($r->total, 2) }}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                                    {{ $r->gym->city }}, {{ $r->gym->state->code }},
+                                    {{ $r->gym->zipcode }}<br/>
+                                    {{ $r->gym->country->name }}
+                                </address>
+
+                                <strong>Phone:</strong> {{ $r->gym->office_phone }}
+                            </td>
+
+                            <td colspan="5" class="p-0">
+                                <table class="table-1">
+                                    <tbody>
+                                        @foreach ($r->athletes as $a)
+                                            <tr>
+                                                <td class="col-2">
+                                                    {{ $a->fullName() }}
+                                                </td>
+
+                                                <td class="col-3">
+                                                    -
+                                                </td>
+
+                                                <td class="col-4">
+                                                    {{ $a->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
+                                                </td>
+
+                                                <td class="col-5">
+                                                    @switch($a->status)
+                                                        @case(\App\Models\RegistrationAthlete::STATUS_SCRATCHED)
+                                                            Scratched
+                                                            @break
+
+                                                        @default
+                                                            Moved
+                                                    @endswitch
+                                                </td>
+                                                <td colspan="3" class="text-right" >
+                                                    $ {{ number_format($a->refund_fee(), 2) }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+
+                                        @foreach ($r->specialists as $s)
+                                            <tr>
+                                                <td class="col-2">
+                                                    {{ $s->fullName() }}
+                                                </td>
+
+                                                <td colspan="6" class="p-0">
+                                                    <table class="table-2">
+                                                        <tbody>
+                                                            @foreach ($s->events as $evt)
+                                                                <tr>
+                                                                    <td class="col-3">
+                                                                        {{ $evt->specialist_event->name }}
+                                                                    </td>
+
+                                                                    <td class="col-4">
+                                                                        {{ $evt->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
+                                                                    </td>
+
+                                                                    <td class="col-5">
+                                                                        @switch($evt->status)
+                                                                            @case(\App\Models\RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED)
+                                                                                Scratched
+                                                                                @break
+
+                                                                            @default
+                                                                                Moved
+                                                                        @endswitch
+                                                                    </td>
+
+                                                                    <td class="text-right">
+                                                                        $ {{ number_format($evt->refund_fee(), 2) }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+
+                                        @foreach ($r->levels as $l)
+                                            <tr>
+                                                <td colspan="4">
+                                                    <strong>
+                                                        {{ $l->sanctioning_body->initialism }} |
+                                                        {{ $l->level_category->name }} |
+                                                        {{ $l->name }}
+
+                                                        @if ($l->pivot->disabled)
+                                                            (disabled))
+                                                        @endif
+                                                    </strong>
+                                                </td>
+
+                                                <td class="col-4">
+                                                    {{ $l->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
+                                                </td>
+
+                                                <td class="col-5">
+                                                    Team Refund
+                                                </td>
+
+                                                <td class="text-right">
+                                                    $ {{ number_format($l->pivot->refund_fee(), 2) }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+
+                                        @if ($r->late_refund > 0)
+                                            <tr>
+                                                <td colspan="4">
+                                                    <strong>
+                                                        Late Registration Refund
+                                                    </strong>
+                                                </td>
+
+                                                <td class="col-4">
+                                                    {{ $l->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
+                                                </td>
+
+                                                <td class="col-5">
+                                                    Late Refund
+                                                </td>
+
+                                                <td class="text-right">
+                                                    $ {{ number_format($r->late_refund, 2) }}
+                                                </td>
+                                            </tr>
+                                        @endif
+
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td colspan="2" class="total">Total</td>
+                                            <td class="text-right total">
+                                                $ {{ number_format($r->total, 2) }}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                    <span  style="margin-bottom:15px;"></span>
+            @endforeach
+        @endfor
+
+
     @endif
 </body>
 </html>
