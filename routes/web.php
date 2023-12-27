@@ -178,9 +178,9 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     });
 
     Route::middleware(['permission:access_report'])->group(function () {
-        Route::middleware('throttle:50,1')->get('/gym/{gym}/registration/{registration}/report/{reportType}', 'MeetRegistrationController@reportCreate');
+        Route::middleware('throttle:500,1')->get('/gym/{gym}/registration/{registration}/report/{reportType}', 'MeetRegistrationController@reportCreate');
 
-        Route::middleware('throttle:5,1')->get('/host/{hostingGym}/meets/{meet}/report/{reportType}/create/{gym?}', 'MeetController@hostReportCreate');
+        Route::middleware('throttle:500,1')->get('/host/{hostingGym}/meets/{meet}/report/{reportType}/create/{gym?}', 'MeetController@hostReportCreate');
         Route::get('/host/{gym}/meets/{meet}/dashboard', 'MeetController@hostMeetDashboard')->name('host.meets.dashboard');
 
         //meet dashboard chart route
