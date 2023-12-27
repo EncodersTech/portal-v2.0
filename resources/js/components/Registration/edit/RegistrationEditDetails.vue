@@ -56,14 +56,14 @@
                         <div v-if="add_athlete_level">
                             <p>Please select which athlete to add  <br>
                             <span class="fas fa-exclamation-circle"></span>
-                            <span style="color:blue;">Drag and hold down <strong>Command</strong> or <strong>Control</strong> and click to select multiple athletes</span> 
+                            <span style="color:blue; font-size: 11px;">Drag and hold down <strong>Command</strong> or <strong>Control</strong> and click to select multiple athletes</span> 
                             </p>
 
                             <div>
                                 <select class="form-control form-control-sm" v-model="add_athlete_athlete" multiple size='10'>
                                     <option v-for="athlete in filtreredAthletesForAddModal" :key="'modal-' + athlete.id"
                                         :value="athlete">
-                                        {{ athlete.first_name }} {{ athlete.last_name }}
+                                        {{ athlete.active_level }} - {{ athlete.first_name }} {{ athlete.last_name }}
                                     </option>
                                 </select>
                             </div>
@@ -1335,17 +1335,27 @@ export default {
                         body = 'nga';
                         break;
                 }
+
+                // i want add a active_level parameter based on level 
                 result = this.gym.athletes.filter(a => {
                     let sanction = a[body + '_active'] && (a[body + '_no'] !== null);
                     let gender = (this.add_athlete_level.male && (a.gender == 'male')) ||
                             (this.add_athlete_level.female && (a.gender == 'female'));
 
-                    var level = false;
-                    if(sanction)
-                        level = a[body + '_level'].id == this.add_athlete_level.id;
-                    return sanction && gender && level;
+                    // var level = false;
+                    // if(sanction)
+                    //     level = a[body + '_level'].id == this.add_athlete_level.id;
+                    return sanction && gender;
                 });
-                // filter by levels
+
+                $.each(result, function(index, value){
+                    value.active_level = value[body + '_level'].abbreviation;
+                });
+                // result.each(a => {
+                //     a.active_level = a[body + '_level'].abbreviation;
+                // });
+
+                result = _.sortBy(result, ['active_level', 'first_name']);
                 
             }
 
