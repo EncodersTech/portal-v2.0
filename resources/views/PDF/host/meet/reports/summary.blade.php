@@ -31,7 +31,7 @@
         padding-top: 10px !important;
     }
     .usag{
-        background-color: #657daa;
+        background-color: #bcc9e0;
     }
     .nga{
         background-color: #b6c5d6;
@@ -52,8 +52,8 @@
         <br>
     @endif
     <div class="d-flex">
-        * <span style="padding: 0 13px; background-color: #000000"></span>&nbsp; - <b>Levels of Woman </b> &nbsp;&nbsp;
-        <span style="padding: 0 13px; background-color: #888888"></span>&nbsp; - <b>Levels of Man </b>
+        * <span style="padding: 0 13px; background-color: #000000"></span>&nbsp; - <b>Women’s levels </b> &nbsp;&nbsp;
+        <span style="padding: 0 13px; background-color: #888888"></span>&nbsp; - <b>Men’s levels </b>
         <br><br>
     </div>
     <table class="table-0 table-summary">
