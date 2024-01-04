@@ -13,6 +13,7 @@ use App\Mail\Registrant\HandlingFeeChargeFailedMailable;
 use App\Mail\Registrant\HandlingFeeChargeMailable;
 use App\Mail\Registrant\TransactionExecutedMailable;
 use App\Models\Deposit;
+use App\Models\MeetCredit;
 use App\Models\MeetTransaction;
 use App\Services\DwollaService;
 use App\Services\IntellipayService;
@@ -1639,7 +1640,7 @@ class MeetRegistration extends Model
         }
     }
 
-    public function calculateRegistrationTotal(array $snapshot, bool $is_scratch = false, $usag_mismatch_fee = 0)
+    public function calculateRegistrationTotal(array $snapshot, bool $is_scratch = false, $usag_mismatch_fee = 0, $credit_remaining = 0)
     {
         $meet = $this->meet; /** @var Meet $m */
         try {
@@ -1750,7 +1751,7 @@ class MeetRegistration extends Model
             $result = [
                 'level_team_fees' => $lTeamFee,
                 'registration_late_fee' => $mLateFee,
-                'subtotal' => $subtotal - $coupon + $usag_mismatch_fee,
+                'subtotal' => $subtotal - $coupon + $usag_mismatch_fee - $credit_remaining,
                 'deposit_subtotal' => $deposit ? ($subtotal * $meet->deposit_ratio) / 100 : 0,
                 'coupon' => $coupon,
             ];
@@ -3858,22 +3859,43 @@ class MeetRegistration extends Model
                 if (!empty($previous_deposit_remaining_total)) {
                     $previous_d_remaining_total = $previous_deposit_remaining_total['total'];
                 }
+                // calculate net refund fees from scratch, athlete level change, team refund and late refund
 
-                // $snapshot['registration']['new'] = [ // tr7
-                //     'was_late' => $meet->isLate(),
-                //     'late_fee' => $meet->isLate() ? $meet->late_registration_fee : 0
-                // ];
-                // print_r($summary);
-                // print_r();
-                // $snapshot['registration']['new'] = [ // tr7
-                //     'was_late' => $meet->isLate(),
-                //     'late_fee' => $meet->isLate() ? $meet->late_registration_fee : 0
-                // ];
+                $r_total = 0;
+                $r_total += $this->late_refund;
+
+                foreach ($this->specialists as $j => $specialist) { /** @var RegistrationSpecialist $specialist */
+                        $r_total += $specialist->refund_fee();
+                }
+                foreach ($this->athletes as $athlete) { /** @var RegistrationAthlete $athlete */
+                    $r_total += $athlete->refund_fee();
+                }
+
+                foreach ($this->levels as $level) { /** @var AthleteLevel $level */
+                    $r_total += $level->pivot->refund_fee();
+                }
+
+                $credit_remaining = 0;
+                $credit_used = 0;
+                $credit_row = MeetCredit::where('meet_registration_id',$this->id)->where('gym_id', $gym->id)->where('meet_id', $meet->id)->first();
+                if($credit_row->count() > 0)
+                {
+                    $credit_remaining = $credit_row->credit_amount - $credit_row->used_credit_amount;
+                }
+                else
+                {
+                    $credit_model = resolve(MeetCredit::class);
+                    $credit_model->meet_registration_id = $this->id;
+                    $credit_model->gym_id = $gym->id;
+                    $credit_model->meet_id = $meet->id;
+                    $credit_model->credit_amount = $r_total;
+                    $credit_model->used_credit_amount = 0;
+                    $credit_model->save();
+                }
                 $snapshot = $this->snapshotEnd($snapshot, $newIds);
                 $is_scratch = $summary['subtotal'] == 0 ? true : false;
                 $couponAmount = 0;
                 $prev_deposit = null;
-                //    print_r($); die();
                 if ($coupon != '' && strlen($coupon) != 0) //edit
                 {
                     $prev_deposit = Deposit::where('meet_id', $meet->id)
@@ -3888,10 +3910,25 @@ class MeetRegistration extends Model
                     }
                 }
                 $snapshot['coupon'] = $couponAmount;
-                $incurredFees = $this->calculateRegistrationTotal($snapshot, $is_scratch);
+                
+                $incurredFees = $this->calculateRegistrationTotal($snapshot, $is_scratch, 0);
+
+                if($credit_remaining > 0 )
+                {
+                    if($incurredFees['subtotal'] >= $credit_remaining)
+                    {
+                        $incurredFees['subtotal'] -= $credit_remaining;
+                        $credit_used = $credit_remaining;
+                    }
+                    else
+                    {
+                        $credit_used = $incurredFees['subtotal'];
+                        $incurredFees['subtotal'] = 0;
+                    }
+                }
+                
                 $subtotal = $incurredFees['subtotal'] + $previous_d_remaining_total;
-
-
+                
                 if ($subtotal != $summary['subtotal']) {
                     throw new CustomBaseException('Subtotal calculation mismatch.', -1);
                 }
@@ -4096,6 +4133,11 @@ class MeetRegistration extends Model
                 if (isset($prev_deposit) && $prev_deposit != null) {
                     $prev_deposit->is_used = true;
                     $prev_deposit->save();
+                }
+                if($credit_used > 0)
+                {
+                    $credit_row->used_credit_amount += $credit_used;
+                    $credit_row->save();
                 }
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,

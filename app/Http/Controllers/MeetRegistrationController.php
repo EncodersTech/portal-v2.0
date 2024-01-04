@@ -6,6 +6,7 @@ use App\Exceptions\CustomBaseException;
 use App\Exceptions\CustomStripeException;
 use App\Helper;
 use App\Models\CategoryMeet;
+use App\Models\MeetCredit;
 use App\Models\ErrorCodeCategory;
 use App\Models\Meet;
 use App\Models\Gym;
@@ -204,16 +205,24 @@ class MeetRegistrationController extends Controller
                 break;
             }
         }
-
+        $previous_registration_credit_amount = 0;
+        $previous_registration_credit = MeetCredit::where('meet_registration_id',$registration->id)
+                                                    ->where('gym_id', $gym->id)
+                                                    ->where('meet_id', $registration->meet->id)->first();
+                
+        if($previous_registration_credit->count() > 0)
+        {
+            $previous_registration_credit_amount = $previous_registration_credit->credit_amount - $previous_registration_credit->used_credit_amount;
+        }
         // $registration->test = "111";
-
         return view('registration.edit', [
             'current_page' => 'gym-' . $gym->id,
             'meet' => $registration->meet,
             'registration' => $registration,
             'gym' => $gym,
             'required_sanctions' => $required_sanctions,
-            'previous_remaining' => $previous_deposit_remaining_total
+            'previous_remaining' => $previous_deposit_remaining_total,
+            'previous_registration_credit_amount' => $previous_registration_credit_amount
         ]);
     }
     public function test()

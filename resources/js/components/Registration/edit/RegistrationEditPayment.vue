@@ -510,6 +510,10 @@
             previous_remaining: {
                 type: Number,
                 default: null
+            },
+            previous_registration_credit_amount: {
+                type: Number,
+                default: 0
             }
             
         },
