@@ -31,7 +31,7 @@
         padding-top: 10px !important;
     }
     .usag{
-        background-color: #bcc9e0;
+        background-color: #DAFFF5;
     }
     .nga{
         background-color: #b6c5d6;
