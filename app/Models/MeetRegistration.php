@@ -3878,19 +3878,19 @@ class MeetRegistration extends Model
                 $credit_row = MeetCredit::where('meet_registration_id',$this->id)->where('gym_id', $gym->id)->where('meet_id', $meet->id)->first();
                 
                 
-                if($credit_row->count() > 0)
+                if($credit_row != null && $credit_row->count() > 0)
                 {
                     $credit_remaining = ($credit_row->credit_amount + $changes_fees) - $credit_row->used_credit_amount;
                 }
                 else
                 {
-                    $credit_model = resolve(MeetCredit::class);
-                    $credit_model->meet_registration_id = $this->id;
-                    $credit_model->gym_id = $gym->id;
-                    $credit_model->meet_id = $meet->id;
-                    $credit_model->credit_amount = $r_total;
-                    $credit_model->used_credit_amount = 0;
-                    $credit_model->save();
+                    $credit_row = resolve(MeetCredit::class);
+                    $credit_row->meet_registration_id = $this->id;
+                    $credit_row->gym_id = $gym->id;
+                    $credit_row->meet_id = $meet->id;
+                    $credit_row->credit_amount = $r_total;
+                    $credit_row->used_credit_amount = 0;
+                    $credit_row->save();
                 }
                 $snapshot = $this->snapshotEnd($snapshot, $newIds);
                 $is_scratch = $summary['subtotal'] == 0 ? true : false;
@@ -4147,16 +4147,19 @@ class MeetRegistration extends Model
                     $prev_deposit->is_used = true;
                     $prev_deposit->save();
                 }
+
                 if($changes_fees > 0)
                 {
                     $credit_row->credit_amount += $changes_fees;
+                    $credit_row->save();
                 }
                 if($credit_used > 0)
                 {
                     $credit_row->used_credit_amount += $credit_used;
+                    $credit_row->save();
                 }
                 $credit_row->save();
-                
+
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,
                     $gym,
