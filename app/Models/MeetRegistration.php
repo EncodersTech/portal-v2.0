@@ -2474,8 +2474,7 @@ class MeetRegistration extends Model
     }
 
     public function edit(Meet $meet, Gym $gym,
-        $inputBodies, $inputCoaches, $summary, $method, bool $useBalance, $previous_deposit_remaining_total, $coupon, $onetimeach = null) {
-
+        $inputBodies, $inputCoaches, $summary, $method, bool $useBalance, $previous_deposit_remaining_total, $coupon, $onetimeach = null, $changes_fees = 0) {
         $chosenMethod = [
             'type' => $method['type'],
             'id' => '',
@@ -3863,7 +3862,6 @@ class MeetRegistration extends Model
 
                 $r_total = 0;
                 $r_total += $this->late_refund;
-
                 foreach ($this->specialists as $j => $specialist) { /** @var RegistrationSpecialist $specialist */
                         $r_total += $specialist->refund_fee();
                 }
@@ -3874,13 +3872,15 @@ class MeetRegistration extends Model
                 foreach ($this->levels as $level) { /** @var AthleteLevel $level */
                     $r_total += $level->pivot->refund_fee();
                 }
-
+                // changes_fees
                 $credit_remaining = 0;
                 $credit_used = 0;
                 $credit_row = MeetCredit::where('meet_registration_id',$this->id)->where('gym_id', $gym->id)->where('meet_id', $meet->id)->first();
+                
+                
                 if($credit_row->count() > 0)
                 {
-                    $credit_remaining = $credit_row->credit_amount - $credit_row->used_credit_amount;
+                    $credit_remaining = ($credit_row->credit_amount + $changes_fees) - $credit_row->used_credit_amount;
                 }
                 else
                 {
@@ -3962,6 +3962,19 @@ class MeetRegistration extends Model
                     'waitlist' => $waitlistTransaction !== null,
                     'message' => ($waitlistTransaction !== null) ? 'You have successfully entered this meet\'s wait-list.' : 'Thank you. You have successfully entered the meet.',
                 ];
+                // echo 'total refund calculate : '. $r_total . '<br>';
+                // echo 'total changes fee calculate : '. $changes_fees . '<br>';
+                // echo 'f subtotal : '. $summary['subtotal'] . '<br>';
+                // echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
+                // echo 'remaining credit : '. $credit_remaining . '<br>';
+
+                // echo 'handling calculate : '. $gymSummary['handling'] . '<br>';
+                // echo 'processor : '. $summary['processor'] . '<br>';
+                // echo 'gym total : '. $gymSummary['total'] . '<br>';
+                // echo 'summary total : '. $summary['total'] . '<br>';
+
+                // echo 'credit used : '. $credit_used . '<br>';
+                // die();               
 
                 if ($needWaitlistTransaction) {
                     $waitlistTransaction = $this->transactions()->create([
@@ -4134,11 +4147,16 @@ class MeetRegistration extends Model
                     $prev_deposit->is_used = true;
                     $prev_deposit->save();
                 }
+                if($changes_fees > 0)
+                {
+                    $credit_row->credit_amount += $changes_fees;
+                }
                 if($credit_used > 0)
                 {
                     $credit_row->used_credit_amount += $credit_used;
-                    $credit_row->save();
                 }
+                $credit_row->save();
+                
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,
                     $gym,

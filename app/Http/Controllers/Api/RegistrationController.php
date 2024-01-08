@@ -133,7 +133,8 @@ class RegistrationController extends BaseApiController
                 (bool) $request->input('use_balance'),
                 $previous_deposit_remaining_total,
                 $request->input('coupon'),
-                $request->input('onetimeach')
+                $request->input('onetimeach'),
+                $request->input('changes_fees')
             );
         } catch(CustomBaseException $e) {
             throw $e;

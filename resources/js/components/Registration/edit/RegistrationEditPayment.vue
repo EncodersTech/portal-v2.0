@@ -548,7 +548,7 @@
                 routingNumber: '',
                 accountNumber: '',
                 accountType: 's', // Default to savings
-                accountName: '',
+                accountName: ''
             }
         },
         watch: {
@@ -598,6 +598,8 @@
                 return !isNaN(parseFloat(n)) && isFinite(n);
             },
             recalculateTotals(coupon = 0) {
+                console.log(this.registrationData.changes_fees);
+
                 if(this.couponValue != 0 && this.isNumeric(this.couponValue))
                     coupon = this.couponValue;
 
@@ -829,6 +831,7 @@
                                 use_balance: this.useBalance,
                                 coupon: this.coupon.trim().toUpperCase(),
                                 onetimeach: this.onetimeach,
+                                changes_fees: this.registrationData.changes_fees,
                             }
                         ).then(result => {
                             this.paymentProcessedMessage = result.data.message;
@@ -903,7 +906,9 @@
         },
         mounted() {
             if (this.registrationData)
+            {
                 subtotal = this.registrationData.total;
+            }
         }
     }
 </script>

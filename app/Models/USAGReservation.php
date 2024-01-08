@@ -1968,7 +1968,7 @@ class USAGReservation extends Model
                 AuditEvent::registrationCreated(
                     request()->_managed_account, auth()->user(), $registration, $auditEvent
                 );
-
+                $meetEntryReport = $meet->registrantMeetEntryAndStoreReport($meet->id, $gym);
                 Mail::to($gym->user->email)->send(new GymRegisteredMailable(
                     $meet,
                     $gym,
@@ -1977,7 +1977,8 @@ class USAGReservation extends Model
                     $paymentMethodString,
                     $transaction !== null,
                     $waitlistTransaction !== null,
-                    $sanction
+                    $sanction,
+                    $meetEntryReport
                 ));
 
                 if($enable_travel_arrangements)
@@ -1987,7 +1988,7 @@ class USAGReservation extends Model
                 AuditEvent::registrationUpdated(
                     request()->_managed_account, auth()->user(), $registration, $auditEvent
                 );
-
+                $meetEntryReport = $meet->registrantMeetEntryAndStoreReport($meet->id, $gym);
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,
                     $gym,
@@ -1996,7 +1997,8 @@ class USAGReservation extends Model
                     $paymentMethodString,
                     $transaction !== null,
                     $waitlistTransaction !== null,
-                    $sanction
+                    $sanction,
+                    $meetEntryReport
                 ));
             }
 

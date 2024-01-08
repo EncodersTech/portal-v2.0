@@ -2408,6 +2408,8 @@ class Meet extends Model
         try {
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
+
+            // dd($base);
             /** @var Builder $base */
 
             if ($gym !== null)

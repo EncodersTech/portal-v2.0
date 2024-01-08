@@ -756,7 +756,7 @@
                                                                             </button>
                                                                         </div>
                                                                         <div v-else>
-                                                                            <button v-if="!athlete.is_scratched() && athlete.permissions.scratch()" class="dropdown-item text-danger"
+                                                                            <button v-if="!athlete.is_scratched() && athlete.permissions.scratch() && athlete.changes.moved_to == false" class="dropdown-item text-danger"
                                                                                 type="button" @click="scratchObject(athlete, 'athlete', level)">
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                             </button>
@@ -764,12 +764,12 @@
                                                                                 type="button" @click="scratchObject(athlete, 'athlete', level)">
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch Without Refund
                                                                             </button>
-                                                                            <button v-if="athlete.permissions.change_level()"
+                                                                            <button v-if="athlete.permissions.change_level() && athlete.changes.moved_to == false"
                                                                                 class="dropdown-item text-info" type="button"
                                                                                     @click="showMoveModal(athlete, level.uid)">
                                                                                 <span class="fas fa-fw fa-exchange-alt"></span> Move To ...
                                                                             </button>
-                                                                            <button v-if="athlete.is_specialist && athlete.permissions.add_specialist_events()"
+                                                                            <button v-if="athlete.is_specialist && athlete.permissions.add_specialist_events() && athlete.changes.moved_to == false"
                                                                                 class="dropdown-item" type="button" @click="showAddEventsModal(level, athlete)">
                                                                                 <span class="fa fa-fw fa-user-tag"></span> Add Event
                                                                             </button>
@@ -1156,7 +1156,7 @@ export default {
         previous_registration_credit_amount: {
             type: Number,
             default: 0
-        }
+        },
     },
     computed: {
         constants() {
@@ -1532,6 +1532,7 @@ export default {
                     total += this.meet.late_registration_fee;
             }
             var p_credit = this.previous_registration_credit_amount + this.changes_fees;
+            console.log(total);
             if(total >= p_credit)
                 total = total - p_credit;
             else
@@ -1667,10 +1668,18 @@ export default {
                         Utils.remove(parent.athletes, obj);
                     } else if (obj.is_specialist) {
                         console.log('specialist ?');
+                        // var refund_specialist = 0;
                         obj.events.forEach(evt => {
                             if(evt.status != this.constants.athletes.statuses.Scratched)
+                            {
+                                if(!evt.is_new)
+                                {
+                                    // refund_specialist = parseFloat(refund_specialist) + parseFloat(evt.fee) + parseFloat(evt.late_fee) - parseFloat(evt.refund) - parseFloat(evt.late_refund);
+                                }
                                 this.scratchObject(evt, 'event', obj, parent);
+                            }
                         });
+                        // this.changes_fees = parseFloat(this.changes_fees) + parseFloat(refund_specialist);
                         obj.status = this.constants.athletes.statuses.Scratched;
                         obj.changes.scratch = true;
                     } else {
@@ -1678,9 +1687,11 @@ export default {
                         obj.status = this.constants.athletes.statuses.Scratched;
                         obj.changes.scratch = true;
                         parent.freed_slots++;
+
+                        console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
+                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+                        console.log(this.changes_fees);
                     }
-                    console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
-                    this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
                     break;
 
                 case 'event':
@@ -1696,12 +1707,12 @@ export default {
                     } else {
                         obj.status = this.constants.specialists.statuses.Scratched;
                         obj.changes.scratch = true;
+                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
                     }
                     // parent.deduceStatus();
                     // if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
                     //     parent.changes.scratch = true;
                     // }
-                    this.changes_fees  = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
                     break;
 
                 case 'coach':
@@ -1727,8 +1738,21 @@ export default {
                             while (i--) {
                                 let evt = obj.events[i];
                                 this.revertChanges(evt, 'event', obj, parent);
+                                if(obj.changes.moved_to!=false)
+                                {
+                                    if(evt.fee - parent.specialist_registration_fee > 0)
+                                    {
+                                        var cg = parseFloat(evt.fee) - parseFloat(parent.specialist_registration_fee);
+                                        this.changes_fees = parseFloat(this.changes_fees) - cg;
+                                    }
+                                }
+                                else
+                                {
+                                    // this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(evt.fee) + parseFloat(evt.late_fee) - parseFloat(evt.refund) - parseFloat(evt.late_refund));
+                                }
                             };
                             obj.changes.events = false;
+
                         } else {
                             if (obj.changes.scratch) {
 
@@ -1785,14 +1809,26 @@ export default {
                                 obj.changes.sanction_no = false;
 
                                 var refund_move = curLevel.registration_fee - origLevel.registration_fee;
+                                var refund_sp = curLevel.specialist_registration_fee - origLevel.specialist_registration_fee;
                                 if(curLevel.registration_fee > origLevel.registration_fee){
                                     refund_move = 0;
+                                    refund_sp = 0;
                                 }
                                 else{
                                     refund_move = refund_move * -1;
+                                    refund_sp = refund_sp * -1;
                                 }
-                                    
-                                this.changes_fees = parseFloat(this.changes_fees) - parseFloat(refund_move);
+                                if(!obj.is_specialist)
+                                {    
+                                    this.changes_fees = parseFloat(this.changes_fees) - parseFloat(refund_move);
+                                }
+                                else
+                                {
+                                    // event number whhere is_new is faslse
+                                    var event_numbers = obj.events.filter(e => e.is_new == false).length;
+                                    this.change_fees = parseFloat(this.changes_fees) - (parseFloat(refund_sp) * event_numbers);
+                                    console.log()
+                                }
                                 
                             }
                         }
@@ -1854,6 +1890,7 @@ export default {
                         if (obj.changes.scratch) {
                             obj.status = obj.original_data.status;
                             obj.changes.scratch = false;
+                            this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund));
                         }
 
                         // if (!obj.is_new) {
@@ -1873,7 +1910,7 @@ export default {
                             && (parent.status != this.constants.specialists.statuses.Scratched)) {
                             parent.changes.scratch = false;
                         }
-                        this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+                        // this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
                     }
                     break;
 
@@ -2002,7 +2039,7 @@ export default {
                 let newFee;
                 let newLateFee;
                 let moveAthleteNewFee = 0;
-
+                var refund_move = 0;
                 if (athlete.is_specialist) {
                     let newFee = 0;
                     let newLateFee = 0;
@@ -2011,15 +2048,26 @@ export default {
                     athlete.events.forEach(evt => {
                         if (!evt.is_scratched()) {
                             moveSpecialistNewFee = newLevel.specialist_registration_fee - oldLevel.specialist_registration_fee;
-                            if(oldLevel.specialist_registration_fee > newLevel.specialist_registration_fee){
-                                moveSpecialistNewFee = 0;
+                            if(!evt.is_new)
+                            {
+                                if(oldLevel.specialist_registration_fee > newLevel.specialist_registration_fee)
+                                {
+                                    moveSpecialistNewFee = 0;
+                                    refund_move += oldLevel.specialist_registration_fee - newLevel.specialist_registration_fee;
+                                }
                             }
-                            evt.new_fee = moveSpecialistNewFee;
+                            else
+                            {
+                                evt.new_fee =  newLevel.specialist_registration_fee; //moveSpecialistNewFee
+                            }
                             evt.new_late_fee = 0; //already registered - do not charge late fee ::: this.late ? newLevel.specialist_late_registration_fee : 0;
+                            
                         }
                     });
+
+                    this.changes_fees = parseFloat(this.changes_fees) + parseFloat(refund_move);
                 } else {
-                    var refund_move = 0;
+                    
                     moveAthleteNewFee = newLevel.registration_fee - oldLevel.registration_fee;
                     if(oldLevel.registration_fee > newLevel.registration_fee){
                         moveAthleteNewFee = 0;
@@ -2525,7 +2573,7 @@ export default {
                 return;
 
             this.add_athlete_level = level;
-            this.add_athlete_athlete = athlete;
+            this.add_athlete_athlete[0] = athlete;
             this.add_athlete_events = {};
             for (let i in this.specialist_events) {
                 let evt = this.specialist_events[i];
@@ -2546,14 +2594,14 @@ export default {
         addModalEvents() {
             $('#modal-registration-add-events').modal('hide');
 
-            if (this.add_athlete_athlete) {
+            if (this.add_athlete_athlete[0]) {
                 let vm = this;
 
                 for (let x in this.add_athlete_events) {
                     let addedEvent = this.add_athlete_events[x];
                     if (addedEvent.checked) {
 
-                        let existing = this.add_athlete_athlete.events.filter(e => {
+                        let existing = this.add_athlete_athlete[0].events.filter(e => {
                             return (e.event_id == addedEvent.id) && !e.is_scratched();
                         });
                         if (existing.length) {
@@ -2611,8 +2659,8 @@ export default {
                             was_late: this.late,
                         };
                         evt.original_data = _.cloneDeep(evt);
-                        this.add_athlete_athlete.events.push(evt);
-                        this.add_athlete_athlete.changes.events = true;
+                        this.add_athlete_athlete[0].events.push(evt);
+                        this.add_athlete_athlete[0].changes.events = true;
                     }
                 }
 
@@ -2721,6 +2769,7 @@ export default {
                     gym: this.gymId,
                     bodies: [],
                     coaches: [],
+                    changes_fees: this.changes_fees,
                 };
 
                 for (let i in this.bodies) {
