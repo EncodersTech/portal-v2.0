@@ -3877,7 +3877,7 @@ class MeetRegistration extends Model
                 $credit_used = 0;
                 $credit_row = MeetCredit::where('meet_registration_id',$this->id)->where('gym_id', $gym->id)->where('meet_id', $meet->id)->first();
                 
-                
+                $is_credit_amount_new = false;
                 if($credit_row != null && $credit_row->count() > 0)
                 {
                     $credit_remaining = ($credit_row->credit_amount + $changes_fees) - $credit_row->used_credit_amount;
@@ -3891,6 +3891,8 @@ class MeetRegistration extends Model
                     $credit_row->credit_amount = $r_total;
                     $credit_row->used_credit_amount = 0;
                     $credit_row->save();
+                    $is_credit_amount_new = true;
+
                 }
                 $snapshot = $this->snapshotEnd($snapshot, $newIds);
                 $is_scratch = $summary['subtotal'] == 0 ? true : false;
@@ -4148,7 +4150,7 @@ class MeetRegistration extends Model
                     $prev_deposit->save();
                 }
 
-                if($changes_fees > 0)
+                if($changes_fees > 0 && !$is_credit_amount_new)
                 {
                     $credit_row->credit_amount += $changes_fees;
                     $credit_row->save();
