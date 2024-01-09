@@ -3892,7 +3892,7 @@ class MeetRegistration extends Model
                     $credit_row->used_credit_amount = 0;
                     $credit_row->save();
                     $is_credit_amount_new = true;
-
+                    $credit_remaining = $changes_fees;
                 }
                 $snapshot = $this->snapshotEnd($snapshot, $newIds);
                 $is_scratch = $summary['subtotal'] == 0 ? true : false;
@@ -3931,6 +3931,12 @@ class MeetRegistration extends Model
                 
                 $subtotal = $incurredFees['subtotal'] + $previous_d_remaining_total;
                 
+                // echo 'total refund calculate : '. $r_total . '<br>';
+                // echo 'total changes fee calculate : '. $changes_fees . '<br>';
+                // echo 'f subtotal : '. $summary['subtotal'] . '<br>';
+                // echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
+                // echo 'remaining credit : '. $credit_remaining . '<br>';
+                // die();
                 if ($subtotal != $summary['subtotal']) {
                     throw new CustomBaseException('Subtotal calculation mismatch.', -1);
                 }
