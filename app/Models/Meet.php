@@ -2487,13 +2487,24 @@ class Meet extends Model
                 $specialistLateRefundFee = 0;
                 $speicalist_total_fee = 0;
 
+                $used_credit = 0;
+                // echo $registration->id .' '.$registration->gym->id.' '.$registration->meet->id.'<br>';
+                $credit_row = MeetCredit::where('meet_registration_id',$registration->id)->where('gym_id', $registration->gym->id)->where('meet_id', $registration->meet->id)->first();
+                // dd($credit_row);
+                if($credit_row != null)
+                {
+                    $used_credit = $credit_row->used_credit_amount;
+                }
+                // dd($used_credit);
                 $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
+                // dd($auditEvent);
                 foreach ($auditEvent as $key => $value) {
                     $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
-                    $registrations[$i]['audit_report'] = $this->mergeValue($vs,$registrationAuditReport);
+                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
                 }
+                $registrations[$i]['audit_report'] = $registrationAuditReport;
 
-
+                // dd($registrations[$i]['audit_report']);
                 if(count($registration->specialists) > 0){
                     foreach ($registration->specialists as $specialist) {
                         if(count($specialist->events) > 0){
@@ -2521,6 +2532,7 @@ class Meet extends Model
                         unset($registrations[$i]['transactions'][$j]);
                         continue;
                     }
+                    // dd($registrations[$i]);
                     $levelTeamFees = isset($transaction->breakdown['level_team_fees']) ? $transaction->breakdown['level_team_fees'] :[];
                     
                     if (count($levelTeamFees) > 0) {
@@ -2530,11 +2542,13 @@ class Meet extends Model
                             if(!in_array($kv,$alreadGone))
                             {
                                 array_push($newarr,$kv);
-                                array_push($alreadGone,$kv);
+                                // array_push($alreadGone,$kv);
                             }
                             else 
                                 continue;
                         }
+                        // dd($newarr);
+                        // print_r($newarr);
                         $levels = $registration->levels()->wherePivotIn('id', $newarr)->get();
                         
                         $k = 0;
@@ -2542,7 +2556,8 @@ class Meet extends Model
                         $team_late = 0;
                         foreach ($levels as $l) { /** @var AthleteLevel $l */
                             $specialist_count = 0;
-                            $at_count = $l->pivot->athletes->count(); 
+                            $at_count = $l->pivot->athletes->where('transaction_id',$transaction->id)->count(); 
+                            // dd($at_count);
                             $specialist_fee = $l->pivot->specialist_registration_fee;
                             $sf_total = 0;
                             
@@ -2592,11 +2607,11 @@ class Meet extends Model
                 $fee_s['card_fees'] = $cardFees;
                 $fee_s['admin_meet_fees'] = $adminMeetFee;
                 $fee_s['card_meet_fees'] = $cardMeetFees;
-                $fee_s['reg_fees'] = ($registration->athletes->sum('fee') + $speicalist_total_fee + $reg_meet_fees);
+                $fee_s['reg_fees'] = ($registration->athletes->where('status',1)->sum('fee') + $speicalist_total_fee + $reg_meet_fees);
                 $fee_s['reg_meet_fees'] = $reg_meet_fees; //trackthis
                 $fee_s['team_fees'] = $teamFee;
                 $fee_s['team_meet_fees'] = 0;
-                $fee_s['refund_fees'] = $registration->athletes->sum('refund') + $specialistRefundFee + $specialistLateRefundFee;
+                $fee_s['refund_fees'] = $registration->athletes->sum('refund') + $specialistRefundFee + $specialistLateRefundFee - $used_credit;
                 $fee_s['refund_meet_fees'] = $refund_meet_fees;
                 $fee_s['late_fee'] = $registration->athletes->sum('late_fee') + $specialistLateFee + $team_late + ($registration->was_late ? $registration->late_fee : 0);
 
