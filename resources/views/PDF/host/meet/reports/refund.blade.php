@@ -198,11 +198,26 @@
                                         </tr>
                                     @endif
 
+                                    
                                     <tr>
                                         <td colspan="4"></td>
-                                        <td colspan="2" class="total">Total</td>
-                                        <td class="text-right total">
+                                        <td colspan="2" class="">Total</td>
+                                        <td class="text-right ">
                                             $ {{ number_format($r->total, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"></td>
+                                        <td colspan="2" class="">Used Credit</td>
+                                        <td class="text-right ">
+                                            $ {{ number_format($r->credit_used, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"></td>
+                                        <td colspan="2" class="total">Refund Amount</td>
+                                        <td class="text-right total">
+                                            $ {{ number_format(($r->total - $r->credit_used), 2) }}
                                         </td>
                                     </tr>
                                 </tbody>

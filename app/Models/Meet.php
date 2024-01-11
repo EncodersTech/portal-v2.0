@@ -1991,7 +1991,14 @@ class Meet extends Model
 
             foreach ($registrations as $i => $registration) { /** @var MeetRegistration $registration */
                 $total = 0;
-
+                $credit_used = 0;
+                $credit_row = MeetCredit::where('meet_registration_id',$registration->id)->where('gym_id', $registration->gym->id)->where('meet_id', $registration->meet->id)->first();
+                
+                if($credit_row != null && $credit_row->count() > 0)
+                {
+                    $credit_used = $credit_row->used_credit_amount;
+                }
+                $registration->credit_used = $credit_used;
                 foreach ($registration->specialists as $j => $specialist) { /** @var RegistrationSpecialist $specialist */
                     if ($specialist->events->count() < 1)
                         unset($registrations[$i]->specialists[$j]);
