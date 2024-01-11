@@ -2593,6 +2593,7 @@ class Meet extends Model
                             
                         }
                         $registrations[$i]['transactions'][$j]['level_reg_history'] = $level_reg_history;
+                        $registrations[$i]['transactions'][$j]['used_credit'] = $used_credit;
                     }
                 }
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {

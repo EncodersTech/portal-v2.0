@@ -183,7 +183,7 @@
                                 <td class="col-1">Team Fee</td>
                                 <td class="col-1">Amount</td>
                                 <td class="col-1  text-right">
-                                    {{number_format( $gym_sub_total,3)}}</td>
+                                    {{number_format( $gym_sub_total,3)}} {{ $transaction->used_credit }}</td>
                             <tr>
                             @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
                                 <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
