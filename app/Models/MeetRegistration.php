@@ -1235,6 +1235,16 @@ class MeetRegistration extends Model
                 }
 
                 foreach ($registration->specialists as $rs) {/** @var RegistrationSpecialist $rs */
+                    if($transaction !== null)
+                    {
+                        $rs->transaction()->associate($transaction);
+                    }
+                    else
+                    {
+                        $rs->transaction()->associate($waitlistTransaction);
+                    }
+                    $rs->save();
+
                     $s = $rs->toArray();
                     $s['events'] = [];
                     foreach ($rs->events as $se) {/** @var RegistrationSpecialistEvent $se */
@@ -1741,11 +1751,15 @@ class MeetRegistration extends Model
                 }
 
                 $specialists = $l['specialists'];
+                // dd($l);
+                // echo 'before sp : '. count($specialists).'<br>';
                 foreach ($specialists as $specialist_events) {
+                    // dd($specialist_events);
                     foreach ($specialist_events as $se) {
                         $subtotal += $se['new']['fee'] + $se['new']['late_fee'] - ($se['new']['refund'] + $se['new']['late_refund']);
                     }
                 }
+                // echo 'after sp : '. $subtotal.'<br>';
             }
 
             $result = [
@@ -2824,12 +2838,13 @@ class MeetRegistration extends Model
                                         if ($athlete == null) {
                                             throw new CustomBaseException('No such specialist', -1);
                                         }
+                                       
 
                                         $allRegistered = true;
+                                        // dd($a['events']);
                                         foreach ($a['events'] as $event) /** @var RegistrationSpecialistEvent $event */ {
                                             $event = (object) $event;
-                                            if(!$event->id >= 0)
-                                                continue;
+                                            // dd($event->id);
                                             $allRegistered = $allRegistered && !$event->in_waitlist && ($event->status == RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED);
                                             if (isset($a['total']) && !empty($a['total']) && $a['total'] > 0) {
                                                 $snapshot['levels'][$registrationLevel->id]['specialists'][$athlete->id][$event->id]['new'] = [
@@ -3155,6 +3170,7 @@ class MeetRegistration extends Model
 
                                                         $athleteTotal = $event->fee + $event->late_fee - $event->refund - $event->late_refund;
                                                     }
+                                                    // dd($athleteTotal);
                                                 } else {
                                                     $newAthlete['level_registration_id'] = $registrationLevel->id;
 
@@ -3183,7 +3199,7 @@ class MeetRegistration extends Model
 
                                                     $newAthlete['fee'] = $level->pivot->registration_fee; // track this, that was += , but updated it on 3-1-22
                                                     $newAthlete['late_fee'] = ($late ? $level->pivot->late_registration_fee : 0);
-
+                                                    $newAthlete['transaction_id'] = $athlete->transaction_id;
                                                     $athleteTotal = $newAthlete['fee'] + $newAthlete['late_fee'] - $newAthlete['refund'] - $newAthlete['late_refund'];
                                                 }
                                             }
@@ -3914,7 +3930,7 @@ class MeetRegistration extends Model
                 $snapshot['coupon'] = $couponAmount;
                 
                 $incurredFees = $this->calculateRegistrationTotal($snapshot, $is_scratch, 0);
-
+                // echo '1st in fee: '. $incurredFees['subtotal'] . '<br>';
                 if($credit_remaining > 0 )
                 {
                     if($incurredFees['subtotal'] >= $credit_remaining)
@@ -3936,6 +3952,7 @@ class MeetRegistration extends Model
                 // echo 'f subtotal : '. $summary['subtotal'] . '<br>';
                 // echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
                 // echo 'remaining credit : '. $credit_remaining . '<br>';
+                // echo 'used credit : '. $credit_used . '<br>';
                 // die();
                 if ($subtotal != $summary['subtotal']) {
                     throw new CustomBaseException('Subtotal calculation mismatch.', -1);
@@ -4052,14 +4069,14 @@ class MeetRegistration extends Model
                     $auditEvent['athletes'][] = $a;
                 }
                 foreach ($txAthletes['added'] as $ra) {/** @var RegistrationAthlete $ra */
-                    $ra->transaction()->associate($transaction);
+                    if($transaction)
+                        $ra->transaction()->associate($transaction);
                     $ra->status = isset($athleteStatus) ? $athleteStatus : RegistrationAthlete::STATUS_REGISTERED;
                     $ra->save();
                     $a = $ra->toArray();
                     unset($a['transaction']);
                     $auditEvent['athletes'][] = $a;
                 }
-
                 $auditEventSpecialists = [];
                 foreach ($txSpecialists['added'] as $rse) {/** @var RegistrationSpecialistEvent $rse */
                     if (!key_exists($rse->specialist->id, $auditEventSpecialists)) {
@@ -4069,8 +4086,8 @@ class MeetRegistration extends Model
                     if (!key_exists('events', $s)) {
                         $s['events'] = [];
                     }
-
-                    $rse->transaction()->associate($transaction);
+                    if($transaction)
+                        $rse->transaction()->associate($transaction);
                     $rse->status = isset($specialistStatus) ? $specialistStatus : RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
                     $rse->save();
                     $e = $rse->toArray();
@@ -4087,7 +4104,10 @@ class MeetRegistration extends Model
                     if (!key_exists('events', $s)) {
                         $s['events'] = [];
                     }
-
+                    if($transaction)
+                    {
+                        $rse->specialist->transaction()->associate($transaction);
+                    }
                     $rse->transaction()->associate($waitlistTransaction);
                     $rse->in_waitlist = true;
                     $rse->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_PENDING;
@@ -4101,7 +4121,8 @@ class MeetRegistration extends Model
                 }
 
                 foreach ($txCoaches['added'] as $rc) {/** @var RegistrationCoach $rc */
-                    $rc->transaction()->associate($transaction);
+                    if($transaction)
+                        $rc->transaction()->associate($transaction);
                     $rc->status = isset($coachStatus) ? $coachStatus : RegistrationCoach::STATUS_REGISTERED;
                     $rc->save();
                     $c = $rc->toArray();
@@ -4117,7 +4138,8 @@ class MeetRegistration extends Model
                     unset($c['transaction']);
                     $auditEvent['coaches'][] = $c;
                 }
-
+// dd($txSpecialists->specialist);
+// die();
                 $this->save();
                 $registrationArray = $this->toArray();
                 // print_r($registrationArray); die();
@@ -4136,7 +4158,6 @@ class MeetRegistration extends Model
                 AuditEvent::registrationUpdated(
                     request()->_managed_account, auth()->user(), $this, $auditEvent
                 );
-
                 $result['registration'] = $this->id;
                 // This commented section userd for Meet Entry pdf send for registaring host and gym
                 // $pdf = $meet->generateMeetEntryReport($gym);

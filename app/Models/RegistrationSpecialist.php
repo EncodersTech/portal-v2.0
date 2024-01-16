@@ -14,6 +14,11 @@ class RegistrationSpecialist extends Model
     protected $guarded = ['id'];
     protected $dates = ['dob'];
 
+    
+    public function transaction()
+    {
+        return $this->belongsTo(MeetTransaction::class, 'transaction_id');
+    }
     public function meet_registration()
     {
         return $this->belongsTo(MeetRegistration::class);

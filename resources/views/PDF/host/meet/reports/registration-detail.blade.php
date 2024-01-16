@@ -169,6 +169,9 @@
                                 } else {
                                 $gym_sub_total = (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] > 0) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'] + $coupon;
                                 }
+
+                                $refund_used = $transaction->level_payment_sum - $gym_sub_total;
+                                // $refund_used = ($transaction->level_payment_sum - $gym_sub_total) > 0 ? ($transaction->level_payment_sum - $gym_sub_total) : 0;
                             ?>
                             <tr>
                                 <td class="col-4">{{$transaction['created_at']->format(Helper::AMERICAN_SHORT_DATE)}}</td>
@@ -183,7 +186,17 @@
                                 <td class="col-1">Team Fee</td>
                                 <td class="col-1">Amount</td>
                                 <td class="col-1  text-right">
-                                    {{number_format( $gym_sub_total,3)}}</td>
+                                    {{number_format( $gym_sub_total,3)}}
+                                    @php
+                                        if($refund_used > 0){
+                                            echo '<br>Credit: '.number_format($refund_used,3);
+                                        }
+                                        else if($refund_used < 0)
+                                        {
+                                            echo '<br>Refund: '.number_format(($refund_used * -1),3);
+                                        }
+                                    @endphp
+                                </td>
                             <tr>
                             @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
                                 <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">

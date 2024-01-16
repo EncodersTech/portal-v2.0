@@ -1845,8 +1845,8 @@ export default {
                                 {
                                     // event number whhere is_new is faslse
                                     var event_numbers = obj.events.filter(e => e.is_new == false).length;
-                                    this.change_fees = parseFloat(this.changes_fees) - (parseFloat(refund_sp) * event_numbers);
-                                    console.log()
+                                    var refund_sp_sum = parseFloat(refund_sp) * event_numbers;
+                                    this.changes_fees -= refund_sp_sum;
                                 }
                                 
                             }
@@ -1885,18 +1885,18 @@ export default {
                             obj.changes.sanction_no = false;
                         }
 
-                        // if (!obj.is_new) {
-                        //     obj.fee = 0;
-                        //     obj.late_fee = 0;
-                        //     obj.refund = 0;
-                        //     obj.late_refund = 0;
+                        if (!obj.is_new) {
+                            obj.fee = 0;
+                            obj.late_fee = 0;
+                            obj.refund = 0;
+                            obj.late_refund = 0;
 
-                        //     obj.new_fee = 0;
-                        //     obj.new_late_fee = 0;
-                        //     obj.new_refund = 0;
-                        //     obj.new_late_refund = 0;
-                        //     this.changes_fees -= obj.total;
-                        // }
+                            obj.new_fee = 0;
+                            obj.new_late_fee = 0;
+                            obj.new_refund = 0;
+                            obj.new_late_refund = 0;
+                            // this.changes_fees -= obj.total;
+                        }
                     }
                     break;
 
@@ -1912,17 +1912,17 @@ export default {
                             this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund));
                         }
 
-                        // if (!obj.is_new) {
-                        //     obj.fee = 0;
-                        //     obj.late_fee = 0;
-                        //     obj.refund = 0;
-                        //     obj.late_refund = 0;
+                        if (!obj.is_new) {
+                            obj.fee = 0;
+                            obj.late_fee = 0;
+                            obj.refund = 0;
+                            obj.late_refund = 0;
 
-                        //     obj.new_fee = 0;
-                        //     obj.new_late_fee = 0;
-                        //     obj.new_refund = 0;
-                        //     obj.new_late_refund = 0;
-                        // }
+                            obj.new_fee = 0;
+                            obj.new_late_fee = 0;
+                            obj.new_refund = 0;
+                            obj.new_late_refund = 0;
+                        }
 
                         parent.deduceStatus();
                         if ((prevStatus == this.constants.specialists.statuses.Scratched)
@@ -2071,8 +2071,12 @@ export default {
                             {
                                 if(oldLevel.specialist_registration_fee > newLevel.specialist_registration_fee)
                                 {
-                                    moveSpecialistNewFee = 0;
+                                    evt.new_fee = 0;
                                     refund_move += oldLevel.specialist_registration_fee - newLevel.specialist_registration_fee;
+                                }
+                                else
+                                {
+                                    evt.new_fee = moveSpecialistNewFee;
                                 }
                             }
                             else
@@ -2862,7 +2866,7 @@ export default {
                                     if (a.is_specialist) {
                                         athlete.events = [];
                                         a.events.forEach(evt => {
-                                            if (evt.is_new || (evt.hasOwnProperty('has_changes') && evt.has_changes())) {
+                                            if (evt.is_new || (evt.hasOwnProperty('has_changes') && evt.has_changes()) || evt.fee > 0 ) {
                                                 athlete.events.push({
                                                     ..._.cloneDeep(evt),
                                                     to_waitlist: a.to_waitlist,
