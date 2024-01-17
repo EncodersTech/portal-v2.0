@@ -1755,8 +1755,9 @@ class MeetRegistration extends Model
                 // echo 'before sp : '. count($specialists).'<br>';
                 foreach ($specialists as $specialist_events) {
                     // dd($specialist_events);
-                    foreach ($specialist_events as $se) {
-                        $subtotal += $se['new']['fee'] + $se['new']['late_fee'] - ($se['new']['refund'] + $se['new']['late_refund']);
+                    foreach ($specialist_events as $k => $se) {
+                        if($k > 0) // this is important, gettint evt-number as duplicate for some reason
+                            $subtotal += $se['new']['fee'] + $se['new']['late_fee'] - ($se['new']['refund'] + $se['new']['late_refund']);
                     }
                 }
                 // echo 'after sp : '. $subtotal.'<br>';
@@ -3928,7 +3929,7 @@ class MeetRegistration extends Model
                     }
                 }
                 $snapshot['coupon'] = $couponAmount;
-                
+                // dd($snapshot);
                 $incurredFees = $this->calculateRegistrationTotal($snapshot, $is_scratch, 0);
                 // echo '1st in fee: '. $incurredFees['subtotal'] . '<br>';
                 if($credit_remaining > 0 )
@@ -4058,7 +4059,7 @@ class MeetRegistration extends Model
                     'scratch' => $txScratch,
                     'sp_move' => $sp_move
                 ];
-
+                $last_transaction = MeetTransaction::where('meet_registration_id', $this->id)->orderBy('created_at', 'desc')->first();
                 foreach ($txAthletes['waitlist'] as $ra) {/** @var RegistrationAthlete $ra */
                     $ra->in_waitlist = true;
                     $ra->transaction()->associate($waitlistTransaction);
@@ -4070,7 +4071,13 @@ class MeetRegistration extends Model
                 }
                 foreach ($txAthletes['added'] as $ra) {/** @var RegistrationAthlete $ra */
                     if($transaction)
+                    {
                         $ra->transaction()->associate($transaction);
+                    }
+                    else
+                    {
+                        $ra->transaction()->associate($last_transaction);
+                    }
                     $ra->status = isset($athleteStatus) ? $athleteStatus : RegistrationAthlete::STATUS_REGISTERED;
                     $ra->save();
                     $a = $ra->toArray();
@@ -4087,7 +4094,13 @@ class MeetRegistration extends Model
                         $s['events'] = [];
                     }
                     if($transaction)
+                    {
                         $rse->transaction()->associate($transaction);
+                    }
+                    else
+                    {
+                        $rse->transaction()->associate($last_transaction);
+                    }
                     $rse->status = isset($specialistStatus) ? $specialistStatus : RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
                     $rse->save();
                     $e = $rse->toArray();

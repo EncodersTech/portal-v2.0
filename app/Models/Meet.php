@@ -2535,6 +2535,7 @@ class Meet extends Model
                 ->orderBy('created_at', 'ASC')
                 ->get();
                 $team_late = 0;
+                // blank payment id is not working - need to have previous payment id assigned to it
                 // dd($registrations[$i]['transactions']);
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {
                     if (!isset($transaction->breakdown['level_team_fees'])) {
