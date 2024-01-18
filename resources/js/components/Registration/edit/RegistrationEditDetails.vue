@@ -1708,7 +1708,7 @@ export default {
                         parent.freed_slots++;
 
                         console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
-                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
                         console.log(this.changes_fees);
                     }
                     break;
@@ -1726,7 +1726,7 @@ export default {
                     } else {
                         obj.status = this.constants.specialists.statuses.Scratched;
                         obj.changes.scratch = true;
-                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
                     }
                     // parent.deduceStatus();
                     // if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
@@ -1791,7 +1791,7 @@ export default {
                                     obj.status = obj.original_data.status;
                                     obj.changes.scratch = false;
                                     parent.freed_slots--;
-                                    this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+                                    this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee);
                                 }
                             }
                         }
@@ -1885,18 +1885,18 @@ export default {
                             obj.changes.sanction_no = false;
                         }
 
-                        if (!obj.is_new) {
-                            obj.fee = 0;
-                            obj.late_fee = 0;
-                            obj.refund = 0;
-                            obj.late_refund = 0;
+                        // if (!obj.is_new) {
+                        //     obj.fee = 0;
+                        //     obj.late_fee = 0;
+                        //     obj.refund = 0;
+                        //     obj.late_refund = 0;
 
-                            obj.new_fee = 0;
-                            obj.new_late_fee = 0;
-                            obj.new_refund = 0;
-                            obj.new_late_refund = 0;
-                            // this.changes_fees -= obj.total;
-                        }
+                        //     obj.new_fee = 0;
+                        //     obj.new_late_fee = 0;
+                        //     obj.new_refund = 0;
+                        //     obj.new_late_refund = 0;
+                        //     // this.changes_fees -= obj.total;
+                        // }
                     }
                     break;
 
@@ -1909,20 +1909,20 @@ export default {
                         if (obj.changes.scratch) {
                             obj.status = obj.original_data.status;
                             obj.changes.scratch = false;
-                            this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund));
+                            this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));
                         }
 
-                        if (!obj.is_new) {
-                            obj.fee = 0;
-                            obj.late_fee = 0;
-                            obj.refund = 0;
-                            obj.late_refund = 0;
+                        // if (!obj.is_new) {
+                        //     obj.fee = 0;
+                        //     obj.late_fee = 0;
+                        //     obj.refund = 0;
+                        //     obj.late_refund = 0;
 
-                            obj.new_fee = 0;
-                            obj.new_late_fee = 0;
-                            obj.new_refund = 0;
-                            obj.new_late_refund = 0;
-                        }
+                        //     obj.new_fee = 0;
+                        //     obj.new_late_fee = 0;
+                        //     obj.new_refund = 0;
+                        //     obj.new_late_refund = 0;
+                        // }
 
                         parent.deduceStatus();
                         if ((prevStatus == this.constants.specialists.statuses.Scratched)

@@ -3384,7 +3384,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             obj.changes.scratch = true;
             parent.freed_slots++;
             console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
-            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
             console.log(this.changes_fees);
           }
 
@@ -3402,7 +3402,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           } else {
             obj.status = this.constants.specialists.statuses.Scratched;
             obj.changes.scratch = true;
-            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
           } // parent.deduceStatus();
           // if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
           //     parent.changes.scratch = true;
@@ -3457,7 +3457,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   obj.status = obj.original_data.status;
                   obj.changes.scratch = false;
                   parent.freed_slots--;
-                  this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund);
+                  this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee);
                 }
               }
             }
@@ -3532,18 +3532,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             if (obj.changes.sanction_no) {
               obj[obj.sanction_no] = obj.original_data[obj.sanction_no];
               obj.changes.sanction_no = false;
-            }
+            } // if (!obj.is_new) {
+            //     obj.fee = 0;
+            //     obj.late_fee = 0;
+            //     obj.refund = 0;
+            //     obj.late_refund = 0;
+            //     obj.new_fee = 0;
+            //     obj.new_late_fee = 0;
+            //     obj.new_refund = 0;
+            //     obj.new_late_refund = 0;
+            //     // this.changes_fees -= obj.total;
+            // }
 
-            if (!obj.is_new) {
-              obj.fee = 0;
-              obj.late_fee = 0;
-              obj.refund = 0;
-              obj.late_refund = 0;
-              obj.new_fee = 0;
-              obj.new_late_fee = 0;
-              obj.new_refund = 0;
-              obj.new_late_refund = 0; // this.changes_fees -= obj.total;
-            }
           }
 
           break;
@@ -3557,19 +3557,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             if (obj.changes.scratch) {
               obj.status = obj.original_data.status;
               obj.changes.scratch = false;
-              this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee) - parseFloat(obj.refund) - parseFloat(obj.late_refund));
-            }
+              this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));
+            } // if (!obj.is_new) {
+            //     obj.fee = 0;
+            //     obj.late_fee = 0;
+            //     obj.refund = 0;
+            //     obj.late_refund = 0;
+            //     obj.new_fee = 0;
+            //     obj.new_late_fee = 0;
+            //     obj.new_refund = 0;
+            //     obj.new_late_refund = 0;
+            // }
 
-            if (!obj.is_new) {
-              obj.fee = 0;
-              obj.late_fee = 0;
-              obj.refund = 0;
-              obj.late_refund = 0;
-              obj.new_fee = 0;
-              obj.new_late_fee = 0;
-              obj.new_refund = 0;
-              obj.new_late_refund = 0;
-            }
 
             parent.deduceStatus();
 
