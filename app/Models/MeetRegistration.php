@@ -1752,12 +1752,15 @@ class MeetRegistration extends Model
 
                 $specialists = $l['specialists'];
                 // dd($l);
-                // echo 'before sp : '. count($specialists).'<br>';
+                // if($specialists)
+                // dd($specialists);
                 foreach ($specialists as $specialist_events) {
                     // dd($specialist_events);
                     foreach ($specialist_events as $k => $se) {
-                        if($k > 0) // this is important, gettint evt-number as duplicate for some reason
+                        if(is_int($k)) // this is important, gettint evt-number as duplicate for some reason
+                        {
                             $subtotal += $se['new']['fee'] + $se['new']['late_fee'] - ($se['new']['refund'] + $se['new']['late_refund']);
+                        }
                     }
                 }
                 // echo 'after sp : '. $subtotal.'<br>';

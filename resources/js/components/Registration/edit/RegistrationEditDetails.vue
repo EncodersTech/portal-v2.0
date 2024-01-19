@@ -1759,22 +1759,18 @@ export default {
                                 this.revertChanges(evt, 'event', obj, parent);
                                 if(obj.changes.moved_to!=false)
                                 {
-                                    if(evt.fee - parent.specialist_registration_fee > 0)
-                                    {
-                                        var cg = parseFloat(evt.fee) - parseFloat(parent.specialist_registration_fee);
-                                        this.changes_fees = parseFloat(this.changes_fees) - cg;
-                                    }
-                                }
-                                else
-                                {
-                                    // this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(evt.fee) + parseFloat(evt.late_fee) - parseFloat(evt.refund) - parseFloat(evt.late_refund));
+                                    evt.new_fee = 0;
+                                    // if(evt.fee - parent.specialist_registration_fee > 0)
+                                    // {
+                                    //     var cg = parseFloat(evt.fee) - parseFloat(parent.specialist_registration_fee);
+                                    //     this.changes_fees = parseFloat(this.changes_fees) - cg;
+                                    // }
                                 }
                             };
                             obj.changes.events = false;
 
                         } else {
                             if (obj.changes.scratch) {
-
                                 if (
                                     parent.athletes
                                             .filter(a => {
@@ -1791,7 +1787,7 @@ export default {
                                     obj.status = obj.original_data.status;
                                     obj.changes.scratch = false;
                                     parent.freed_slots--;
-                                    this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) + parseFloat(obj.late_fee);
+                                    this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);
                                 }
                             }
                         }
@@ -1821,13 +1817,14 @@ export default {
                                 );
                             } else {
                                 obj.changes.moved_to = false;
+                                obj.new_fee = 0;
                                 Utils.remove(curLevel.athletes, obj);
                                 origLevel.athletes.push(obj);
 
                                 obj.sanction_no = newSanction;
                                 obj.changes.sanction_no = false;
 
-                                var refund_move = curLevel.registration_fee - origLevel.registration_fee;
+                                
                                 var refund_sp = curLevel.specialist_registration_fee - origLevel.specialist_registration_fee;
                                 if(curLevel.registration_fee > origLevel.registration_fee){
                                     refund_move = 0;
@@ -1839,6 +1836,7 @@ export default {
                                 }
                                 if(!obj.is_specialist)
                                 {    
+                                    var refund_move = obj.new_refund;
                                     this.changes_fees = parseFloat(this.changes_fees) - parseFloat(refund_move);
                                 }
                                 else
@@ -2091,10 +2089,11 @@ export default {
                     this.changes_fees = parseFloat(this.changes_fees) + parseFloat(refund_move);
                 } else {
                     
-                    moveAthleteNewFee = newLevel.registration_fee - oldLevel.registration_fee;
-                    if(oldLevel.registration_fee > newLevel.registration_fee){
+                    moveAthleteNewFee = newLevel.registration_fee - athlete.fee; //oldLevel.registration_fee;
+                    if(athlete.fee > newLevel.registration_fee){  //oldLevel.registration_fee > newLevel.registration_fee
                         moveAthleteNewFee = 0;
-                        refund_move = oldLevel.registration_fee - newLevel.registration_fee;
+                        refund_move = athlete.fee - newLevel.registration_fee; // oldLevel.registration_fee - newLevel.registration_fee;
+                        athlete.new_refund = refund_move;
                     }
                     athlete.new_fee = (moveAthleteNewFee < 0) ? -(moveAthleteNewFee) : moveAthleteNewFee;
                     // athlete.new_late_fee = this.late ? newLevel.late_registration_fee : 0;
@@ -2122,6 +2121,11 @@ export default {
 
                 level.team = toggle;
                 level.changes.team = (level.team != level.original_data.team);
+                if(level.changes.team)
+                    this.changes_fees += level.team_fee;
+                else
+                    this.changes_fees -= level.team_fee;
+                    
                 this.calculateWaitlistStatuses();
             } catch (error) {
                 this.showAlert(
