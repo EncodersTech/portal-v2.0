@@ -2537,13 +2537,31 @@ class Meet extends Model
                 ->orderBy('created_at', 'ASC')
                 ->get();
                 $team_late = 0;
+                $usag_refund = 0;
+                $regular_refund = 0;
+                $team_already_mentioned = [];
+                $allaround_late_fee_calculate = false;
                 // blank payment id is not working - need to have previous payment id assigned to it
                 // dd($registrations[$i]['transactions']);
+                $registered_team_ids = [];
+                foreach ($registrations[$i]['transactions'] as $j => $transaction) {
+                    foreach ($transaction->breakdown['level_team_fees'] as $key => $value) {
+                        if($transaction->breakdown['level_team_fees'][$key]['fee'] > 0)
+                            $registered_team_ids[$key] = array(
+                                'transaction_id' => $transaction->id
+                        );
+                    }
+                }
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {
                     if (!isset($transaction->breakdown['level_team_fees'])) {
                         unset($registrations[$i]['transactions'][$j]);
                         continue;
                     }
+                    echo '<br>Transaction ID : ' .  $transaction->id .'<br>';
+                    // dd($transaction->breakdown['level_team_fees']);
+                    
+                    // if($transaction->breakdown['level_team_fees']['fee'] > 0)
+                    //     dd($transaction->breakdown['level_team_fees']);
                     // dd($registrations[$i]);
                     // $levelTeamFees = isset($transaction->breakdown['level_team_fees']) ? $transaction->breakdown['level_team_fees'] :[];
                     // dd($levelTeamFees);
@@ -2563,8 +2581,10 @@ class Meet extends Model
                     }, $l_r_a);
 
                     $l_r = array_merge($l_r_s,$l_r_a);
+                    $l_r = array_unique($l_r);
                     // dd($l_r);
-
+                    print_r($l_r);
+                    echo '<br><br>';
                     if (count($l_r) > 0) {
                         $levels = $registration->levels()->wherePivotIn('id', $l_r)->get();
                         // dd($levels);
@@ -2574,13 +2594,28 @@ class Meet extends Model
                         $total_difference = 0;
                         // echo '<br>Transaction ID : ' .  $j .'<br>';
                         foreach ($levels as $l) { /** @var AthleteLevel $l */
-                            // dd($l); die();
                             $specialist_count = 0;
                             // dd($l->pivot->athletes);
                             $at_count = $l->pivot->athletes->where('transaction_id',$transaction->id)->count(); 
                             $at_count_t = $l->pivot->athletes->where('transaction_id',$transaction->id);
                             $net_athlete_value = 0;
                             foreach ($at_count_t as $key => $value) {
+                                if($l->sanctioning_body_id == 1) //USAG
+                                {
+                                    if($value->status == RegistrationAthlete::STATUS_REGISTERED)
+                                    {
+                                        $u_refund = ($value->refund + $value->late_refund) -  ($value->fee + $value->late_fee);
+                                        $usag_refund += $u_refund > 0 ? $u_refund : 0;
+                                    }
+                                    else if($value->status == RegistrationAthlete::STATUS_SCRATCHED)
+                                    {
+                                        $usag_refund += $value->refund + $value->late_refund;
+                                    }
+                                }
+                                else
+                                {
+                                    $regular_refund += $value->refund;
+                                }
                                 if($value->was_late)
                                     $net_athlete_value += $value->fee + $value->late_fee;
                                 else
@@ -2613,37 +2648,92 @@ class Meet extends Model
                             else
                                 $cttr = $specialist_athletes_count[0]->numb;
 
-                            // print_r($l->pivot->specialists);
-                            // echo '<br><br><br>';
-                            // foreach ($specialist_athletes as $ss) {
-                                // dd($ss->events);
-                                foreach ($specialist_athletes as $e) {
-                                    if($e->was_late)
+                            foreach ($specialist_athletes as $e) {
+                                if($e->was_late)
+                                {
+                                    $sf_total += $e->fee + $e->late_fee;
+                                }
+                                else
+                                {
+                                    $sf_total += $e->fee;
+                                }
+                                $specialist_count += 1;
+                            }
+                            if(isset($team_already_mentioned[$l->id]))
+                            {
+                                $team_count = 0;
+                                $team_fee = 0;
+                                $team_late = 0;
+                            }
+                            else
+                            {
+                                // dd($registered_team_ids);
+                                echo 'level ' . $l->pivot->id . '<br>';
+                                if(isset($registered_team_ids[$l->pivot->id]))
+                                {
+                                    echo $registered_team_ids[$l->pivot->id]['transaction_id'] . ' ' . $transaction->id . '<br>';
+                                    // dd($registered_team_ids[$l->pivot->id]['transaction_id']);
+                                    if($registered_team_ids[$l->pivot->id]['transaction_id'] == $transaction->id)
                                     {
-                                        $sf_total += $e->fee + $e->late_fee;
+                                        echo 'Team Fee : ' . $l->pivot->team_fee . '<br>';
+                                        $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee > 0 ? 1 : 0);
+                                        $team_fee = $l->pivot->team_fee;
+                                        $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
+        
+                                        if($team_count > 0)
+                                            $team_already_mentioned[$l->id] = 1;
                                     }
                                     else
                                     {
-                                        $sf_total += $e->fee;
+                                        $team_count = 0;
+                                        $team_fee = 0;
+                                        $team_late = 0;
                                     }
-                                    $specialist_count += 1;
-                                    // if($e->status == RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED)
-                                    // {
-                                    // }
                                 }
-                            // }
+                                else
+                                {
+                                    $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee > 0 ? 1 : 0);
+                                    $team_fee = $l->pivot->team_fee;
+                                    $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
+    
+                                    if($team_count > 0)
+                                        $team_already_mentioned[$l->id] = 1;
+                                }
+
+                               
+                            }
+                            // dd($l);
+                            $onetimelatefee = 0;
+                            if($registration->was_late && $l->pivot->was_late && $allaround_late_fee_calculate == false)
+                            {
+                                $onetimelatefee = $registration->late_fee;
+                                $allaround_late_fee_calculate = true;
+                            }
+
+
                             $speicalist_total_fee += $sf_total;
                             $speicalist = $cttr;
                             // $specialist = $specialist_count;
                             $reg_fee = $l->pivot->registration_fee;
                             $late_reg_fee = $l->pivot->late_registration_fee;
-                            $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee > 0 ? 1 : 0);
-                            $team_fee = $l->pivot->team_fee;
-                            $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
+                            // $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee > 0 ? 1 : 0);
+                            // $team_fee = $l->pivot->team_fee;
+                            // $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
                             // $re_total = $reg_fee * $at_count + $team_fee * $team_count + $sf_total + $late_at_count * $late_reg_fee;
-                            $re_total = $net_athlete_value + $team_fee * $team_count + $sf_total + $late_at_count * $late_reg_fee;
-                            // dd($speicalist);
+                            $individual_team_late = ($team_count == 1 && $l->pivot->team_late_registration_fee > 0) ? $l->pivot->team_late_registration_fee : 0;
+                            $re_total = $net_athlete_value + ($team_fee * $team_count) + $sf_total + $individual_team_late + $onetimelatefee; // + $late_at_count * $late_reg_fee;
+                            echo 'Net Athlete Value : ' . $net_athlete_value . '<br>';
+                            echo 'Team Fee : ' . $team_fee . '<br>';
+                            echo 'Team Count : ' . $team_count . '<br>';
+                            echo 'Specialist Fee : ' . $sf_total . '<br>';
+                            echo 'Late Athlete Count : ' . $late_at_count . '<br>';
+                            echo 'Late Reg Fee : ' . $late_reg_fee . '<br>';
+                            echo 'Total : ' . $re_total . '<br>';
+                            echo 'team late : ' . $individual_team_late .'<br>';
 
+                            // dd($speicalist);
+                            // echo $re_total . ' <br>';
+                            // dd($re_total);
                             if($re_total > 0)
                             {
                                 $level_reg_history[$l->id] = [
@@ -2663,13 +2753,48 @@ class Meet extends Model
                                 $total_difference += $re_total;
                                 
                             } 
+                            // dd($l);
                         }
                         $registrations[$i]['transactions'][$j]['level_reg_history'] = $level_reg_history;
                         $registrations[$i]['transactions'][$j]['level_payment_sum'] = $total_difference;
                     }
+                    else
+                    {
+                        $total_team_sum = 0;
+                        foreach ($transaction->breakdown['level_team_fees'] as $key => $value) {
+                            if($value['fee'] > 0)
+                            {
+                                echo 'level in else ' . $key . '<br>';
+                                $l = $registration->levels()->wherePivot('id', $key)->first();
+                                // dd($l);
+                                $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee > 0 ? 1 : 0);
+                                $team_fee = $l->pivot->team_fee;
+                                $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
+
+                                if($team_count > 0)
+                                    $team_already_mentioned[$l->id] = 1;
+                                
+                                echo 'Team Fee : ' . $team_fee . '<br>';
+                                $level_team_reg_history[$l->id] = [
+                                    'name' => $l->abbreviation,
+                                    'at_count' => 0,
+                                    'specialists' => 0,
+                                    'team_count' => 1,
+                                    'entry_fee' => $team_fee,
+                                    'specialist_registration_fee' => 0,
+                                    'team_fee' => $team_fee,
+                                    'total_fee' => $team_fee
+                                ];
+                                $total_team_sum += $team_fee;
+                            }
+                        }
+                        $registrations[$i]['transactions'][$j]['level_reg_history'] = $level_team_reg_history;
+                        $registrations[$i]['transactions'][$j]['level_payment_sum'] = $total_team_sum;
+                        $level_team_reg_history = [];
+                    }
                 }
-                // die();
-                // dd($registrations[0]['transactions'][2]['level_reg_history']);
+                // dD("check");
+                // dd($registrations[0]['transactions']);
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {
                     $adminFee += (isset($transaction->breakdown['gym']['deposit_handling']) && $transaction->breakdown['gym']['deposit_handling'] > 0) ? $transaction->breakdown['gym']['deposit_handling'] : $transaction->breakdown['gym']['handling'];
                     $cardFees += $transaction->breakdown['gym']['processor'];
@@ -2677,7 +2802,7 @@ class Meet extends Model
                     $cardMeetFees += $transaction->breakdown['host']['processor'];
                 }
 
-                // dd($registration->athletes->sum('fee') .' '. $speicalist_total_fee);
+                // dd($usag_refund .' '. $regular_refund );
                 $fee_s['admin_fees'] = $adminFee;
                 $fee_s['card_fees'] = $cardFees;
                 $fee_s['admin_meet_fees'] = $adminMeetFee;
@@ -2686,7 +2811,10 @@ class Meet extends Model
                 $fee_s['reg_meet_fees'] = $reg_meet_fees; //trackthis
                 $fee_s['team_fees'] = $teamFee;
                 $fee_s['team_meet_fees'] = 0;
-                $fee_s['refund_fees'] = $registration->athletes->sum('refund') + $specialistRefundFee + $specialistLateRefundFee - $used_credit + $team_refund;
+                // $registration->athletes->sum('refund') +
+                $fee_s['refund_fees'] = $usag_refund + $regular_refund + $specialistRefundFee + $specialistLateRefundFee - $used_credit + $team_refund;
+                // echo 'USAG REFUND';
+                // dd($usag_refund , $regular_refund , $specialistRefundFee , $specialistLateRefundFee , $used_credit , $team_refund);
                 $fee_s['refund_meet_fees'] = $refund_meet_fees;
                 $fee_s['late_fee'] = $registration->athletes->sum('late_fee') + $specialistLateFee + $team_late + ($registration->was_late ? $registration->late_fee : 0);
 
@@ -2702,6 +2830,7 @@ class Meet extends Model
             // $data['changes'] = $registrationAuditReport;
             // dd($data['changes']);
             // dd($data);
+            // die();
             return PDF::loadView('PDF.host.meet.reports.registration-detail', $data);
         } catch(\Throwable $e) {
             throw $e;
@@ -2727,7 +2856,7 @@ class Meet extends Model
                     },
                     'levels' => function ($q) {
 
-                    },
+                    }, 
                     'athletes' => function ($q) {
 
                     },

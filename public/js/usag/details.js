@@ -2991,7 +2991,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       accountNumber: '',
       accountType: 's',
       // Default to savings
-      accountName: ''
+      accountName: '',
+      previous_registration_credit_amount: 0,
+      changes_fees: 0
     };
   },
   methods: {
@@ -3104,13 +3106,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     toggleTeam: function toggleTeam(level, toggle) {
       if (!this.permissions.scratch && toggle == false) return;
+      if (toggle == false && level.has_team == false) return;
       level.has_team = toggle;
-      level.changes.team = level.has_team != level.original_data.has_team;
+      level.changes.team = level.has_team != level.original_data.has_team; // this.calculateSubtotal();
+
+      for (var i in this.registrationLevelToMeetLevelMatrix) {
+        if (this.registrationLevelToMeetLevelMatrix[i] == level.uid) {
+          this.state["final"].levels[i] = level;
+          break;
+        }
+      }
+
+      if (level.changes.team) this.changes_fees += level.team_fee;else this.changes_fees -= level.team_fee; // this.$forceUpdate(); 
+
       this.calculateSubtotal();
     },
     revertLevelTeam: function revertLevelTeam(level) {
+      if (level.has_team == true && level.changes.team == false) return;
       level.has_team = level.original_data.has_team;
       level.changes.team = false;
+      this.changes_fees -= level.team_fee;
+
+      for (var i in this.registrationLevelToMeetLevelMatrix) {
+        if (this.registrationLevelToMeetLevelMatrix[i] == level.uid) {
+          this.state["final"].levels[i] = level;
+          this.$forceUpdate();
+          break;
+        }
+      }
+
       this.calculateSubtotal();
     },
     loadMeetDetails: function loadMeetDetails(state) {
@@ -3242,7 +3266,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        var result, vm, registration, i, level, _loop2, _i, _ret2, _loop3, _i2, _ret3;
+        var result, vm, registration, i, level, j, athlete, _i, _level, _loop2, _i2, _ret2, _loop3, _i3, _ret3;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
           while (1) {
@@ -3275,20 +3299,33 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 vm = _this3;
                 registration = result.data;
                 _this3.old_data_athletes = result.data;
+                _this3.previous_registration_credit_amount = registration.previous_registration_credit_amount;
                 registration.late_fee = Utils.toFloat(registration.late_fee);
                 registration.late_refund = Utils.toFloat(registration.late_refund);
 
-                for (i in registration.levels) {
-                  level = registration.levels[i];
-                  _this3.registrationLevelToMeetLevelMatrix[level.pivot.id] = _this3.levelUniqueId({
-                    id: level.id,
-                    male: level.pivot.allow_men,
-                    female: level.pivot.allow_women
+                for (i in state["final"].levels) {
+                  level = state["final"].levels[i];
+
+                  for (j in level.athletes) {
+                    athlete = level.athletes[j];
+
+                    if (athlete.status == vm.constants.athletes.statuses.Scratched && !athlete.processed_already) {
+                      _this3.changes_fees += parseFloat(athlete.fee) + parseFloat(athlete.late_fee);
+                    }
+                  }
+                }
+
+                for (_i in registration.levels) {
+                  _level = registration.levels[_i];
+                  _this3.registrationLevelToMeetLevelMatrix[_level.pivot.id] = _this3.levelUniqueId({
+                    id: _level.id,
+                    male: _level.pivot.allow_men,
+                    female: _level.pivot.allow_women
                   });
                 }
 
-                _loop2 = function _loop2(_i) {
-                  var athlete = _.cloneDeep(registration.athletes[_i]);
+                _loop2 = function _loop2(_i2) {
+                  var athlete = _.cloneDeep(registration.athletes[_i2]);
 
                   athlete.is_scratched = function () {
                     return this.status == vm.constants.athletes.statuses.Scratched;
@@ -3331,8 +3368,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   };
 
                   athlete.has_changes = function () {
-                    for (var _i3 in this.changes) {
-                      var c = this.changes[_i3];
+                    for (var _i4 in this.changes) {
+                      var c = this.changes[_i4];
                       if (c !== null && c !== false) return true;
                     }
 
@@ -3374,29 +3411,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 _context2.t0 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(registration.athletes);
 
-              case 14:
+              case 16:
                 if ((_context2.t1 = _context2.t0()).done) {
+                  _context2.next = 23;
+                  break;
+                }
+
+                _i2 = _context2.t1.value;
+                _ret2 = _loop2(_i2);
+
+                if (!(_ret2 === "continue")) {
                   _context2.next = 21;
                   break;
                 }
 
-                _i = _context2.t1.value;
-                _ret2 = _loop2(_i);
-
-                if (!(_ret2 === "continue")) {
-                  _context2.next = 19;
-                  break;
-                }
-
-                return _context2.abrupt("continue", 14);
-
-              case 19:
-                _context2.next = 14;
-                break;
+                return _context2.abrupt("continue", 16);
 
               case 21:
-                _loop3 = function _loop3(_i2) {
-                  var coach = _.cloneDeep(registration.coaches[_i2]);
+                _context2.next = 16;
+                break;
+
+              case 23:
+                _loop3 = function _loop3(_i3) {
+                  var coach = _.cloneDeep(registration.coaches[_i3]);
 
                   coach.is_scratched = function () {
                     return this.status == vm.constants.coaches.statuses.Scratched;
@@ -3439,8 +3476,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   };
 
                   coach.has_changes = function () {
-                    for (var _i4 in this.changes) {
-                      var c = this.changes[_i4];
+                    for (var _i5 in this.changes) {
+                      var c = this.changes[_i5];
                       if (c !== null && c !== false) return true;
                     }
 
@@ -3473,30 +3510,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
                 _context2.t2 = _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.keys(registration.coaches);
 
-              case 23:
+              case 25:
                 if ((_context2.t3 = _context2.t2()).done) {
+                  _context2.next = 32;
+                  break;
+                }
+
+                _i3 = _context2.t3.value;
+                _ret3 = _loop3(_i3);
+
+                if (!(_ret3 === "continue")) {
                   _context2.next = 30;
                   break;
                 }
 
-                _i2 = _context2.t3.value;
-                _ret3 = _loop3(_i2);
-
-                if (!(_ret3 === "continue")) {
-                  _context2.next = 28;
-                  break;
-                }
-
-                return _context2.abrupt("continue", 23);
-
-              case 28:
-                _context2.next = 23;
-                break;
+                return _context2.abrupt("continue", 25);
 
               case 30:
+                _context2.next = 25;
+                break;
+
+              case 32:
                 Vue.set(_this3, 'registration', registration);
 
-              case 31:
+              case 33:
               case "end":
                 return _context2.stop();
             }
@@ -3601,19 +3638,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         var old_a = _.cloneDeep(this.old_data_athletes.athletes[a_i]);
 
         if (old_a.id === athlete.id) {
-          if (athlete.was_late && athleteTotal > athlete.late_fee) {
-            var athleteFee = 0;
-            athleteFee = athleteTotal - athlete.late_fee;
-
-            if (old_a.fee == athleteFee) {
-              athleteTotal = athlete.late_fee;
-            }
-          }
+          athleteTotal = level.registration_fee - athlete.fee;
+          if (athleteTotal < 0) athleteTotal = 0;else if (athleteTotal > 0) athlete.include_in_calculation = true; // if (athlete.was_late && (athleteTotal > athlete.late_fee)) {
+          //     let athleteFee = 0;
+          //     athleteFee = athleteTotal - athlete.late_fee;
+          //     if (old_a.fee == athleteFee) {
+          //         athleteTotal = athlete.late_fee;
+          //     }
+          // }
         }
       } //#endregion
 
 
       athlete.total = athleteTotal;
+
+      if (athlete.old_level !== null) {
+        var old_level_fee = this.state["final"].levels[athlete.old_level].registration_fee;
+        var current_level_fee = level.registration_fee;
+
+        if (old_level_fee > current_level_fee) {
+          if (this.changes_fees == 0) this.changes_fees += parseFloat(old_level_fee) - parseFloat(current_level_fee);
+        }
+      }
+
       if (stop !== true) this.calculateLevelSubtotal(level);
     },
     calculateLevelSubtotal: function calculateLevelSubtotal(level, stop) {
@@ -3656,6 +3703,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         if (diff == 0) total += this.meet.late_registration_fee;
       }
 
+      var p_credit = this.previous_registration_credit_amount + this.changes_fees;
+      if (total >= p_credit) total = total - p_credit;else total = 0;
       this.total = total;
     },
     calculateSubtotal: function calculateSubtotal() {
@@ -3874,9 +3923,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }
 
-        for (var _i5 in this.state["final"].coaches) {
-          if (this.state["final"].coaches.hasOwnProperty(_i5)) {
-            var coach = this.state["final"].coaches[_i5];
+        for (var _i6 in this.state["final"].coaches) {
+          if (this.state["final"].coaches.hasOwnProperty(_i6)) {
+            var coach = this.state["final"].coaches[_i6];
 
             if (!['male', 'female'].includes(coach.gender)) {
               throw 'Invalid gender for coach <strong>' + coach.first_name + ' ' + coach.last_name + '</strong>';
@@ -3942,7 +3991,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           use_balance: _this6.useBalance,
           coupon: _this6.coupon.trim().toUpperCase(),
           enable_travel_arrangements: _this6.enable_travel_arrangements,
-          onetimeach: _this6.onetimeach
+          onetimeach: _this6.onetimeach,
+          changes_fees: _this6.changes_fees
         }).then(function (result) {
           _this6.registrationUrl = result.data.url;
           _this6.paymentProcessedMessage = result.data.message;
@@ -4005,7 +4055,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     var _this7 = this;
 
     return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee4() {
-      var state, initial, _final, lid, l, level, usag_no, a, athlete, _usag_no, c, coach, freed_slots_tracker, added_slots_tracker, _lid, _l, _level, _usag_no2, _a, added, old_level, scratched, _athlete, sizing_id, _sizing_id, a_i, old_a, _old_a$tshirt_size_id, _old_a$leo_size_id, tmp, tmp_fee, _lid2, _l2, j, new_a, _a_i, _old_a, _usag_no3, _c, _added, _scratched, _coach, c_i, old_c, _old_c$tshirt_size_id, _tmp, msg;
+      var state, initial, _final, lid, l, level, usag_no, a, athlete, _usag_no, c, coach, freed_slots_tracker, added_slots_tracker, _lid, _l, _level2, _usag_no2, _a, added, old_level, scratched, _athlete, sizing_id, _sizing_id, a_i, old_a, _old_a$tshirt_size_id, _old_a$leo_size_id, tmp, tmp_fee, _lid2, _l2, j, new_a, _a_i, _old_a, _usag_no3, _c, _added, _scratched, _coach, c_i, old_c, _old_c$tshirt_size_id, _tmp, msg;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee4$(_context4) {
         while (1) {
@@ -4150,7 +4200,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               _l = _final.levels[_lid];
-              _level = null;
+              _level2 = null;
 
               if (!state["final"].levels.hasOwnProperty(_lid)) {
                 _context4.next = 51;
@@ -4158,7 +4208,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               // check if level was processed before
-              _level = state["final"].levels[_lid];
+              _level2 = state["final"].levels[_lid];
               _context4.next = 60;
               break;
 
@@ -4169,7 +4219,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               // check if level exists in registration (lid in registrationLevelToMeetLevelMatrix)
-              _level = _objectSpread(_objectSpread({}, _.cloneDeep(_this7.genderAwareMeetLevelMatrix[_this7.registrationLevelToMeetLevelMatrix[_lid]])), {}, {
+              _level2 = _objectSpread(_objectSpread({}, _.cloneDeep(_this7.genderAwareMeetLevelMatrix[_this7.registrationLevelToMeetLevelMatrix[_lid]])), {}, {
                 is_new: false,
                 athletes: {}
               });
@@ -4183,7 +4233,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               }
 
               // if not, check if level exists in meet (uid in genderAwareMeetLevelMatrix)
-              _level = _objectSpread(_objectSpread({}, _.cloneDeep(_this7.genderAwareMeetLevelMatrix[_l.uid])), {}, {
+              _level2 = _objectSpread(_objectSpread({}, _.cloneDeep(_this7.genderAwareMeetLevelMatrix[_l.uid])), {}, {
                 is_new: true,
                 athletes: {}
               });
@@ -4213,7 +4263,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               added = 0;
               if (_final.ids.added.athletes.hasOwnProperty(_usag_no2)) added = _final.ids.added.athletes[_usag_no2];
               old_level = null;
-              if (_final.ids.moved.hasOwnProperty(_usag_no2)) old_level = _final.ids.moved[_usag_no2];
+
+              if (_final.ids.moved.hasOwnProperty(_usag_no2)) {
+                old_level = _final.ids.moved[_usag_no2];
+              }
+
               scratched = 0;
               if (_final.ids.scratched.athletes.hasOwnProperty(_usag_no2)) scratched = _final.ids.scratched.athletes[_usag_no2];
               _athlete = _objectSpread(_objectSpread({}, _a), {}, {
@@ -4272,12 +4326,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 // If athlete was moved to a different level and is not a new addition
                 _athlete.include_in_calculation = true;
                 _athlete.was_late = _athlete.was_late || _this7.late;
-                tmp_fee = _level.registration_fee - _athlete.fee;
+                tmp_fee = _level2.registration_fee - _athlete.fee;
                 _athlete.refund = tmp_fee < 0 ? tmp_fee * -1 : 0; //athlete.fee;
 
                 _athlete.late_refund = _athlete.late_fee;
                 _athlete.fee = tmp_fee < 0 ? 0 : tmp_fee;
-                if (_athlete.was_late) _athlete.late_fee = _level.late_registration_fee;
+                if (_athlete.was_late) _athlete.late_fee = _level2.late_registration_fee;
                 _athlete.status = _athlete.to_waitlist || _athlete.in_waitlist ? _this7.constants.athletes.statuses.NonReserved : _this7.constants.athletes.statuses.Registered;
 
                 if (!_athlete.in_waitlist) {
@@ -4303,8 +4357,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 _athlete.was_late = _this7.late;
                 _athlete.refund = _athlete.fee;
                 _athlete.late_refund = _athlete.late_fee;
-                _athlete.fee += _level.registration_fee;
-                if (_athlete.was_late) _athlete.late_fee += _level.late_registration_fee;
+                _athlete.fee += _level2.registration_fee;
+                if (_athlete.was_late) _athlete.late_fee += _level2.late_registration_fee;
                 _athlete.status = _athlete.in_waitlist ? _this7.constants.athletes.statuses.NonReserved : _this7.constants.athletes.statuses.Registered;
 
                 if (!_athlete.in_waitlist) {
@@ -4313,14 +4367,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
               } else {// no status change
               }
 
-              _level.athletes[_usag_no2] = _athlete;
+              _level2.athletes[_usag_no2] = _athlete;
 
             case 90:
               _context4.next = 61;
               break;
 
             case 92:
-              state["final"].levels[_lid] = _level;
+              state["final"].levels[_lid] = _level2;
 
             case 93:
               _context4.next = 42;
@@ -72623,6 +72677,18 @@ var render = function() {
                                                                 }
                                                               },
                                                               [
+                                                                _vm._v(
+                                                                  " " +
+                                                                    _vm._s(
+                                                                      l.changes
+                                                                        .team
+                                                                    ) +
+                                                                    " " +
+                                                                    _vm._s(
+                                                                      l.has_team
+                                                                    ) +
+                                                                    "\n                                                "
+                                                                ),
                                                                 _c("span", {
                                                                   staticClass:
                                                                     "fas fa-fw fa-users"
@@ -72660,7 +72726,16 @@ var render = function() {
                                                                     "fa fa-fw fa-undo-alt"
                                                                 }),
                                                                 _vm._v(
-                                                                  " Revert Changes\n                                            "
+                                                                  " Revert Changes  " +
+                                                                    _vm._s(
+                                                                      l.changes
+                                                                        .team
+                                                                    ) +
+                                                                    " " +
+                                                                    _vm._s(
+                                                                      l.has_team
+                                                                    ) +
+                                                                    "\n                                            "
                                                                 )
                                                               ]
                                                             )

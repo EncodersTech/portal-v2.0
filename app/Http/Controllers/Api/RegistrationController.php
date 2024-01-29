@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
+use App\Models\MeetCredit;
 
 class RegistrationController extends BaseApiController
 {
@@ -447,6 +448,17 @@ class RegistrationController extends BaseApiController
             foreach ($transactions as $i => $tx)
                 unset($transactions[$i]['breakdown'][$hiddenParty]);
 
+
+            $previous_registration_credit_amount = 0;
+            $previous_registration_credit = MeetCredit::where('meet_registration_id',$registration->id)
+                                                        ->where('gym_id', $gym->id)
+                                                        ->where('meet_id', $registration->meet->id)->first();
+                    
+            if($previous_registration_credit != null && $previous_registration_credit->count() > 0)
+            {
+                $previous_registration_credit_amount = $previous_registration_credit->credit_amount - $previous_registration_credit->used_credit_amount;
+            }
+
             $result  = [
                 'was_late' => $registration->was_late,
                 'late_fee' => $registration->late_fee,
@@ -457,6 +469,7 @@ class RegistrationController extends BaseApiController
                 'coaches' => $coaches,
                 'transactions' => $transactions,
                 'editing_abilities' => $registration->editingAbilities(),
+                'previous_registration_credit_amount' => $previous_registration_credit_amount
             ];
 
             return $result;

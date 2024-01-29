@@ -90,7 +90,7 @@
                                 <div class="small mb-1">
                                     <div>
                                         <div class="d-inline-block mr-1">
-                                            <strong>Regular fee:</strong>
+                                            <strong>Registration fee:</strong>
                                             $@{{ numberFormat(level.registration_fee)}}
                                         </div>
                                         <div class="d-inline-block">

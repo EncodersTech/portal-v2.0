@@ -4020,7 +4020,11 @@ class MeetRegistration extends Model
                 if ($gymSummary['total'] == 0 && !$useBalance) {
                     $needRegularTransaction = false;
                 }
-                // dd($needRegularTransaction);
+                if($gymSummary['total'] > 0)
+                {
+                    $needRegularTransaction = true;
+                }
+                // dd($gymSummary); die();
                 if ($needRegularTransaction) {
                     if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
                         $chosenMethod = [

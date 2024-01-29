@@ -160,6 +160,7 @@
                         ?>
                         @foreach ($registration->transactions as $transaction)
                             <?php
+                            try{
                                 // MODIFICATION => Mod. 
                                 $reg_type = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? 'Mod.' : 'Reg.';
                                 $symbols = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? '-' : '';
@@ -171,6 +172,7 @@
                                 }
 
                                 $refund_used = $transaction->level_payment_sum - $gym_sub_total;
+                            
                                 // $refund_used = ($transaction->level_payment_sum - $gym_sub_total) > 0 ? ($transaction->level_payment_sum - $gym_sub_total) : 0;
                             ?>
                             <tr>
@@ -198,7 +200,9 @@
                                     @endphp
                                 </td>
                             <tr>
+                            @if(isset($transaction['level_reg_history']))
                             @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
+                            
                                 <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
                                     <td class="col-4" colspan="3"></td>
                                     <td class="col-1">{{$tr_hi['name']}}</td>
@@ -215,6 +219,7 @@
                                     $total_reg_sp_at += $tr_hi['specialists'];
                                 ?>
                             @endforeach
+                            @endif
                                 <?php
                                     $total_reg_fees += (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] > 0) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'];
                                     $total_participant_fees = $transaction->breakdown['gym']['total'];
@@ -224,6 +229,12 @@
                                     $total_reg_fees -= (($transaction->breakdown['gym']['handling'] + $transaction->breakdown['gym']['processor']) - $transaction->breakdown['gym']['total']);
                                     }
                                 ?>
+                        <?php  }
+                        catch(Exception $e){
+                            print_r($e->getMessage());
+                            die();
+                        }
+                        ?>
                         @endforeach
                     </tbody>
                     <thead>
@@ -240,7 +251,7 @@
             @else
                 No Transaction.
             @endif
-        </div>
+        </div> 
         <div class="float-parent" style="padding-top: 20px !important;">
             <span><strong>Payment Method</strong> : Full</span><br>
             <table class="table-0 full-width">

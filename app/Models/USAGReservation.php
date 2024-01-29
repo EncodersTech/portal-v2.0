@@ -891,7 +891,11 @@ class USAGReservation extends Model
                             $leo = $rosterAthlete->leo_size_id;
                         }
                     }
-
+                    $processed_already = false;
+                    if($athlete->status == RegistrationAthlete::STATUS_SCRATCHED)
+                    {
+                        $processed_already = $athlete->refund > 0 ? true : false;
+                    }
                     $athleteData = [
                         'id' => $athlete->id,
                         'first_name' => $athlete->first_name,
@@ -911,6 +915,7 @@ class USAGReservation extends Model
                         'status' => $athlete->status,
                         'tshirt_size_id' => $tshirt,
                         'leo_size_id' => $leo,
+                        'processed_already' => $processed_already,
                     ];
 
                     $finalState['levels'][$registrationLevel->id]['athletes'][$athlete->usag_no] = $athleteData;
@@ -975,7 +980,7 @@ class USAGReservation extends Model
         return $result;
     }
 
-    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements, $onetimeach = null) {
+    public static function merge(Gym $gym, string $sanction, array $data, array $summary, array $method, bool $useBalance,  $coupon, bool $enable_travel_arrangements, $onetimeach = null, $changes_fees=0) {
         DB::beginTransaction();
         try {
             $sanction = USAGSanction::where('number', $sanction)
@@ -1264,16 +1269,16 @@ class USAGReservation extends Model
 
                             $oldRegistrationLevel = $athlete->registration_level;
 
-//                            $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id] = [
-//                                'old' => [
-//                                    'was_late' => $athlete->was_late,
-//                                    'fee' => $athlete->fee,
-//                                    'late_fee' => $athlete->late_fee,
-//                                    'refund' => $athlete->refund,
-//                                    'late_refund' => $athlete->late_refund,
-//                                ],
-//                                'new' => [],
-//                            ];
+                           $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id] = [
+                               'old' => [
+                                   'was_late' => $athlete->was_late,
+                                   'fee' => $athlete->fee,
+                                   'late_fee' => $athlete->late_fee,
+                                   'refund' => $athlete->refund,
+                                   'late_refund' => $athlete->late_refund,
+                               ],
+                               'new' => [],
+                           ];
 
                             //#region - check = if athlete moved and new level fee is <= old level fee than count different, and add to refund.
                             $refundAmount = null;  $newLevelRegiFee = 0;
@@ -1295,14 +1300,14 @@ class USAGReservation extends Model
                                 $athlete->late_fee = $registrationLevel->late_registration_fee;
                             $athlete->save();
 
-//                            $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id]['new'] = [
-//                                'was_late' => $athlete->was_late,
-//                                'fee' => $athlete->fee,
-//                                'late_fee' => $athlete->late_fee,
-//                                'refund' => $athlete->refund,
-//                                'late_refund' => $athlete->late_refund,
-//                                'athlete_move' => true,
-//                            ];
+                           $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id]['new'] = [
+                               'was_late' => $athlete->was_late,
+                               'fee' => $athlete->fee,
+                               'late_fee' => $athlete->late_fee,
+                               'refund' => $athlete->refund,
+                               'late_refund' => $athlete->late_refund,
+                               'athlete_move' => true,
+                           ];
 
                             $tx['athletes'][] = $athlete;
 
@@ -1809,10 +1814,68 @@ class USAGReservation extends Model
                 }
             }
             $snapshot['coupon'] = $couponAmount;
+
+            $r_total = 0;
+            $r_total += $registration->late_refund;
+            // dd($registration->athletes);
+            foreach ($registration->athletes as $athlete) { /** @var RegistrationAthlete $athlete */
+                $r_total += $athlete->refund_fee();
+            }
+            // echo 'athlete : '.$r_total .'<br>';
+            foreach ($registration->levels as $level) { /** @var AthleteLevel $level */
+                $r_total += $level->pivot->refund_fee();
+            }
+            // echo 'level : '.$r_total .'<br>';
+            $credit_remaining = 0;
+            $credit_used = 0;
+            $credit_row = MeetCredit::where('meet_registration_id',$registration->id)->where('gym_id', $gym->id)->where('meet_id', $meet->id)->first();
+            
+            $is_credit_amount_new = false;
+            if($credit_row != null && $credit_row->count() > 0)
+            {
+                $credit_remaining = ($credit_row->credit_amount + $changes_fees) - $credit_row->used_credit_amount;
+            }
+            else
+            {
+                $credit_row = resolve(MeetCredit::class);
+                $credit_row->meet_registration_id = $registration->id;
+                $credit_row->gym_id = $gym->id;
+                $credit_row->meet_id = $meet->id;
+                $credit_row->credit_amount = $r_total;
+                $credit_row->used_credit_amount = 0;
+                $credit_row->save();
+                $is_credit_amount_new = true;
+                $credit_remaining = $changes_fees;
+            }
+            // dd($snapshot);
             #region FEE CALCULATIONS
             $incurredFees = $registration->calculateRegistrationTotal($snapshot);
-
+            
+            if($credit_remaining > 0 )
+            {
+                if($incurredFees['subtotal'] >= $credit_remaining)
+                {
+                    $incurredFees['subtotal'] -= $credit_remaining;
+                    $credit_used = $credit_remaining;
+                }
+                else
+                {
+                    $credit_used = $incurredFees['subtotal'];
+                    $incurredFees['subtotal'] = 0;
+                }
+            }
             $subtotal = $incurredFees['subtotal'];
+
+
+            // echo 'total refund calculate : '. $r_total . '<br>';
+            // echo 'total changes fee calculate : '. $changes_fees . '<br>';
+            // echo 'f subtotal : '. $summary['subtotal'] . '<br>';
+            // echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
+            // echo 'remaining credit : '. $credit_remaining . '<br>';
+            // echo 'used credit : '. $credit_used . '<br>';
+            // die();
+
+
             if ($subtotal != $summary['subtotal'] + $couponAmount)
             {
                 $incurredFees = $registration->calculateRegistrationTotal($snapshot, false, $summary['subtotal']);
@@ -1910,14 +1973,22 @@ class USAGReservation extends Model
                 'specialists' => [],
                 'coaches' => [],
             ];
-            
+            $last_transaction = MeetTransaction::where('meet_registration_id', $registration->id)->orderBy('created_at', 'desc')->first();
             foreach ($tx['athletes'] as $ra) { /** @var RegistrationAthlete $ra */
                 if (in_array($ra->id, $shouldGoIntoWaitlist)) {
                     $ra->in_waitlist = true;
                     $ra->transaction()->associate($waitlistTransaction);
                     $ra->status = RegistrationAthlete::STATUS_PENDING_NON_RESERVED;
                 } else {
-                    $ra->transaction()->associate($transaction);
+                    if($transaction)
+                    {
+                        $ra->transaction()->associate($transaction);
+                    }
+                    else
+                    {
+                        $ra->transaction()->associate($last_transaction);
+                    }
+                    // $ra->transaction()->associate($transaction);
                     $ra->status = $athleteStatus;
                 }
                 $ra->save();
@@ -2008,6 +2079,18 @@ class USAGReservation extends Model
                 $prev_deposit->is_used = true;
                 $prev_deposit->save();
             }
+            if($changes_fees > 0 && !$is_credit_amount_new)
+            {
+                $credit_row->credit_amount += $changes_fees;
+                $credit_row->save();
+            }
+            if($credit_used > 0)
+            {
+                $credit_row->used_credit_amount += $credit_used;
+                $credit_row->save();
+            }
+            $credit_row->save();
+
             DB::commit();
             return $registration;
         } catch (Throwable $e) {
