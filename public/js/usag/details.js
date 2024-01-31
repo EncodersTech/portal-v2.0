@@ -3117,9 +3117,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }
 
-      if (level.changes.team) this.changes_fees += level.team_fee;else this.changes_fees -= level.team_fee; // this.$forceUpdate(); 
-
+      if (level.changes.team) this.changes_fees += level.team_fee;else this.changes_fees -= level.team_fee;
       this.calculateSubtotal();
+      this.$forceUpdate();
     },
     revertLevelTeam: function revertLevelTeam(level) {
       if (level.has_team == true && level.changes.team == false) return;
@@ -3676,7 +3676,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }
       }
 
-      if (total > 0 && level.allow_team) {
+      if (level.allow_team) {
         if (level.has_team) {
           var diff = level.team_fee + level.team_late_fee - level.team_refund - level.team_late_refund;
 
@@ -72677,18 +72677,6 @@ var render = function() {
                                                                 }
                                                               },
                                                               [
-                                                                _vm._v(
-                                                                  " " +
-                                                                    _vm._s(
-                                                                      l.changes
-                                                                        .team
-                                                                    ) +
-                                                                    " " +
-                                                                    _vm._s(
-                                                                      l.has_team
-                                                                    ) +
-                                                                    "\n                                                "
-                                                                ),
                                                                 _c("span", {
                                                                   staticClass:
                                                                     "fas fa-fw fa-users"
@@ -72726,16 +72714,7 @@ var render = function() {
                                                                     "fa fa-fw fa-undo-alt"
                                                                 }),
                                                                 _vm._v(
-                                                                  " Revert Changes  " +
-                                                                    _vm._s(
-                                                                      l.changes
-                                                                        .team
-                                                                    ) +
-                                                                    " " +
-                                                                    _vm._s(
-                                                                      l.has_team
-                                                                    ) +
-                                                                    "\n                                            "
+                                                                  " Revert Changes\n                                            "
                                                                 )
                                                               ]
                                                             )

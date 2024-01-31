@@ -393,12 +393,12 @@
                                             <div class="btn-group" v-if="l.allow_team">
                                                 <button v-if="!l.changes.team && !l.has_team"
                                                     class="dropdown-item text-success" type="button" style="border: 1px solid;"
-                                                    @click="toggleTeam(l, true)"> {{ l.changes.team }} {{ l.has_team }}
+                                                    @click="toggleTeam(l, true)">
                                                     <span class="fas fa-fw fa-users"></span> Register as Team
                                                 </button>
                                                 <button v-else class="dropdown-item" type="button" style="border: 1px solid;"
                                                     @click="revertLevelTeam(l)">
-                                                    <span class="fa fa-fw fa-undo-alt"></span> Revert Changes  {{ l.changes.team }} {{ l.has_team }}
+                                                    <span class="fa fa-fw fa-undo-alt"></span> Revert Changes
                                                 </button>
                                             </div>
                                         </div>
@@ -1427,8 +1427,8 @@
                     this.changes_fees += level.team_fee;
                 else
                     this.changes_fees -= level.team_fee;
-                // this.$forceUpdate(); 
                 this.calculateSubtotal();
+                this.$forceUpdate(); 
             },
 
             revertLevelTeam(level) {
@@ -1913,7 +1913,7 @@
                     }
                 }
 
-                if ((total > 0) && level.allow_team) {
+                if (level.allow_team) {
                     if (level.has_team) {
                         let diff = (level.team_fee + level.team_late_fee - level.team_refund - level.team_late_refund);
                         if (diff == 0) {

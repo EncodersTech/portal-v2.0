@@ -2828,6 +2828,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3359,6 +3364,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     scratchObject: function scratchObject(obj, type, parent, grandpa) {
       var _this7 = this;
 
+      var withoutRefund = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+
       switch (type) {
         case 'athlete':
           if (obj.is_new) {
@@ -3372,7 +3379,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 if (!evt.is_new) {// refund_specialist = parseFloat(refund_specialist) + parseFloat(evt.fee) + parseFloat(evt.late_fee) - parseFloat(evt.refund) - parseFloat(evt.late_refund);
                 }
 
-                _this7.scratchObject(evt, 'event', obj, parent);
+                _this7.scratchObject(evt, 'event', obj, parent, withoutRefund);
               }
             }); // this.changes_fees = parseFloat(this.changes_fees) + parseFloat(refund_specialist);
 
@@ -3382,10 +3389,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             console.log('athlete ?');
             obj.status = this.constants.athletes.statuses.Scratched;
             obj.changes.scratch = true;
-            parent.freed_slots++;
-            console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
-            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
-            console.log(this.changes_fees);
+            parent.freed_slots++; // console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
+
+            if (!withoutRefund) this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);else obj.scratch_without_refund = true; // console.log(this.changes_fees);
           }
 
           break;
@@ -3402,7 +3408,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           } else {
             obj.status = this.constants.specialists.statuses.Scratched;
             obj.changes.scratch = true;
-            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
+            if (!withoutRefund) this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);else obj.scratch_without_refund = true;
           } // parent.deduceStatus();
           // if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
           //     parent.changes.scratch = true;
@@ -3457,7 +3463,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   obj.status = obj.original_data.status;
                   obj.changes.scratch = false;
                   parent.freed_slots--;
-                  this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);
+                  if (obj.scratch_without_refund == false) this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);else obj.scratch_without_refund = false;
                 }
               }
             }
@@ -3558,7 +3564,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             if (obj.changes.scratch) {
               obj.status = obj.original_data.status;
               obj.changes.scratch = false;
-              this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));
+              if (obj.scratch_without_refund == false) this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));else obj.scratch_without_refund = false;
             } // if (!obj.is_new) {
             //     obj.fee = 0;
             //     obj.late_fee = 0;
@@ -3907,6 +3913,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               athlete.changes = {
                 events: false,
                 scratch: false,
+                scratch_without_refund: false,
                 moved_to: false,
                 first_name: false,
                 last_name: false,
@@ -3981,6 +3988,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               };
               athlete.changes = {
                 scratch: false,
+                scratch_without_refund: false,
                 moved_to: false,
                 first_name: false,
                 last_name: false,
@@ -4878,6 +4886,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         athlete.changes = {
           scratch: false,
+          scratch_without_refund: false,
           moved_to: false,
           first_name: false,
           last_name: false,
@@ -5039,6 +5048,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           },
           scratch: function scratch() {
             return specialist.is_new || vm.permissions.scratch && !specialist.has_pending_events();
+          },
+          scratch_without_refund: function scratch_without_refund() {
+            return specialist.is_new || !vm.permissions.scratch && specialist.status == vm.constants.specialists.statuses.Registered && !specialist.has_pending_events();
           }
         };
 
@@ -5071,6 +5083,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           evt.permissions = {
             scratch: function scratch() {
               return evt.is_new || vm.permissions.scratch && evt.status == vm.constants.specialists.statuses.Registered;
+            },
+            scratch_without_refund: function scratch_without_refund() {
+              return evt.is_new || !vm.permissions.scratch && evt.status == vm.constants.specialists.statuses.Registered;
             }
           };
           evt.original_data = _.cloneDeep(evt);
@@ -73008,6 +73023,52 @@ var render = function() {
                                                                                                                                 _vm._v(
                                                                                                                                   " "
                                                                                                                                 ),
+                                                                                                                                !athlete.is_scratched() &&
+                                                                                                                                !event.permissions.scratch() &&
+                                                                                                                                event.permissions.hasOwnProperty(
+                                                                                                                                  "scratch_without_refund"
+                                                                                                                                ) &&
+                                                                                                                                  event.permissions.scratch_without_refund()
+                                                                                                                                  ? _c(
+                                                                                                                                      "button",
+                                                                                                                                      {
+                                                                                                                                        staticClass:
+                                                                                                                                          "dropdown-item text-danger",
+                                                                                                                                        attrs: {
+                                                                                                                                          type:
+                                                                                                                                            "button"
+                                                                                                                                        },
+                                                                                                                                        on: {
+                                                                                                                                          click: function(
+                                                                                                                                            $event
+                                                                                                                                          ) {
+                                                                                                                                            return _vm.scratchObject(
+                                                                                                                                              event,
+                                                                                                                                              "event",
+                                                                                                                                              athlete,
+                                                                                                                                              level,
+                                                                                                                                              true
+                                                                                                                                            )
+                                                                                                                                          }
+                                                                                                                                        }
+                                                                                                                                      },
+                                                                                                                                      [
+                                                                                                                                        _c(
+                                                                                                                                          "span",
+                                                                                                                                          {
+                                                                                                                                            staticClass:
+                                                                                                                                              "fas fa-fw fa-user-slash"
+                                                                                                                                          }
+                                                                                                                                        ),
+                                                                                                                                        _vm._v(
+                                                                                                                                          " Scratch Without Refund\n                                                                                    "
+                                                                                                                                        )
+                                                                                                                                      ]
+                                                                                                                                    )
+                                                                                                                                  : _vm._e(),
+                                                                                                                                _vm._v(
+                                                                                                                                  " "
+                                                                                                                                ),
                                                                                                                                 event.permissions &&
                                                                                                                                 event.has_changes()
                                                                                                                                   ? _c(
@@ -74499,7 +74560,9 @@ var render = function() {
                                                                                                                               return _vm.scratchObject(
                                                                                                                                 athlete,
                                                                                                                                 "athlete",
-                                                                                                                                level
+                                                                                                                                level,
+                                                                                                                                null,
+                                                                                                                                true
                                                                                                                               )
                                                                                                                             }
                                                                                                                           }

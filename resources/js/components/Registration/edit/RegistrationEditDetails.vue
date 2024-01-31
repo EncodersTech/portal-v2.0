@@ -548,6 +548,11 @@
                                                                                         type="button" @click="scratchObject(event, 'event', athlete, level)">
                                                                                         <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                                     </button>
+                                                                                    
+                                                                                    <button v-if="!athlete.is_scratched() && !event.permissions.scratch() && (event.permissions.hasOwnProperty('scratch_without_refund') && event.permissions.scratch_without_refund())" class="dropdown-item text-danger"
+                                                                                        type="button" @click="scratchObject(event, 'event', athlete, level, true)">
+                                                                                        <span class="fas fa-fw fa-user-slash"></span> Scratch Without Refund
+                                                                                    </button>
 
                                                                                     <div v-if="event.permissions && event.has_changes()">
                                                                                         <button class="dropdown-item" type="button"
@@ -765,7 +770,7 @@
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                             </button>
                                                                             <button v-if="!athlete.is_scratched() && !athlete.permissions.scratch() && (athlete.permissions.hasOwnProperty('scratch_without_refund') && athlete.permissions.scratch_without_refund())" class="dropdown-item text-danger"
-                                                                                type="button" @click="scratchObject(athlete, 'athlete', level)">
+                                                                                type="button" @click="scratchObject(athlete, 'athlete', level, null, true)">
                                                                                 <span class="fas fa-fw fa-user-slash"></span> Scratch Without Refund
                                                                             </button>
                                                                             <button v-if="athlete.permissions.change_level() && athlete.changes.moved_to == false"
@@ -1679,7 +1684,7 @@ export default {
             obj.changes[field] = (obj[obj[field]] != obj.original_data[obj[field]]);
         },
 
-        scratchObject(obj, type, parent, grandpa) {
+        scratchObject(obj, type, parent, grandpa, withoutRefund = false) {
             switch (type) {
                 case 'athlete':
                     if (obj.is_new) {
@@ -1695,7 +1700,7 @@ export default {
                                 {
                                     // refund_specialist = parseFloat(refund_specialist) + parseFloat(evt.fee) + parseFloat(evt.late_fee) - parseFloat(evt.refund) - parseFloat(evt.late_refund);
                                 }
-                                this.scratchObject(evt, 'event', obj, parent);
+                                this.scratchObject(evt, 'event', obj, parent, withoutRefund);
                             }
                         });
                         // this.changes_fees = parseFloat(this.changes_fees) + parseFloat(refund_specialist);
@@ -1707,9 +1712,12 @@ export default {
                         obj.changes.scratch = true;
                         parent.freed_slots++;
 
-                        console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
-                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
-                        console.log(this.changes_fees);
+                        // console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
+                        if(!withoutRefund)
+                            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
+                        else
+                            obj.scratch_without_refund = true;
+                        // console.log(this.changes_fees);
                     }
                     break;
 
@@ -1726,7 +1734,10 @@ export default {
                     } else {
                         obj.status = this.constants.specialists.statuses.Scratched;
                         obj.changes.scratch = true;
-                        this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
+                        if(!withoutRefund)
+                            this.changes_fees = parseFloat(this.changes_fees) + parseFloat(obj.fee) + parseFloat(obj.late_fee);
+                        else
+                            obj.scratch_without_refund = true;
                     }
                     // parent.deduceStatus();
                     // if ((prevStatus != parent.status) && (parent.status == this.constants.specialists.statuses.Scratched)) {
@@ -1787,7 +1798,10 @@ export default {
                                     obj.status = obj.original_data.status;
                                     obj.changes.scratch = false;
                                     parent.freed_slots--;
-                                    this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);
+                                    if(obj.scratch_without_refund == false)
+                                        this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);
+                                    else
+                                        obj.scratch_without_refund = false;
                                 }
                             }
                         }
@@ -1907,7 +1921,11 @@ export default {
                         if (obj.changes.scratch) {
                             obj.status = obj.original_data.status;
                             obj.changes.scratch = false;
-                            this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));
+
+                            if(obj.scratch_without_refund == false)
+                                this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));
+                            else
+                                obj.scratch_without_refund = false;
                         }
 
                         // if (!obj.is_new) {
@@ -2306,6 +2324,7 @@ export default {
                         athlete.changes = {
                             events: false,
                             scratch: false,
+                            scratch_without_refund: false,
                             moved_to: false,
                             first_name: false,
                             last_name: false,
@@ -2405,6 +2424,7 @@ export default {
 
                         athlete.changes = {
                             scratch: false,
+                            scratch_without_refund: false,
                             moved_to: false,
                             first_name: false,
                             last_name: false,
@@ -3346,6 +3366,7 @@ export default {
 
                 athlete.changes = {
                     scratch: false,
+                    scratch_without_refund: false,
                     moved_to: false,
                     first_name: false,
                     last_name: false,
@@ -3550,6 +3571,13 @@ export default {
                             !specialist.has_pending_events()
                         );
                     },
+                    scratch_without_refund: function(){
+                        return specialist.is_new || (
+                            !vm.permissions.scratch &&
+                            (specialist.status == vm.constants.specialists.statuses.Registered) &&
+                            !specialist.has_pending_events()
+                        );
+                    }
                 };
 
                 for (let j in specialist.events) {
@@ -3588,7 +3616,15 @@ export default {
                                 (evt.status == vm.constants.specialists.statuses.Registered)
                             );
                         },
+                        scratch_without_refund: function(){
+                            return evt.is_new || (
+                                !vm.permissions.scratch &&
+                                (evt.status == vm.constants.specialists.statuses.Registered)
+                        );
+                    }
+                        
                     };
+                    
 
                     evt.original_data = _.cloneDeep(evt);
                 }
