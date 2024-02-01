@@ -1094,6 +1094,12 @@
                         </span>
                         <span class="text-white font-weight-bold">${{ numberFormat(previous_remaining) }}</span>
                     </div>
+                    <div v-if="previous_registration_credit_amount > 0 || changes_fees > 0" class="flex-grow-1 text-uppercase">
+                        <span class="text-secondary mr-1">
+                            <span class="fas fa-coins"></span> Credit Amount :
+                        </span>
+                        <span class="text-white font-weight-bold">${{ numberFormat(previous_registration_credit_amount + changes_fees) }}</span>
+                    </div>
                     <div>
                         <button class="btn btn-sm btn-success" @click="validateRegistration">
                             Next <span class="fas fa-long-arrow-alt-right"></span>
@@ -1798,7 +1804,7 @@ export default {
                                     obj.status = obj.original_data.status;
                                     obj.changes.scratch = false;
                                     parent.freed_slots--;
-                                    if(obj.scratch_without_refund == false)
+                                    if(obj.scratch_without_refund == false || obj.scratch_without_refund == undefined)
                                         this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);
                                     else
                                         obj.scratch_without_refund = false;
@@ -1922,7 +1928,7 @@ export default {
                             obj.status = obj.original_data.status;
                             obj.changes.scratch = false;
 
-                            if(obj.scratch_without_refund == false)
+                            if(obj.scratch_without_refund == false || obj.scratch_without_refund == undefined)
                                 this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));
                             else
                                 obj.scratch_without_refund = false;
@@ -2012,6 +2018,7 @@ export default {
                     break;
             }
             this.calculateWaitlistStatuses();
+            this.$forceUpdate();
         },
 
         showMoveModal(athlete, current) {

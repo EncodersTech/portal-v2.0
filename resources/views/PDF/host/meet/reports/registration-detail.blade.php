@@ -139,6 +139,7 @@
         <hr>
         <div class="float-parent" style="padding-top: 20px !important;">
             <span><strong>Transaction History</strong></span><br>
+            <span>* Credits found in the report reflect athlete changes made after initial registration. Please refer only to the refund section or refund report for refund totals</span>
             @if ($registrations->count() > 0)
                 <table class="table-0 table-summary full-width">
                     <thead>
@@ -191,11 +192,11 @@
                                     {{number_format( $gym_sub_total,3)}}
                                     @php
                                         if($refund_used > 0){
-                                            echo '<br>Credit: '.number_format($refund_used,3);
+                                            echo '<br><span style="color:red; font-weight: bold;">Credit: '.number_format($refund_used,3) . '</span>';
                                         }
                                         else if($refund_used < 0)
                                         {
-                                            echo '<br>Refund: '.number_format(($refund_used * -1),3);
+                                            echo '<br><span style="color:green; font-weight: bold;">Refund: '.number_format(($refund_used * -1),3) . '</span>';
                                         }
                                     @endphp
                                 </td>
@@ -449,7 +450,7 @@
 
 </body>
 
-<div style="position: absolute;  bottom: -10em;  vertical-align: bottom" >
+<div style="position: absolute; vertical-align: bottom;" >
     * Admin and CC/ACH fees are non-refundable
 </div>
 </html>

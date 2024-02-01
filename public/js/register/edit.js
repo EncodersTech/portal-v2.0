@@ -2833,6 +2833,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3463,7 +3469,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                   obj.status = obj.original_data.status;
                   obj.changes.scratch = false;
                   parent.freed_slots--;
-                  if (obj.scratch_without_refund == false) this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);else obj.scratch_without_refund = false;
+                  if (obj.scratch_without_refund == false || obj.scratch_without_refund == undefined) this.changes_fees = parseFloat(this.changes_fees) - parseFloat(obj.fee) - parseFloat(obj.late_fee);else obj.scratch_without_refund = false;
                 }
               }
             }
@@ -3564,7 +3570,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             if (obj.changes.scratch) {
               obj.status = obj.original_data.status;
               obj.changes.scratch = false;
-              if (obj.scratch_without_refund == false) this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));else obj.scratch_without_refund = false;
+              if (obj.scratch_without_refund == false || obj.scratch_without_refund == undefined) this.changes_fees = parseFloat(this.changes_fees) - (parseFloat(obj.fee) + parseFloat(obj.late_fee));else obj.scratch_without_refund = false;
             } // if (!obj.is_new) {
             //     obj.fee = 0;
             //     obj.late_fee = 0;
@@ -3652,6 +3658,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.calculateWaitlistStatuses();
+      this.$forceUpdate();
     },
     showMoveModal: function showMoveModal(athlete, current) {
       if (athlete.locked) return;
@@ -75990,6 +75997,33 @@ var render = function() {
                         )
                       : _vm._e(),
                     _vm._v(" "),
+                    _vm.previous_registration_credit_amount > 0 ||
+                    _vm.changes_fees > 0
+                      ? _c(
+                          "div",
+                          { staticClass: "flex-grow-1 text-uppercase" },
+                          [
+                            _vm._m(16),
+                            _vm._v(" "),
+                            _c(
+                              "span",
+                              { staticClass: "text-white font-weight-bold" },
+                              [
+                                _vm._v(
+                                  "$" +
+                                    _vm._s(
+                                      _vm.numberFormat(
+                                        _vm.previous_registration_credit_amount +
+                                          _vm.changes_fees
+                                      )
+                                    )
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      : _vm._e(),
+                    _vm._v(" "),
                     _c("div", [
                       _c(
                         "button",
@@ -76279,6 +76313,15 @@ var staticRenderFns = [
     return _c("span", { staticClass: "text-secondary mr-1" }, [
       _c("span", { staticClass: "fas fa-coins" }),
       _vm._v(" Previous Deposit Remaining :\n                        ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("span", { staticClass: "text-secondary mr-1" }, [
+      _c("span", { staticClass: "fas fa-coins" }),
+      _vm._v(" Credit Amount :\n                        ")
     ])
   }
 ]
