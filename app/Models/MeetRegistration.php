@@ -2609,7 +2609,6 @@ class MeetRegistration extends Model
                 $count = [];
                 $txScratch = [
                     'athlete' => [],
-                    'specialist' => [],
                     'coach' => []
                 ];
                 $sp_move = [];
@@ -3267,7 +3266,7 @@ class MeetRegistration extends Model
                                                     $event->refund = $event->fee;
                                                     $event->late_refund = $event->late_fee;
                                                     $event->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED;
-                                                    $txScratch['specialist'][] = $athlete;
+                                                    $txScratch['athlete'][] = $athlete;
                                                 } 
                                                 // else {
                                                 //     throw new CustomBaseException('You are not allowed to scratch events.');

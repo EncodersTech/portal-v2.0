@@ -1109,6 +1109,11 @@ class USAGReservation extends Model
                 'athletes' => [],
                 'coaches' => [],
             ];
+            $txScratch = [
+                'athlete' => [],
+                'specialist' => [],
+                'coach' => []
+            ];
 
             if (!isset($data['coaches'], $data['levels']) || !is_array($data['coaches']) || !is_array($data['levels']))
                 throw new CustomBaseException('Invalid reservation data', -1);
@@ -1363,6 +1368,8 @@ class USAGReservation extends Model
                             $athlete->refund = $athlete->fee;
                             $athlete->late_refund = $athlete->late_fee;
                             $athlete->save();
+                            
+                            $txScratch['athlete'][] = $athlete;
 
                             $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id]['new'] = [
                                 'was_late' => $athlete->was_late,
@@ -1539,6 +1546,8 @@ class USAGReservation extends Model
                         $coach->status = RegistrationCoach::STATUS_SCRATCHED;
                         $coach->was_late = $coach->was_late || $late;
                         $coach->save();
+
+                        $txScratch['coach'][] = $coach;
                     } else {
                         throw new CustomBaseException('Trying to scratch coach with USAG No. ' . $usag_no . ' that does not exist in local database.', -1);
                     }
@@ -1850,7 +1859,6 @@ class USAGReservation extends Model
             // dd($snapshot);
             #region FEE CALCULATIONS
             $incurredFees = $registration->calculateRegistrationTotal($snapshot);
-            
             if($credit_remaining > 0 )
             {
                 if($incurredFees['subtotal'] >= $credit_remaining)
@@ -1972,6 +1980,7 @@ class USAGReservation extends Model
                 'athletes' => [],
                 'specialists' => [],
                 'coaches' => [],
+                'scratch' => $txScratch,
             ];
             $last_transaction = MeetTransaction::where('meet_registration_id', $registration->id)->orderBy('created_at', 'desc')->first();
             foreach ($tx['athletes'] as $ra) { /** @var RegistrationAthlete $ra */
