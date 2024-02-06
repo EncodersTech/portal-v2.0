@@ -4352,6 +4352,7 @@ class MeetRegistration extends Model
         }
         if(isset($auditEvent->scratch))
         {
+            if(isset($auditEvent->scratch['athlete']))
             foreach($auditEvent->scratch['athlete'] as $scratch)
             {
                 $scratch = (object) $scratch;
@@ -4368,6 +4369,7 @@ class MeetRegistration extends Model
                 $change_info['athlete']['scratched'][] = $at_info;
             }
             $rem_me = [];
+            if(isset($auditEvent->scratch['specialist']))
             foreach($auditEvent->scratch['specialist'] as $scratch)
             {
                 $scratch = (object) $scratch;
@@ -4402,6 +4404,7 @@ class MeetRegistration extends Model
                 ];
                 $change_info['specialist']['scratched'][] = $at_info;
             }
+            if(isset($auditEvent->scratch['coach']))
             foreach($auditEvent->scratch['coach'] as $scratch)
             {
                 $scratch = (object) $scratch;
