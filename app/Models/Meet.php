@@ -2738,7 +2738,7 @@ class Meet extends Model
                             // $team_fee = $l->pivot->team_fee;
                             // $team_late +=  $l->pivot->team_late ? $l->pivot->team_late_registration_fee : 0;
                             // $re_total = $reg_fee * $at_count + $team_fee * $team_count + $sf_total + $late_at_count * $late_reg_fee;
-                            $individual_team_late = ($team_count == 1 && $l->pivot->team_late_registration_fee > 0) ? $l->pivot->team_late_registration_fee : 0;
+                            $individual_team_late = ($team_count == 1 && $l->pivot->was_late > 0) ? $l->pivot->team_late_registration_fee : 0;
                             $re_total = $net_athlete_value + ($team_fee * $team_count) + $sf_total + $individual_team_late + $onetimelatefee; // + $late_at_count * $late_reg_fee;
                             // echo 'Net Athlete Value : ' . $net_athlete_value . '<br>';
                             // echo 'Team Fee : ' . $team_fee . '<br>';
