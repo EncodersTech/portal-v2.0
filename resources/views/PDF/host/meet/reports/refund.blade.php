@@ -157,7 +157,7 @@
                                                     {{ $l->name }}
 
                                                     @if ($l->pivot->disabled)
-                                                        (disabled))
+                                                        (disabled)
                                                     @endif
                                                 </strong>
                                             </td>
