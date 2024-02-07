@@ -2553,6 +2553,7 @@ class Meet extends Model
                     }
                 }
                 foreach ($registrations[$i]['transactions'] as $j => $transaction) {
+                    // echo $usag_refund;
                     if (!isset($transaction->breakdown['level_team_fees'])) {
                         unset($registrations[$i]['transactions'][$j]);
                         continue;
@@ -2622,8 +2623,12 @@ class Meet extends Model
                                 {
                                     if($value->status == RegistrationAthlete::STATUS_REGISTERED)
                                     {
-                                        $u_refund = ($value->refund + $value->late_refund) -  ($value->fee + $value->late_fee);
+                                        // echo ('refund '.$value->refund );
+                                        $u_refund = ($value->refund + $value->late_refund);
                                         $usag_refund += $u_refund > 0 ? $u_refund : 0;
+                                        // var_dump($value);
+                                        // echo $value->refund. ' ' . $value->fee .'<br>';
+                                        // echo 'usag refund : '. $u_refund . '<br>';
                                     }
                                     else if($value->status == RegistrationAthlete::STATUS_SCRATCHED)
                                     {
@@ -2782,7 +2787,7 @@ class Meet extends Model
                         foreach ($transaction->breakdown['level_team_fees'] as $key => $value) {
                             if($value['fee'] > 0)
                             {
-                                echo 'level in else ' . $key . '<br>';
+                                // echo 'level in else ' . $key . '<br>';
                                 $l = $registration->levels()->wherePivot('id', $key)->first();
                                 // dd($l);
                                 $team_count = ( $l->pivot->allow_teams ? 1 : 0 ) * ($l->pivot->team_fee > 0 ? 1 : 0);
@@ -2792,7 +2797,6 @@ class Meet extends Model
                                 if($team_count > 0)
                                     $team_already_mentioned[$l->id] = 1;
                                 
-                                echo 'Team Fee : ' . $team_fee . '<br>';
                                 $level_team_reg_history[$l->id] = [
                                     'name' => $l->abbreviation,
                                     'at_count' => 0,
@@ -2830,7 +2834,9 @@ class Meet extends Model
                 $fee_s['team_fees'] = $teamFee;
                 $fee_s['team_meet_fees'] = 0;
                 // $registration->athletes->sum('refund') +
+                // echo $usag_refund .' '. $regular_refund .' '. $specialistRefundFee .' '. $specialistLateRefundFee .' '. $used_credit .' '. $team_refund;
                 $fee_s['refund_fees'] = $usag_refund + $regular_refund + $specialistRefundFee + $specialistLateRefundFee - $used_credit + $team_refund;
+                $fee_s['refund_fees'] = $fee_s['refund_fees'] > 0 ? $fee_s['refund_fees'] : 0;
                 // echo 'USAG REFUND';
                 // dd($usag_refund , $regular_refund , $specialistRefundFee , $specialistLateRefundFee , $used_credit , $team_refund);
                 $fee_s['refund_meet_fees'] = $refund_meet_fees;

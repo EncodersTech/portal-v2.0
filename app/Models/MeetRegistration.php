@@ -1744,10 +1744,17 @@ class MeetRegistration extends Model
                     }
 
                 }
-
                 $athletes = $l['athletes'];
                 foreach ($athletes as $a) {
-                    $subtotal += $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                    if(isset($a['old']['fee']) && isset($a['old']['late_fee']))
+                    {
+                        $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                        $subtotal = $usag_subtotal > 0 ? $usag_subtotal : ($usag_subtotal * -1);
+                    }
+                    else
+                    {
+                        $subtotal += $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                    }
                 }
 
                 $specialists = $l['specialists'];
@@ -1765,7 +1772,6 @@ class MeetRegistration extends Model
                 }
                 // echo 'after sp : '. $subtotal.'<br>';
             }
-
             $result = [
                 'level_team_fees' => $lTeamFee,
                 'registration_late_fee' => $mLateFee,

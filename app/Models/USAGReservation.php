@@ -1296,15 +1296,16 @@ class USAGReservation extends Model
                             } else {
                                 $refundAmount = 0;
                             }
+                            // echo 'refund' . $refundAmount . '<br>';
                             $athlete->level_registration_id = $registrationLevel->id;
                             $athlete->was_late = $athlete->was_late || $late;
-                            $athlete->refund =  ($refundAmount != null) ? $refundAmount : $athlete->fee;
+                            $athlete->refund =  ($refundAmount != null) ? $refundAmount : 0;
                             $athlete->late_refund = $athlete->late_fee;
                             $athlete->fee = $registrationLevel->registration_fee;
                             if ($late)
                                 $athlete->late_fee = $registrationLevel->late_registration_fee;
                             $athlete->save();
-
+                            // dd($athlete);
                            $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id]['new'] = [
                                'was_late' => $athlete->was_late,
                                'fee' => $athlete->fee,
