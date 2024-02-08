@@ -2226,6 +2226,25 @@ class Meet extends Model
 
     public function generateScratchReport(Gym $gym = null) : PdfWrapper   {
         try {
+            
+            $meetRegistration = resolve(MeetRegistration::class);
+            $registrationAuditReport = [
+                'athlete' => [
+                    'new' => [],
+                    'moved' => [],
+                    'scratched' => []
+                ],
+                'specialist' => [
+                    'new' => [],
+                    'moved' => [],
+                    'scratched' => []
+                ],
+                'coach' => [
+                    'new' => [],
+                    'moved' => [],
+                    'scratched' => []
+                ]
+            ];
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
             /** @var Builder $base */
@@ -2258,7 +2277,6 @@ class Meet extends Model
                             'fee', 'late_fee', 'refund', 'late_refund', 'status', 'updated_at'
                         ])->whereIn('status', [
                             RegistrationAthlete::STATUS_SCRATCHED,
-//                            RegistrationAthlete::STATUS_REGISTERED
                         ])->where(DB::raw(
                             '(registration_athletes.refund + registration_athletes.late_refund)'
                         ), '>=', 0);
@@ -2316,6 +2334,13 @@ class Meet extends Model
                 $total += $registration->late_refund;
 
                 $registration->total = $total;
+                // dd($registration->athletes);
+                $auditEvent = AuditEvent::where('object_id',$registration->id)->where('type_id',502)->get();
+                foreach ($auditEvent as $key => $value) {
+                    $vs = $meetRegistration->process_audit_event((object) $value->event_meta);
+                    $registrationAuditReport = $this->mergeValue($vs,$registrationAuditReport);
+                }
+                $registration->audit_report = $registrationAuditReport;
             }
 
             $data = [
@@ -2323,7 +2348,7 @@ class Meet extends Model
                 'meet' => $this,
                 'registrations' => $registrations
             ];
-
+            // return view('PDF.host.meet.reports.scratch', $data);
             return PDF::loadView('PDF.host.meet.reports.scratch', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
             throw $e;

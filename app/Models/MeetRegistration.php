@@ -4279,7 +4279,9 @@ class MeetRegistration extends Model
                     'previous_level' => $previous_level->name,
                     'current_level' => $current_level->level->name,
                     'sanction' => $this->getSanctioningBody($bodyId),
-                    'fee' => $athlete->fee
+                    'fee' => $athlete->fee,
+                    'dob' => $athlete->dob,
+                    'updated_at' => $athlete->updated_at
                 ];
                 $change_info['athlete']['moved'][] = $a_info;
             }
@@ -4293,7 +4295,9 @@ class MeetRegistration extends Model
                     'previous_level' => '',
                     'current_level' => $current_level->level->name,
                     'sanction' => $this->getSanctioningBody($bodyId),
-                    'fee' => $athlete->fee
+                    'fee' => $athlete->fee,
+                    'dob' => $athlete->dob,
+                    'updated_at' => $athlete->updated_at
                 ];
                 $change_info['athlete']['new'][] = $a_info;
             }
@@ -4308,7 +4312,8 @@ class MeetRegistration extends Model
                 $event_model = AthleteSpecialistEvents::where('id',$event['event_id'])->first();
                 $event_info[] = [
                     'name' => $event_model->name,
-                    'fee' => $event['fee']
+                    'fee' => $event['fee'],
+                    'updated_at' => $event_model->updated_at
                 ];
             }
             $specialist_info = [
@@ -4317,7 +4322,9 @@ class MeetRegistration extends Model
                 'previous_level' => '',
                 'current_level' => $current_level->level->name,
                 'sanction' => $this->getSanctioningBody($bodyId),
-                'event' =>  $event_info
+                'event' =>  $event_info,
+                'dob' => $specialist->dob,
+                'updated_at' => $specialist->updated_at
             ];
             $change_info['specialist']['new'][] = $specialist_info;
         }
@@ -4333,7 +4340,8 @@ class MeetRegistration extends Model
                 $event_model = AthleteSpecialistEvents::where('id',$event['event_id'])->first();
                 $event_info[] = [
                     'name' => $event_model->name,
-                    'fee' => $event['fee']
+                    'fee' => $event['fee'],
+                    'updated_at' => $event_model->updated_at
                 ];
             }
             $a_info = [
@@ -4342,7 +4350,9 @@ class MeetRegistration extends Model
                 'previous_level' => $previous_level->level->name,
                 'current_level' => $current_level->level->name,
                 'sanction' => $this->getSanctioningBody($bodyId),
-                'event' =>  $event_info
+                'event' =>  $event_info,
+                'dob' => $specialist->dob,
+                'update_at' => $specialist->updated_at
                 // 'fee' => $specialist->fee
             ];
             $change_info['specialist']['moved'][] = $a_info;
@@ -4352,7 +4362,8 @@ class MeetRegistration extends Model
             $coach = (object)$coach;
             $c_info = [
                 'first_name' => $coach->first_name,
-                'last_name' => $coach->last_name
+                'last_name' => $coach->last_name,
+                'updated_at' => $coach->updated_at
             ];
             $change_info['coach']['new'][] = $c_info;
         }
@@ -4370,7 +4381,9 @@ class MeetRegistration extends Model
                     'previous_level' => '',
                     'current_level' => $current_level->level->name,
                     'sanction' => $this->getSanctioningBody($bodyId),
-                    'fee' => $scratch->fee
+                    'fee' => $scratch->fee,
+                    'dob' => $scratch->dob,
+                    'updated_at' => $scratch->updated_at
                 ];
                 $change_info['athlete']['scratched'][] = $at_info;
             }
@@ -4396,7 +4409,8 @@ class MeetRegistration extends Model
                         $event_model = AthleteSpecialistEvents::where('id',$event['event_id'])->first();
                         $event_info[] = [
                             'name' => $event_model->name,
-                            'fee' => $event['fee']
+                            'fee' => $event['fee'],
+                            'updated_at' => $event_model->updated_at
                         ];
                     }
                 }
@@ -4406,7 +4420,9 @@ class MeetRegistration extends Model
                     'previous_level' => '',
                     'current_level' => $current_level->level->name,
                     'sanction' => $this->getSanctioningBody($bodyId),
-                    'event' => $event_info
+                    'event' => $event_info,
+                    'dob' => $scratch->dob,
+                    'updated_at' => $scratch->updated_at
                 ];
                 $change_info['specialist']['scratched'][] = $at_info;
             }
@@ -4416,7 +4432,8 @@ class MeetRegistration extends Model
                 $scratch = (object) $scratch;
                 $at_info = [
                     'first_name' => $scratch->first_name,
-                    'last_name' => $scratch->last_name
+                    'last_name' => $scratch->last_name,
+                    'updated_at' => $scratch->updated_at
                 ];
                 $change_info['coach']['scratched'][] = $at_info;
             }
