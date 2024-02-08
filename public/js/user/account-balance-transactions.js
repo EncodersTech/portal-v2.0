@@ -77613,6 +77613,13 @@ $(document).ready(function () {
       },
       showTransactionDetails: function showTransactionDetails(tx) {
         this.transaction = tx;
+
+        if (tx.type == this.constants.balance.transactions.types.Withdrawal) {
+          $('#withdraw_info').show();
+        } else {
+          $('#withdraw_info').hide();
+        }
+
         $('#modal-transaction-details').modal('show');
       },
       numberFormat: function numberFormat(n) {
