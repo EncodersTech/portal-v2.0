@@ -75,7 +75,8 @@
                         <div v-else class="container-fluid">
                             <div class="mb-3">
                                 <div id="withdraw_info">
-                                    <span class="fas fa-fw fa-clock" aria-hidden="true"></span><span style="color: cornflowerblue;">Please note, it could take up to 7 business days to clear. </span>
+                                    <span class="fas fa-fw fa-clock" aria-hidden="true"></span>
+                                    <span style="color: cornflowerblue;">Note: Depending on your bank, it may take up to 7 business days To clear </span>
                                 </div>
                                 <div v-if="transaction.processor_id" class="row mt-1">
                                     <div class="col">
