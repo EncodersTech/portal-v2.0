@@ -1749,7 +1749,7 @@ class MeetRegistration extends Model
                     if(isset($a['old']['fee']) && isset($a['old']['late_fee']))
                     {
                         $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
-                        $subtotal = $usag_subtotal > 0 ? $usag_subtotal : ($usag_subtotal * -1);
+                        $subtotal += $usag_subtotal > 0 ? $usag_subtotal : ($usag_subtotal * -1);
                     }
                     else
                     {
@@ -3957,13 +3957,13 @@ class MeetRegistration extends Model
                 
                 $subtotal = $incurredFees['subtotal'] + $previous_d_remaining_total;
                 
-                // echo 'total refund calculate : '. $r_total . '<br>';
-                // echo 'total changes fee calculate : '. $changes_fees . '<br>';
-                // echo 'f subtotal : '. $summary['subtotal'] . '<br>';
-                // echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
-                // echo 'remaining credit : '. $credit_remaining . '<br>';
-                // echo 'used credit : '. $credit_used . '<br>';
-                // die();
+                echo 'total refund calculate : '. $r_total . '<br>';
+                echo 'total changes fee calculate : '. $changes_fees . '<br>';
+                echo 'f subtotal : '. $summary['subtotal'] . '<br>';
+                echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
+                echo 'remaining credit : '. $credit_remaining . '<br>';
+                echo 'used credit : '. $credit_used . '<br>';
+                die();
                 if ($subtotal != $summary['subtotal']) {
                     throw new CustomBaseException('Subtotal calculation mismatch.', -1);
                 }
