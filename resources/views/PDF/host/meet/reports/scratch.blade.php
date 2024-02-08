@@ -12,7 +12,7 @@
     <div class="header">
         <div class="header-text">
             <h1 class="mb-0">
-                Scratch Report
+                Scratches & Modifications
             </h1>
             <h2 class="mb-0">
                 Meet: {{ $meet->name }}
@@ -31,20 +31,18 @@
         <table class="table-0">
             <thead>
                 <tr>
-                    <th class="col-1">Club</th>
-                    <th class="col-2">Name</th>
-                    <th class="col-3">Event</th>
-                    <th class="col-6">DOB</th>
-                    <th class="col-7">Sex</th>
-                    <th class="col-4">Scratch Date</th>
-                    <th class="col-5">Level</th>
-                    <th class="text-right">Fee</th>
+                    <th class="col-2">Club</th>
+                    <th class="col-4">Name</th>
+                    <th class="col-4">DOB</th>
+                    <th class="col-4">Action Details</th>
+                    <th class="col-4">Action Date</th>
+                    <th class="col-4">Level</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($registrations as $r)
                     <tr>
-                        <td  class="col-1">
+                        <td  class="col-2">
                             <strong>{{ $r->gym->name }}</strong><br/>
 
                             <address>
@@ -63,8 +61,8 @@
                             <strong>Phone:</strong> {{ $r->gym->office_phone }}
                         </td>
 
-                        <td colspan="7" class="p-0">
-                            <table class="table-1">
+                        <td colspan="10" class="p-0">
+                        <table class="table-1">
                                 <tbody>
                                     @foreach ($r->athletes as $a)
                                         <tr>
@@ -72,30 +70,29 @@
                                                 {{ $a->fullName() }}
                                             </td>
 
-                                            <td class="col-3">
-                                                -
-                                            </td>
-
-                                            <td class="col-6">
+                                            <td class="col-2">
                                                 {{ $a->dob->format(Helper::AMERICAN_SHORT_DATE) }}
                                             </td>
 
-                                            <td class="col-7">
-                                                {{ $a->gender == 'male' ? 'M' : 'F' }}
+                                            <td class="col-2">
+                                                @switch($a->status)
+                                                    @case(\App\Models\RegistrationAthlete::STATUS_SCRATCHED)
+                                                        Scratched
+                                                        @break
+
+                                                    @default
+                                                        Moved
+                                                @endswitch
                                             </td>
 
-                                            <td class="col-4">
+                                            <td class="col-2">
                                                 {{ $a->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
                                             </td>
 
-                                            <td class="col-5">
+                                            <td class="col-2">
                                             @if ($a->registration_level)
                                                     {{ $a->registration_level->level->abbreviation }}
                                                 @endif
-                                            </td>
-
-                                            <td colspan="2" class="text-right">
-                                                $ {{ number_format($a->refund_fee(), 2) }}
                                             </td>
                                         </tr>
                                     @endforeach
@@ -106,36 +103,35 @@
                                                 {{ $s->fullName() }}
                                             </td>
 
-                                            <td colspan="7" class="p-0">
+                                            <td colspan="8" class="p-0">
                                                 <table class="table-2">
                                                     <tbody>
                                                         @foreach ($s->events as $evt)
                                                             <tr>
-                                                                <td class="col-3">
-                                                                    {{ $evt->specialist_event->name }}
-                                                                </td>
-
-                                                                <td class="col-6">
+                                                                <td class="col-2">
                                                                     {{ $s->dob->format(Helper::AMERICAN_SHORT_DATE) }}
                                                                 </td>
 
-                                                                <td class="col-7">
-                                                                    {{ $s->gender == 'male' ? 'M' : 'F' }}
-                                                                </td>
+                                                                <td class="col-2">
+                                                                    @switch($evt->status)
+                                                                        @case(\App\Models\RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED)
+                                                                            Scratched
+                                                                            @break
 
-                                                                <td class="col-4">
+                                                                        @default
+                                                                            Moved
+                                                                    @endswitch
+                                                                </td>
+                                                                <td class="col-2">
                                                                     {{ $evt->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
                                                                 </td>
 
-                                                                <td class="col-5">
+                                                                <td class="col-2">
                                                                     @if ($evt->specialist->registration_level)
                                                                         {{$evt->specialist->registration_level->level->abbreviation}}
                                                                     @endif
                                                                 </td>
 
-                                                                <td class="text-right">
-                                                                    $ {{ number_format($evt->refund_fee(), 2) }}
-                                                                </td>
                                                             </tr>
                                                         @endforeach
                                                     </tbody>
@@ -193,14 +189,6 @@
                                             </td>
                                         </tr>
                                     @endif
-
-                                    <tr>
-                                        <td colspan="4"></td>
-                                        <td colspan="3" class="total">Total</td>
-                                        <td class="text-right total">
-                                            $ {{ number_format($r->total, 2) }}
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </td>
