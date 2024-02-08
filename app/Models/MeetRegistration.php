@@ -1744,10 +1744,17 @@ class MeetRegistration extends Model
                     }
 
                 }
-
                 $athletes = $l['athletes'];
                 foreach ($athletes as $a) {
-                    $subtotal += $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                    if(isset($a['old']['fee']) && isset($a['old']['late_fee']))
+                    {
+                        $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                        $subtotal = $usag_subtotal > 0 ? $usag_subtotal : ($usag_subtotal * -1);
+                    }
+                    else
+                    {
+                        $subtotal += $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                    }
                 }
 
                 $specialists = $l['specialists'];
@@ -1765,7 +1772,6 @@ class MeetRegistration extends Model
                 }
                 // echo 'after sp : '. $subtotal.'<br>';
             }
-
             $result = [
                 'level_team_fees' => $lTeamFee,
                 'registration_late_fee' => $mLateFee,
@@ -2609,7 +2615,6 @@ class MeetRegistration extends Model
                 $count = [];
                 $txScratch = [
                     'athlete' => [],
-                    'specialist' => [],
                     'coach' => []
                 ];
                 $sp_move = [];
@@ -3267,7 +3272,7 @@ class MeetRegistration extends Model
                                                     $event->refund = $event->fee;
                                                     $event->late_refund = $event->late_fee;
                                                     $event->status = RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED;
-                                                    $txScratch['specialist'][] = $athlete;
+                                                    $txScratch['athlete'][] = $athlete;
                                                 } 
                                                 // else {
                                                 //     throw new CustomBaseException('You are not allowed to scratch events.');
@@ -4353,6 +4358,7 @@ class MeetRegistration extends Model
         }
         if(isset($auditEvent->scratch))
         {
+            if(isset($auditEvent->scratch['athlete']))
             foreach($auditEvent->scratch['athlete'] as $scratch)
             {
                 $scratch = (object) $scratch;
@@ -4369,6 +4375,7 @@ class MeetRegistration extends Model
                 $change_info['athlete']['scratched'][] = $at_info;
             }
             $rem_me = [];
+            if(isset($auditEvent->scratch['specialist']))
             foreach($auditEvent->scratch['specialist'] as $scratch)
             {
                 $scratch = (object) $scratch;
@@ -4403,6 +4410,7 @@ class MeetRegistration extends Model
                 ];
                 $change_info['specialist']['scratched'][] = $at_info;
             }
+            if(isset($auditEvent->scratch['coach']))
             foreach($auditEvent->scratch['coach'] as $scratch)
             {
                 $scratch = (object) $scratch;
