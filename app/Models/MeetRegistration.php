@@ -1305,8 +1305,6 @@ class MeetRegistration extends Model
 
                 $result['registration'] = $registration->id;
                 $meetEntryReport = $meet->registrantMeetEntryAndStoreReport($meet->id, $gym);
-                // echo $meetEntryReport; die();
-                $attachment = $meetEntryReport;
                 // TODO : Mail to host
                 if (isset($prev_deposit) && $prev_deposit != null) {
                     // $prev_deposit->is_used = true;
@@ -1330,8 +1328,7 @@ class MeetRegistration extends Model
                     $transaction !== null,
                     $waitlistTransaction !== null,
                     null,
-                    $meetEntryReport,
-                    $attachment
+                    $meetEntryReport
                 ));
 
                 //when registration complete then host receive mail.
@@ -1350,7 +1347,7 @@ class MeetRegistration extends Model
                 }
 
                 Log::debug('when registration complete then host receive mail. => ' . json_encode($mailcc));
-                Mail::to($meet->gym->user->email)->cc($mailcc)->send(new HostReceiveMeetRegistrationMailable($meet, $gym));
+                Mail::to($meet->gym->user->email)->cc($mailcc)->send(new HostReceiveMeetRegistrationMailable($meet, $gym, $meetEntryReport));
                 if($enable_travel_arrangements)
                     Mail::to(env('MAIL_TRAVEL_ADDRESS'))->cc("hello@allgymnastics.com")->send(new TransportHelpMailable($meet, $gym, $number_of));
 
@@ -3957,13 +3954,13 @@ class MeetRegistration extends Model
                 
                 $subtotal = $incurredFees['subtotal'] + $previous_d_remaining_total;
                 
-                echo 'total refund calculate : '. $r_total . '<br>';
-                echo 'total changes fee calculate : '. $changes_fees . '<br>';
-                echo 'f subtotal : '. $summary['subtotal'] . '<br>';
-                echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
-                echo 'remaining credit : '. $credit_remaining . '<br>';
-                echo 'used credit : '. $credit_used . '<br>';
-                die();
+                // echo 'total refund calculate : '. $r_total . '<br>';
+                // echo 'total changes fee calculate : '. $changes_fees . '<br>';
+                // echo 'f subtotal : '. $summary['subtotal'] . '<br>';
+                // echo 'b subtotal : '. $incurredFees['subtotal'] . '<br>';
+                // echo 'remaining credit : '. $credit_remaining . '<br>';
+                // echo 'used credit : '. $credit_used . '<br>';
+                // die();
                 if ($subtotal != $summary['subtotal']) {
                     throw new CustomBaseException('Subtotal calculation mismatch.', -1);
                 }
@@ -4215,6 +4212,10 @@ class MeetRegistration extends Model
                 }
                 $credit_row->save();
 
+                DB::commit();
+
+                $attachment = $meet->registrantMeetEntryAndStoreReport($meet->id, $gym);
+
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,
                     $gym,
@@ -4222,19 +4223,22 @@ class MeetRegistration extends Model
                     $gymSummary,
                     $paymentMethodString,
                     $transaction !== null,
-                    $waitlistTransaction !== null
+                    $waitlistTransaction !== null,
+                    null,
+                    $attachment
                 ));
-
+                // die();
                 // process_audit_event($auditEvent);
                 Mail::to($meet->gym->user->email)->send(new RegistrationUpdateMailable(
                     $meet,
                     $gym,
-                    $this->process_audit_event((object) $auditEvent)
+                    $this->process_audit_event((object) $auditEvent),
+                    $attachment
                 ));
 
                 // TODO : Mail to host
 
-                DB::commit();
+
             } catch (\Throwable $e) {
                 DB::rollBack();
                 self::panicCancelTransaction($e, $transaction, $chosenMethod['type']);

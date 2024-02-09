@@ -2183,9 +2183,9 @@ class Meet extends Model
             $gymName = strtolower(str_replace(' ', '_', $meet->name));
             $pdfName = 'regi_meet_en_' . time() . '_' . $gymName . '.pdf';
 
-            $pdf->save(storage_path('registrant_meet_entry/' . $pdfName));
+            $pdf->save(storage_path('registrant_meet_entry\\' . $pdfName));
 
-            return storage_path("registrant_meet_entry/{$pdfName}");
+            return storage_path("registrant_meet_entry\\{$pdfName}");
         } catch (\Throwable $e) {
             throw $e;
         }

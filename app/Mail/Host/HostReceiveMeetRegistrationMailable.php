@@ -18,17 +18,20 @@ class HostReceiveMeetRegistrationMailable extends Mailable implements ShouldQueu
 {
     use Queueable, SerializesModels;
 
+    public $tries = 3;
+    public $retryAfter = 300;
+    
     public $meet; /** @var Meet $meet */
     public $gym; /** @var Gym $gym */
     public $url = '#';
+    public $attachment;
 
-
-    public function __construct(Meet $meet, Gym $gym)
+    public function __construct(Meet $meet, Gym $gym, $attachment = null)
     {
         $this->gym = $gym;
         $this->meet = $meet;
         $this->url = route('host.meets.dashboard', ['gym' => $meet->gym, 'meet' => $meet]);
-
+        $this->attachment = $attachment;
     }
 
     /**
@@ -40,7 +43,11 @@ class HostReceiveMeetRegistrationMailable extends Mailable implements ShouldQueu
     {
         return  $this->from(config('mail.from.address'))
             ->subject('New Registration received.')
-            ->markdown('emails.host.receive_meet_registration_mail');
+            ->markdown('emails.host.receive_meet_registration_mail')
+            ->attach($this->attachment, [
+                'as' => 'meet_entry_report.pdf',
+                'mime' => 'application/pdf',
+            ]);
     }
 
     public function failed(\Exception $e)

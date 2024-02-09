@@ -28,14 +28,14 @@ class GymRegistrationUpdatedMailable extends Mailable implements ShouldQueue
     public $hadWaitlist;
     public $sanction; /** @var USAGSanction $sanction */
     public $url = '#';
-
+    public $attachment;
     /**
      * Create a new message instance.
      *
      * @return void
      */
     public function __construct(Meet $meet, Gym $gym, MeetRegistration $registration,
-        array $breakdown, string $paymentMethodString, bool $hadRegular, bool $hadWaitlist, USAGSanction $sanction = null, $pdf = null)
+        array $breakdown, string $paymentMethodString, bool $hadRegular, bool $hadWaitlist, USAGSanction $sanction = null, $attachment = null)
     {
         $this->meet = $meet;
         $this->gym = $gym;
@@ -46,7 +46,7 @@ class GymRegistrationUpdatedMailable extends Mailable implements ShouldQueue
         $this->hadWaitlist = $hadWaitlist;
         $this->sanction = $sanction;
         // This commented section userd for Meet Entry pdf send for registaring host and gym
-        // $this->pdf = $pdf;
+        $this->attachment = $attachment;
         $this->url = route(
             'gyms.registration',
             [
@@ -63,19 +63,18 @@ class GymRegistrationUpdatedMailable extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        return $this->from(config('mail.from.address'))
+        $mail = $this->from(config('mail.from.address'))
                     ->subject(
                         ($this->sanction !== null ? 'USAG Sanction No. ' . $this->sanction->number . ': ' : '') .
                         'You have updated your registration for "' . $this->meet->name . '"'
-                    )->markdown('emails.registration.updated');
-                    
-        // This commented section userd for Meet Entry pdf send for registaring host and gym
-        // return $this->from(config('mail.from.address'))
-        //     ->attachData($this->pdf->output(), "MeetEntryReport.pdf")
-        //     ->subject(
-        //         ($this->sanction !== null ? 'USAG Sanction No. ' . $this->sanction->number . ': ' : '') .
-        //         'You have updated your registration for "' . $this->meet->name . '"'
-        //     )->markdown('emails.registration.updated');
+                    )->markdown('emails.registration.updated')
+                    ->attach($this->attachment, [
+                        'as' => 'meet_entry_report.pdf',
+                        'mime' => 'application/pdf',
+                    ]);;
+
+        return $mail;
+
     }
 
     public function failed(\Exception $e)
