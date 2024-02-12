@@ -34,6 +34,7 @@ Refer to [this](https://www.digitalocean.com/community/tutorials/how-to-install-
 - Add other users to www-data group : `sudo usermod -a -G www-data <username>`
 
 # Database Setup
+#test
 
 ### Initial Setup
 - `CREATE USER <db_username> WITH PASSWORD '<db_password>';`
