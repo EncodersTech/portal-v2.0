@@ -40,21 +40,20 @@
     @if ($registrations->count() < 1)
         No Refunds.
     @else
-        <table class="table-0">
-            <thead>
+
+        @foreach ($registrations as $r)
+            <table class="table-0" style="margin-bottom:5em;">
+                <thead>
                 <tr>
                     <th class="col-1">Club</th>
                     <th class="col-2">Name</th>
-                    <!-- <th class="col-3">Event</th>
-                    <th class="col-6">DoB</th>
-                    <th class="col-7">Sex</th> -->
+                    <th class="col-3">Event</th>
                     <th class="col-4">Date</th>
                     <th class="col-5">Action</th>
                     <th class="text-right">Amount</th>
                 </tr>
-            </thead>
-            <tbody>
-                @foreach ($registrations as $r)
+                </thead>
+                <tbody>
                     <tr>
                         <td  class="col-1">
                             <strong>{{ $r->gym->name }}</strong><br/>
@@ -75,7 +74,7 @@
                             <strong>Phone:</strong> {{ $r->gym->office_phone }}
                         </td>
 
-                        <td colspan="7" class="p-0">
+                        <td colspan="5" class="p-0">
                             <table class="table-1">
                                 <tbody>
                                     @foreach ($r->athletes as $a)
@@ -84,17 +83,9 @@
                                                 {{ $a->fullName() }}
                                             </td>
 
-                                            <!-- <td class="col-3">
+                                            <td class="col-3">
                                                 -
                                             </td>
-
-                                            <td class="col-6">
-                                                {{ $a->dob->format(Helper::AMERICAN_SHORT_DATE) }}
-                                            </td>
-
-                                            <td class="col-7">
-                                                {{ $a->gender == 'male' ? 'M' : 'F' }}
-                                            </td> -->
 
                                             <td class="col-4">
                                                 {{ $a->updated_at->format(Helper::AMERICAN_SHORT_DATE_TIME) }}
@@ -110,8 +101,7 @@
                                                         Moved
                                                 @endswitch
                                             </td>
-
-                                            <td class="text-right">
+                                            <td colspan="3" class="text-right" >
                                                 $ {{ number_format($a->refund_fee(), 2) }}
                                             </td>
                                         </tr>
@@ -130,14 +120,6 @@
                                                             <tr>
                                                                 <td class="col-3">
                                                                     {{ $evt->specialist_event->name }}
-                                                                </td>
-
-                                                                <td class="col-6">
-                                                                    {{ $s->dob->format(Helper::AMERICAN_SHORT_DATE) }}
-                                                                </td>
-
-                                                                <td class="col-7">
-                                                                    {{ $s->gender == 'male' ? 'M' : 'F' }}
                                                                 </td>
 
                                                                 <td class="col-4">
@@ -175,7 +157,7 @@
                                                     {{ $l->name }}
 
                                                     @if ($l->pivot->disabled)
-                                                        (disabled))
+                                                        (disabled)
                                                     @endif
                                                 </strong>
                                             </td>
@@ -216,20 +198,36 @@
                                         </tr>
                                     @endif
 
+                                    
                                     <tr>
                                         <td colspan="4"></td>
-                                        <td colspan="2" class="total">Total</td>
-                                        <td class="text-right total">
+                                        <td colspan="2" class="">Total</td>
+                                        <td class="text-right ">
                                             $ {{ number_format($r->total, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"></td>
+                                        <td colspan="2" class="">Used Credit</td>
+                                        <td class="text-right ">
+                                            $ {{ number_format($r->credit_used, 2) }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"></td>
+                                        <td colspan="2" class="total">Refund Amount</td>
+                                        <td class="text-right total">
+                                            $ {{ number_format(($r->total - $r->credit_used), 2) }}
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </td>
                     </tr>
-                @endforeach
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+                <span  style="margin-bottom:15px;"></span>
+        @endforeach
     @endif
 </body>
 </html>

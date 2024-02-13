@@ -67,12 +67,7 @@ class GymRegisteredMailable extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        // $mail =  $this->from(config('mail.from.address'))
-        //             ->subject(
-        //                 ($this->sanction !== null ? 'USAG Sanction No. ' . $this->sanction->number . ': ' : '') .
-        //                 'You have registered for "' . $this->meet->name . '"'
-        //             )->markdown('emails.registration.registered');
-        $mail =  $this->from(config('mail.from.address'))
+        $mail = $this->from(config('mail.from.address'))
                     ->subject(
                         ($this->sanction !== null ? 'USAG Sanction No. ' . $this->sanction->number . ': ' : '') .
                         'Confirmation of "' . $this->meet->name . '" Registration'
@@ -80,10 +75,9 @@ class GymRegisteredMailable extends Mailable implements ShouldQueue
 
         if ($this->attachment) {
             $mail = $mail->attach($this->attachment, [
-                'as' => "Registration_Details.pdf",
+                'as' => "meet_entry_report.pdf",
                 'mime' => "application/pdf",
             ]);
-            // $mail->attach($this->attachment);
         }
 
         return  $mail;

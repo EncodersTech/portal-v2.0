@@ -1273,6 +1273,8 @@
                 accountNumber: '',
                 accountType: 's', // Default to savings
                 accountName: '',
+                previous_registration_credit_amount: 0,
+                changes_fees: 0,
             }
         },
         methods: {
@@ -1406,15 +1408,45 @@
             toggleTeam(level, toggle) {
                 if (!this.permissions.scratch && toggle == false)
                     return;
+                if(toggle == false && level.has_team == false)
+                    return;
 
                 level.has_team = toggle;
                 level.changes.team = (level.has_team != level.original_data.has_team);
+                // this.calculateSubtotal();
+
+                for(var i in this.registrationLevelToMeetLevelMatrix) {
+                    if(this.registrationLevelToMeetLevelMatrix[i] == level.uid) {
+                    this.state.final.levels[i] = level;
+                    
+                    break;
+                    }
+                }
+
+                if(level.changes.team)
+                    this.changes_fees += level.team_fee;
+                else
+                    this.changes_fees -= level.team_fee;
                 this.calculateSubtotal();
+                this.$forceUpdate(); 
             },
 
             revertLevelTeam(level) {
+                if(level.has_team == true && level.changes.team == false) return;
+                
                 level.has_team = level.original_data.has_team;
                 level.changes.team = false;
+                
+
+                this.changes_fees -= level.team_fee;
+
+                for(var i in this.registrationLevelToMeetLevelMatrix) {
+                    if(this.registrationLevelToMeetLevelMatrix[i] == level.uid) {
+                    this.state.final.levels[i] = level;
+                    this.$forceUpdate(); 
+                    break;
+                    }
+                }
                 this.calculateSubtotal();
             },
 
@@ -1535,10 +1567,23 @@
                 let vm = this;
                 let registration = result.data;
                 this.old_data_athletes = result.data;
-
+                this.previous_registration_credit_amount = registration.previous_registration_credit_amount;
                 registration.late_fee = Utils.toFloat(registration.late_fee);
                 registration.late_refund = Utils.toFloat(registration.late_refund);
 
+                for(let i in state.final.levels)
+                {
+                    let level = state.final.levels[i];
+                    for(let j in level.athletes)
+                    {
+                        let athlete = level.athletes[j];
+                        if(athlete.status == vm.constants.athletes.statuses.Scratched && !athlete.processed_already )
+                        {
+                            this.changes_fees += parseFloat(athlete.fee) + parseFloat(athlete.late_fee);
+                        }
+                        
+                    }
+                }
                 for (let i in registration.levels) {
                     let level = registration.levels[i];
 
@@ -1821,17 +1866,33 @@
                 for (let a_i in this.old_data_athletes.athletes) {
                     let old_a = _.cloneDeep(this.old_data_athletes.athletes[a_i]);
                     if (old_a.id === athlete.id) {
-                        if (athlete.was_late && (athleteTotal > athlete.late_fee)) {
-                            let athleteFee = 0;
-                            athleteFee = athleteTotal - athlete.late_fee;
-                            if (old_a.fee == athleteFee) {
-                                athleteTotal = athlete.late_fee;
-                            }
-                        }
+                        athleteTotal = level.registration_fee - athlete.fee;
+                        if(athleteTotal < 0)
+                            athleteTotal = 0;
+                        else if(athleteTotal > 0)
+                            athlete.include_in_calculation = true;
+                        // if (athlete.was_late && (athleteTotal > athlete.late_fee)) {
+                        //     let athleteFee = 0;
+                        //     athleteFee = athleteTotal - athlete.late_fee;
+                        //     if (old_a.fee == athleteFee) {
+                        //         athleteTotal = athlete.late_fee;
+                        //     }
+                        // }
                     }
                 }
                 //#endregion
                 athlete.total = athleteTotal;
+
+                if (athlete.old_level !== null) {
+                    let old_level_fee = this.state["final"].levels[athlete.old_level].registration_fee;
+                    let current_level_fee = level.registration_fee;
+                    if (old_level_fee > current_level_fee) {
+                        if(this.changes_fees == 0)
+                            this.changes_fees += parseFloat(old_level_fee) - parseFloat(current_level_fee);
+                    }
+                }
+
+
                 if (stop !== true)
                     this.calculateLevelSubtotal(level);
             },
@@ -1852,7 +1913,7 @@
                     }
                 }
 
-                if ((total > 0) && level.allow_team) {
+                if (level.allow_team) {
                     if (level.has_team) {
                         let diff = (level.team_fee + level.team_late_fee - level.team_refund - level.team_late_refund);
                         if (diff == 0) {
@@ -1881,6 +1942,12 @@
                     if (diff == 0)
                         total += this.meet.late_registration_fee;
                 }
+
+                var p_credit = this.previous_registration_credit_amount + this.changes_fees;
+                if(total >= p_credit)
+                    total = total - p_credit;
+                else
+                    total = 0;
 
                 this.total = total;
             },
@@ -2206,6 +2273,7 @@
                                 coupon: this.coupon.trim().toUpperCase(),
                                 enable_travel_arrangements: this.enable_travel_arrangements,
                                 onetimeach: this.onetimeach,
+                                changes_fees: this.changes_fees
                             }
                         ).then(result => {
                             this.registrationUrl = result.data.url;
@@ -2392,7 +2460,9 @@
 
                                 let old_level = null;
                                 if (final.ids.moved.hasOwnProperty(usag_no))
+                                {
                                     old_level = final.ids.moved[usag_no];
+                                }
 
 
                                 let scratched = 0

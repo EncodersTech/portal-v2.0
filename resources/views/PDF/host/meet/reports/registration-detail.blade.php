@@ -139,6 +139,7 @@
         <hr>
         <div class="float-parent" style="padding-top: 20px !important;">
             <span><strong>Transaction History</strong></span><br>
+            <span>* Credits found in the report reflect athlete changes made after initial registration. Please refer only to the refund section or refund report for refund totals</span>
             @if ($registrations->count() > 0)
                 <table class="table-0 table-summary full-width">
                     <thead>
@@ -160,6 +161,7 @@
                         ?>
                         @foreach ($registration->transactions as $transaction)
                             <?php
+                            try{
                                 // MODIFICATION => Mod. 
                                 $reg_type = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? 'Mod.' : 'Reg.';
                                 $symbols = $transaction->breakdown['gym']['own_meet_refund'] > 0 ? '-' : '';
@@ -169,6 +171,10 @@
                                 } else {
                                 $gym_sub_total = (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] > 0) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'] + $coupon;
                                 }
+
+                                $refund_used = $transaction->level_payment_sum - $gym_sub_total;
+                            
+                                // $refund_used = ($transaction->level_payment_sum - $gym_sub_total) > 0 ? ($transaction->level_payment_sum - $gym_sub_total) : 0;
                             ?>
                             <tr>
                                 <td class="col-4">{{$transaction['created_at']->format(Helper::AMERICAN_SHORT_DATE)}}</td>
@@ -183,9 +189,21 @@
                                 <td class="col-1">Team Fee</td>
                                 <td class="col-1">Amount</td>
                                 <td class="col-1  text-right">
-                                    {{number_format( $gym_sub_total,3)}}</td>
+                                    {{number_format( $gym_sub_total,3)}}
+                                    @php
+                                        if($refund_used > 0){
+                                            echo '<br><span style="color:red; font-weight: bold;">Credit: '.number_format($refund_used,3) . '</span>';
+                                        }
+                                        else if($refund_used < 0)
+                                        {
+                                            echo '<br><span style="color:green; font-weight: bold;">Refund: '.number_format(($refund_used * -1),3) . '</span>';
+                                        }
+                                    @endphp
+                                </td>
                             <tr>
+                            @if(isset($transaction['level_reg_history']))
                             @foreach ($transaction['level_reg_history'] as $key => $tr_hi)
+                            
                                 <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
                                     <td class="col-4" colspan="3"></td>
                                     <td class="col-1">{{$tr_hi['name']}}</td>
@@ -202,6 +220,7 @@
                                     $total_reg_sp_at += $tr_hi['specialists'];
                                 ?>
                             @endforeach
+                            @endif
                                 <?php
                                     $total_reg_fees += (isset($transaction->breakdown['gym']['deposit_subtotal']) && $transaction->breakdown['gym']['deposit_subtotal'] > 0) ? $transaction->breakdown['gym']['deposit_subtotal'] : $transaction->breakdown['gym']['subtotal'];
                                     $total_participant_fees = $transaction->breakdown['gym']['total'];
@@ -211,6 +230,12 @@
                                     $total_reg_fees -= (($transaction->breakdown['gym']['handling'] + $transaction->breakdown['gym']['processor']) - $transaction->breakdown['gym']['total']);
                                     }
                                 ?>
+                        <?php  }
+                        catch(Exception $e){
+                            print_r($e->getMessage());
+                            die();
+                        }
+                        ?>
                         @endforeach
                     </tbody>
                     <thead>
@@ -227,7 +252,7 @@
             @else
                 No Transaction.
             @endif
-        </div>
+        </div> 
         <div class="float-parent" style="padding-top: 20px !important;">
             <span><strong>Payment Method</strong> : Full</span><br>
             <table class="table-0 full-width">
@@ -425,7 +450,7 @@
 
 </body>
 
-<div style="position: absolute;  bottom: -10em;  vertical-align: bottom" >
+<div style="position: absolute; vertical-align: bottom;" >
     * Admin and CC/ACH fees are non-refundable
 </div>
 </html>

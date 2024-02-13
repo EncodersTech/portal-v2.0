@@ -78,7 +78,7 @@
                 <thead>
                     <tr>
                         <th class="col-2">Name</th>
-                        <th class="col-2">Athlete #</th>
+                        <th class="col-2">Coach #</th>
                         <th class="col-2">Sanctions</th>
                         <th class="col-2">Size</th>
                     </tr>

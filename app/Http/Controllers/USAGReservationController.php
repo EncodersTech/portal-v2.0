@@ -34,7 +34,6 @@ class USAGReservationController extends Controller
             if ($result === false)
                 throw new CustomBaseException('JSON encoding failed.', -1);
 
-            //return $result;
             return view('reservation.usag.details', [
                 'current_page' => 'gym-' . $gym->id,
                 'gym' => $gym,
