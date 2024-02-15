@@ -7,9 +7,27 @@
     <title>{{ config('app.name', 'AllGymnastics') }}</title>
     @include('PDF.styles.reboot')
     @include('PDF.styles.reports')
+
+    <style>
+        body { 
+            background-image: url('http://127.0.0.1:8000/img/nga_background.png'); 
+            background-repeat: no-repeat; 
+            background-size: 100%;
+            display: block; 
+            margin: 0 auto;
+        }
+        .PageBorder {
+			  border: 18px solid transparent;
+			  border-image-slice: 13%;
+			  border-image-width: 13px;
+			  border-image-repeat: round round;background-size: cover;
+			  border-image-source: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkBAMAAACCzIhnAAAAJ1BMVEUAAADc1VKxzunu6qnl4H2ow72syNL29dTF2u6eweOvyt7g2mjp5ZOtY6MuAAAAAXRSTlMAQObYZgAAAK9JREFUWMPt2LENwjAQBdCTmOBWuAJBh3RsgLvUXoCCFdJQMQJjUGcH1uIcPMDPFVaK/4tU/0mx7OZOdM1FgBz+3RRZSikoieoUpLVR0j4Dycvq3YAcq506OePk3YnhP2ZZoloVTlRTxN0frksBMmlU3SWy6SwiJCQkJCQkJCQkJCQkJCSDSR94bw7k2gfeMZO4fufPjJ4lqs/EViGx7kgsVfa8IGoXj5L1CYzZwv0AT56E0VsJv2sAAAAASUVORK5CYII=);
+          }
+    </style>
 </head>
+<!-- how to put watermark image -->
 <body>
-    <div class="header">
+    <div class="header PageBorder">
         <div class="header-text">
             <h1 class="mb-0">
                USAIGC Coach Sign In Report
@@ -52,10 +70,10 @@
             <tbody>
                 @foreach ($gyms as $r)
                     @foreach ($r['coaches'] as $c)
-                        @if($c->usaigc_no != null)
+                        @if($c->nga_no != null)
                             <tr>
                                 <td>{{ $c->first_name .' '.$c->last_name }}</td>
-                                <td>{{ '  USAIGC: '.$c->usaigc_no }}</td>
+                                <td>{{ '  NGA: '.$c->nga_no }}</td>
                                 <td  class="col-1">
                                     <strong>{{ $r['gyms']->name }}</strong>
                                 </td>
@@ -70,3 +88,7 @@
    
 </body>
 </html>
+
+@php
+    // die();
+@endphp

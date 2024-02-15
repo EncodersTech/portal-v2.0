@@ -191,7 +191,8 @@ $(document).ready(e => {
                             LeoTShirtGym: 'leo-t-shirt-gym',
                             MeetEntry: 'meet-entry',
                             Scratch: 'scratch',
-                            CoachSignin: 'coach-signin',
+                            USAIGCCoachSignin: 'usaigc-coach-signin',
+                            NGACoachSignin: 'nga-coach-signin'
                         }
                     }
                 };
@@ -238,7 +239,8 @@ $(document).ready(e => {
                         case this.constants.reports.types.LeoTShirtGym:
                         case this.constants.reports.types.MeetEntry:
                         case this.constants.reports.types.Scratch:
-                        case this.constants.reports.types.CoachSignin:
+                        case this.constants.reports.types.USAIGCCoachSignin:
+                        case this.constants.reports.types.NGACoachSignin:
                             break;
 
                         default:
