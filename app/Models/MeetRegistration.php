@@ -1745,7 +1745,7 @@ class MeetRegistration extends Model
                 foreach ($athletes as $a) {
                     if(isset($a['old']['fee']) && isset($a['old']['late_fee']))
                     {
-                        $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                        $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - ($a['new']['fee'] + $a['new']['late_fee']) - ($a['new']['refund'] + $a['new']['late_refund']);
                         $subtotal += $usag_subtotal > 0 ? $usag_subtotal : ($usag_subtotal * -1);
                     }
                     else
