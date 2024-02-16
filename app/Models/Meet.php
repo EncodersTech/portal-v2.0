@@ -2191,7 +2191,7 @@ class Meet extends Model
         }
     }
 
-    public function generateMeetEntryReport(Gym $gym = null) : PdfWrapper {
+    public function generateMeetEntryReport(Gym $gym = null, $single = true) : PdfWrapper {
         try {
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
@@ -2212,10 +2212,15 @@ class Meet extends Model
                 ,'athletes'])->orderBy('created_at', 'DESC')
                 ->get();
 
+            // sort registrations based on gym->namespace
+            $registrations = $registrations->sortBy(function($registration, $key) {
+                return $registration->gym->name;
+            });
             $data = [
                 'host' => $this->gym,
                 'meet' => $this,
-                'registrations' => $registrations
+                'registrations' => $registrations,
+                'single' => $single
             ];
 
             return PDF::loadView('PDF.host.meet.reports.meet-entry', $data); /** @var PdfWrapper $pdf */
