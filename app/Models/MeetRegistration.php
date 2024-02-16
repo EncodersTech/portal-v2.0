@@ -4377,6 +4377,8 @@ class MeetRegistration extends Model
             foreach($auditEvent->scratch['athlete'] as $scratch)
             {
                 $scratch = (object) $scratch;
+                if(isset($scratch->events))
+                    continue;
                 $current_level = LevelRegistration::find($scratch->level_registration_id);
                 $bodyId = $current_level->level->sanctioning_body_id;
                 $at_info = [
