@@ -9,28 +9,47 @@
     @include('PDF.styles.reports')
 
     <style>
-        body { 
-            background-image: url('http://127.0.0.1:8000/img/nga_background.png'); 
-            background-repeat: no-repeat; 
-            background-size: 100%;
-            display: block; 
-            margin: 0 auto;
+        .watermark{
+            position: absolute;
+            top: 80%;
+            left: 21%;
+            width: 60%;
+            height: 60%;
+            opacity: .3;
+            z-index: -1;
         }
-        .PageBorder {
-			  border: 18px solid transparent;
-			  border-image-slice: 13%;
-			  border-image-width: 13px;
-			  border-image-repeat: round round;background-size: cover;
-			  border-image-source: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkBAMAAACCzIhnAAAAJ1BMVEUAAADc1VKxzunu6qnl4H2ow72syNL29dTF2u6eweOvyt7g2mjp5ZOtY6MuAAAAAXRSTlMAQObYZgAAAK9JREFUWMPt2LENwjAQBdCTmOBWuAJBh3RsgLvUXoCCFdJQMQJjUGcH1uIcPMDPFVaK/4tU/0mx7OZOdM1FgBz+3RRZSikoieoUpLVR0j4Dycvq3YAcq506OePk3YnhP2ZZoloVTlRTxN0frksBMmlU3SWy6SwiJCQkJCQkJCQkJCQkJCSDSR94bw7k2gfeMZO4fufPjJ4lqs/EViGx7kgsVfa8IGoXj5L1CYzZwv0AT56E0VsJv2sAAAAASUVORK5CYII=);
-          }
+        .watermark img {
+            opacity: 0.3;
+        }
+        table{
+            border-collapse: separate !important;
+            border-spacing: 50px 0;
+        }
+        .ntd{
+            text-align:center; 
+            width: 33%; 
+            padding: 5px;
+            border-bottom: 0px !important;
+            border-right: 0px !important;
+            border-left: 0px !important;
+        }
+        .line{
+            color: red;
+            border-top: 1px solid black;
+        }
+        .rbottom > td{
+            padding-bottom: 3em !important;
+        }
     </style>
 </head>
-<!-- how to put watermark image -->
 <body>
-    <div class="header PageBorder">
+    <div class="watermark">
+        @include('PDF.host.meet.reports.nga_logo_image')
+    </div>
+    <div class="header">
         <div class="header-text">
             <h1 class="mb-0">
-               USAIGC Coach Sign In Report
+               NGA Coach Sign In Report
             </h1>
             <h2 class="mb-0">
                 Meet: {{ $meet->name }}
@@ -54,34 +73,30 @@
             <strong>A final report can be obtained after this meet is closed for registrations.</strong>
         </div>
     @endif
+    <br><br>
     <!-- {{ count($gyms) < 1 ? "1" :"2" }} -->
     @if ($cont < 1)
         No Gym Participation's.
     @else
-        <table class="table-0">
-            <thead>
-                <tr>
-                    <th class="col-2">Coach Name</th>
-                    <th class="col-2">USAIGC No</th>
-                    <th class="col-2">Gym</th>
-                    <th class="col-2">Signature</th>
-                </tr>
-            </thead>
+
+        <table class="table-1" style="border: 0;">
             <tbody>
-                @foreach ($gyms as $r)
-                    @foreach ($r['coaches'] as $c)
-                        @if($c->nga_no != null)
-                            <tr>
-                                <td>{{ $c->first_name .' '.$c->last_name }}</td>
-                                <td>{{ '  NGA: '.$c->nga_no }}</td>
-                                <td  class="col-1">
-                                    <strong>{{ $r['gyms']->name }}</strong>
-                                </td>
-                                <td></td>
-                            </tr>
-                        @endif
+                    @foreach ($gyms as $r)
+                        @foreach ($r['coaches'] as $c)
+                            @if($c->nga_no != null)
+                                <tr>
+                                    <td class="ntd">{{ $c->first_name .' '.$c->last_name }}</td>
+                                    <td class="ntd">{{ $r['gyms']->name }}</td>
+                                    <td class="ntd">{{ $c->nga_no }}</td>
+                                </tr>
+                                <tr class="rbottom">
+                                    <td class="ntd line"></span>Coach Name</td>
+                                    <td class="ntd line"></span>Club</td>
+                                    <td class="ntd line"></span>NGA #</td>
+                                </tr>
+                            @endif
+                        @endforeach
                     @endforeach
-                @endforeach
             </tbody>
         </table>
     @endif
