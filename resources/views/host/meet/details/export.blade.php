@@ -5,46 +5,50 @@
         <span class="fas fa-info-circle"></span> You can generate up to 5 reports per minute.
         If you encounter a "Too Many Request", please wait a minute and retry.
     </div>
-
+    <h5><b>FINANCIAL</b></h5><hr>
     <div class="row">
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-primary" @click="generateReport(constants.reports.types.Summary)">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.RegistrationDetail)">
+                Registration Detail
+            </button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.Summary)">
                 Meet Summary
             </button>
         </div>
-
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.Refunds)">
+               Refunds
+            </button>
+        </div>
+    </div>
+    
+    <h5><b>MEET INFO</b></h5><hr>
+    <div class="row">
         <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.MeetEntry)">
                 Meet Entries
             </button>
         </div>
-
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-info" @click="generateReport(constants.reports.types.RegistrationDetail)">
-                Registration Detail
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Scratch)">
+                Scratches &amp; Modifications
             </button>
         </div>
-
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.Entry)">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Entry)">
                 Team Participation (Athletes)
             </button>
         </div>
 
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.EntryNonAthletes)">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.EntryNonAthletes)">
                 Team Participation (Not Athletes)
             </button>
         </div>
-
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.Coaches)">
-                Attending Gyms &amp; Coaches
-            </button>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-danger" @click="generateReport(constants.reports.types.Specialists)">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Specialists)">
                 Event Specialists
             </button>
         </div>
@@ -59,32 +63,38 @@
             </button>
         </div>
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-primary" @click="generateReport(constants.reports.types.Scratch)">
-                Scratches
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Coaches)">
+                Attending Gyms  Coaches
             </button>
         </div>
-
-        <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Refunds)">
-               Refunds
-            </button>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.ProscoreExport)">
-                ProScore Export
-            </button>
-        </div>
+    </div>
+    <h5><b>CLOTHING INFO</b></h5><hr>
+    <div class="row">
         <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-info" @click="generateReport(constants.reports.types.LeoTShirt)">
                 Leo/T-Shirt Summary
             </button>
         </div>
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.LeoTShirtGym)">
+            <button class="btn btn-block btn-info" @click="generateReport(constants.reports.types.LeoTShirtGym)">
                 Leo/T-Shirt Gym
             </button>
         </div>
-
+    </div>
+    <h5><b>MEET DAY</b></h5><hr>
+    <div class="row">
+        <div class="col-md-3 mb-3" v-if="typeof constants.bodies.USAIGC !== 'undefined'">
+            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.CoachSignin)">
+                USAIGC Coach Sign In
+            </button>
+        </div>
+    </div>
+    <h5><b>PRE & POST MEET</b></h5><hr>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.ProscoreExport)">
+                ProScore Export
+            </button>
+        </div>
     </div>
 </div>

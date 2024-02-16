@@ -1374,8 +1374,8 @@ class USAGReservation extends Model
 
                             $snapshot['levels'][$registrationLevel->id]['athletes'][$athlete->id]['new'] = [
                                 'was_late' => $athlete->was_late,
-                                'fee' => $athlete->fee,
-                                'late_fee' => $athlete->late_fee,
+                                'fee' => 0,
+                                'late_fee' => 0,
                                 'refund' => $athlete->refund,
                                 'late_refund' => $athlete->late_refund,
                             ];

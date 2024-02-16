@@ -1745,7 +1745,7 @@ class MeetRegistration extends Model
                 foreach ($athletes as $a) {
                     if(isset($a['old']['fee']) && isset($a['old']['late_fee']))
                     {
-                        $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                        $usag_subtotal = ($a['old']['fee'] + $a['old']['late_fee']) - ($a['new']['fee'] + $a['new']['late_fee']) - ($a['new']['refund'] + $a['new']['late_refund']);
                         $subtotal += $usag_subtotal > 0 ? $usag_subtotal : ($usag_subtotal * -1);
                     }
                     else
@@ -4377,6 +4377,8 @@ class MeetRegistration extends Model
             foreach($auditEvent->scratch['athlete'] as $scratch)
             {
                 $scratch = (object) $scratch;
+                if(isset($scratch->events))
+                    continue;
                 $current_level = LevelRegistration::find($scratch->level_registration_id);
                 $bodyId = $current_level->level->sanctioning_body_id;
                 $at_info = [
