@@ -261,7 +261,6 @@ class MeetRegistrationController extends Controller
                 case Meet::REPORT_TYPE_SUMMARY:
                     $pdf = $meet->generateSummaryReport($gym)->setPaper('a4', 'landscape')
                         ->setOption('margin-top', '38mm')
-                        
                         ->setOption('margin-bottom', '10mm')
                         ->setOption('header-html', view('PDF.host.meet.reports.header_footer.meet_summery_header',['meet' => $meet])->render())
                         ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
@@ -269,20 +268,12 @@ class MeetRegistrationController extends Controller
                     return $pdf->stream($name);
                     break;
 
-                case Meet::REPORT_TYPE_ENTRY:
-                    $pdf = $meet->generateEntryReport($gym)->setPaper('a4')
-                        ->setOption('margin-top', '10mm')
-                        ->setOption('margin-bottom', '10mm')
-                        ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
-
-                    return $pdf->stream($name);
-                    break;
-
                 case Meet::REPORT_TYPE_ENTRY_NOT_ATHLETE:
                     $notAthlete = true;
-                    $pdf = $meet->generateEntryReport($gym,$notAthlete)->setPaper('a4')
-                        ->setOption('margin-top', '10mm')
+                    $pdf = $meet->generateEntryReport($gym)->setPaper('a4', 'landscape')
+                        ->setOption('margin-top', '40mm')
                         ->setOption('margin-bottom', '10mm')
+                        ->setOption('header-html', view('PDF.host.meet.reports.header_footer.team_summary_header',['meet' => $meet])->render())
                         ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
                     return $pdf->stream($name);
                     break;
