@@ -12,7 +12,7 @@
     <div class="header">
         <div class="header-text">
             <h1 class="mb-0">
-               Gym Participation Report
+               Attending Gyms & Coaches
             </h1>
             <h2 class="mb-0">
                 Meet: {{ $meet->name }}
@@ -44,53 +44,53 @@
             <thead>
                 <tr>
                     <th class="col-2">Gym</th>
+                    <th class="col-2">Gym Contact</th>
                     <th class="col-2">Address</th>
-                    <th class="col-2">City</th>
-                    <th class="col-2">Contact</th>
                     <th class="col-4">Coaches</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($gyms as $r)
-                    <tr>
+                    <tr style="{{ $loop->even?'background-color: #ccc;':'' }}">
                         <td  class="col-1">
                             <strong>{{ $r->name }}</strong><br/>
                         </td>
-                        <td>
-                        {{ $r->addr_1 }}<br/>
-                        @if ($r->addr_2)
-                            {{ $r->addr_2 }}<br/>
-                        @endif
-                        </td>
-                        <td>
-                        {{ $r->city }}, {{ $r->state->code }}, {{ $r->zipcode }}, {{ $r->country->name }}
-                        </td>
                         <td style="word-wrap: break-word;">{{ 'Phone: ' . $r->office_phone }}<br>{{'Email: '. $r->user->email }}</td>
+                        <td>
+                            {{ $r->addr_1 }}<br/>
+                            @if ($r->addr_2)
+                                {{ $r->addr_2 }}<br/>
+                            @endif
+                            {{ $r->city }}, {{ $r->state->code }}, {{ $r->zipcode }}, {{ $r->country->name }}
+                        </td>
+                        
                         @php 
                         $coaches = $r->getCoachesFromMeetRegistrations($meet->id)
                         @endphp
-                        <td><table class="table-1">
-                        @foreach($coaches as $c)
-                        <tr>
-                            <td>{{ $c->first_name .' '.$c->last_name }}</td>
-                            <td>
-                            @if($c->usag_no != null)
-                                {{ '  USAG: '.$c->usag_no }}.<br>
-                            @endif
-                            @if($c->usaigc_no != null)
-                                {{ '  USAIGC: '.$c->usaigc_no }}.<br>
-                            @endif
-                            @if($c->aau_no != null)
-                                {{ '  AAU: '.$c->aau_no }}.<br>
-                            @endif
-                            @if($c->nga_no != null)
-                                {{ '  NGA: '.$c->nga_no}}
-                            @endif
+                        <td>
+                            <table class="table-1">
+                                @foreach($coaches as $c)
+                                    <tr>
+                                        <td>{{ $c->first_name .' '.$c->last_name }}</td>
+                                        <td>
+                                        @if($c->usag_no != null)
+                                            {{ '  USAG: '.$c->usag_no }}.<br>
+                                        @endif
+                                        @if($c->usaigc_no != null)
+                                            {{ '  USAIGC: '.$c->usaigc_no }}.<br>
+                                        @endif
+                                        @if($c->aau_no != null)
+                                            {{ '  AAU: '.$c->aau_no }}.<br>
+                                        @endif
+                                        @if($c->nga_no != null)
+                                            {{ '  NGA: '.$c->nga_no}}
+                                        @endif
 
-                            </td>
-                        </tr>
-                        @endforeach
-                        </table></td>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </table>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
