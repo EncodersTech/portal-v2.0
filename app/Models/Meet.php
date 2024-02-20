@@ -2968,10 +2968,35 @@ class Meet extends Model
                 ])->orderBy('created_at', 'DESC')
                 ->get();
             $events  = AthleteSpecialistEvents::all()->pluck('abbreviation','id')->toArray();
+            // sort $registrations->levels by sanctioning_body_id
+            $registrations->each(function($registration) {
+                $registration->levels = $registration->levels->sortBy('sanctioning_body_id');
+            });
+            $report_data_gym = [];
+            $report_data_level = [];
+
+            foreach ($registrations as $key => $value) {
+                $report_data_gym[$value->gym->name] = [];
+                foreach ($value->levels as $key1 => $value1) {
+                    if($value1->pivot->specialists->count() > 0)
+                        $report_data_gym[$value->gym->name][$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][] = $value1->pivot->specialists;
+                }
+            }
+
+            foreach ($registrations as $key => $value) {
+                foreach ($value->levels as $key1 => $value1) {
+                    if($value1->pivot->specialists->count() > 0)
+                        $report_data_level[$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][$value->gym->name] = $value1->pivot->specialists;
+                }
+            }
+
+            // dd($report_data_level);
             $data = [
                 'host' => $this->gym,
                 'meet' => $this,
                 'registrations' => $registrations,
+                'report_data_gym' => $report_data_gym,
+                'report_data_level' => $report_data_level,
                 'events' => $events
             ];
 
