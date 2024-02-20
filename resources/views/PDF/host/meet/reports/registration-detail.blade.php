@@ -103,6 +103,11 @@
                                 <!-- <td class=" text-right">{{number_format($feeArr[$index]['reg_meet_fees'], 2)}}</td> -->
                             <tr>
                             <tr>
+                                <td class="">Specialist Fees</td>
+                                <td class=" text-right">{{number_format($feeArr[$index]['specialist_fee'], 2)}}</td>
+                                <!-- <td class=" text-right">{{number_format($feeArr[$index]['reg_meet_fees'], 2)}}</td> -->
+                            <tr>
+                            <tr>
                                 <td class="">Team Fees</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['team_fees'], 2)}}</td>
                                 <!-- <td class=" text-right">{{number_format($feeArr[$index]['team_meet_fees'], 2)}}</td> -->

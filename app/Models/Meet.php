@@ -2854,7 +2854,8 @@ class Meet extends Model
                 $fee_s['card_fees'] = $cardFees;
                 $fee_s['admin_meet_fees'] = $adminMeetFee;
                 $fee_s['card_meet_fees'] = $cardMeetFees;
-                $fee_s['reg_fees'] = ($registration->athletes->sum('fee') + $speicalist_total_fee + $reg_meet_fees);
+                $fee_s['reg_fees'] = ($registration->athletes->sum('fee') + $reg_meet_fees);
+                $fee_s['specialist_fee'] = $speicalist_total_fee;
                 $fee_s['reg_meet_fees'] = $reg_meet_fees; //trackthis
                 $fee_s['team_fees'] = $teamFee;
                 $fee_s['team_meet_fees'] = 0;
@@ -2868,7 +2869,7 @@ class Meet extends Model
                 $fee_s['late_fee'] = $registration->athletes->sum('late_fee') + $specialistLateFee + $team_late + ($registration->was_late ? $registration->late_fee : 0);
 
                 // $fee_s['total_fees'] = $fee_s['reg_fees'] + $fee_s['admin_fees'] + $fee_s['card_fees'] + $fee_s['late_fee'] - $fee_s['refund_fees'];
-                $fee_s['total_fees'] = $fee_s['team_fees'] + $fee_s['reg_fees'] + $fee_s['admin_fees'] + $fee_s['card_fees'] + $fee_s['late_fee']; // - $fee_s['refund_fees'];
+                $fee_s['total_fees'] = $fee_s['team_fees'] + $fee_s['reg_fees'] + $fee_s['specialist_fee'] + $fee_s['admin_fees'] + $fee_s['card_fees'] + $fee_s['late_fee']; // - $fee_s['refund_fees'];
                 $fee_s['total_meet_fees'] = $fee_s['reg_meet_fees'] + $fee_s['admin_meet_fees'] + $fee_s['card_meet_fees'] + $fee_s['team_meet_fees']; // - $fee_s['refund_meet_fees'];
 
                 $data['feeArr'][] = $fee_s;
