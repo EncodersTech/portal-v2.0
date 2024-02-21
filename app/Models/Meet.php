@@ -2863,13 +2863,14 @@ class Meet extends Model
                 // echo $usag_refund .' '. $regular_refund .' '. $specialistRefundFee .' '. $specialistLateRefundFee .' '. $used_credit .' '. $team_refund;
                 $fee_s['refund_fees'] = $usag_refund + $regular_refund + $specialistRefundFee + $specialistLateRefundFee - $used_credit + $team_refund;
                 $fee_s['refund_fees'] = $fee_s['refund_fees'] > 0 ? $fee_s['refund_fees'] : 0;
+                $fee_s['used_credit'] = $used_credit > 0 ? - $used_credit : 0;
                 // echo 'USAG REFUND';
                 // dd($usag_refund , $regular_refund , $specialistRefundFee , $specialistLateRefundFee , $used_credit , $team_refund);
                 $fee_s['refund_meet_fees'] = $refund_meet_fees;
                 $fee_s['late_fee'] = $registration->athletes->sum('late_fee') + $specialistLateFee + $team_late + ($registration->was_late ? $registration->late_fee : 0);
 
                 // $fee_s['total_fees'] = $fee_s['reg_fees'] + $fee_s['admin_fees'] + $fee_s['card_fees'] + $fee_s['late_fee'] - $fee_s['refund_fees'];
-                $fee_s['total_fees'] = $fee_s['team_fees'] + $fee_s['reg_fees'] + $fee_s['specialist_fee'] + $fee_s['admin_fees'] + $fee_s['card_fees'] + $fee_s['late_fee']; // - $fee_s['refund_fees'];
+                $fee_s['total_fees'] = $fee_s['team_fees'] + $fee_s['reg_fees'] + $fee_s['specialist_fee'] + $fee_s['admin_fees'] + $fee_s['card_fees'] + $fee_s['late_fee'] - $used_credit; // - $fee_s['refund_fees'];
                 $fee_s['total_meet_fees'] = $fee_s['reg_meet_fees'] + $fee_s['admin_meet_fees'] + $fee_s['card_meet_fees'] + $fee_s['team_meet_fees']; // - $fee_s['refund_meet_fees'];
 
                 $data['feeArr'][] = $fee_s;
