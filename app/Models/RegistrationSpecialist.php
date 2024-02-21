@@ -83,4 +83,19 @@ class RegistrationSpecialist extends Model
         }
         return $total;
     }
+    public static function athlete_meet($meet,$gym = '')
+    {
+        try{
+            return RegistrationSpecialist::whereHas('meet_registration', function ($query) use ($meet,$gym) {
+                $query->where('meet_id', $meet);
+                if($gym){
+                    $query->where('gym_id', $gym);
+                }
+            });
+
+        }
+        catch (\Exception $e){
+            return $e->getMessage();
+        }
+    }
 }
