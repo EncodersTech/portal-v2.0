@@ -65,7 +65,7 @@ class RegistrationAthlete extends Model
             }
         });
     }
-    public static function athlete_meet_data_for_csv($registrationAthlete)
+    public static function athlete_meet_data_for_csv($registrationAthlete, $registrationSpecialist)
     {
         $data = [];
         if($registrationAthlete){
@@ -83,7 +83,50 @@ class RegistrationAthlete extends Model
                     'first_name' => $athlete->first_name,
                     'last_name' => $athlete->last_name,
                     'gym' => $athlete->meet_registration->gym->short_name,
-                    'event' => $event,
+                    'event_category' => $event,
+                    'event' => '',
+                    'level' => $athlete->registration_level->level->abbreviation,
+                    'dob' => $athlete->dob->format(Helper::AMERICAN_SHORT_DATE),
+                    'usag_no' => ($athlete->usaigc_no ?? $athlete->usaigc_no ?? ($athlete->usag_no ?? $athlete->usag_no ?? ($athlete->nga_no))),
+                    'session' => "1",
+                    'flight' => "",
+                    'squad' => "",
+                    'team1' => "",
+                    'team2' => "",
+                    'team3' => "",
+                    'tshirt' => $tsize,
+                    'is_us_citizen' => $is_us_citizen,
+                    'scratched' =>"false",
+                    'altID' =>"",
+                ];
+            }
+        }
+        if($registrationSpecialist)
+        {
+            foreach ($registrationSpecialist as $athlete) {
+                $tsize = "";
+                $is_us_citizen = "false";
+                if($athlete->tshirt){
+                    $tsize = $athlete->tshirt->size;
+                }
+                if($athlete->is_us_citizen){
+                    $is_us_citizen = "true";
+                }
+                $event = ($athlete->registration_level->level->level_category->male) ? "Men":"Women";
+                $es = "";
+                $c = count($athlete->events);
+                foreach ($athlete->events as $k=>$e) {
+                    $es .= $e->specialist_event->name; 
+                    if($k < $c-1){
+                        $es .= ", ";
+                    }
+                }
+                $data[] = [
+                    'first_name' => $athlete->first_name,
+                    'last_name' => $athlete->last_name,
+                    'gym' => $athlete->meet_registration->gym->short_name,
+                    'event_category' => $event,
+                    'event' => $es,
                     'level' => $athlete->registration_level->level->abbreviation,
                     'dob' => $athlete->dob->format(Helper::AMERICAN_SHORT_DATE),
                     'usag_no' => ($athlete->usaigc_no ?? $athlete->usaigc_no ?? ($athlete->usag_no ?? $athlete->usag_no ?? ($athlete->nga_no))),
