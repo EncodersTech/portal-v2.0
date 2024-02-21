@@ -48,16 +48,6 @@
                 Event Specialists
             </button>
         </div>
-        <div class="col-md-3 mb-3" v-if="typeof constants.bodies.USAIGC !== 'undefined'">
-            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.USAIGCCoachSignin)">
-                USAIGC Coach Sign In
-            </button>
-        </div>
-        <div class="col-md-3 mb-3" v-if="typeof constants.bodies.USAIGC !== 'undefined'">
-            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.NGACoachSignin)">
-                NGA Coach Sign In
-            </button>
-        </div>
         <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Coaches)">
                 Attending Gyms  Coaches
@@ -82,6 +72,11 @@
         <div class="col-md-3 mb-3" v-if="typeof constants.bodies.USAIGC !== 'undefined'">
             <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.CoachSignin)">
                 USAIGC Coach Sign In
+            </button>
+        </div>
+        <div class="col-md-3 mb-3" v-if="typeof constants.bodies.USAIGC !== 'undefined'">
+            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.NGACoachSignin)">
+                NGA Coach Sign In
             </button>
         </div>
     </div>
