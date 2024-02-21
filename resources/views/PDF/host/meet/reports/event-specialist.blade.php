@@ -25,51 +25,123 @@
             @include('PDF.host.meet.reports.common_logo_image')
         </div>
     </div>
-    @if ($registrations->count() < 1)
+    @if ($registrations->count() < 1 || count($report_data_gym) < 1 || count($report_data_level) < 1)
         No Event Specialists.
     @else
-        <?php
-            $spe = false;
-        ?>
-        @foreach ($registrations as $r)
-            @foreach ($r->levels as $l)
-                @if ($l->pivot->specialists->count() > 0)
+
+        <center><h2>--------- Specialist Report By Gym ---------</h2></center> <br>
+        @foreach($report_data_gym as $key1 => $sanction)
+            <center><h2> {{ $key1 }}</h2></center>
+            @foreach($sanction as $key2 => $level_category)
+                @foreach($level_category as $key3 => $level)
                     <?php
-                        $spe = true;
+                        $current_sanction = $key2 . ' - ' . $key3;
                     ?>
                     <table class="table-0 full-width">
                         <thead>
                             <tr>
-                                <th colspan="{{count($events)+1}}" class="meet-subheader-text">
-
-                                    {{$l->level_category->name}} - {{$l->name}} - {{$l->pivot->specialists->count()}}
-                                @php($att = $l->pivot->specialists->count() > 1 ? 'athletes': 'athlete')
-                                {{$att}}
+                                <th colspan="5"  style="background-color: #ccc; color: black; text-align:center;">
+                                    {{ $current_sanction }}
                                 </th>
                             </tr>
-                        </thead><br>
+                        </thead>
+                    </table>
+                    @foreach($level as $key4 => $specialists)
+                    <table class="table-0 full-width">
+                        <thead>
+                            <tr>
+                                <th colspan="5"  style="background-color: #ccc; color: black; text-align:center;">
+                                    {{ $key4 }}
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table-0 full-width">
+                        <thead>
+                            <tr>
+                                <th class="col-2">Name</th>
+                                <th class="col-2">Athlete #</th>
+                                <th class="col-2">DOB</th>
+                                <th class="col-2">Events</th>
+                                <th class="col-2">Gym</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            @foreach ($l->pivot->specialists as $s)
+                        @foreach($specialists as $key5 => $v5)
+                            @foreach($v5 as $s)
                                 <tr>
-                                    <td colspan="3">{{$loop->iteration}}. {{$s->fullName()}}
-                                        (@foreach($s->events as $e)
+                                    <td class="col-2">{{$s->fullName()}}</td>
+                                    <td class="col-2">{{!empty($s->usaigc_no)? 'IGC'.$s->usaigc_no:''}}</td>
+                                    <td class="col-2">{{ $s->dob->format(Helper::AMERICAN_SHORT_DATE) }}</td>
+                                    <td class="col-2">
+                                        @foreach($s->events as $e)
                                             {{$loop->first?'':'/'}}
                                             {{$e->specialist_event->name}}
-                                        @endforeach()) {{!empty($s->usaigc_no)? ': IGC'.$s->usaigc_no:''}}</td>
-                                    <td colspan="2">{{$r->gym->name}}</td>
+                                        @endforeach
+                                    </td>
+                                    <td>{{ $key1 }}</td>
                                 </tr>
+
                             @endforeach
+                        @endforeach
                         </tbody>
                     </table>
-                @endif
+                    @endforeach
+                @endforeach
             @endforeach
+            <div style="margin-bottom: 5em;"></div>
         @endforeach
+        <div style="page-break-after: always;"></div>
 
-        @if($spe == false)
-            No Event Specialists.
-        @endif
+        <center><h2>--------- Specialist Report By Level ---------</h2></center> <br>
+        @foreach($report_data_level as $key1 => $sanction)
+            @foreach($sanction as $key2 => $level_category)
+                <center><h2> {{ $key1 }} <br> {{ $key2 }}</h2></center>
+                @foreach($level_category as $key3 => $gyms)
+                    <table class="table-0 full-width">
+                        <thead>
+                            <tr>
+                                <th colspan="5"  style="background-color: #ccc; color: black; text-align:center;">
+                                    {{ $key3 }}
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table-0 full-width">
+                        <thead>
+                            <tr>
+                                <th class="col-2">Name</th>
+                                <th class="col-2">Athlete #</th>
+                                <th class="col-2">DOB
+                                <th class="col-2">Events</th>
+                                <th class="col-2">Gym</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach($gyms as $key4 => $specialists)
+                            @foreach($specialists as $key5 => $s)
+                                <tr>
+                                    <td class="col-2">{{$s->fullName()}}</td>
+                                    <td class="col-2">{{!empty($s->usaigc_no)? 'IGC'.$s->usaigc_no:''}}</td>
+                                    <td class="col-2">{{ $s->dob->format(Helper::AMERICAN_SHORT_DATE) }}</td>
+                                    <td class="col-2">
+                                        @foreach($s->events as $e)
+                                            {{$loop->first?'':'/'}}
+                                            {{$e->specialist_event->name}}
+                                        @endforeach
+                                    </td>
+                                    <td>{{ $key4 }}</td>
+                                </tr>
+                            @endforeach
+                        @endforeach
+                        </tbody>
+                    </table>
+                    <div style="margin-bottom: 1em;"></div>
+                @endforeach
+            @endforeach
+            <div style="margin-bottom: 5em;"></div>
+        @endforeach
     @endif
-
 
 </body>
 </html>
