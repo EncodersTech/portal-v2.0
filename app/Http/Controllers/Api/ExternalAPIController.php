@@ -307,7 +307,7 @@ class ExternalAPIController extends BaseApiController
     }
 
     public function ps_registration (Request $request, string $registrationId, string $filter = null) {
-        // $this->authenticate($request);
+        $this->authenticate($request);
 
         $filterBody = $request->get('bodyType', null);
         try {
