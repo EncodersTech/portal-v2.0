@@ -549,7 +549,7 @@
                                                                                         <span class="fas fa-fw fa-user-slash"></span> Scratch
                                                                                     </button>
                                                                                     
-                                                                                    <button v-if="!athlete.is_scratched() && !event.permissions.scratch() && (event.permissions.hasOwnProperty('scratch_without_refund') && event.permissions.scratch_without_refund())" class="dropdown-item text-danger"
+                                                                                    <button v-if="!athlete.is_scratched() && event.permissions && !event.permissions.scratch() && (event.permissions.hasOwnProperty('scratch_without_refund') && event.permissions.scratch_without_refund())" class="dropdown-item text-danger"
                                                                                         type="button" @click="scratchObject(event, 'event', athlete, level, true)">
                                                                                         <span class="fas fa-fw fa-user-slash"></span> Scratch Without Refund
                                                                                     </button>
