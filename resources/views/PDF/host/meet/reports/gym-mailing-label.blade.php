@@ -13,13 +13,14 @@
         .table-0 {
             width: 100%;
             border-collapse: collapse;
-            border-spacing: 0;
+            border-spacing: 5px;
+            border: 0px !important;
         }
 
         .table-0 td {
             padding: 0;
             margin: 0;
-            border: 1px solid #000;
+            border: 0px !important;
             height: 1.1in;
             width: 2.625in;
             text-align: left;
@@ -31,22 +32,6 @@
     </style>
 </head>
 <body>
-    <!-- <div class="header">
-        <div class="header-text">
-            <h1 class="mb-0">
-                Gym Mailing Label
-            </h1>
-            <h2 class="mb-0">
-                Meet: {{ $meet->name }}
-            </h2>
-            <h4 class="mb-0">
-                Date: {{ $meet->start_date->format(Helper::AMERICAN_SHORT_DATE) }} - {{ $meet->end_date->format(Helper::AMERICAN_SHORT_DATE) }}
-            </h4>
-        </div>
-        <div class="logo-container">
-            @include('PDF.host.meet.reports.common_logo_image')
-        </div>
-    </div> -->
     @if ($registrations < 1)
         No Scratches.
     @else
@@ -58,9 +43,9 @@
                         @if(!isset($matrix[$p][$r][$c]))
                             <td class="col-2"></td>
                         @else
-                            <td class="col-2" style="text-align:center;">
+                            <td class="col-2" style="margin-right:2px;">
                                 <strong>{{ $matrix[$p][$r][$c]->gym->name  }}</strong><br/>
-                                <address>
+                                <address style="font-size:12px;">
                                     {{ $matrix[$p][$r][$c]->gym->addr_1 }}<br/>
 
                                     @if ($matrix[$p][$r][$c]->gym->addr_2)
@@ -70,7 +55,7 @@
                                     {{ $matrix[$p][$r][$c]->gym->city }}, {{ $matrix[$p][$r][$c]->gym->state->code }},
                                     {{ $matrix[$p][$r][$c]->gym->zipcode }},
                                     {{ $matrix[$p][$r][$c]->gym->country->name }}<br/>
-                                    <strong>Phone:</strong> {{ $matrix[$p][$r][$c]->gym->office_phone }}
+                                    Phone:{{ $matrix[$p][$r][$c]->gym->office_phone }}
                                 </address>
                             </td>
                         @endif
