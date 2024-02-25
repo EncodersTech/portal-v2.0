@@ -481,19 +481,19 @@ class ExternalAPIController extends BaseApiController
 
                     switch ($s->registration_level->level->sanctioning_body_id) {
                         case SanctioningBody::USAG:
-                            $entry['membership'] = $s->usag_no;
+                            $entry['membership'] = $s->usag_no.'S';
                             break;
 
                         case SanctioningBody::USAIGC:
-                            $entry['membership'] = $s->usaigc_no;
+                            $entry['membership'] = $s->usaigc_no.'S';
                             break;
 
                         case SanctioningBody::AAU:
-                            $entry['membership'] = $s->aau_no;
+                            $entry['membership'] = $s->aau_no.'S';
                             break;
 
                         case SanctioningBody::NGA:
-                            $entry['membership'] = $s->nga_no;
+                            $entry['membership'] = $s->nga_no.'S';
                             break;
                     }
 

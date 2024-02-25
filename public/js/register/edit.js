@@ -73031,6 +73031,7 @@ var render = function() {
                                                                                                                                   " "
                                                                                                                                 ),
                                                                                                                                 !athlete.is_scratched() &&
+                                                                                                                                event.permissions &&
                                                                                                                                 !event.permissions.scratch() &&
                                                                                                                                 event.permissions.hasOwnProperty(
                                                                                                                                   "scratch_without_refund"
