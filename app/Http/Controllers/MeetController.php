@@ -37,6 +37,7 @@ use PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CsvExport;
 use App\Models\RegistrationAthlete;
+use App\Models\RegistrationSpecialist;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Models\Media;
 use Barryvdh\Snappy\PdfWrapper;
@@ -890,8 +891,9 @@ class MeetController extends AppBaseController
 
                 case Meet::REPORT_TYPE_PROSCOREEXPORT:
                     $registrationAthlete = RegistrationAthlete::athlete_meet($meet->id, '')->get();
-                    $data['data'] =  RegistrationAthlete::athlete_meet_data_for_csv($registrationAthlete);
-                    $data['headings'] = ["First_Name", "Last_Name", "Gym", "Events", "Level", "Birthday", "USAG", "Session", "Flight", "Squad","Team1","Team2", "Team3", "TSize", "USCitizen", "Scratched", "AltID" ];
+                    $registrationSpecialist = RegistrationSpecialist::athlete_meet($meet->id, '')->get();
+                    $data['data'] =  RegistrationAthlete::athlete_meet_data_for_csv($registrationAthlete, $registrationSpecialist);
+                    $data['headings'] = ["First_Name", "Last_Name", "Gym", "Event Category", "Specialist Events", "Level", "Birthday", "USAG", "Session", "Flight", "Squad","Team1","Team2", "Team3", "TSize", "USCitizen", "Scratched", "AltID" ];
                     $name = 'ProScoreExport_'.Str::slug($meet->name, '_') . '.csv';
                     return Excel::download(new CsvExport($data), $name);
                     break;
