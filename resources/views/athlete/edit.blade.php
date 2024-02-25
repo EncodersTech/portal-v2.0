@@ -601,7 +601,7 @@
     <script>
         $(document).ready(function(){
             var isError = '<?php echo json_encode(Session::has('ngaData')); ?>';
-            console.log(isError);
+            //console.log(isError);
             if(isError == 'true')
             {
                 $("#comparison-athlete-modal").modal('show');
@@ -613,7 +613,7 @@
                 // a_first_name a_last_name a_gender a_date
                 // n_first_name n_last_name n_gender n_dob
                 var parentC = $('#'+id).val();
-                console.log(parentC);
+                //console.log(parentC);
                 if(id == 'a_first_name')
                 {
                     if(parentC == $('#n_first_name').val())
@@ -638,7 +638,7 @@
                         $('#'+id).removeClass("alert-success").addClass("alert-danger");
                 }
 
-                console.log(id);
+                //console.log(id);
             }
             $('#a_gender').change(e => {
                 let selected = e.currentTarget.value;

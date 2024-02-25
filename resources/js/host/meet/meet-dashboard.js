@@ -65,7 +65,7 @@ $(document).ready(function () {
     window.isValidDocument = function (
         inputSelector, validationMessageSelector) {
         let ext = $(inputSelector).val().split('.').pop().toLowerCase();
-        console.log('ext',ext);
+        //console.log('ext',ext);
         if(isEmpty(ext)){
             $('#previewImage').attr('src', defaultImage);
             return false;

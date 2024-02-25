@@ -1562,7 +1562,7 @@ export default {
                     total += this.meet.late_registration_fee;
             }
             var p_credit = this.previous_registration_credit_amount + this.changes_fees;
-            console.log(total);
+            //console.log(total);
             if(total >= p_credit)
                 total = total - p_credit;
             else
@@ -1694,10 +1694,10 @@ export default {
             switch (type) {
                 case 'athlete':
                     if (obj.is_new) {
-                        console.log('new ?');
+                        //console.log('new ?');
                         Utils.remove(parent.athletes, obj);
                     } else if (obj.is_specialist) {
-                        console.log('specialist ?');
+                        //console.log('specialist ?');
                         // var refund_specialist = 0;
                         obj.events.forEach(evt => {
                             if(evt.status != this.constants.athletes.statuses.Scratched)
@@ -1713,7 +1713,7 @@ export default {
                         obj.status = this.constants.athletes.statuses.Scratched;
                         obj.changes.scratch = true;
                     } else {
-                        console.log('athlete ?');
+                        //console.log('athlete ?');
                         obj.status = this.constants.athletes.statuses.Scratched;
                         obj.changes.scratch = true;
                         parent.freed_slots++;

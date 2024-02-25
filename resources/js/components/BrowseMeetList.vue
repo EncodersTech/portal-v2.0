@@ -527,7 +527,7 @@
             },
 
             showClubs(id){
-                console.log(id);
+                //console.log(id);
                 this.isErrorSoft = false;
                 // this.isLoading = true;
                 axios.get('/api/app/meet/gym/participant/'+id, {
