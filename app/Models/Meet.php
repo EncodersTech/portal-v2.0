@@ -47,6 +47,7 @@ class Meet extends Model
     public const REPORT_TYPE_EVENT_SPECIALIST = 'event-specialist';
     public const REPORT_TYPE_LEO_T_SHIRT = 'leo-t-shirt';
     public const REPORT_TYPE_LEO_T_SHIRT_GYM = 'leo-t-shirt-gym';
+    public const REPORT_TYPE_COACHES_NAME_TAG = 'coach-name-tag';
 
     protected $guarded = ['id'];
 
@@ -3114,6 +3115,57 @@ class Meet extends Model
 
             return PDF::loadView('PDF.host.meet.reports.leo-t-shirt-gym', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
+            throw $e;
+        }
+    }
+    public function generateCoachNameLabelReport() : PdfWrapper{
+        try{
+            $base = $this->registrations()
+            ->where('status', MeetRegistration::STATUS_REGISTERED);
+            /** @var Builder $base */
+            $registrations = $base->select([
+                'id', 'gym_id', 'meet_id', 'status'
+            ])->orderBy('created_at', 'DESC')
+            ->get();
+            
+            // create a 3 column matrix, having 30 rows per page of 1” x 2-5/8” labels
+            $row = 0;
+            $col = 0;
+            $page = 0;
+            $matrix[$page][$row][$col] = [];
+            // dd($registrations[0]->coaches);
+            foreach ($registrations as $i => $registration) {
+                $coaches = $registration->coaches;
+                foreach ($coaches as $coach) {
+                    $coach_data = [
+                        'name' => $coach->first_name . ' ' . $coach->last_name,
+                        'gym' => $registration->gym->name
+                    ];
+                    $matrix[$page][$row][$col] = $coach_data;
+                    $col++;
+                    if ($col > 1) {
+                        $col = 0;
+                        $row++;
+                        if ($row > 2) {
+                            $row = 0;
+                            $page++;
+                        }
+                    }
+                }
+            }
+            $data = [
+                'meet' => $this,
+                'matrix' => $matrix,
+                'registrations' => $registrations->count(),
+                'page' => $page,
+                'row' => $row,
+                'col' => $col
+            ];
+            
+            return PDF::loadView('PDF.host.meet.reports.coach-name-label', $data); /** @var PdfWrapper $pdf */
+        }
+        catch(\Throwable $e)
+        {
             throw $e;
         }
     }
