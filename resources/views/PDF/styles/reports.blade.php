@@ -195,7 +195,7 @@
     .meet-header-text{margin-top: 64px;text-align: center;margin-bottom: 20px;}
 	.meet-subheader-text{text-align: center;}
 	.extra-margin{margin-left:10px}
-	.table-header{margin:15px;text-align:center}
+	.table-header{margin:15px;text-align:center; font-size: 20px;}
 	.full-width{width:100%}
     .float-child {
         width: 50%;

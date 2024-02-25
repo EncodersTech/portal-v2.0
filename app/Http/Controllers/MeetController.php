@@ -897,7 +897,7 @@ class MeetController extends AppBaseController
                     break;
 
                 case Meet::REPORT_TYPE_MEETENTRY:
-                    $pdf = $meet->generateMeetEntryReport($gym)->setPaper('a4')
+                    $pdf = $meet->generateMeetEntryReport($gym, false)->setPaper('a4')
                     ->setOption('margin-top', '10mm')
                     ->setOption('margin-bottom', '10mm')
                     ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
