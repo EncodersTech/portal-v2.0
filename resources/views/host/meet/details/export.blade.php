@@ -1,6 +1,8 @@
+<!-- This is from Meet Host View Page -->
+
 <div class="mt-2">
     <h5 class="pb-1 border-bottom"><span class="fas fa-fw fa-file-pdf"></span> Reports</h5>
-
+    
     <div class="text-info small mt-1 mb-3">
         <span class="fas fa-info-circle"></span> You can generate up to 5 reports per minute.
         If you encounter a "Too Many Request", please wait a minute and retry.
@@ -37,14 +39,8 @@
             </button>
         </div>
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Entry)">
-                Team Participation (Athletes)
-            </button>
-        </div>
-
-        <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.EntryNonAthletes)">
-                Team Participation (Not Athletes)
+                Team Participation
             </button>
         </div>
         <div class="col-md-3 mb-3">

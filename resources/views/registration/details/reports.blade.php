@@ -37,14 +37,8 @@
             </button>
         </div>
         <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.Entry)">
-                Team Participation (Athletes)
-            </button>
-        </div>
-
-        <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.EntryNonAthletes)">
-                Team Participation (Not Athletes)
+                Team Participation
             </button>
         </div>
         
