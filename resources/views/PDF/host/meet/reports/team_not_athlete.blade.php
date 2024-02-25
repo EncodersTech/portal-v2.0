@@ -139,7 +139,7 @@
             <td class="col-sum-1 text-left">#&nbsp;&nbsp;&nbsp;Total Gyms: {{ count($registrations) }}</td>
             @if ($levels->count() > 0)
                 @foreach ($levels as $l)
-                    <td class="col-sum-3 text-center">{{ $col_team_sum[$l->id] > 0 ?? '' }}</td>
+                    <td class="col-sum-3 text-center">{{ $col_team_sum[$l->id] > 0 ? $col_team_sum[$l->id] : '' }}</td>
                 @endforeach
 
                 <td class="col-sum-3 text-center">{{ $row_team_sum }}</td>
