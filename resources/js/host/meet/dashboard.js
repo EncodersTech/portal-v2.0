@@ -194,6 +194,8 @@ $(document).ready(e => {
                             USAIGCCoachSignin: 'usaigc-coach-signin',
                             NGACoachSignin: 'nga-coach-signin',
                             GymMailingLabel: 'gym-mailing-label',
+                            CoachSignin: 'coach-signin',
+                            SpecialistsByLevel: 'specialist-by-level'
                         }
                     }
                 };
@@ -244,6 +246,8 @@ $(document).ready(e => {
                         case this.constants.reports.types.NGACoachSignin:
                         case this.constants.reports.types.GymMailingLabel:
                         
+                        case this.constants.reports.types.CoachSignin:
+                        case this.constants.reports.types.SpecialistsByLevel:
                             break;
 
                         default:
