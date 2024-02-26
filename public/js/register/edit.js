@@ -3244,8 +3244,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (diff == 0) total += this.meet.late_registration_fee;
       }
 
-      var p_credit = this.previous_registration_credit_amount + this.changes_fees;
-      console.log(total);
+      var p_credit = this.previous_registration_credit_amount + this.changes_fees; //console.log(total);
+
       if (total >= p_credit) total = total - p_credit;else total = 0;
       this.total = total;
       this.$emit('total-changed', total);
@@ -3375,11 +3375,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       switch (type) {
         case 'athlete':
           if (obj.is_new) {
-            console.log('new ?');
+            //console.log('new ?');
             Utils.remove(parent.athletes, obj);
           } else if (obj.is_specialist) {
-            console.log('specialist ?'); // var refund_specialist = 0;
-
+            //console.log('specialist ?');
+            // var refund_specialist = 0;
             obj.events.forEach(function (evt) {
               if (evt.status != _this7.constants.athletes.statuses.Scratched) {
                 if (!evt.is_new) {// refund_specialist = parseFloat(refund_specialist) + parseFloat(evt.fee) + parseFloat(evt.late_fee) - parseFloat(evt.refund) - parseFloat(evt.late_refund);
@@ -3392,7 +3392,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             obj.status = this.constants.athletes.statuses.Scratched;
             obj.changes.scratch = true;
           } else {
-            console.log('athlete ?');
+            //console.log('athlete ?');
             obj.status = this.constants.athletes.statuses.Scratched;
             obj.changes.scratch = true;
             parent.freed_slots++; // console.log(this.changes_fees + ' ' + obj.fee + ' ' + obj.late_fee + ' ' + obj.refund + ' ' + obj.late_refund);
@@ -5926,7 +5926,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     recalculateTotals: function recalculateTotals() {
       var coupon = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-      console.log(this.registrationData.changes_fees);
+      //console.log(this.registrationData.changes_fees);
       if (this.couponValue != 0 && this.isNumeric(this.couponValue)) coupon = this.couponValue;
       if (this.paymentOptions == null || this.chosenMethod == null) return;
       this.summary = {

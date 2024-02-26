@@ -77571,7 +77571,7 @@ $(document).ready(function (e) {
           var athletes_update = usagReservation.payload.Reservation.Details.Gymnasts.Update;
           var _athlete_table = '';
           athletes_update.forEach(function (athletes) {
-            console.log(athletes);
+            //console.log(athletes);
             _athlete_table += '<tr><td>' + athletes.ReservationID + '</td><td>' + athletes.USAGID + '</td><td>' + athletes.Apparatus + '</td><td>' + athletes.Level + '</td><td>Update</td></tr>';
           });
           $('#athlete_update').html(_athlete_table);
@@ -77583,7 +77583,7 @@ $(document).ready(function (e) {
           var _athlete_table2 = '';
 
           _athletes_update.forEach(function (athletes) {
-            console.log(athletes);
+            //console.log(athletes);
             _athlete_table2 += '<tr><td>' + athletes.ReservationID + '</td><td>' + athletes.USAGID + '</td><td>' + athletes.Apparatus + '</td><td>' + athletes.Level + '</td><td>Scratch</td></tr>';
           });
 

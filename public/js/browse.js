@@ -2213,7 +2213,7 @@ __webpack_require__.r(__webpack_exports__);
     showClubs: function showClubs(id) {
       var _this3 = this;
 
-      console.log(id);
+      //console.log(id);
       this.isErrorSoft = false; // this.isLoading = true;
 
       axios.get('/api/app/meet/gym/participant/' + id, {

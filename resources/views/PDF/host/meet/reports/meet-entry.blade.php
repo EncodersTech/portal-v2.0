@@ -277,9 +277,14 @@
                     </tbody>
                 </table>
             @endif
+        <br>
+        <br>
+        <br>
+
             @if(!$single && !$loop->last)
                 <div style="page-break-after: always;"></div>
             @endif
+
         @endforeach
     @endif
 </body>
