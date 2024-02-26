@@ -598,7 +598,7 @@
                 return !isNaN(parseFloat(n)) && isFinite(n);
             },
             recalculateTotals(coupon = 0) {
-                console.log(this.registrationData.changes_fees);
+                //console.log(this.registrationData.changes_fees);
 
                 if(this.couponValue != 0 && this.isNumeric(this.couponValue))
                     coupon = this.couponValue;

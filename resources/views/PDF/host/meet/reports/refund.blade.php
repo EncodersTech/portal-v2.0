@@ -226,7 +226,9 @@
                     </tr>
                 </tbody>
             </table>
-                <span  style="margin-bottom:15px;"></span>
+            @if(!$loop->last)
+                <div style="page-break-after: always;"></div>
+            @endif
         @endforeach
     @endif
 </body>

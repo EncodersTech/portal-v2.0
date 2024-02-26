@@ -1126,7 +1126,7 @@
 
                     $('#modal-edit-all').modal('hide');
                 } catch (error) {
-                    console.log(error);
+                    //console.log(error);
                     this.editedLevel.error = error;
                 }
             },
@@ -1210,7 +1210,7 @@
 
                     $('#modal-edit-level').modal('hide');
                 } catch (error) {
-                    console.log(error);
+                    //console.log(error);
                     this.editedLevel.error = error;
                 }
             },

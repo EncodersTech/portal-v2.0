@@ -103,6 +103,11 @@
                                 <!-- <td class=" text-right">{{number_format($feeArr[$index]['reg_meet_fees'], 2)}}</td> -->
                             <tr>
                             <tr>
+                                <td class="">Specialist Fees</td>
+                                <td class=" text-right">{{number_format($feeArr[$index]['specialist_fee'], 2)}}</td>
+                                <!-- <td class=" text-right">{{number_format($feeArr[$index]['reg_meet_fees'], 2)}}</td> -->
+                            <tr>
+                            <tr>
                                 <td class="">Team Fees</td>
                                 <td class=" text-right">{{number_format($feeArr[$index]['team_fees'], 2)}}</td>
                                 <!-- <td class=" text-right">{{number_format($feeArr[$index]['team_meet_fees'], 2)}}</td> -->
@@ -122,6 +127,10 @@
                                 <td class=" text-right">{{number_format($feeArr[$index]['late_fee'], 2)}}</td>
                                 <!-- <td class=" text-right">0.00</td> -->
                             <tr>
+                            <tr style="color:red;">
+                                <td class="">Scratch Credit Used</td>
+                                <td class=" text-right">{{number_format($feeArr[$index]['used_credit'], 2)}}</td>
+                            </tr>
                         </tbody>
                         <thead>
                             <tr>
@@ -139,7 +148,7 @@
         <hr>
         <div class="float-parent" style="padding-top: 20px !important;">
             <span><strong>Transaction History</strong></span><br>
-            <span>* Credits found in the report reflect athlete changes made after initial registration. Please refer only to the refund section or refund report for refund totals</span>
+            <span>Please note: Credits found in the report reflect athlete changes made after initial registration. Please refer only to the refund section or refund report for refund totals</span>
             @if ($registrations->count() > 0)
                 <table class="table-0 table-summary full-width">
                     <thead>
@@ -232,8 +241,6 @@
                                 ?>
                         <?php  }
                         catch(Exception $e){
-                            print_r($e->getMessage());
-                            die();
                         }
                         ?>
                         @endforeach

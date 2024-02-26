@@ -37,6 +37,7 @@ use PDF;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\CsvExport;
 use App\Models\RegistrationAthlete;
+use App\Models\RegistrationSpecialist;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Models\Media;
 use Barryvdh\Snappy\PdfWrapper;
@@ -847,20 +848,14 @@ class MeetController extends AppBaseController
                     return $pdf->stream($name);
                     break;
 
-                case Meet::REPORT_TYPE_ENTRY:
-                    $pdf = $meet->generateEntryReport($gym)->setPaper('a4')
-                        ->setOption('margin-top', '10mm')
-                        ->setOption('margin-bottom', '10mm')
-                        ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
-                    return $pdf->stream($name);
-                    break;
-
                 case Meet::REPORT_TYPE_ENTRY_NOT_ATHLETE:
                     $notAthlete = true;
-                    $pdf = $meet->generateEntryReport($gym,$notAthlete)->setPaper('a4')
-                        ->setOption('margin-top', '10mm')
+                    $pdf = $meet->generateEntryReport($gym)->setPaper('a4', 'landscape')
+                        ->setOption('margin-top', '40mm')
                         ->setOption('margin-bottom', '10mm')
+                        ->setOption('header-html', view('PDF.host.meet.reports.header_footer.team_summary_header',['meet' => $meet])->render())
                         ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
+
                     return $pdf->stream($name);
                     break;
 
@@ -896,14 +891,15 @@ class MeetController extends AppBaseController
 
                 case Meet::REPORT_TYPE_PROSCOREEXPORT:
                     $registrationAthlete = RegistrationAthlete::athlete_meet($meet->id, '')->get();
-                    $data['data'] =  RegistrationAthlete::athlete_meet_data_for_csv($registrationAthlete);
-                    $data['headings'] = ["First_Name", "Last_Name", "Gym", "Events", "Level", "Birthday", "USAG", "Session", "Flight", "Squad","Team1","Team2", "Team3", "TSize", "USCitizen", "Scratched", "AltID" ];
+                    $registrationSpecialist = RegistrationSpecialist::athlete_meet($meet->id, '')->get();
+                    $data['data'] =  RegistrationAthlete::athlete_meet_data_for_csv($registrationAthlete, $registrationSpecialist);
+                    $data['headings'] = ["First_Name", "Last_Name", "Gym", "Event Category", "Specialist Events", "Level", "Birthday", "USAG", "Session", "Flight", "Squad","Team1","Team2", "Team3", "TSize", "USCitizen", "Scratched", "AltID" ];
                     $name = 'ProScoreExport_'.Str::slug($meet->name, '_') . '.csv';
                     return Excel::download(new CsvExport($data), $name);
                     break;
 
                 case Meet::REPORT_TYPE_MEETENTRY:
-                    $pdf = $meet->generateMeetEntryReport($gym)->setPaper('a4')
+                    $pdf = $meet->generateMeetEntryReport($gym, false)->setPaper('a4')
                     ->setOption('margin-top', '10mm')
                     ->setOption('margin-bottom', '10mm')
                     ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());

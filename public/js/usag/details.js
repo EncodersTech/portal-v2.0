@@ -5732,7 +5732,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         $('#modal-edit-all').modal('hide');
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         this.editedLevel.error = error;
       }
     },
@@ -5801,7 +5801,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.state["final"][this.editedLevel.code].athlete_limit = this.editedLevel.athlete_limit;
         $('#modal-edit-level').modal('hide');
       } catch (error) {
-        console.log(error);
+        //console.log(error);
         this.editedLevel.error = error;
       }
     },

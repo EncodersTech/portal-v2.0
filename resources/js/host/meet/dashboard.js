@@ -853,7 +853,7 @@ $(document).ready(e => {
                 let athletes_update = usagReservation.payload.Reservation.Details.Gymnasts.Update;
                 let athlete_table = '';
                 athletes_update.forEach(athletes => {
-                    console.log(athletes);
+                    //console.log(athletes);
                     athlete_table += '<tr><td>'+athletes.ReservationID+'</td><td>'+athletes.USAGID+'</td><td>'+athletes.Apparatus+'</td><td>'+athletes.Level+'</td><td>Update</td></tr>';
                 });
                 $('#athlete_update').html(athlete_table);
@@ -864,7 +864,7 @@ $(document).ready(e => {
                 let athletes_update = usagReservation.payload.Reservation.Details.Gymnasts.Scratch;
                 let athlete_table = '';
                 athletes_update.forEach(athletes => {
-                    console.log(athletes);
+                    //console.log(athletes);
                     athlete_table += '<tr><td>'+athletes.ReservationID+'</td><td>'+athletes.USAGID+'</td><td>'+athletes.Apparatus+'</td><td>'+athletes.Level+'</td><td>Scratch</td></tr>';
                 });
                 $('#athlete_update').html(athlete_table);

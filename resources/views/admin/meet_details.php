@@ -346,7 +346,7 @@ define('MEET_ID', filter_input(INPUT_GET, 'meet', FILTER_VALIDATE_INT, [
                     var date_format = 'MMM Do, YYYY';
                     var meets = [];
                     result.data.meets.forEach(function (meet) {
-                        console.log(meet.id);
+                        //console.log(meet.id);
                         meet.start_date = Moment(meet.start_date);
                         meet.start_date_display = meet.start_date.format(date_format);
                         meet.end_date = Moment(meet.end_date);

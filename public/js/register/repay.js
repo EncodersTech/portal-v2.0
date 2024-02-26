@@ -2187,7 +2187,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }).then(function (result) {
           _this.paymentProcessedMessage = result.data.message;
         })["catch"](function (error) {
-          console.log(_this.registrationId);
+          //console.log(this.registrationId);
           var msg = '';
 
           if (error.response) {

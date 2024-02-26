@@ -515,7 +515,7 @@
                         ).then(result => {
                             this.paymentProcessedMessage = result.data.message;
                         }).catch(error => {
-                            console.log(this.registrationId);
+                            //console.log(this.registrationId);
                             let msg = '';
                             if (error.response) {
                                 msg = error.response.data.message;
