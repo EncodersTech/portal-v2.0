@@ -47,6 +47,7 @@ class Meet extends Model
     public const REPORT_TYPE_EVENT_SPECIALIST = 'event-specialist';
     public const REPORT_TYPE_LEO_T_SHIRT = 'leo-t-shirt';
     public const REPORT_TYPE_LEO_T_SHIRT_GYM = 'leo-t-shirt-gym';
+    public const REPORT_TYPE_SPECIALISTS_BY_LEVEL = 'specialist-by-level';
 
     protected $guarded = ['id'];
 
@@ -2955,7 +2956,7 @@ class Meet extends Model
         }
     }
 
-    public function generateEventSpecialistReport(Gym $gym = null) : PdfWrapper {
+    public function generateEventSpecialistReport(Gym $gym = null, $type = 0) : PdfWrapper {
         try {
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
@@ -2974,33 +2975,43 @@ class Meet extends Model
             });
             $report_data_gym = [];
             $report_data_level = [];
-
-            foreach ($registrations as $key => $value) {
-                $report_data_gym[$value->gym->name] = [];
-                foreach ($value->levels as $key1 => $value1) {
-                    if($value1->pivot->specialists->count() > 0)
-                        $report_data_gym[$value->gym->name][$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][] = $value1->pivot->specialists;
+            if($type == 0) // by gym
+            {
+                foreach ($registrations as $key => $value) {
+                    $report_data_gym[$value->gym->name] = [];
+                    foreach ($value->levels as $key1 => $value1) {
+                        if($value1->pivot->specialists->count() > 0)
+                            $report_data_gym[$value->gym->name][$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][] = $value1->pivot->specialists;
+                    }
                 }
+                $data = [
+                    'host' => $this->gym,
+                    'meet' => $this,
+                    'registrations' => $registrations,
+                    'report_data_gym' => $report_data_gym,
+                    'events' => $events
+                ];
+                return PDF::loadView('PDF.host.meet.reports.event-specialist', $data); /** @var PdfWrapper $pdf */
             }
-
-            foreach ($registrations as $key => $value) {
-                foreach ($value->levels as $key1 => $value1) {
-                    if($value1->pivot->specialists->count() > 0)
-                        $report_data_level[$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][$value->gym->name] = $value1->pivot->specialists;
+            else // by level
+            {
+                foreach ($registrations as $key => $value) {
+                    foreach ($value->levels as $key1 => $value1) {
+                        if($value1->pivot->specialists->count() > 0)
+                            $report_data_level[$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][$value->gym->name] = $value1->pivot->specialists;
+                    }
                 }
+                $data = [
+                    'host' => $this->gym,
+                    'meet' => $this,
+                    'registrations' => $registrations,
+                    'report_data_level' => $report_data_level,
+                    'events' => $events,
+                ];
+                // dd($data);
+                return PDF::loadView('PDF.host.meet.reports.event-specialist-level', $data); /** @var PdfWrapper $pdf */
             }
-
-            // dd($report_data_level);
-            $data = [
-                'host' => $this->gym,
-                'meet' => $this,
-                'registrations' => $registrations,
-                'report_data_gym' => $report_data_gym,
-                'report_data_level' => $report_data_level,
-                'events' => $events
-            ];
-
-            return PDF::loadView('PDF.host.meet.reports.event-specialist', $data); /** @var PdfWrapper $pdf */
+            
         } catch(\Throwable $e) {
             throw $e;
         }
