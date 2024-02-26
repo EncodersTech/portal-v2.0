@@ -44,7 +44,7 @@
 </head>
 <body>
     <div class="watermark">
-        @include('PDF.host.meet.reports.nga_logo_image')
+        <!-- @include('PDF.host.meet.reports.nga_logo_image') -->
     </div>
     <div class="header">
         <div class="header-text">
@@ -63,7 +63,7 @@
             </h4>
         </div>
         <div class="logo-container">
-            @include('PDF.host.meet.reports.common_logo_image')
+            @include('PDF.host.meet.reports.nga_logo_image')
         </div>
     </div>
 
@@ -99,11 +99,23 @@
                     @endforeach
             </tbody>
         </table>
+        <table class="table-1" style="border: 0;">
+            <tbody>
+                    @for($i = 0; $i < 10; $i++)
+                        <tr>
+                            <td class="ntd"></td>
+                            <td class="ntd"></td>
+                            <td class="ntd"></td>
+                        </tr>
+                        <tr class="rbottom">
+                            <td class="ntd line"></span>Coach Name</td>
+                            <td class="ntd line"></span>Club</td>
+                            <td class="ntd line"></span>NGA #</td>
+                        </tr>
+                    @endfor
+            </tbody>
+        </table>
     @endif
    
 </body>
 </html>
-
-@php
-    // die();
-@endphp
