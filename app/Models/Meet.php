@@ -2280,6 +2280,7 @@ class Meet extends Model
     }
     public function generateNGACoachSignInReport(Gym $gym = null) : PdfWrapper   {
         try{
+            
             $base = $this->registrations()->where('status', MeetRegistration::STATUS_REGISTERED);
             
             // print_r($base);
@@ -2292,8 +2293,9 @@ class Meet extends Model
             {
                 $meet_id = $base->select(['meet_id'])->first();
             }
-            $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
-
+            $re_gyms = [];
+            if($meet_id != null)
+                $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
             $gym_name = [];
             foreach ($re_gyms as $key => $value) {
                 $k = Gym::where('id',$value->gym_id)->first();
@@ -2301,8 +2303,7 @@ class Meet extends Model
                 $gym_name[$k->id]['gyms'] = $k;
                 $gym_name[$k->id]['coaches'] = $coaches;
             }
-            // dd(storage_path('images\nga_background.png')); die();
-            $bi = asset('img/nga_background.png');
+            
             $data = [
                 'host' => $this->gym,
                 'meet' => $this,
@@ -2310,6 +2311,7 @@ class Meet extends Model
                 'cont' => count($gym_name),
                 'background_logo' => asset('img/nga_background.png')
             ];
+            
             $pdf =  PDF::loadView('PDF.host.meet.reports.nga-coach-report', $data); /** @var PdfWrapper $pdf */
             // $pdf->setOption('background-image', $bi);
             return $pdf;
@@ -2333,7 +2335,9 @@ class Meet extends Model
             {
                 $meet_id = $base->select(['meet_id'])->first();
             }
-            $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
+            $re_gyms = [];
+            if($meet_id != null)
+                $re_gyms = MeetRegistration::select(['gym_id'])->where('meet_id',$meet_id->meet_id)->get();
 
             $gym_name = [];
             foreach ($re_gyms as $key => $value) {

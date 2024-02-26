@@ -70,7 +70,7 @@
     <h5><b>MEET DAY</b></h5><hr>
     <div class="row">
         <div class="col-md-3 mb-3" v-if="typeof constants.bodies.USAIGC !== 'undefined'">
-            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.CoachSignin)">
+            <button class="btn btn-block btn-warning" @click="generateReport(constants.reports.types.USAIGCCoachSignin)">
                 USAIGC Coach Sign In
             </button>
         </div>
