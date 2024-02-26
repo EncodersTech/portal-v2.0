@@ -12,7 +12,7 @@
     <div class="header">
         <div class="header-text">
             <h1 class="mb-0">
-                Event Specialist Report
+                Event Specialist Report By Gym
             </h1>
             <h2 class="mb-0">
                 Meet: {{ $meet->name }}
