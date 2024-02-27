@@ -45,7 +45,7 @@ class HostReceiveMeetRegistrationMailable extends Mailable implements ShouldQueu
             ->subject('New Registration received.')
             ->markdown('emails.host.receive_meet_registration_mail')
             ->attach($this->attachment, [
-                'as' => 'meet_entry_report.pdf',
+                'as' => 'meet_entry_report_for_' . $this->meet->name . '.pdf',
                 'mime' => 'application/pdf',
             ]);
     }

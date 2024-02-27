@@ -75,7 +75,7 @@ class GymRegisteredMailable extends Mailable implements ShouldQueue
 
         if ($this->attachment) {
             $mail = $mail->attach($this->attachment, [
-                'as' => "meet_entry_report.pdf",
+                'as' => 'meet_entry_report_for_' . $this->meet->name . '.pdf',
                 'mime' => "application/pdf",
             ]);
         }
