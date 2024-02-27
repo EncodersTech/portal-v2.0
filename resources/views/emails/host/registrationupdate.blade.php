@@ -37,7 +37,7 @@ Update Summary: <br>
         <th>First Name</th>
         <th>Last Name</th>
         <th>Level</th>
-        <th>Sanction</th>
+        <th>Organization</th>
         <th>Event</th>
     </tr>
 @foreach($changes['specialist']['new'] as $specialist)
