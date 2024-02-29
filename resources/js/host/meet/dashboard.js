@@ -192,6 +192,7 @@ $(document).ready(e => {
                             MeetEntry: 'meet-entry',
                             Scratch: 'scratch',
                             CoachSignin: 'coach-signin',
+                            GymNameLabel: 'gym-name-label'
                         }
                     }
                 };
@@ -239,6 +240,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.MeetEntry:
                         case this.constants.reports.types.Scratch:
                         case this.constants.reports.types.CoachSignin:
+                        case this.constants.reports.types.GymNameLabel:
                             break;
 
                         default:
