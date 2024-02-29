@@ -33,7 +33,7 @@
 </head>
 <body>
     @if ($registrations < 1)
-        No Scratches.
+        No Registrations.
     @else
     <table class="table-0">
         @for($p=0; $p <= $page; $p++)
