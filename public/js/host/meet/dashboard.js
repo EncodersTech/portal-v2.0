@@ -76976,7 +76976,8 @@ $(document).ready(function (e) {
               GymMailingLabel: 'gym-mailing-label',
               CoachSignin: 'coach-signin',
               SpecialistsByLevel: 'specialist-by-level',
-              GymNameLabel: 'gym-name-label'
+              GymNameLabel: 'gym-name-label',
+              CoachNameLabel: 'coaches-name-label'
             }
           }
         };
@@ -77027,6 +77028,7 @@ $(document).ready(function (e) {
             case this.constants.reports.types.CoachSignin:
             case this.constants.reports.types.SpecialistsByLevel:
             case this.constants.reports.types.GymNameLabel:
+            case this.constants.reports.types.CoachNameLabel:
               break;
 
             default:

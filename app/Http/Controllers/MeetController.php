@@ -982,12 +982,16 @@ class MeetController extends AppBaseController
 
                     return $pdf->stream($name);
                     break;
-
+                case Meet::REPORT_TYPE_COACHES_NAME_LABEL:
+                    $pdf = $meet->generateCoachesNameLabelReport($gym)->setPaper('a4')
+                        ->setOption('margin-top', '40mm')
+                        ->setOption('margin-bottom', '40mm');
+                    return $pdf->stream($name);
+                    break;
                 case Meet::REPORT_TYPE_GYM_MAILING_LABEL:
                     $pdf = $meet->generateGymMailingLabelReport()->setPaper('a4')
                         ->setOption('margin-top', '20mm')
                         ->setOption('margin-bottom', '10mm');
-
                     return $pdf->stream($name);
                     break;
                 default:
