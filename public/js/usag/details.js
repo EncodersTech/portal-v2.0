@@ -3638,7 +3638,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         var old_a = _.cloneDeep(this.old_data_athletes.athletes[a_i]);
 
         if (old_a.id === athlete.id) {
-          athleteTotal = level.registration_fee - athlete.fee;
+          if (old_a.registration_level.level.id == level.id) athleteTotal = 0;else athleteTotal = level.registration_fee - athlete.fee;
           if (athleteTotal < 0) athleteTotal = 0;else if (athleteTotal > 0) athlete.include_in_calculation = true; // if (athlete.was_late && (athleteTotal > athlete.late_fee)) {
           //     let athleteFee = 0;
           //     athleteFee = athleteTotal - athlete.late_fee;
