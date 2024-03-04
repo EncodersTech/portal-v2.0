@@ -18,8 +18,6 @@
                 <h2 class="mb-0">
                     Meet: {{ $meet->name }}
                     <br/>
-                    Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
-                    <br/>
                     Host: {{ $host->name }}
                 </h2>
                 <h4 class="mb-0">
@@ -41,8 +39,6 @@
                     </h1>
                     <h2 class="mb-0">
                         Meet: {{ $meet->name }}
-                        <br/>
-                        Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
                         <br/>
                         Host: {{ $host->name }}
                     </h2>
