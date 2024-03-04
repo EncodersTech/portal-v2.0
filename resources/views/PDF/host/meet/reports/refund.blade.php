@@ -9,39 +9,53 @@
     @include('PDF.styles.reports')
 </head>
 <body>
-    <div class="header">
-        <div class="header-text">
-            <h1 class="mb-0">
-                Refund Report
-            </h1>
-            <h2 class="mb-0">
-                Meet: {{ $meet->name }}
-                <br/>
-                Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
-                <br/>
-                Host: {{ $host->name }}
-            </h2>
-            <h4 class="mb-0">
-                Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
-            </h4>
-        </div>
-        <div class="logo-container">
-            @include('PDF.host.meet.reports.common_logo_image')
-        </div>
-    </div>
-
-    @if ($meet->registrationStatus() != \App\Models\Meet::REGISTRATION_STATUS_CLOSED)
-        <div class="text-danger mb-3">
-            The information on this report is not final and might change at a later date.
-            <strong>A final report can be obtained after this meet is closed for registrations.</strong>
-        </div>
-    @endif
-
     @if ($registrations->count() < 1)
+        <div class="header">
+            <div class="header-text">
+                <h1 class="mb-0">
+                    Refund Report
+                </h1>
+                <h2 class="mb-0">
+                    Meet: {{ $meet->name }}
+                    <br/>
+                    Host: {{ $host->name }}
+                </h2>
+                <h4 class="mb-0">
+                    Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
+                </h4>
+            </div>
+            <div class="logo-container">
+                @include('PDF.host.meet.reports.common_logo_image')
+            </div>
+        </div>
         No Refunds.
     @else
 
         @foreach ($registrations as $r)
+            <div class="header">
+                <div class="header-text">
+                    <h1 class="mb-0">
+                        Refund Report
+                    </h1>
+                    <h2 class="mb-0">
+                        Meet: {{ $meet->name }}
+                        <br/>
+                        Host: {{ $host->name }}
+                    </h2>
+                    <h4 class="mb-0">
+                        Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
+                    </h4>
+                </div>
+                <div class="logo-container">
+                    @include('PDF.host.meet.reports.common_logo_image')
+                </div>
+            </div>
+            @if ($meet->registrationStatus() != \App\Models\Meet::REGISTRATION_STATUS_CLOSED)
+                <div class="text-danger mb-3">
+                    The information on this report is not final and might change at a later date.
+                    <strong>A final report can be obtained after this meet is closed for registrations.</strong>
+                </div>
+            @endif
             <table class="table-0" style="margin-bottom:5em;">
                 <thead>
                 <tr>
