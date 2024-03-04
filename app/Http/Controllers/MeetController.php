@@ -676,7 +676,6 @@ class MeetController extends AppBaseController
                     $data['meetStart'] = Carbon::parse($meet->start_date)->format('jS M Y');
                     $data['meetHost'] = $gym->name;
                     $data['attachments'] = $schedule;
-                    $data['attachments'] = $schedule;
                     Email::to($register->gym->user->email)
                     ->send(new MeetScheduleUploadedMailable('emails.registration.meet_schedule_uploaded',$data['subject'], $data));
                 }
