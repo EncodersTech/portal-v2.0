@@ -198,6 +198,7 @@ $(document).ready(e => {
                             SpecialistsByLevel: 'specialist-by-level',
                             GymNameLabel: 'gym-name-label',
                             CoachNameLabel: 'coaches-name-label',
+                            MarketingQR: 'marketing-qr',
                         }
                     }
                 };
@@ -252,6 +253,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.SpecialistsByLevel:
                         case this.constants.reports.types.GymNameLabel:
                         case this.constants.reports.types.CoachNameLabel:
+                        case this.constants.reports.types.MarketingQR:
                             break;
 
                         default:

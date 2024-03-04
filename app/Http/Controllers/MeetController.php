@@ -676,6 +676,7 @@ class MeetController extends AppBaseController
                     $data['meetStart'] = Carbon::parse($meet->start_date)->format('jS M Y');
                     $data['meetHost'] = $gym->name;
                     $data['attachments'] = $schedule;
+                    $data['attachments'] = $schedule;
                     Email::to($register->gym->user->email)
                     ->send(new MeetScheduleUploadedMailable('emails.registration.meet_schedule_uploaded',$data['subject'], $data));
                 }
@@ -991,6 +992,13 @@ class MeetController extends AppBaseController
                     $pdf = $meet->generateGymMailingLabelReport()->setPaper('a4')
                         ->setOption('margin-top', '20mm')
                         ->setOption('margin-bottom', '10mm');
+                    return $pdf->stream($name);
+                    break;
+                case Meet::REPORT_TYPE_REGISTRATION_QR:
+                    $pdf = $meet->generateRegistrationQR()->setPaper('a4')
+                        ->setOption('margin-top', '10mm')
+                        ->setOption('margin-bottom', '10mm')
+                        ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
                     return $pdf->stream($name);
                     break;
                 default:
