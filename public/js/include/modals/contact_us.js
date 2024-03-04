@@ -1,1 +1,205 @@
-!function(e){var a={};function n(t){if(a[t])return a[t].exports;var s=a[t]={i:t,l:!1,exports:{}};return e[t].call(s.exports,s,s.exports,n),s.l=!0,s.exports}n.m=e,n.c=a,n.d=function(e,a,t){n.o(e,a)||Object.defineProperty(e,a,{enumerable:!0,get:t})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,a){if(1&a&&(e=n(e)),8&a)return e;if(4&a&&"object"==typeof e&&e&&e.__esModule)return e;var t=Object.create(null);if(n.r(t),Object.defineProperty(t,"default",{enumerable:!0,value:e}),2&a&&"string"!=typeof e)for(var s in e)n.d(t,s,function(a){return e[a]}.bind(null,s));return t},n.n=function(e){var a=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(a,"a",a),a},n.o=function(e,a){return Object.prototype.hasOwnProperty.call(e,a)},n.p="/",n(n.s=52)}({52:function(e,a,n){e.exports=n("eLI7")},eLI7:function(e,a){$(document).ready((function(){var e=$("#modal-contact-us"),a=!1;function n(){r("spinner").hide(),r("email").val(""),r("email").removeClass("is-invalid"),r("message").val(""),r("message").removeClass("is-invalid"),s()}function t(e,a){switch(a){case"error":r("alert-icon").attr("class","fas fa-times-circle"),a="danger";break;case"success":r("alert-icon").attr("class","fas fa-check-circle");break;case"warning":r("alert-icon").attr("class","fas fa-exclamation-triangle");break;default:r("alert-icon").attr("class","fas fa-info-circle"),a="info"}r("alert").attr("class","alert alert-"+a),r("alert-text").html(e),r("alert-container").show()}function s(e,a){r("alert-container").hide(),r("alert-icon").attr("class",""),r("alert").attr("class",""),r("alert-text").html("")}function r(e){return $("#modal-contact-us-"+e)}e.on("show.bs.modal",(function(e){n()})),r("email").bind("input propertychange",(function(){r("email").removeClass("is-invalid")})),r("message").bind("input propertychange",(function(){r("message").removeClass("is-invalid"),r("message-char-count").html(750-r("message").val().length)})),r("close").click((function(){a||e.modal("hide")})),r("submit").click((function(){a||(a=!0,r("spinner").show(),r("email").removeClass("is-invalid"),r("message").removeClass("is-invalid"),s(),email=r("email").val(),message=r("message").val(),axios.post("/api/contact",{email:email,message:message}).then((function(e){n(),t("Thank you ! Your message was sent, we will get back to you soon","success")})).catch((function(e){response=e.response.data;try{"errors"in response&&("email"in response.errors&&r("email").addClass("is-invalid"),"message"in response.errors&&r("message").addClass("is-invalid"))}catch(e){}t(response.message,"error")})).finally((function(){r("spinner").hide(),a=!1})))}))}))}});
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "/";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 52);
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./resources/js/include/modals/contact_us.js":
+/*!***************************************************!*\
+  !*** ./resources/js/include/modals/contact_us.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+$(document).ready(function () {
+  var prefix = 'modal-contact-us';
+  var modal = $('#' + prefix);
+  var _busy = false;
+  modal.on('show.bs.modal', function (e) {
+    clearForm();
+  });
+  el('email').bind('input propertychange', function () {
+    el('email').removeClass('is-invalid');
+  });
+  el('message').bind('input propertychange', function () {
+    el('message').removeClass('is-invalid');
+    el('message-char-count').html(750 - el('message').val().length);
+  });
+  el('close').click(function () {
+    if (!_busy) modal.modal('hide');
+  });
+  el('submit').click(function () {
+    if (_busy) return;
+    _busy = true;
+    el('spinner').show();
+    el('email').removeClass('is-invalid');
+    el('message').removeClass('is-invalid');
+    hideAlert();
+    email = el('email').val();
+    message = el('message').val();
+    axios.post('/api/contact', {
+      'email': email,
+      'message': message
+    }).then(function (response) {
+      clearForm();
+      showAlert('Thank you ! Your message was sent, we will get back to you soon', 'success');
+    })["catch"](function (error) {
+      response = error.response.data;
+
+      try {
+        if ('errors' in response) {
+          if ('email' in response.errors) el('email').addClass('is-invalid');
+          if ('message' in response.errors) el('message').addClass('is-invalid');
+        }
+      } catch (ex) {}
+
+      showAlert(response.message, 'error');
+    })["finally"](function () {
+      el('spinner').hide();
+      _busy = false;
+    });
+  });
+
+  function clearForm() {
+    el('spinner').hide();
+    el('email').val('');
+    el('email').removeClass('is-invalid');
+    el('message').val('');
+    el('message').removeClass('is-invalid');
+    hideAlert();
+  }
+
+  function showAlert(msg, type) {
+    switch (type) {
+      case 'error':
+        el('alert-icon').attr('class', 'fas fa-times-circle');
+        type = 'danger';
+        break;
+
+      case 'success':
+        el('alert-icon').attr('class', 'fas fa-check-circle');
+        break;
+
+      case 'warning':
+        el('alert-icon').attr('class', 'fas fa-exclamation-triangle');
+        break;
+
+      default:
+        el('alert-icon').attr('class', 'fas fa-info-circle');
+        type = 'info';
+    }
+
+    el('alert').attr('class', 'alert alert-' + type);
+    el('alert-text').html(msg);
+    el('alert-container').show();
+  }
+
+  function hideAlert(msg, type) {
+    el('alert-container').hide();
+    el('alert-icon').attr('class', '');
+    el('alert').attr('class', '');
+    el('alert-text').html('');
+  }
+
+  function el(el) {
+    return $('#' + prefix + '-' + el);
+  }
+});
+
+/***/ }),
+
+/***/ 52:
+/*!*********************************************************!*\
+  !*** multi ./resources/js/include/modals/contact_us.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(/*! E:\xampp_7.2\htdocs\AllGym\portal-v2.0\resources\js\include\modals\contact_us.js */"./resources/js/include/modals/contact_us.js");
+
+
+/***/ })
+
+/******/ });
