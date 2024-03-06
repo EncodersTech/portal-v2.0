@@ -306,7 +306,7 @@
                             </div>
                         </div>
 
-                        <div v-if="paymentOptions.methods.balance && (paymentOptions.methods.balance.current > 0)"
+                        <div v-if="paymentOptions.methods.balance && (paymentOptions.methods.balance.current > 0) && false"
                             class="py-1 px-2 mb-2 border bg-white rounded">
                             <div v-if="chosenMethod && (chosenMethod.type == 'check')" class="text-danger">
                                 <span class="fas fa-exclamation-circle"></span>
