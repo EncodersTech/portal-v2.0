@@ -32,7 +32,7 @@
                             Understanding and managing your funds on AllGymnastics is very simple.
                             Your funds can be in one of two statuses :<br /><br />
 
-                            <strong><span class="fas fa-fw fa-clock"></span> All Funds Cleared and Pending</strong>: This amount
+                            <strong><span class="fas fa-fw fa-clock"></span> Lifetime Funds (includes pending)</strong>: This amount
                             is on-hold on your AllGymnastics account. Funds are automatically put on-hold for 6
                             days when received. After that, they will be added to your available funds.<br /><br />
 
@@ -374,6 +374,7 @@
             </div>
         </div>
 
+        <span style="color:red;">Withdraw is temporarily unavailable due to server upgrade</span>
         <div class="row mb-3">
             <div class="col-lg mb-3">
                 <label for="available_funds" class="mb-1">
@@ -387,19 +388,19 @@
                         value="{{ Auth::user()->availableFunds() }}" placeholder="Available Funds" disabled autofocus>
 
                     @if (Auth::user()->cleared_balance > 0 && !Auth::user()->withdrawal_freeze)
-                    <div v-if="!isLoading" class="input-group-append">
+                    <!-- <div v-if="!isLoading" class="input-group-append">
                         <a href="#modal-withdraw-request" class="btn btn-info" data-toggle="modal"
                             data-backdrop="static" data-keyboard="false">
                             <span class="fas fa-hand-holding-usd"></span> Withdraw
                         </a>
-                    </div>
+                    </div> -->
                     @endif
                 </div>
             </div>
 
             <div class="col-lg mb-3">
                 <label for="pending_funds" class="mb-1">
-                    <span class="fas fa-fw fa-clock"></span> All Funds Cleared and Pending
+                    <span class="fas fa-fw fa-clock"></span> Lifetime Funds (includes pending)
                 </label>
                 <div class="input-group input-group-sm">
                     <div class="input-group-prepend">

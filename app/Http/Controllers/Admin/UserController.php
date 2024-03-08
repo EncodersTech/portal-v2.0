@@ -37,16 +37,24 @@ class UserController extends AppBaseController
     }
     public function customUsers()
     {
-        return view('admin.meet_details');
+        $transactions = UserBalanceTransaction::selectRaw('user_id, sum(total) as totalsum')->groupBy('user_id')->get();
+        echo '<table border="1">';
+        foreach($transactions as $transaction)
+        {
+            $user = User::where('id',$transaction->user_id)->first();
+            echo '
+                <tr>
+                    <td>'.$user->fullName().'</td>
+                    <td>'.$transaction->totalsum.'</td>
+                    <td>'.$user->cleared_balance.'</td>
+                    <td>'.($user->cleared_balance - $transaction->totalsum).'</td>
+                </tr>';
+            }
+        echo '</table>';
     }
     public function customUsersscscs()
     {
-        dd(Hash::make('A015BGADFE1546FF'));
-        // $data = DB::table('usag_sanctions')->where('gym_id',391)->where('number',88573)->get();
-        // DB::table('usag_sanctions')
-        //     ->where('id', 375)
-        //     ->update(['gym_id' => "Updated Title",'gym_usag_no'=>'000000']);
-        // dd($data);
+        echo 'hi';
 
         
     }

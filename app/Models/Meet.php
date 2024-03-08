@@ -2457,7 +2457,7 @@ class Meet extends Model
                 $specialistRefundFee = 0;
                 $specialistLateRefundFee = 0;
                 $speicalist_total_fee = 0;
-
+                $is_meet_late_charged = 0;
                 $history = [];
                 $used_credit = 0;
                 // echo $registration->id .' '.$registration->gym->id.' '.$registration->meet->id.'<br>';
@@ -2709,6 +2709,11 @@ class Meet extends Model
                             // $re_total = $reg_fee * $at_count + $team_fee * $team_count + $sf_total + $late_at_count * $late_reg_fee;
                             $individual_team_late = ($team_count == 1 && $l->pivot->was_late > 0) ? $l->pivot->team_late_registration_fee : 0;
                             $re_total = $net_athlete_value + ($team_fee * $team_count) + $sf_total + $individual_team_late + $onetimelatefee; // + $late_at_count * $late_reg_fee;
+                            if($is_meet_late_charged == 0 && $registration->was_late)
+                            {
+                                $re_total += $registration->late_fee;
+                                $is_meet_late_charged = 1;
+                            }
                             // echo 'Net Athlete Value : ' . $net_athlete_value . '<br>';
                             // echo 'Team Fee : ' . $team_fee . '<br>';
                             // echo 'Team Count : ' . $team_count . '<br>';
