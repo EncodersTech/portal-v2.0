@@ -48,7 +48,7 @@ class ClearPendingBalance extends Command
             $now = now()->addHours(12); /** @var Carbon $now */
             UserBalanceTransaction::where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_REVENUE)
                 ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
-                ->where('clears_on', '<=', $now)
+                ->where('clears_on', '<=', $now) //uncomment this before pushing
                 ->chunkById(100, function ($transactions) {
                     foreach ($transactions as $tx) { /** @var UserBalanceTransaction $tx */
                         DB::beginTransaction();
