@@ -52,19 +52,16 @@
             <tbody>
                 @foreach ($gyms as $r)
                     @foreach ($r['coaches'] as $c)
-                        <tr>
-                            <td>{{ $c->first_name .' '.$c->last_name }}</td>
-                            <td>
-                                @if($c->usaigc_no != null)
-                                    {{ '  USAIGC: '.$c->usaigc_no }}.<br>
-                                @endif
-                            </td>
-                            <td  class="col-1">
-                                <strong>{{ $r['gyms']->name }}</strong>
-                            </td>
-                            <td></td>
-                        </tr>
-                    <tr>   
+                        @if($c->usaigc_no != null)
+                            <tr>
+                                <td>{{ $c->first_name .' '.$c->last_name }}</td>
+                                <td>{{ '  USAIGC: '.$c->usaigc_no }}</td>
+                                <td  class="col-1">
+                                    <strong>{{ $r['gyms']->name }}</strong>
+                                </td>
+                                <td></td>
+                            </tr>
+                        @endif
                     @endforeach
                 @endforeach
             </tbody>
