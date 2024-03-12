@@ -192,7 +192,8 @@ $(document).ready(e => {
                             MeetEntry: 'meet-entry',
                             Scratch: 'scratch',
                             USAIGCCoachSignin: 'usaigc-coach-signin',
-                            NGACoachSignin: 'nga-coach-signin'
+                            NGACoachSignin: 'nga-coach-signin',
+                            SpecialistsByLevel: 'specialist-by-level'
                         }
                     }
                 };
@@ -241,6 +242,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.Scratch:
                         case this.constants.reports.types.USAIGCCoachSignin:
                         case this.constants.reports.types.NGACoachSignin:
+                        case this.constants.reports.types.SpecialistsByLevel:
                             break;
 
                         default:
