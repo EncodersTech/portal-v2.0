@@ -2978,7 +2978,7 @@ class Meet extends Model
             if($type == 0) // by gym
             {
                 foreach ($registrations as $key => $value) {
-                    $report_data_gym[$value->gym->name] = [];
+                    // $report_data_gym[$value->gym->name] = [];
                     foreach ($value->levels as $key1 => $value1) {
                         if($value1->pivot->specialists->count() > 0)
                             $report_data_gym[$value->gym->name][$value1->sanctioning_body->initialism][$value1->level_category->name][$value1->name][] = $value1->pivot->specialists;
