@@ -22,10 +22,10 @@ Auth::routes(['verify' => true]);
 ////    });
 //});
 
+Route::get('/privacy-policy', 'DashboardController@privacyPolicy')->name('privacy.policy');
 Route::middleware(['guest'])->group(function () {
     Route::get('/register/member/{token}', 'Auth\RegisterController@showRegistrationForm')->name('register.member.invite');
 });
-
 Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     Route::get('/', 'DashboardController@index')->name('dashboard');
     Route::get('/meets', 'DashboardController@browseMeets')->name('meets.browse');

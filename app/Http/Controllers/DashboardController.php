@@ -49,7 +49,10 @@ class DashboardController extends AppBaseController
             'current_page' => 'browse-meets'
         ]);
     }
-
+    public function privacyPolicy() {
+        // echo "Hello";
+        return view('auth.privacy_policy');
+    }
 
     /**
      * @throws CustomBaseException
