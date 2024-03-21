@@ -39,7 +39,7 @@
     We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.
     Contact Us:hello@allgymnastics.com
     <br><br>
-    If you have any questions or concerns about our Privacy Policy or our practices regarding your personal information, please contact us at [Your Contact Information].
+    If you have any questions or concerns about our Privacy Policy or our practices regarding your personal information, please contact us at hello@allgymnastics.com.
     By using our mobile application, you consent to the collection and use of your information as outlined in this Privacy Policy.
     </p>
     This Privacy Policy was last updated on 20 march 2024.
