@@ -33,7 +33,7 @@
                 </div>
                 
                 <label for="">Amount</label>
-                <input type="number" name="amount" class="form-control">
+                <input type="text" name="amount" class="form-control">
 
                 <button type="submit" class="btn btn-primary">Adjust</button>
             </form>
