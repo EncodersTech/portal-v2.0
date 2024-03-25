@@ -1,6 +1,12 @@
 <div class="mt-2">
     <div class="alert alert-danger mb-3" id="validationErrorsBox" style="display: none"></div>
-    <h5 class="pb-1 border-bottom"><span class="fas fa-fw fa-mail-bulk"></span> Email Participants</h5>
+    <h5 class="pb-1 border-bottom">
+        <span class="fas fa-fw fa-mail-bulk"></span> Email Participants
+        <span class="float-right">
+            <a href="#" data-toggle="modal" data-target="#previousMailsModal" class="btn btn-primary"
+                style="padding:2px 5px;">Show Previous Mails</a>
+        </span>
+    </h5>
 
     <div class="row"> @{{ selectedGymMailable }}
         <div class="col-12 col-xs-12 col-sm-3 col-md-12 col-lg-3 mb-3 selectGymDiv">
@@ -61,5 +67,57 @@
         </div>
 
 
+    </div>
+</div>
+
+<!-- modal to view previous emails -->
+<div class="modal fade" id="previousMailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Previous Emails</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body
+                p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Sent To</th>
+                                <th>Attachment</th>
+                                <th>Sent At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($massMailers as $massMailer)
+                            <tr>
+                                <td>{{$massMailer->subject}}</td>
+                                <td>
+                                    {!!$massMailer->message !!}
+                                </td>
+                                <td>{{$massMailer->registered_gym_names}}</td>
+                                <td>
+                                    @if($massMailer->attachments)
+                                    <a href="{{$massMailer->attachments}}"
+                                        target="_blank">Attachment</a>
+                                    @endif
+                                </td>
+                                <td>{{$massMailer->created_at}}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
