@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Exceptions\CustomStripeException;
 use App\Mail\MassMailerNotification;
+use App\Models\MassMailer;
 use App\Mail\Registrant\MeetScheduleUploadedMailable;
 use App\Mail\PastMeetsGymsNotification;
 use App\Repositories\MeetRepository;
@@ -804,7 +805,13 @@ class MeetController extends AppBaseController
 
         $usagSanctions = $this->meetRepo->getMeetUsagSanction($meet->usag_meet_sanctions, $gym, $meet);
         $summaryData = $this->meetRepo->getSummaryData($meet);
-
+        $massMailers = MassMailer::where('meet_id', $meet->id)->where('host', $gym->id)->get();
+        foreach ($massMailers as $massMailer) {
+            $massMailer->registered_gyms = json_decode($massMailer->registered_gyms);
+            $massMailer->registered_gym_names = Gym::whereIn('id', $massMailer->registered_gyms)->pluck('name')->toArray();
+            $massMailer->registered_gym_names = implode(', ', $massMailer->registered_gym_names);
+        }
+        // dd($massMailers);
         return view('host.meet.details', [
             'current_page' => self::_get_page_name($gym),
             'gym' => $gym,
@@ -814,6 +821,7 @@ class MeetController extends AppBaseController
             'registerGymsPending' =>  $registerGymsPending,
             'usagSanctions' => $usagSanctions,
             'summaryData' => $summaryData,
+            'massMailers' => $massMailers
         ]);
     }
 
@@ -989,7 +997,7 @@ class MeetController extends AppBaseController
             $input['attachments'] = Storage::url(Storage::putFile('public/'.Meet::MEET_MASS_MAILER,$input['attachments']));
         }
         $input['attachments'] = (isset($input['attachments'])) ? $input['attachments'] : null; # correction needed
-        $input['attachments'] = str_replace('/storage', 'storage', $input['attachments']);
+        // $input['attachments'] = str_replace('/storage', 'storage', $input['attachments']);
         if(!$meet){
             throw new CustomBaseException("Meet not found.");
         }
@@ -997,6 +1005,16 @@ class MeetController extends AppBaseController
             throw new CustomBaseException("No gym is registered for this meet.");
         }
 
+        MassMailer::create([
+            'host' => $meet->gym_id,
+            'meet_id' => $meet->id,
+            'registered_gyms' => json_encode($input['registerGym']),
+            'subject' => $input['subject'],
+            'message' => $input['message'],
+            'attachments' => $input['attachments'],
+        ]);
+
+        // dd($input); die();
         try {
             foreach ($gymEmails as $gymEmail) {
                 dispatch(new SendEmailJob($gymEmail,'emails.mass_mailer_notification',$input['subject'], $input));
