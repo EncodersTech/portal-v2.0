@@ -374,7 +374,7 @@
             </div>
         </div>
 
-        <span style="color:red;">Withdraw is temporarily unavailable due to server upgrade</span>
+        <!-- <span style="color:red;">Withdraw is temporarily unavailable due to server upgrade</span> -->
         <div class="row mb-3">
             <div class="col-lg mb-3">
                 <label for="available_funds" class="mb-1">
@@ -388,12 +388,12 @@
                         value="{{ Auth::user()->availableFunds() }}" placeholder="Available Funds" disabled autofocus>
 
                     @if (Auth::user()->cleared_balance > 0 && !Auth::user()->withdrawal_freeze)
-                    <!-- <div v-if="!isLoading" class="input-group-append">
+                    <div v-if="!isLoading" class="input-group-append">
                         <a href="#modal-withdraw-request" class="btn btn-info" data-toggle="modal"
                             data-backdrop="static" data-keyboard="false">
                             <span class="fas fa-hand-holding-usd"></span> Withdraw
                         </a>
-                    </div> -->
+                    </div>
                     @endif
                 </div>
             </div>
