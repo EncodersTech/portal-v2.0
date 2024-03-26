@@ -1878,7 +1878,7 @@ class MeetRegistration extends Model
         $coachStatus = null;
 
         $gymSummary = $calculatedFees['gym'];
-
+        $hostSummary = $calculatedFees['host'];
         $transaction = null;
         $result = [
             'message' => 'Payment executed.',
@@ -2020,33 +2020,9 @@ class MeetRegistration extends Model
                 $transaction_response = $intellipayService->make_payment($onetimeach['routingNumber'],$onetimeach['accountNumber'],
                                         $onetimeach['accountType'],$onetimeach['accountName'],$gymSummary['total'], $comment );
 
-                                       
-                // $fundingSource = $dwollaService->getFundingSource($chosenMethod['id']); /** @var FundingSource $fundingSource */
-                // $transaction = self::payWithACH(
-                //     $gym->user->dwolla_customer_id,
-                //     $fundingSource,
-                //     $gymSummary['total'],
-                //     [
-                //         'type' => 'registration',
-                //         'registration' => $registration->id,
-                //         'meet' => $gym->name,
-                //         'gym' => $meet->name,
-                //     ]
-                // );
-
-                // $transaction = $dwollaService->getACHTransfer($transaction);
                 $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH One Time payment has been initiated.") .
                 ' Bank Account ' . $onetimeach['accountName'];
-                
-                // dd($result['payment_method_string']);
-                // $result['payment_method_string'] = '(Pending) ' . ucfirst("ACH payment has been initiated.");
-                // $result['payment_method_string'] = '(Pending) ' . ucfirst($transaction->payment_method_details->ach_debit->account_holder_type) .
-                //                         ' Bank Account' . $transaction->payment_method_details->ach_debit->bank_name ;
-                
-
-
                 $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['total']);
-                // dd($savings);
                 $transaction = $registration->transactions()->create([ //trackthis
                     'processor_id' => $transaction_response['paymentid'],
                     'handling_rate' => Helper::getHandlingFee($meet),
@@ -2204,7 +2180,7 @@ class MeetRegistration extends Model
             '\'s registration in ' . $meet->name;
 
             $btxStatus = (
-                $chosenMethod['type'] == self::PAYMENT_OPTION_ACH ?
+                ($chosenMethod['type'] == self::PAYMENT_OPTION_ACH || $chosenMethod['type'] == self::PAYMENT_OPTION_ONETIMEACH) ?
                 UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_UNCONFIRMED :
                 UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
             );
@@ -2218,19 +2194,32 @@ class MeetRegistration extends Model
                 'status' => $btxStatus,
             ]);
             $balanceTransaction->save();
+            // need to consider if handling is paid by host
+            if($hostSummary['handling'] > 0)
+                $originalHandling = $hostSummary['handling'];
+            else if ($gymSummary['handling'] > 0)
+                $originalHandling = $gymSummary['handling'];
+            else
+                $originalHandling = 0;
 
-            $balanceTransaction = $registration->user_balance_transaction()->create([
-                'user_id' => $meet->gym->user->id,
-                'processor_id' => null,
-                'total' => $transaction->breakdown['host']['total'],
-                'description' => $description,
-                'clears_on' => now(),
-                'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT,
-                'status' => $btxStatus,
-            ]);
-            $balanceTransaction->save();
-            $host->cleared_balance += $gymSummary['used_balance'];
-            $host->pending_balance += $gymSummary['used_balance'];
+            if($transaction->breakdown['host']['total'] == ($gymSummary['used_balance'] - $originalHandling))
+            {
+                $balanceTransaction = $registration->user_balance_transaction()->create([
+                    'user_id' => $meet->gym->user->id,
+                    'processor_id' => null,
+                    'total' => $transaction->breakdown['host']['total'],
+                    'description' => $description,
+                    'clears_on' => now(),
+                    'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT,
+                    'status' => $btxStatus,
+                ]);
+                $balanceTransaction->save();
+                $host->cleared_balance += $gymSummary['used_balance'] - $originalHandling;
+                $host->pending_balance += $gymSummary['used_balance'] - $originalHandling;
+                // $host->cleared_balance += $gymSummary['used_balance'];
+                // $host->pending_balance += $gymSummary['used_balance'];
+            }
+
             $host->save();
             if ($transaction !== null) {
                 $breakdown = $transaction->breakdown;
@@ -4023,11 +4012,11 @@ class MeetRegistration extends Model
                 if ($gymSummary['total'] == 0 && !$useBalance) {
                     $needRegularTransaction = false;
                 }
-                if($gymSummary['total'] > 0)
+                if($gymSummary['total'] > 0 || $gymSummary['used_balance'] > 0)
                 {
                     $needRegularTransaction = true;
                 }
-                // dd($gymSummary); die();
+
                 if ($needRegularTransaction) {
                     if ($useBalance && ($gymSummary['used_balance'] > 0) && ($gymSummary['total'] == 0)) {
                         $chosenMethod = [

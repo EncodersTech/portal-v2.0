@@ -44,8 +44,8 @@ class ProcessDwollaWebhook implements ShouldQueue
     /** @var DwollaService */
     private $dwollaService;
     
-    public $tries = 5;
-    public $retryAfter = 30;
+    public $tries = 3;
+    public $retryAfter = 300;
 
     /**
      * Create a new job instance.
