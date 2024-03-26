@@ -2195,7 +2195,12 @@ class MeetRegistration extends Model
             ]);
             $balanceTransaction->save();
             // need to consider if handling is paid by host
-            $originalHandling = ($hostSummary['handling'] > 0) ? $hostSummary['handling'] : ($gymSummary['handling'] > 0) ? $gymSummary['handling'] : 0;
+            if($hostSummary['handling'] > 0)
+                $originalHandling = $hostSummary['handling'];
+            else if ($gymSummary['handling'] > 0)
+                $originalHandling = $gymSummary['handling'];
+            else
+                $originalHandling = 0;
 
             if($transaction->breakdown['host']['total'] == ($gymSummary['used_balance'] - $originalHandling))
             {
