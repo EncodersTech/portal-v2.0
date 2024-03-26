@@ -1878,7 +1878,7 @@ class MeetRegistration extends Model
         $coachStatus = null;
 
         $gymSummary = $calculatedFees['gym'];
-
+        $hostSummary = $calculatedFees['host'];
         $transaction = null;
         $result = [
             'message' => 'Payment executed.',
@@ -2194,8 +2194,10 @@ class MeetRegistration extends Model
                 'status' => $btxStatus,
             ]);
             $balanceTransaction->save();
+            // need to consider if handling is paid by host
+            $originalHandling = ($hostSummary['handling'] > 0) ? $hostSummary['handling'] : ($gymSummary['handling'] > 0) ? $gymSummary['handling'] : 0;
 
-            if($transaction->breakdown['host']['total'] == ($gymSummary['used_balance'] - $gymSummary['handling']))
+            if($transaction->breakdown['host']['total'] == ($gymSummary['used_balance'] - $originalHandling))
             {
                 $balanceTransaction = $registration->user_balance_transaction()->create([
                     'user_id' => $meet->gym->user->id,
@@ -2207,8 +2209,8 @@ class MeetRegistration extends Model
                     'status' => $btxStatus,
                 ]);
                 $balanceTransaction->save();
-                $host->cleared_balance += $gymSummary['used_balance'] - $gymSummary['handling'];
-                $host->pending_balance += $gymSummary['used_balance'] - $gymSummary['handling'];
+                $host->cleared_balance += $gymSummary['used_balance'] - $originalHandling;
+                $host->pending_balance += $gymSummary['used_balance'] - $originalHandling;
                 // $host->cleared_balance += $gymSummary['used_balance'];
                 // $host->pending_balance += $gymSummary['used_balance'];
             }
