@@ -11,7 +11,8 @@ use App\Repositories\DashboardRepository;
 use Illuminate\Http\Request;
 use App\Services\USAGService;
 use App\Services\IntellipayService;
-
+use App\Models\UserBalanceTransaction;
+use Illuminate\Support\Facades\DB;
 class DashboardController extends AppBaseController
 {
     /**
@@ -67,6 +68,44 @@ class DashboardController extends AppBaseController
     public function onetimeach_report_postdddd(Request $request)
     {
         dd($request);
+    }
+    public function balance_adjustment()
+    {
+        $data = [];
+        $data['page'] = 'balance_adjustment';
+        return view('admin.balance.index')->with($data);
+    }
+    public function get_user(Request $request)
+    {
+        $email = $request->email;
+        $user = User::where('email',$email)->first();
+        return response()->json(['status' => 'success', 'user' => $user]);
+    }
+    public function adjust_balance(Request $request)
+    {
+        $email = $request->email;
+        $amount = $request->amount;
+        $user = User::where('email',$email)->first();
+        if($user)
+        {
+            DB::beginTransaction();
+
+            $user->cleared_balance = $user->cleared_balance + $amount;
+            
+            $user->balance_transactions()->create([
+                'processor_id' => null,
+                'total' => $amount,
+                'description' => "Overdraft Adjustment by Admin",
+                'clears_on' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN,
+                'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED
+            ]);
+            $user->save();
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Balance Adjusted Successfully']);
+        }
     }
     public function onetimeach_report()
     {

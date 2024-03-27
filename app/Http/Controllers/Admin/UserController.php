@@ -37,12 +37,18 @@ class UserController extends AppBaseController
     }
     public function customUsers()
     {
-        $transactions = UserBalanceTransaction::selectRaw('user_id, sum(total) as totalsum')->groupBy('user_id')->get();
+        $transactions = UserBalanceTransaction::selectRaw('user_id, sum(total) as totalsum')
+        ->groupBy('user_id')
+        ->where('description','!=','Overdraft Adjustment by Admin')
+        ->get();
+
         echo '<table border="1">';
         foreach($transactions as $transaction)
         {
             $user = User::where('id',$transaction->user_id)->first();
-            echo '
+            if($transaction->totalsum > 0 && $user->cleared_balance > 0 && ( $user->cleared_balance - $transaction->totalsum) > 0)
+            {
+                echo '
                 <tr>
                     <td>'.$user->fullName().'</td>
                     <td>'.$transaction->totalsum.'</td>
@@ -50,6 +56,8 @@ class UserController extends AppBaseController
                     <td>'.($user->cleared_balance - $transaction->totalsum).'</td>
                 </tr>';
             }
+            
+        }
         echo '</table>';
     }
     public function customUsersscscs()

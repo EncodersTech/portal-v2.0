@@ -374,7 +374,6 @@
             </div>
         </div>
 
-        <!-- <span style="color:red;">Withdraw is temporarily unavailable due to server upgrade</span> -->
         <div class="row mb-3">
             <div class="col-lg mb-3">
                 <label for="available_funds" class="mb-1">

@@ -76972,13 +76972,13 @@ $(document).ready(function (e) {
               MeetEntry: 'meet-entry',
               Scratch: 'scratch',
               USAIGCCoachSignin: 'usaigc-coach-signin',
-              NGACoachSignin: 'nga-coach-signin',
               GymMailingLabel: 'gym-mailing-label',
               CoachSignin: 'coach-signin',
-              SpecialistsByLevel: 'specialist-by-level',
               GymNameLabel: 'gym-name-label',
               CoachNameLabel: 'coaches-name-label',
-              MarketingQR: 'marketing-qr'
+              MarketingQR: 'marketing-qr',
+              NGACoachSignin: 'nga-coach-signin',
+              SpecialistsByLevel: 'specialist-by-level'
             }
           }
         };
@@ -77027,10 +77027,10 @@ $(document).ready(function (e) {
             case this.constants.reports.types.NGACoachSignin:
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.CoachSignin:
-            case this.constants.reports.types.SpecialistsByLevel:
             case this.constants.reports.types.GymNameLabel:
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.MarketingQR:
+            case this.constants.reports.types.SpecialistsByLevel:
               break;
 
             default:

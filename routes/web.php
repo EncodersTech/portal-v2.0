@@ -22,10 +22,10 @@ Auth::routes(['verify' => true]);
 ////    });
 //});
 
+Route::get('/privacy-policy', 'DashboardController@privacyPolicy')->name('privacy.policy');
 Route::middleware(['guest'])->group(function () {
     Route::get('/register/member/{token}', 'Auth\RegisterController@showRegistrationForm')->name('register.member.invite');
 });
-
 Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     Route::get('/', 'DashboardController@index')->name('dashboard');
     Route::get('/meets', 'DashboardController@browseMeets')->name('meets.browse');
@@ -235,6 +235,9 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::get('settings', 'SettingController@index')->name('admin.settings');
         Route::post('settings','SettingController@update')->name('admin.settings.update');
 
+        Route::get('gym-balance','DashboardController@balance_adjustment')->name('admin.gym.balance');
+        Route::get('gym-balance-user','DashboardController@get_user')->name('admin.gym.balance.get_user');
+        Route::post('gym-balance-adjust','DashboardController@adjust_balance')->name('admin.gym.balance.adjust');
 
         Route::get('errortracing','DashboardController@errorNotice')->name('admin.errortracing');
         Route::get('usag_level','DashboardController@usagLevel')->name('admin.usag_level');

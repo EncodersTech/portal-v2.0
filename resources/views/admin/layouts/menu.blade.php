@@ -91,6 +91,13 @@
                 <p>Transfer</p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.gym.balance') }}"
+                class="nav-link {{ Request::is('admin/gym-balance') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-hand-holding-usd"></i>
+                <p>Balance Adjustment</p>
+            </a>
+        </li>
 
         <li class="nav-item">
             <a href="{{ route('admin.settings') }}"
