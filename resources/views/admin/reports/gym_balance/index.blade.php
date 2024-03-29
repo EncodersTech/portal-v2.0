@@ -2,20 +2,6 @@
 
 @section('page_css')
     <link href="{{ asset('assets/admin/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
-    <style>
-        .red{
-            color: red;
-            background-color: #f2dede;
-        }
-        .green{
-            color: green;
-            background-color: #dff0d8;
-        }
-        .warning{
-            color: #8a6d3b;
-            background-color: #fcf8e3;
-        }
-    </style>
 @endsection
 
 @section('content')
@@ -23,6 +9,15 @@
         <div class="container-fluid">
             <div class="col-12 d-flex header__criteria">
                     <h1 class="m-0">Gym Balance Report</h1>
+            </div>
+        </div>
+        <div class="container-fluid alert-info mt-2" style="padding:5px;">
+            <div class="col-12">
+                <i class="fa fa-info-circle"></i> If "Cleared Balance" is negative, it means overdraft and balance adjustment is done. <br>
+                <i class="fa fa-info-circle"></i> If "Balance Transaction" is negative, it means overdraft. <br>
+                <i class="fa fa-info-circle"></i> If "Cleared Balance" and "Lifetime Balance" are not equal, it means there are pending transactions. <br>
+                <i class="fa fa-info-circle"></i> If "Cleared Balance" and "Balance Transaction" are not equal, it means there are pending transactions. <br>
+                
             </div>
         </div>
     </div>
