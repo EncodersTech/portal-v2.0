@@ -2,6 +2,20 @@
 
 @section('page_css')
     <link href="{{ asset('assets/admin/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
+    <style>
+        .red{
+            color: red;
+            background-color: #f2dede;
+        }
+        .green{
+            color: green;
+            background-color: #dff0d8;
+        }
+        .warning{
+            color: #8a6d3b;
+            background-color: #fcf8e3;
+        }
+    </style>
 @endsection
 
 @section('content')
