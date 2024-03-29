@@ -1,5 +1,7 @@
 'use strict';
 
+const { difference } = require("lodash");
+
 $(document).ready(function () {
     let tbl = $('#gymBalanceReportsTbl').DataTable({
         processing: true,
@@ -76,7 +78,7 @@ $(document).ready(function () {
             {
                 data: function data(row){
                   row.total == NaN ? 0 : row.total;
-                  return row.cleared_balance - row.total;
+                  return addCommas(parseFloat(row.cleared_balance - row.total).toFixed(2));
                 }
             }
         ],
