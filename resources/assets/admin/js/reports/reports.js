@@ -11,6 +11,8 @@ $(document).ready(function () {
             {
                 targets: '_all',
                 defaultContent: 'N/A',
+                orderData: [3],
+                orderSequence: ["desc","asc"]
             },
             {
                 "targets": [1],
