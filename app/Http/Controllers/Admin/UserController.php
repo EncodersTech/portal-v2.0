@@ -78,6 +78,20 @@ class UserController extends AppBaseController
 
     public function edit(User $user)
     {
+        if($user->access_control == null)
+        {
+            $user->access_control = [
+                'name_change' => true,
+                'phone_change' => true,
+                'host_meet' => false,
+                'register_meet' => true,
+                'add_bank' => true
+            ];
+        }
+        else
+        {
+            $user->access_control = json_decode($user->access_control,true);
+        }
         return view('admin.users_list.edit',compact('user'));
     }
 
@@ -128,7 +142,15 @@ class UserController extends AppBaseController
             else
                 unset($input['email_verified_at']);
         }
-        // print_r($input); die();
+        
+        $access_control = [
+            'name_change' => isset($input['name_change']) ? true : false,
+            'phone_change' => isset($input['phone_change']) ? true : false,
+            'host_meet' => isset($input['host_meet']) ? true : false,
+            'register_meet' => isset($input['register_meet']) ? true : false,
+            'add_bank' => isset($input['add_bank']) ? true : false
+        ];
+        $input['access_control'] =  json_encode($access_control);
         if ($user->update($input) && $error == false)
             return back()->with('success', 'User profile was updated.');
         else

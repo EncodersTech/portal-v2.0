@@ -82,6 +82,29 @@
                     <label><i class="fas fa-shield"></i> Payment Gateways </label>
                     <input type="checkbox" name="isGatewayOn" {{ strpos($user->stripe_customer_id, 'cus_') === FALSE ? '':'checked' }} {{ strpos($user->stripe_customer_id, 'cus_') === FALSE ? '':'disabled' }} data-toggle="toggle">
                 </div>
+            </div><br><br>
+            <h3>Access Management</h3> <br><br>
+            <div class="row">
+                <div class="form-group col-sm-12 col-md-3">
+                    <label><i class="fas fa-shield"></i> Name Change </label>
+                    <input type="checkbox" name="name_change" {{ $user->access_control['name_change'] === FALSE ? '':'checked' }} data-toggle="toggle">
+                </div>
+                <div class="form-group col-sm-12 col-md-3">
+                    <label><i class="fas fa-shield"></i> Phone Change </label>
+                    <input type="checkbox" name="phone_change" {{ $user->access_control['phone_change'] === FALSE ? '':'checked' }} data-toggle="toggle">
+                </div>
+                <div class="form-group col-sm-12 col-md-3">
+                    <label><i class="fas fa-shield"></i> Host Meet </label>
+                    <input type="checkbox" name="host_meet" {{ $user->access_control['host_meet'] === FALSE ? '':'checked' }} data-toggle="toggle">
+                </div>
+                <div class="form-group col-sm-12 col-md-3">
+                    <label><i class="fas fa-shield"></i> Register Meet </label>
+                    <input type="checkbox" name="register_meet" {{ $user->access_control['register_meet'] === FALSE ? '':'checked' }} data-toggle="toggle">
+                </div>
+                <div class="form-group col-sm-12 col-md-3">
+                    <label><i class="fas fa-shield"></i> Add Bank Account </label>
+                    <input type="checkbox" name="add_bank" {{ $user->access_control['add_bank'] === FALSE ? '':'checked' }} data-toggle="toggle">
+                </div>
             </div>
             <div class="text-right">
                 <button type="submit" class="btn btn-sm btn-success">
