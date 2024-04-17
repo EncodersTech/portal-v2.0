@@ -42,6 +42,9 @@ use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Models\Media;
 use Barryvdh\Snappy\PdfWrapper;
 use App\Jobs\SendEmailJob;
+use App\Mail\NewMeetMailable;
+use Illuminate\Support\Facades\Mail;
+
 class MeetController extends AppBaseController
 {
     /**
@@ -405,6 +408,9 @@ class MeetController extends AppBaseController
             throw new CustomBaseException('Something went wrong while saving your meet.', -1);
 
         $meet = $tm->storeStepFive($attr);
+
+        Mail::to($gym->user->email)->send(new NewMeetMailable($meet));
+
         return view('meet.create.success', [
             'current_page' => 'success',
             'redirect_url' => route('gyms.meets.index', ['gym' => $gym])
