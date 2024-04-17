@@ -32,8 +32,10 @@
                     </div>
                 </div>
                 
-                <label for="">Amount</label>
+                <label for="amount">Amount</label>
                 <input type="text" name="amount" class="form-control">
+                <label for="description">Description</label>
+                <input type="test" name="description" class="form-control">
 
                 <button type="submit" class="btn btn-primary">Adjust</button>
             </form>
