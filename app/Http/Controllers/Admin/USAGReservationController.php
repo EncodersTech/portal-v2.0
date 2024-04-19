@@ -69,4 +69,8 @@ class USAGReservationController extends AppBaseController
 
         return $this->sendSuccess('USAG Reservation Deleted successfully.');
     }
+    public function pendingReservations()
+    {
+        USAGReservation::pendingReservations();
+    }
 }

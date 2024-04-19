@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
+use App\Jobs\USAGPendingReservationNotification;
 
 class USAGReservation extends Model
 {
@@ -138,6 +139,20 @@ class USAGReservation extends Model
     public function children()
     {
         return $this->hasMany(self::class, 'parent_id');
+    }
+    public static function pendingReservations()
+    {
+        $data = DB::select('select u.* from usag_reservations as ur
+        join gyms as g on g.id = ur.gym_id
+        join users as u on u.id = g.user_id
+        join usag_sanctions as us on us.id=ur.usag_sanction_id
+        join meets as mt on mt.id = us.meet_id
+        where ur.status=1 and mt.end_date >= \''. Carbon::now()->toDateString().'\' 
+        group by u.id');
+        foreach ($data as $d) {
+            $user = User::find($d->id);
+            dispatch(new USAGPendingReservationNotification($user));
+        }
     }
 
     public static function calculateFinalState(Gym $gym, string $sanction, Collection &$reservations = null) {

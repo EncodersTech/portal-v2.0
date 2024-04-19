@@ -197,6 +197,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     });
 
     Route::group(['middleware' => ['checkIsAdmin'], 'prefix' => 'admin','namespace'  => 'Admin'], function () {
+        Route::get('usag-pending-reservations', 'USAGReservationController@pendingReservations')->name('admin.usag.pending.reservations');
         Route::get('meets', 'MeetController@index')->name('admin.meets');
         Route::get('featured-meets', 'MeetController@featuredMeets')->name('admin.featured.meets');
         Route::post('meets/{meet}/meet-featured', 'MeetController@meetFeatured')->name('admin.meet.featured');
