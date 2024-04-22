@@ -59,6 +59,13 @@ class Kernel extends ConsoleKernel
             ->twiceDaily(10, 22)
             ->withoutOverlapping()
             ->sendOutputTo($logFile);
+        
+        $schedule->comman('usag-reservation-reminder:clear')
+            ->daily()
+            ->withoutOverlapping()
+            ->sendOutputTo($logFile)
+            ->emailOutputOnFailure(config('admin_email'));
+
     }
 
     /**
