@@ -373,7 +373,7 @@ class MeetTransaction extends Model
 
         try {
             $r = $this->meet_registration; /** @var MeetRegistration $r */
-            return $r->calculateRegistrationTotal($snapshot);
+            return $r->calculateRegistrationTotalRepay($snapshot);
         } catch (\Throwable $e) {
             throw $e;
         }
