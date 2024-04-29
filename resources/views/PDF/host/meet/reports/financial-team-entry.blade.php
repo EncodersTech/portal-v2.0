@@ -40,7 +40,7 @@
     @endif
 
     @if (count($registrations) < 1)
-        No Refunds.
+        No Registration.
     @else
         <table class="table-0 table-bordered table-sm">
             <thead>
