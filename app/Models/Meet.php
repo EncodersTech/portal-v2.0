@@ -3151,6 +3151,7 @@ class Meet extends Model
             throw $e;
         }
     }
+    //new report
     public function generateEntryTeamReport(): PdfWrapper{
         try{
 
