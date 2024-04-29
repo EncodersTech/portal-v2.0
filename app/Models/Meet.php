@@ -3154,4 +3154,109 @@ class Meet extends Model
             throw $e;
         }
     }
+    //new report
+    public function generateEntryTeamReport(): PdfWrapper{
+        try{
+
+            $base = $this->registrations()
+                        ->where('status', MeetRegistration::STATUS_REGISTERED);
+            /** @var Builder $base */
+
+            $registrations = $base->select([
+                    'id', 'gym_id', 'meet_id', 'status'
+                ])->orderBy('created_at', 'DESC')
+                ->get();
+
+            $row_data = [];
+            
+            foreach ($registrations as $key => $value) {
+                $row_data[$key]['gym'] = $value->gym;
+                $row_data[$key]['sanctioning_body'] = '';
+                $row_data[$key]['total_levels'] = $value->levels->count();
+                foreach ($value->levels as $key1 => $l) {
+                    $sanctioning_body = SanctioningBody::find($l->sanctioning_body_id)->initialism;
+                    $discipline = $l->level_category->name;
+
+                    if (!isset($row_data[$key]['discipline'][$discipline])) {
+                        $row_data[$key]['discipline'][$discipline] = [
+                            'total_participants' => 0,
+                            'level' => []
+                        ];
+                    }
+                    $specialist_athletes_count = DB::select('SELECT count(distinct rs.id) as numb FROM registration_specialists as rs 
+                                        JOIN registration_specialist_events as rse ON rs.id = rse.specialist_id 
+                                        WHERE rse.status =1 and rs.level_registration_id = '.$l->pivot->id);
+
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['gender'] = ($l->pivot->allow_men ? 'Men' : '') . ' ' . ($l->pivot->allow_women?'Women':'');
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['athlete_count'] = $l->pivot->athletes->where('status', 1)->count() + $specialist_athletes_count[0]->numb;
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_count'] = $l->pivot->team_fee > 0 ? 1 : 0;
+                    $row_data[$key]['discipline'][$discipline]['total_participants'] += $row_data[$key]['discipline'][$discipline]['level'][$l->name]['athlete_count'];
+
+                    if($row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_count'] > 0)
+                    {
+                        $row_data[$key]['sanctioning_body'] .= $sanctioning_body .' ';
+                        $row_data[$key]['sanctioning_body'] = implode(' ', array_unique(explode(' ', $row_data[$key]['sanctioning_body'])));
+                    }
+                    $athlete_fees = 0;
+                    $scrath_count = 0;
+                    $specialist_scratch_count = 0;
+                    foreach ($l->pivot->athletes as $key2 => $a) {
+                        if($a->status == RegistrationAthlete::STATUS_REGISTERED)
+                        {
+                            $athlete_fees += $a->fee;
+                            if($a->was_late)
+                                $athlete_fees += $a->late_fee;
+                        }
+                        else if($a->status == RegistrationAthlete::STATUS_SCRATCHED)
+                        {
+                            $scrath_count += 1;
+                        }
+                    }
+
+                    $specialist_fees = 0;
+                    $specialist_athletes = DB::select('SELECT * FROM registration_specialists as rs 
+                                        JOIN registration_specialist_events as rse ON rs.id = rse.specialist_id 
+                                        WHERE rs.level_registration_id = '.$l->pivot->id);
+                    
+                    if($specialist_athletes != [])
+                    {
+                        
+                        $total_events = 0;
+                        foreach ($specialist_athletes as $key2 => $s) {
+                            if($s->status == RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED)
+                            {
+                                $specialist_fees += $s->fee;
+                                if($s->was_late)
+                                    $specialist_fees += $s->late_fee;
+                            }
+                            else if($s->status == RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED)
+                            {
+                                $specialist_scratch_count += 1;
+                            }
+                        }
+                    }
+                    
+
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['athlete_fees'] = $athlete_fees;
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['specialist_fees'] = $specialist_fees;
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['scratch_count'] = $scrath_count;
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['specialist_scratch_count'] = $specialist_scratch_count;
+                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_fees'] = $l->pivot->team_fee + $l->pivot->team_late_fee;
+                }
+            }
+
+            // dd($row_data);
+            $data = [
+                'host' => $this->gym,
+                'meet' => $this,
+                'registrations' => $row_data,
+
+            ];
+
+            return PDF::loadView('PDF.host.meet.reports.financial-team-entry', $data); /** @var PdfWrapper $pdf */
+        }
+        catch(\Throwable $e) {
+            throw $e;
+        }
+    }
 }
