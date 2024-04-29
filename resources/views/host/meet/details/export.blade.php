@@ -44,6 +44,11 @@
             </button>
         </div>
         <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.EntryTeam)">
+                Team Financial Report
+            </button>
+        </div>
+        <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.Specialists)">
                 Event Specialists By Gym
             </button>

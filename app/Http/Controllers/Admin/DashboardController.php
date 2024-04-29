@@ -85,6 +85,7 @@ class DashboardController extends AppBaseController
     {
         $email = $request->email;
         $amount = $request->amount;
+        $description = $request->description;
         $user = User::where('email',$email)->first();
         if($user)
         {
@@ -95,7 +96,7 @@ class DashboardController extends AppBaseController
             $user->balance_transactions()->create([
                 'processor_id' => null,
                 'total' => $amount,
-                'description' => "Overdraft Adjustment by Admin",
+                'description' => $description,
                 'clears_on' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
