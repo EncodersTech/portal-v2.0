@@ -3205,7 +3205,7 @@ class MeetRegistration extends Model
 
                                     if ($a['is_specialist']) {
                                         foreach ($a['events'] as $e) {
-                                            if ($e['is_new']) {
+                                            if (isset($e['is_new']) && $e['is_new']) {
                                                 if ($level->pivot->disabled) {
                                                     throw new CustomBaseException('Cannot add specialist events in ' . $level->name . ' because the level was disabled by the meet host.', -1);
                                                 }
@@ -3247,7 +3247,7 @@ class MeetRegistration extends Model
 
                                                 $newAthlete['events'][] = $newEvent;
 
-                                            } else if ($e['changes']['scratch']) {
+                                            } else if (isset($e['changes']) && $e['changes']['scratch']) {
                                                 if ($abilities['scratch']) {
                                                     $event = $athlete->events->where('id', $e['id'])->first(); /** @var RegistrationSpecialistEvent $event */
 
