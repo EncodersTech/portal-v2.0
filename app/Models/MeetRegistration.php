@@ -4204,7 +4204,7 @@ class MeetRegistration extends Model
                 DB::commit();
 
                 $attachment = $meet->registrantMeetEntryAndStoreReport($meet->id, $gym);
-
+                // Mail to registering gym
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,
                     $gym,
@@ -4216,9 +4216,14 @@ class MeetRegistration extends Model
                     null,
                     $attachment
                 ));
-                // die();
-                // process_audit_event($auditEvent);
-                Mail::to($meet->gym->user->email)->send(new RegistrationUpdateMailable(
+                // Mail to host
+                $secondary_mail = [];
+                if($meet->primary_contact_email != null) {
+                    $secondary_mail[] = $meet->primary_contact_email;
+                if($meet->secondary_contact_email != null)
+                    $secondary_mail[] = $meet->secondary_contact_email;
+                }
+                Mail::to($meet->gym->user->email)->cc($secondary_mail)->send(new RegistrationUpdateMailable(
                     $meet,
                     $gym,
                     $this->process_audit_event((object) $auditEvent),
