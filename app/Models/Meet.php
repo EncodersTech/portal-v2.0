@@ -3259,4 +3259,19 @@ class Meet extends Model
             throw $e;
         }
     }
+    public function generateRegistrationQR() : PdfWrapper{
+        try {
+            $image_stream = 'https://quickchart.io/chart?cht=qr&chld=L|0&chs=600x500&chl=https://www.allgymnastics.com/meet-details?meet='.$this->id;
+            $image_data = base64_encode(file_get_contents($image_stream));
+            $image_data = 'data:image/png;base64,'.$image_data;
+            $data = [
+                'host' => $this->gym,
+                'meet' => $this,
+                'img' => $image_data
+            ];
+            return PDF::loadView('PDF.host.meet.reports.registration_qr', $data); /** @var PdfWrapper $pdf */
+        } catch(\Throwable $e) {
+            throw $e;
+        }
+    }
 }
