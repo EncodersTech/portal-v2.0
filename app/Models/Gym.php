@@ -1112,7 +1112,10 @@ class Gym extends Model
                                 if (($len < 1) || ($len > 255))
                                     $issues[] = 'Invalid name value `' . $row[$_i['Name']] . '`';
                                 else
+                                {
                                     $last_name = explode(' ', $first_name)[1];
+                                    $first_name = explode(' ', $first_name)[0];
+                                }
                                 
                                 $dob = \DateTime::createFromFormat('n/j/Y', $row[$_i['BirthDate']]);
                                 if (($dob === null) || ($dob === false)) {
