@@ -7,7 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class USAGPendingReservationMail extends Mailable
+class NewAcountConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,12 +16,10 @@ class USAGPendingReservationMail extends Mailable
      *
      * @return void
      */
-    public $user;
-    public $meet_name;
-    public function __construct($user, $meet_name)
+    public $name;
+    public function __construct($user)
     {
-        $this->user = $user;
-        $this->meet_name = $meet_name;
+        $this->name = $user->fullName();
     }
 
     /**
@@ -32,7 +30,7 @@ class USAGPendingReservationMail extends Mailable
     public function build()
     {
         return $this->from(config('mail.from.address'))
-                    ->subject('Pending USAG Reservation Notification!')
-                    ->markdown('emails.usag_pending_reservation_notification');
+                    ->subject('NEW ACCOUNT CONFIRMATION!')
+                    ->markdown('emails.pre_welcome_form');
     }
 }

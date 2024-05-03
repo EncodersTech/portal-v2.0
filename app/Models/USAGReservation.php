@@ -142,16 +142,16 @@ class USAGReservation extends Model
     }
     public static function pendingReservations()
     {
-        $data = DB::select('select u.* from usag_reservations as ur
+        $data = DB::select('select u.*, mt.name from usag_reservations as ur
         join gyms as g on g.id = ur.gym_id
         join users as u on u.id = g.user_id
         join usag_sanctions as us on us.id=ur.usag_sanction_id
         join meets as mt on mt.id = us.meet_id
         where ur.status=1 and mt.end_date >= \''. Carbon::now()->toDateString().'\' 
-        group by u.id');
+        group by u.id, mt.id');
         foreach ($data as $d) {
             $user = User::find($d->id);
-            dispatch(new USAGPendingReservationNotification($user));
+            dispatch(new USAGPendingReservationNotification($user, $d->name));
         }
     }
 

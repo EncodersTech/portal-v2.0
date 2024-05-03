@@ -14,16 +14,18 @@ class USAGPendingReservationNotification implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     public $tries = 3;
-    public $retryAfter = 3600;
+    public $retryAfter = 5;
     /**
      * Create a new job instance.
      *
      * @return void
      */
     public $user;
-    public function __construct($user)
+    public $meet_name;
+    public function __construct($user, $meet_name)
     {
         $this->user = $user;
+        $this->meet_name = $meet_name;
     }
 
     /**
@@ -33,6 +35,6 @@ class USAGPendingReservationNotification implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->user->email)->send(new USAGPendingReservationMail($this->user));
+        Mail::to($this->user->email)->send(new USAGPendingReservationMail($this->user, $this->meet_name));
     }
 }

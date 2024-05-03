@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->sendOutputTo($logFile);
         
-        $schedule->comman('usag-reservation-reminder:clear')
+        $schedule->command('usag-reservation-reminder:clear')
             ->daily()
             ->withoutOverlapping()
             ->sendOutputTo($logFile)
