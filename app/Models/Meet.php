@@ -3065,7 +3065,7 @@ class Meet extends Model
     }
     public function generateRegistrationQR() : PdfWrapper{
         try {
-            $image_stream = 'https://chart.googleapis.com/chart?choe=UTF-8&chld=L|0&cht=qr&chs=600x500&chl=https://www.allgymnastics.com/meet-details?meet='.$this->id;
+            $image_stream = 'https://quickchart.io/chart?cht=qr&chld=L|0&chs=600x500&chl=https://www.allgymnastics.com/meet-details?meet='.$this->id;
             $image_data = base64_encode(file_get_contents($image_stream));
             $image_data = 'data:image/png;base64,'.$image_data;
             $data = [
