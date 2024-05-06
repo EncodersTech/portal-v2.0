@@ -3173,30 +3173,38 @@ class Meet extends Model
                 $row_data[$key]['gym'] = $value->gym;
                 $row_data[$key]['sanctioning_body'] = '';
                 $row_data[$key]['total_levels'] = $value->levels->count();
+                $row_data[$key]['total_athletes'] = 0;
                 foreach ($value->levels as $key1 => $l) {
+                    
                     $sanctioning_body = SanctioningBody::find($l->sanctioning_body_id)->initialism;
                     $discipline = $l->level_category->name;
 
                     if (!isset($row_data[$key]['discipline'][$discipline])) {
                         $row_data[$key]['discipline'][$discipline] = [
                             'total_participants' => 0,
+                            'total_levels' => 0
+                        ];
+                        $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body] = [
                             'level' => []
                         ];
                     }
+                    // dd($row_data);
+                    // $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]
+
                     $specialist_athletes_count = DB::select('SELECT count(distinct rs.id) as numb FROM registration_specialists as rs 
                                         JOIN registration_specialist_events as rse ON rs.id = rse.specialist_id 
                                         WHERE rse.status =1 and rs.level_registration_id = '.$l->pivot->id);
-
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['gender'] = ($l->pivot->allow_men ? 'Men' : '') . ' ' . ($l->pivot->allow_women?'Women':'');
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['athlete_count'] = $l->pivot->athletes->where('status', 1)->count() + $specialist_athletes_count[0]->numb;
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_count'] = $l->pivot->team_fee > 0 ? 1 : 0;
-                    $row_data[$key]['discipline'][$discipline]['total_participants'] += $row_data[$key]['discipline'][$discipline]['level'][$l->name]['athlete_count'];
-
-                    if($row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_count'] > 0)
-                    {
-                        $row_data[$key]['sanctioning_body'] .= $sanctioning_body .' ';
-                        $row_data[$key]['sanctioning_body'] = implode(' ', array_unique(explode(' ', $row_data[$key]['sanctioning_body'])));
-                    }
+                    $row_data[$key]['discipline'][$discipline]['total_levels'] += 1;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['gender'] = ($l->pivot->allow_men ? 'Men' : '') . ' ' . ($l->pivot->allow_women?'Women':'');
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['athlete_count'] = $l->pivot->athletes->where('status', 1)->count() + $specialist_athletes_count[0]->numb;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['team_count'] = $l->pivot->team_fee > 0 ? 1 : 0;
+                    $row_data[$key]['discipline'][$discipline]['total_participants'] += $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['athlete_count'];
+                    $row_data[$key]['total_athletes'] += $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['athlete_count'];
+                    // if($row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_count'] > 0)
+                    // {
+                    //     $row_data[$key]['sanctioning_body'] .= $sanctioning_body .' ';
+                    //     $row_data[$key]['sanctioning_body'] = implode(' ', array_unique(explode(' ', $row_data[$key]['sanctioning_body'])));
+                    // }
                     $athlete_fees = 0;
                     $scrath_count = 0;
                     $specialist_scratch_count = 0;
@@ -3237,11 +3245,11 @@ class Meet extends Model
                     }
                     
 
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['athlete_fees'] = $athlete_fees;
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['specialist_fees'] = $specialist_fees;
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['scratch_count'] = $scrath_count;
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['specialist_scratch_count'] = $specialist_scratch_count;
-                    $row_data[$key]['discipline'][$discipline]['level'][$l->name]['team_fees'] = $l->pivot->team_fee + $l->pivot->team_late_fee;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['athlete_fees'] = $athlete_fees;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['specialist_fees'] = $specialist_fees;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['scratch_count'] = $scrath_count;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['specialist_scratch_count'] = $specialist_scratch_count;
+                    $row_data[$key]['discipline'][$discipline]['sanctioning_body'][$sanctioning_body]['level'][$l->name]['team_fees'] = $l->pivot->team_fee + $l->pivot->team_late_fee;
                 }
             }
 
@@ -3252,7 +3260,7 @@ class Meet extends Model
                 'registrations' => $row_data,
 
             ];
-
+            // echo view('PDF.host.meet.reports.financial-team-entry', $data); /** @var PdfWrapper $pdf */
             return PDF::loadView('PDF.host.meet.reports.financial-team-entry', $data); /** @var PdfWrapper $pdf */
         }
         catch(\Throwable $e) {
