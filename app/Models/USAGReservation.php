@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Throwable;
 use App\Jobs\USAGPendingReservationNotification;
+use App\Jobs\USAGPRNotificationAdminJob;
 
 class USAGReservation extends Model
 {
@@ -147,12 +148,31 @@ class USAGReservation extends Model
         join users as u on u.id = g.user_id
         join usag_sanctions as us on us.id=ur.usag_sanction_id
         join meets as mt on mt.id = us.meet_id
-        where ur.status=1 and mt.end_date >= \''. Carbon::now()->toDateString().'\' 
+        where ur.status=1 and mt.registration_end_date >= \''. Carbon::now()->toDateString().'\' 
         group by u.id, mt.id');
         foreach ($data as $d) {
             $user = User::find($d->id);
             dispatch(new USAGPendingReservationNotification($user, $d->name));
         }
+
+        $three_days_advance = Carbon::now()->addDays(3)->toDateString();
+        $query = DB::select('select u.id,u.email,u.first_name,u.last_name,m.name from usag_reservations as ur
+        join usag_sanctions as us on us.id = ur.usag_sanction_id
+        join meets as m on us.meet_id = m.id
+        join gyms as g on m.gym_id = g.id
+        join users as u on u.id = g.user_id
+        where ur.status = 1 and m.registration_end_date > \''.Carbon::now()->toDateString().'\' and m.registration_end_date <= \''.$three_days_advance.'\'
+        group by u.id, m.id');
+
+        foreach ($query as $q) {
+            $data = [
+                'email' => $q->email,
+                'name' => $q->first_name . ' ' . $q->last_name,
+                'meet_name' => $q->name
+            ];
+            dispatch(new USAGPRNotificationAdminJob($data['email'], $data['name'], $data['meet_name']));
+        }
+
     }
 
     public static function calculateFinalState(Gym $gym, string $sanction, Collection &$reservations = null) {
