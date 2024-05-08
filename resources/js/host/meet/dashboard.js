@@ -194,6 +194,7 @@ $(document).ready(e => {
                             USAIGCCoachSignin: 'usaigc-coach-signin',
                             NGACoachSignin: 'nga-coach-signin',
                             SpecialistsByLevel: 'specialist-by-level',
+                            EntryTeam: 'entry-team',
                             CoachSignin: 'coach-signin',
                             MarketingQR: 'marketing-qr'
                         }
@@ -247,6 +248,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.SpecialistsByLevel:
                         case this.constants.reports.types.CoachSignin:
                         case this.constants.reports.types.MarketingQR:
+                        case this.constants.reports.types.EntryTeam:
                             break;
 
                         default:

@@ -885,6 +885,16 @@ class MeetController extends AppBaseController
 
                     return $pdf->stream($name);
                     break;
+                case Meet::REPORT_TYPE_ENTRY_TEAM:
+                    $pdf = $meet->generateEntryTeamReport()
+                        ->setPaper('a4')
+                        ->setOption('orientation', 'landscape')
+                        ->setOption('margin-top', '10mm')
+                        ->setOption('margin-bottom', '10mm')
+                        ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
+
+                    return $pdf->stream($name);
+                    break;
                 case Meet::REPORT_TYPE_REFUNDS:
                     // Commented previous function and execute function written by Palash
                      $pdf = $meet->generateRefundReport($gym)->setPaper('a4')
