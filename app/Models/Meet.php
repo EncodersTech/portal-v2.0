@@ -23,7 +23,6 @@ use Throwable;
 use App\Models\MeetTransaction;
 use App\Models\MeetRegistration;
 // use App\Models\AuditEvent;
-
 class Meet extends Model
 {
     use Excludable;
@@ -49,6 +48,7 @@ class Meet extends Model
     public const REPORT_TYPE_LEO_T_SHIRT = 'leo-t-shirt';
     public const REPORT_TYPE_LEO_T_SHIRT_GYM = 'leo-t-shirt-gym';
     public const REPORT_TYPE_SPECIALISTS_BY_LEVEL = 'specialist-by-level';
+    public const REPORT_TYPE_REGISTRATION_QR = 'marketing-qr';
 
     protected $guarded = ['id'];
 
@@ -3146,6 +3146,21 @@ class Meet extends Model
             ];
 
             return PDF::loadView('PDF.host.meet.reports.leo-t-shirt-gym', $data); /** @var PdfWrapper $pdf */
+        } catch(\Throwable $e) {
+            throw $e;
+        }
+    }
+    public function generateRegistrationQR() : PdfWrapper{
+        try {
+            $image_stream = 'https://quickchart.io/chart?cht=qr&chld=L|0&chs=600x500&chl=https://www.allgymnastics.com/meet-details?meet='.$this->id;
+            $image_data = base64_encode(file_get_contents($image_stream));
+            $image_data = 'data:image/png;base64,'.$image_data;
+            $data = [
+                'host' => $this->gym,
+                'meet' => $this,
+                'img' => $image_data
+            ];
+            return PDF::loadView('PDF.host.meet.reports.registration_qr', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
             throw $e;
         }

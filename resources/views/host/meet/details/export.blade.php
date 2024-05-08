@@ -92,5 +92,10 @@
                 ProScore Export
             </button>
         </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.MarketingQR)">
+                Registration QR For Marketing
+            </button>
+        </div>
     </div>
 </div>

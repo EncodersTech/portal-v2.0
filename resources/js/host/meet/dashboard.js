@@ -193,7 +193,9 @@ $(document).ready(e => {
                             Scratch: 'scratch',
                             USAIGCCoachSignin: 'usaigc-coach-signin',
                             NGACoachSignin: 'nga-coach-signin',
-                            SpecialistsByLevel: 'specialist-by-level'
+                            SpecialistsByLevel: 'specialist-by-level',
+                            CoachSignin: 'coach-signin',
+                            MarketingQR: 'marketing-qr'
                         }
                     }
                 };
@@ -243,6 +245,8 @@ $(document).ready(e => {
                         case this.constants.reports.types.USAIGCCoachSignin:
                         case this.constants.reports.types.NGACoachSignin:
                         case this.constants.reports.types.SpecialistsByLevel:
+                        case this.constants.reports.types.CoachSignin:
+                        case this.constants.reports.types.MarketingQR:
                             break;
 
                         default:

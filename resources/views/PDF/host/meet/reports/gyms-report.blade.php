@@ -21,9 +21,6 @@
                 <br/>
                 Host: {{ $host->name }}
             </h2>
-            <h4 class="mb-0">
-                Date: {{ $meet->start_date->format(Helper::AMERICAN_FULL_DATE) }}
-            </h4>
         </div>
         <div class="logo-container">
             @include('PDF.host.meet.reports.common_logo_image')
