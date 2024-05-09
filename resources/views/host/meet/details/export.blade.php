@@ -107,5 +107,10 @@
                 Gym Name Label
             </button>
         </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.CoachNameLabel)">
+                Coaches Name Label
+            </button>
+        </div>
     </div>
 </div>

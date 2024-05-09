@@ -197,7 +197,8 @@ $(document).ready(e => {
                             EntryTeam: 'entry-team',
                             CoachSignin: 'coach-signin',
                             MarketingQR: 'marketing-qr',
-                            GymNameLabel: 'gym-name-label'
+                            GymNameLabel: 'gym-name-label',
+                            CoachNameLabel: 'coaches-name-label'
                         }
                     }
                 };
@@ -251,6 +252,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.MarketingQR:
                         case this.constants.reports.types.EntryTeam:
                         case this.constants.reports.types.GymNameLabel:
+                        case this.constants.reports.types.CoachNameLabel:
                             break;
 
                         default:
