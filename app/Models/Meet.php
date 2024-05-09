@@ -50,6 +50,7 @@ class Meet extends Model
     public const REPORT_TYPE_SPECIALISTS_BY_LEVEL = 'specialist-by-level';
     public const REPORT_TYPE_REGISTRATION_QR = 'marketing-qr';
     public const REPORT_TYPE_ENTRY_TEAM = 'entry-team';
+    public const REPORT_TYPE_GYM_NAME_LABEL = 'gym-name-label';
 
     protected $guarded = ['id'];
 
@@ -3276,6 +3277,50 @@ class Meet extends Model
             return PDF::loadView('PDF.host.meet.reports.financial-team-entry', $data); /** @var PdfWrapper $pdf */
         }
         catch(\Throwable $e) {
+            throw $e;
+        }
+    }
+    public function generateGymNameLabelReport(Gym $gym = null) : PdfWrapper {
+        try {
+            $base = $this->registrations()
+                    ->where('status', MeetRegistration::STATUS_REGISTERED);
+
+            if ($gym !== null)
+                $base = $base->where('gym_id', $gym->id);
+
+            $registrations = $base->select([
+                    'id', 'gym_id', 'meet_id', 'status'
+                ])->orderBy('created_at', 'DESC')
+                ->get();
+
+            // create a 3 column matrix, having 30 rows per page of 1” x 2-5/8” labels
+            $row = 0;
+            $col = 0;
+            $page = 0;
+            $matrix[$page][$row][$col] = [];
+            foreach ($registrations as $i => $registration) {
+                $matrix[$page][$row][$col] = $registration;
+                $col++;
+                if ($col > 2) {
+                    $col = 0;
+                    $row++;
+                    if ($row > 10) {
+                        $row = 0;
+                        $page++;
+                    }
+                }
+            }
+            // dd($matrix);
+            $data = [
+                'meet' => $this,
+                'matrix' => $matrix,
+                'registrations' => $registrations->count(),
+                'page' => $page,
+                'row' => $row,
+                'col' => $col
+            ];
+            return PDF::loadView('PDF.host.meet.reports.gym_name_label', $data); /** @var PdfWrapper $pdf */
+        } catch(\Throwable $e) {
             throw $e;
         }
     }
