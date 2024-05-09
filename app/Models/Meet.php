@@ -2056,7 +2056,7 @@ class Meet extends Model
         }
     }
 
-    public function generateEntryReport(Gym $gym = null,$notAthlete = false) : PdfWrapper {
+    public function generateEntryReport(Gym $gym = null) : PdfWrapper {
         try {
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
@@ -2066,106 +2066,48 @@ class Meet extends Model
                 $base = $base->where('gym_id', $gym->id);
 
             $registrations = $base->select([
-                    'id', 'gym_id', 'meet_id', 'status'
+                    'id', 'gym_id', 'meet_id', 'late_refund', 'status'
                 ])->with([
                     'gym' => function ($q) {
                         $q->select([
-                            'id', 'user_id', 'name', 'addr_1', 'addr_2', 'city', 'state_id', 'zipcode',
-                            'country_id', 'office_phone',
-                        ]);
+                            'id', 'name', 'short_name',
+                        ])->withCount('athletes');
                     },
-                    'gym.state' => function ($q) {
-                        $q->select([
-                            'id', 'code'
-                        ]);
-                    },
-                    'gym.country' => function ($q) {
-                        $q->select([
-                            'id', 'name'
-                        ]);
-                    },
-                    /*
-                    'athletes' => function ($q) {
-                        $q->select([
-                            'id', 'meet_registration_id', 'first_name', 'last_name', 'gender', 'dob',
-                            'fee', 'late_fee', 'refund', 'late_refund', 'status', 'updated_at'
-                        ])->whereIn('status', [
-                            RegistrationAthlete::STATUS_SCRATCHED,
-                            RegistrationAthlete::STATUS_REGISTERED
-                        ])->where(DB::raw(
-                            '(registration_athletes.fee + registration_athletes.late_fee -
-                                registration_athletes.refund - registration_athletes.late_refund)'
-                        ), '<', 0);
-                    },
-                    'specialists' => function ($q) {
-                        $q->select([
-                            'id', 'meet_registration_id', 'first_name', 'last_name', 'gender', 'dob',
-                        ])->with([
-                            'events' => function ($q) {
-                                $q->select([
-                                    'id', 'specialist_id', 'event_id',
-                                    'late_fee', 'refund', 'late_refund', 'status', 'updated_at'
-                                ])->whereIn('status', [
-                                    RegistrationSpecialistEvent::STATUS_SPECIALIST_SCRATCHED,
-                                    RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED
-                                ])->with([
-                                    'specialist_event' => function ($q) {
-                                        $q->select([
-                                            'id', 'name'
-                                        ]);
-                                    },
-                                ])->where(DB::raw(
-                                    '(registration_specialist_events.fee +
-                                        registration_specialist_events.late_fee -
-                                        registration_specialist_events.refund -
-                                        registration_specialist_events.late_refund)'
-                                ), '<', 0);
-                            },
-                        ]);
-                    },*/
+                    'levels' => function ($q) {
+
+                    }
                 ])->orderBy('created_at', 'DESC')
                 ->get();
 
-            // return $registrations;
-
-            foreach ($registrations as $i => $registration) { /** @var MeetRegistration $registration */
-                $total = 0;
-
-                foreach ($registration->specialists as $j => $specialist) { /** @var RegistrationSpecialist $specialist */
-                    if ($specialist->events->count() < 1)
-                        unset($registrations[$i]->specialists[$j]);
-                    else
-                        $total += $specialist->net_fee();
-                }
-
-                $registration->athlete_count = $registration->athletes->count() + $registration->specialists->count();
-                if ($registration->athlete_count < 1) {
-                    unset($registrations[$i]);
-                    continue;
-                }
-
-                foreach ($registration->athletes as $athlete) { /** @var RegistrationSpecialist $specialist */
-                    $total += $athlete->net_fee();
-                }
-                $teamonly = 0;
-                foreach ($registration->levels as $levels) { /** @var RegistrationSpecialist $specialist */
-                    $total += $levels->pivot->net_fee();
-                    $teamonly += $levels->pivot->net_fee();
-                }
-                $registration->net_fee = $total;
-                $registration->net_fee_not_athlete = $teamonly;
-            }
-            
-            $data = [
-                'host' => $this->gym,
-                'meet' => $this,
-                'registrations' => $registrations
+            $sanctions = [];
+            $santion_class = [
+                SanctioningBody::USAG => 'usag',
+                SanctioningBody::USAIGC => 'usaigc',
+                SanctioningBody::AAU => 'aau',
+                SanctioningBody::NGA => 'nga'
             ];
+            
 
-            if ($notAthlete == true){
-                return PDF::loadView('PDF.host.meet.reports.participation_not_athlete', $data); /** @var PdfWrapper $pdf */
+            // sort $this->levels by sanctioning body and sort sanctions based on it
+            $this->levels = $this->levels->sortBy(function($level) {
+                return $level->sanctioning_body_id;
+            });
+
+            foreach($this->levels as $level) {
+                $sanction = SanctioningBody::find($level->sanctioning_body_id)->initialism;
+                if(isset($sanctions[$sanction]))
+                    $sanctions[$sanction] += 1;
+                else
+                    $sanctions[$sanction] = 1;
             }
-            return PDF::loadView('PDF.host.meet.reports.participation', $data); /** @var PdfWrapper $pdf */
+            $data = [
+                'meet' => $this,
+                'registrations' => $registrations,
+                'levels' => $this->levels,
+                'sanctions' => $sanctions,
+                'sanction_class' => $santion_class
+            ];
+            return PDF::loadView('PDF.host.meet.reports.team_not_athlete', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
             throw $e;
         }
