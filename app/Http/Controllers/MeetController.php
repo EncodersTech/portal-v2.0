@@ -911,7 +911,7 @@ class MeetController extends AppBaseController
                     break;
                 case Meet::REPORT_TYPE_REFUNDS:
                     // Commented previous function and execute function written by Palash
-                     $pdf = $meet->generateRefundReport($gym)->setPaper('a4')
+                     $pdf = $meet->generateRefundReport($gym,0)->setPaper('a4')
                          ->setOption('margin-top', '10mm')
                          ->setOption('margin-bottom', '10mm')
                          ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
@@ -920,6 +920,17 @@ class MeetController extends AppBaseController
                     return $pdf->stream($name);
                     break;
 
+                case Meet::REPORT_TYPE_REFUNDSALL:
+                    // Commented previous function and execute function written by Palash
+                        $pdf = $meet->generateRefundReport($gym,1)->setPaper('a4')
+                            ->setOption('margin-top', '10mm')
+                            ->setOption('margin-bottom', '10mm')
+                            ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
+//                    $pdf = $meet->generateScratchReport($gym)->setPaper('a4');
+
+                    return $pdf->stream($name);
+                    break;
+                    
                 case Meet::REPORT_TYPE_PROSCOREEXPORT:
                     $registrationAthlete = RegistrationAthlete::athlete_meet($meet->id, '')->get();
                     $registrationSpecialist = RegistrationSpecialist::athlete_meet($meet->id, '')->get();

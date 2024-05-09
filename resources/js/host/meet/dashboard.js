@@ -200,6 +200,7 @@ $(document).ready(e => {
                             NGACoachSignin: 'nga-coach-signin',
                             SpecialistsByLevel: 'specialist-by-level',
                             EntryTeam: 'entry-team',
+                            RefundAll: 'RefundsAll'
                         }
                     }
                 };
@@ -255,6 +256,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.MarketingQR:
                         case this.constants.reports.types.SpecialistsByLevel:
                         case this.constants.reports.types.EntryTeam:
+                        case this.constants.reports.types.RefundAll:
                             break;
 
                         default:

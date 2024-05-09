@@ -76971,6 +76971,7 @@ $(document).ready(function (e) {
               LeoTShirtGym: 'leo-t-shirt-gym',
               MeetEntry: 'meet-entry',
               Scratch: 'scratch',
+<<<<<<< HEAD
               USAIGCCoachSignin: 'usaigc-coach-signin',
               GymMailingLabel: 'gym-mailing-label',
               CoachSignin: 'coach-signin',
@@ -76980,6 +76981,10 @@ $(document).ready(function (e) {
               NGACoachSignin: 'nga-coach-signin',
               SpecialistsByLevel: 'specialist-by-level',
               EntryTeam: 'entry-team'
+=======
+              CoachSignin: 'coach-signin',
+              RefundAll: 'RefundsAll'
+>>>>>>> feature/refund_report_117
             }
           }
         };
@@ -77028,11 +77033,15 @@ $(document).ready(function (e) {
             case this.constants.reports.types.NGACoachSignin:
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.CoachSignin:
+<<<<<<< HEAD
             case this.constants.reports.types.GymNameLabel:
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.MarketingQR:
             case this.constants.reports.types.SpecialistsByLevel:
             case this.constants.reports.types.EntryTeam:
+=======
+            case this.constants.reports.types.RefundAll:
+>>>>>>> feature/refund_report_117
               break;
 
             default:
