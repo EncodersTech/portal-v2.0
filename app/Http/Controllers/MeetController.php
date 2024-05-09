@@ -1005,6 +1005,13 @@ class MeetController extends AppBaseController
 
                     return $pdf->stream($name);
                     break;
+                case Meet::REPORT_TYPE_GYM_MAILING_LABEL:
+                    $pdf = $meet->generateGymMailingLabelReport()->setPaper('a4')
+                        ->setOption('margin-top', '20mm')
+                        ->setOption('margin-bottom', '10mm');
+
+                    return $pdf->stream($name);
+                    break;
                 default:
                     throw new CustomBaseException("Invalid report type.", 1);
             }
