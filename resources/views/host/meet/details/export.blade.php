@@ -19,7 +19,12 @@
         </div>
         <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.Refunds)">
-               Refunds
+               Refunds by Gym
+            </button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.RefundAll)">
+               Refunds All
             </button>
         </div>
     </div>

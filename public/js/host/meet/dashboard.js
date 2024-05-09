@@ -76971,7 +76971,8 @@ $(document).ready(function (e) {
               LeoTShirtGym: 'leo-t-shirt-gym',
               MeetEntry: 'meet-entry',
               Scratch: 'scratch',
-              CoachSignin: 'coach-signin'
+              CoachSignin: 'coach-signin',
+              RefundAll: 'RefundsAll'
             }
           }
         };
@@ -77017,6 +77018,7 @@ $(document).ready(function (e) {
             case this.constants.reports.types.MeetEntry:
             case this.constants.reports.types.Scratch:
             case this.constants.reports.types.CoachSignin:
+            case this.constants.reports.types.RefundAll:
               break;
 
             default:
