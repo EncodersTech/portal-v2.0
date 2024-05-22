@@ -1126,7 +1126,7 @@ class Gym extends Model
                                 }
 
                                 $gender = trim($row[$_i['Gender']]);
-                                $gender == "F" ? "female" : "male";
+                                $gender = ($gender == "F") ? "female" : "male";
                                 if (!in_array($gender, ['male', 'female'])) {
                                     $issues[] = 'Invalid gender value `' . $row[$_i['Gender']] . '`';
                                 }
