@@ -21,6 +21,27 @@
     </div>
     <section class="content">
         <div class="container-fluid">
+            <form method="get">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="form-group">
+                            <label for="start_date">From</label>
+                            <input type="date" name="start_date" id="start_date" class="form-control" value="<?php echo $start_date ;?>">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <label for="end_date">To</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" value="<?php echo $end_date ;?>">
+                    </div>
+                    <div class="col-3">
+                        <label for="end_date">&nbsp;</label>
+                        <input type="submit" value="Submit" class="form-control btn btn-success">
+                    </div> 
+                </div>
+            </form>
+            <br>
+            <hr>
+
             <div class="row">
                 <div class="col-4">
                     <h3>User Statistics</h3>
@@ -37,17 +58,27 @@
             </div>
             <hr>
             <div class="row">
-                <div class="col-12">
+                <div class="col-6">
+                    <h3>Meet Registration Statistics</h3>
+                    <canvas id="meetRegistrationStatistics"></canvas>
+                </div>
+                <div class="col-6">
+                    <h3>Gym Registration Statistics</h3>
+                    <canvas id="gymRegistrationStatistics"></canvas>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-6">
                     <h3>Athlete Statistics</h3>
                     <canvas id="athleteStatistics"></canvas>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-12">
+                <div class="col-6">
                     <h3>Coach Statistics</h3>
                     <canvas id="coachStatistics"></canvas>
                 </div>
             </div>
+            <hr>
         </div>
     </section>
 @endsection
@@ -62,6 +93,8 @@
   const userBalanceStatistics = document.getElementById('userBalanceStatistics');
   const transactionStatistics = document.getElementById('transactionStatistics');
   const athleteStatistics = document.getElementById('athleteStatistics');
+  const meetRegistrationStatistics = document.getElementById('meetRegistrationStatistics');
+  const gymRegistrationStatistics = document.getElementById('gymRegistrationStatistics');
 
   new Chart(userStatistics, {
     type: 'doughnut',
@@ -105,8 +138,7 @@
     options: {
         plugins: {
             legend: {
-                display: true,
-                position: 'left'
+                display: false
             }
         }
     }
@@ -120,8 +152,49 @@
     options: {
         plugins: {
             legend: {
+                display: false
+            }
+        }
+    }
+  });
+  new Chart(meetRegistrationStatistics, {
+    type: 'polarArea',
+    data: <?php echo json_encode($meet_registration_statistics); ?>,
+    options: {
+        plugins: {
+            legend: {
                 display: true,
-                position: 'left'
+                labels: {
+                    generateLabels: (chart) => {
+                        const datasets = chart.data.datasets;
+                        return datasets[0].data.map((data, i) => ({
+                        text: `${chart.data.labels[i]} (${data})`,
+                        fillStyle: datasets[0].backgroundColor[i],
+                        index: i
+                        }))
+                    }
+                }
+            }
+        }
+    }
+  });
+  new Chart(gymRegistrationStatistics, {
+    type: 'polarArea',
+    data: <?php echo json_encode($gym_registration_statistics); ?>,
+    options: {
+        plugins: {
+            legend: {
+                display: true,
+                labels: {
+                    generateLabels: (chart) => {
+                        const datasets = chart.data.datasets;
+                        return datasets[0].data.map((data, i) => ({
+                        text: `${chart.data.labels[i]} (${data})`,
+                        fillStyle: datasets[0].backgroundColor[i],
+                        index: i
+                        }))
+                    }
+                }
             }
         }
     }

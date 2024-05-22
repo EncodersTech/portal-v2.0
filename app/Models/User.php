@@ -993,10 +993,18 @@ class User extends Authenticatable implements MustVerifyEmail
             ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_REVENUE)
             ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
             ->get()->sum("total");
+        $registration_revenue += UserBalanceTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
+            ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->where("total", ">", 0)
+            ->get()->sum("total");
+
         $registration_payment = UserBalanceTransaction::where("created_at", ">=", $start_date)
             ->where("created_at", "<=", $end_date)
             ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
             ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->where("total", "<", 0)
             ->get()->sum("total");
 
         $withdrawal_cleared = UserBalanceTransaction::where("created_at", ">=", $start_date)
@@ -1013,7 +1021,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return [
             'Registration Revenue' => $registration_revenue,
-            'Registration Payment' => $registration_payment,
+            'AllGym Balance Payment' => ($registration_payment * -1),
             'Withdrawal Cleared' => $withdrawal_cleared,
             'Withdrawal Pending' => $withdrawal_pending
         ];
@@ -1089,6 +1097,74 @@ class User extends Authenticatable implements MustVerifyEmail
             ];
         }
         return $format_data;
+    }
+    public function meet_registration_report($start_date, $end_date)
+    {
+        $meet_registrations = MeetRegistration::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("status", MeetRegistration::STATUS_REGISTERED)
+            ->get();
+
+        $data = [];
+        foreach ($meet_registrations as $meet_registration) {
+            $meet_name = $meet_registration->meet->name;
+            if(!isset($data[$meet_name]))
+                $data[$meet_name] = $meet_registration->where('meet_id', $meet_registration->meet->id)->count();
+        }
+        $label = [];
+        $dataset = [];
+        $background_color = [];
+        foreach($data as $key=>$value)
+        {
+            $random_number = rand(0, 255).','.rand(0, 255).','.rand(0, 255);
+            $random_rgba_color = 'rgba('.$random_number.',0.6)';
+
+            $label[] = $key;
+            $dataset[] = $value;
+            $background_color[] = $random_rgba_color;
+        }
+        return [
+            'labels' => array_values($label),
+            'datasets' => [[
+                'label' => 'Meet Registrations',
+                'data' => array_values($dataset),
+                'backgroundColor' => $background_color
+            ]]
+        ];
+    }
+    public function gym_registration_report($start_date, $end_date)
+    {
+        $meet_registrations = MeetRegistration::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("status", MeetRegistration::STATUS_REGISTERED)
+            ->get();
+
+        $data = [];
+        foreach ($meet_registrations as $meet_registration) {
+            $gym_name = $meet_registration->gym->name;
+            if(!isset($data[$gym_name]))
+                $data[$gym_name] = $meet_registration->where('gym_id', $meet_registration->gym->id)->count();
+        }
+        $label = [];
+        $dataset = [];
+        $background_color = [];
+        foreach($data as $key=>$value)
+        {
+            $random_number = rand(0, 255).','.rand(0, 255).','.rand(0, 255);
+            $random_rgba_color = 'rgba('.$random_number.',0.6)';
+
+            $label[] = $key;
+            $dataset[] = $value;
+            $background_color[] = $random_rgba_color;
+        }
+        return [
+            'labels' => array_values($label),
+            'datasets' => [[
+                'label' => 'Gym Registrations',
+                'data' => array_values($dataset),
+                'backgroundColor' => $background_color
+            ]]
+        ];
     }
     // Admin Dashboard Reports Function - End
 }

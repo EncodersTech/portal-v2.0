@@ -295,8 +295,17 @@ class DashboardController extends AppBaseController
     }
     public function reports_dashboard()
     {
-        $start_date = date('m/d/Y',strtotime('-36 month'));
-        $end_date = date('m/d/Y');
+        if(isset($_GET['start_date']) && isset($_GET['end_date']))
+        {
+            $start_date = $_GET['start_date'];
+            $end_date = $_GET['end_date'];
+        }
+        else
+        {
+            $start_date = date('Y-m-d',strtotime('-12 month'));
+            $end_date = date('Y-m-d');
+        }
+        // dd($start_date,$end_date);
         $user = resolve(User::class);
 
         $data = [];
@@ -307,7 +316,10 @@ class DashboardController extends AppBaseController
         $data['user_balance_statistics'] = $user->get_user_balance_sum($start_date,$end_date);
         $data['athlete_statistics'] = $user->get_athlete_count_per_gym();
         $data['coach_statistics'] = $user->get_coach_count_per_gym();
-        // dd($data['coach_statistics']);
+        $data['meet_registration_statistics'] = $user->meet_registration_report($start_date,$end_date);
+        $data['gym_registration_statistics'] = $user->gym_registration_report($start_date,$end_date);
+        
+        // dd($data['meet_registration_statistics']);
         return view('admin.dashboard.report', $data);
     }
 
