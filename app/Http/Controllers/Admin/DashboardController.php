@@ -305,12 +305,16 @@ class DashboardController extends AppBaseController
             $start_date = date('Y-m-d',strtotime('-12 month'));
             $end_date = date('Y-m-d');
         }
-        // dd($start_date,$end_date);
+        
         $user = resolve(User::class);
 
         $data = [];
         $data['start_date'] = $start_date;
         $data['end_date'] = $end_date;
+
+        $start_date = date('Y-m-d h:i:s',strtotime($start_date));
+        $end_date = date('Y-m-d h:i:s',strtotime($end_date));
+
         $data['user_statistics'] = $user->get_user_statistics($start_date,$end_date);
         $data['transaction_statistics'] = $user->get_transaction_method_sum($start_date,$end_date);
         $data['user_balance_statistics'] = $user->get_user_balance_sum($start_date,$end_date);
