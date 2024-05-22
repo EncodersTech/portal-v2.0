@@ -244,7 +244,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::get('onetimeach/report','DashboardController@onetimeach_report')->name('admin.onetimeach_report');
         Route::post('onetimeach/report','DashboardController@onetimeach_report')->name('admin.onetimeach_post');
 
-
+        Route::get('major-report','DashboardController@reports_dashboard')->name('admin.dashboard_reports');
 
         Route::post('errortracing/update-usag-levels','DashboardController@usagLevelsUpdate')->name('admin.error_report.update_usag_level');
         Route::post('errortracing/insert-usag-levels','DashboardController@usagLevelsAdd')->name('admin.error_report.insert_usag_level');

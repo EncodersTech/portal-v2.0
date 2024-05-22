@@ -293,5 +293,22 @@ class DashboardController extends AppBaseController
         $usag->checkForExistingLevelsInSanction();
         // $usag->checkForExistingLevels();
     }
+    public function reports_dashboard()
+    {
+        $start_date = date('m/d/Y',strtotime('-36 month'));
+        $end_date = date('m/d/Y');
+        $user = resolve(User::class);
+
+        $data = [];
+        $data['start_date'] = $start_date;
+        $data['end_date'] = $end_date;
+        $data['user_statistics'] = $user->get_user_statistics($start_date,$end_date);
+        $data['transaction_statistics'] = $user->get_transaction_method_sum($start_date,$end_date);
+        $data['user_balance_statistics'] = $user->get_user_balance_sum($start_date,$end_date);
+        $data['athlete_statistics'] = $user->get_athlete_count_per_gym();
+        $data['coach_statistics'] = $user->get_coach_count_per_gym();
+        // dd($data['coach_statistics']);
+        return view('admin.dashboard.report', $data);
+    }
 
 }
