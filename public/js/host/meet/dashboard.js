@@ -76972,14 +76972,14 @@ $(document).ready(function (e) {
               MeetEntry: 'meet-entry',
               Scratch: 'scratch',
               USAIGCCoachSignin: 'usaigc-coach-signin',
-              GymMailingLabel: 'gym-mailing-label',
-              CoachSignin: 'coach-signin',
-              GymNameLabel: 'gym-name-label',
-              CoachNameLabel: 'coaches-name-label',
-              MarketingQR: 'marketing-qr',
               NGACoachSignin: 'nga-coach-signin',
               SpecialistsByLevel: 'specialist-by-level',
               EntryTeam: 'entry-team',
+              CoachSignin: 'coach-signin',
+              MarketingQR: 'marketing-qr',
+              GymNameLabel: 'gym-name-label',
+              CoachNameLabel: 'coaches-name-label',
+              GymMailingLabel: 'gym-mailing-label',
               RefundAll: 'RefundsAll'
             }
           }
@@ -77033,7 +77033,12 @@ $(document).ready(function (e) {
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.MarketingQR:
             case this.constants.reports.types.SpecialistsByLevel:
+            case this.constants.reports.types.CoachSignin:
+            case this.constants.reports.types.MarketingQR:
             case this.constants.reports.types.EntryTeam:
+            case this.constants.reports.types.GymNameLabel:
+            case this.constants.reports.types.CoachNameLabel:
+            case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.RefundAll:
               break;
 

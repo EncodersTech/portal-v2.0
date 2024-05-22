@@ -128,5 +128,12 @@
                 <p>ACH Report</p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.dashboard_reports') }}"
+                class="nav-link {{ Request::is('admin/major-report') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cog"></i>
+                <p>Major Report</p>
+            </a>
+        </li>
     </ul>
 </nav>

@@ -16,6 +16,7 @@ use App\Services\DwollaService;
 use App\Exceptions\CustomStripeException;
 use App\Exceptions\CustomDwollaException;
 use App\Models\MemberInvitation;
+use App\Models\MeetTransaction;
 use App\Exceptions\CustomBaseException;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
@@ -909,4 +910,265 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $featuredMeetFee;
     }
+
+    // Admin Dashboard Reports Function - Start
+
+    public function get_user_statistics($start_date, $end_date)
+    {
+        $total_users = User::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->get()->count();
+
+        $verified_users = User::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->whereNotNull("email_verified_at")
+            ->get()->count();
+
+        $users_with_gyms = User::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->whereHas("gyms")
+            ->get()->count();
+        
+        $users_hosted_meet = User::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->whereHas("gyms.meets")
+            ->get()->count();
+
+        return [
+            "Total Users" => $total_users,
+            "Verified Users" => $verified_users,
+            "Users With Gyms" => $users_with_gyms,
+            "Users Hosted Meet" => $users_hosted_meet
+        ];
+    }
+    public function get_transaction_method_sum($start_date, $end_date)
+    {
+        $card_payments = MeetTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("method", MeetTransaction::PAYMENT_METHOD_CC)
+            ->where("status", MeetTransaction::STATUS_COMPLETED)
+            ->get()->sum("total");
+
+        $dwolla_ach_payments = MeetTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("method", MeetTransaction::PAYMENT_METHOD_ACH)
+            ->where("status", MeetTransaction::STATUS_COMPLETED)
+            ->get()->sum("total");
+
+        $intellipay_ach_payments = MeetTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("method", MeetTransaction::PAYMENT_METHOD_ONETIMEACH)
+            ->where("status", MeetTransaction::STATUS_COMPLETED)
+            ->get()->sum("total");
+
+        $allgym_balance_payments = MeetTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("method", MeetTransaction::PAYMENT_METHOD_BALANCE)
+            ->where("status", MeetTransaction::STATUS_COMPLETED)
+            ->get()->sum("total");
+
+        $handling_fee_received = MeetTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("status", MeetTransaction::STATUS_COMPLETED)
+            ->get()->sum("handling_fee");
+
+        $processor_fee_received = MeetTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("status", MeetTransaction::STATUS_COMPLETED)
+            ->get()->sum("processor_fee");
+
+        return [
+            'Card' => $card_payments,
+            'Dwolla' => $dwolla_ach_payments,
+            'Intellipay' => $intellipay_ach_payments,
+            'AllGym Balance' => $allgym_balance_payments,
+            'Handling' => $handling_fee_received,
+            'Processor' => $processor_fee_received
+        ];
+    }
+    public function get_user_balance_sum($start_date, $end_date)
+    {
+        $registration_revenue = UserBalanceTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_REVENUE)
+            ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->get()->sum("total");
+        $registration_revenue += UserBalanceTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
+            ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->where("total", ">", 0)
+            ->get()->sum("total");
+
+        $registration_payment = UserBalanceTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
+            ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->where("total", "<", 0)
+            ->get()->sum("total");
+
+        $withdrawal_cleared = UserBalanceTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL)
+            ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+            ->get()->sum("total");
+
+        $withdrawal_pending = UserBalanceTransaction::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("type", UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL)
+            ->where("status", UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
+            ->get()->sum("total");
+
+        return [
+            'Registration Revenue' => $registration_revenue,
+            'AllGym Balance Payment' => ($registration_payment * -1),
+            'Withdrawal Cleared' => ($withdrawal_cleared * -1),
+            'Withdrawal Pending' => ($withdrawal_pending * -1)
+        ];
+    }
+    public function get_athlete_count_per_gym()
+    {
+        $gyms = Gym::where('is_archived', false)->get();
+        $data = [];
+        foreach ($gyms as $gym) {
+            if($gym->athletes->count() == 0)
+                continue;
+            $company = [
+                'USAG' => $gym->athletes->where('usag_active', '!=', false)->count(),
+                'USAIGC' => $gym->athletes->where('usaigc_active', '!=', false)->count(),
+                'NGA' => $gym->athletes->where('nga_active', '!=', false)->count(),
+                'AAU' => $gym->athletes->where('aau_active', '!=', false)->count(),
+            ];
+            if(array_sum($company) > 0)
+            	$data[$gym->name] = $company;
+        }
+
+        $format_data = [];
+        foreach ($data as $key => $value) {
+            $random_number = rand(0, 255).','.rand(0, 255).','.rand(0, 255);
+            $random_rgba_color = 'rgba('.$random_number.',0.2)';
+            $border_color = 'rgba('.$random_number.',1)';
+            $format_data[] = [
+                'label' => $key,
+                'data' => array_values($value),
+                'fill' => true,
+                'backgroundColor' => $random_rgba_color,
+                'borderColor' => $border_color,
+                'pointBackgroundColor' => $border_color,
+                'pointBorderColor' => '#fff',
+                'pointHoverBackgroundColor' => '#fff',
+                'pointHoverBorderColor' => $border_color
+            ];
+        }
+        return $format_data;
+    }
+    public function get_coach_count_per_gym()
+    {
+        $gyms = Gym::where('is_archived', false)->get();
+        $data = [];
+        foreach ($gyms as $gym) {
+            if($gym->coaches->count() == 0)
+                continue;
+            $company = [
+                'USAG' => $gym->coaches->where('usag_active', '!=', false)->count(),
+                'USAIGC' => $gym->coaches->where('usaigc_active', '!=', false)->count(),
+                'NGA' => $gym->coaches->where('nga_no', '!=', null)->count(),
+                'AAU' => $gym->coaches->where('aau_no', '!=', null)->count(),
+            ];
+            if(array_sum($company) > 0)
+            	$data[$gym->name] = $company;
+        }
+
+        $format_data = [];
+        foreach ($data as $key => $value) {
+            $random_number = rand(0, 255).','.rand(0, 255).','.rand(0, 255);
+            $random_rgba_color = 'rgba('.$random_number.',0.2)';
+            $border_color = 'rgba('.$random_number.',1)';
+            $format_data[] = [
+                'label' => $key,
+                'data' => array_values($value),
+                'fill' => true,
+                'backgroundColor' => $random_rgba_color,
+                'borderColor' => $border_color,
+                'pointBackgroundColor' => $border_color,
+                'pointBorderColor' => '#fff',
+                'pointHoverBackgroundColor' => '#fff',
+                'pointHoverBorderColor' => $border_color
+            ];
+        }
+        return $format_data;
+    }
+    public function meet_registration_report($start_date, $end_date)
+    {
+        $meet_registrations = MeetRegistration::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("status", MeetRegistration::STATUS_REGISTERED)
+            ->get();
+
+        $data = [];
+        foreach ($meet_registrations as $meet_registration) {
+            $meet_name = $meet_registration->meet->name;
+            if(!isset($data[$meet_name]))
+                $data[$meet_name] = 1;
+            else
+                $data[$meet_name]++;
+        }
+        $label = [];
+        $dataset = [];
+        $background_color = [];
+        foreach($data as $key=>$value)
+        {
+            $random_number = rand(0, 255).','.rand(0, 255).','.rand(0, 255);
+            $random_rgba_color = 'rgba('.$random_number.',0.6)';
+
+            $label[] = $key;
+            $dataset[] = $value;
+            $background_color[] = $random_rgba_color;
+        }
+        return [
+            'labels' => array_values($label),
+            'datasets' => [[
+                'label' => 'Meet Registrations',
+                'data' => array_values($dataset),
+                'backgroundColor' => $background_color
+            ]]
+        ];
+    }
+    public function gym_registration_report($start_date, $end_date)
+    {
+        $meet_registrations = MeetRegistration::where("created_at", ">=", $start_date)
+            ->where("created_at", "<=", $end_date)
+            ->where("status", MeetRegistration::STATUS_REGISTERED)
+            ->get();
+
+        $data = [];
+        foreach ($meet_registrations as $meet_registration) {
+            $gym_name = $meet_registration->gym->name;
+            if(!isset($data[$gym_name]))
+                $data[$gym_name] = 1;
+            else
+                $data[$gym_name] += 1;
+        }
+        $label = [];
+        $dataset = [];
+        $background_color = [];
+        foreach($data as $key=>$value)
+        {
+            $random_number = rand(0, 255).','.rand(0, 255).','.rand(0, 255);
+            $random_rgba_color = 'rgba('.$random_number.',0.6)';
+
+            $label[] = $key;
+            $dataset[] = $value;
+            $background_color[] = $random_rgba_color;
+        }
+        return [
+            'labels' => array_values($label),
+            'datasets' => [[
+                'label' => 'Gym Registrations',
+                'data' => array_values($dataset),
+                'backgroundColor' => $background_color
+            ]]
+        ];
+    }
+    // Admin Dashboard Reports Function - End
 }

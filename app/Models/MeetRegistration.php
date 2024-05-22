@@ -1781,128 +1781,6 @@ class MeetRegistration extends Model
             throw $e;
         }
     }
-    public function calculateRegistrationTotalRepay(array $snapshot, bool $is_scratch = false, $usag_mismatch_fee = 0, $credit_remaining = 0)
-    {
-        $meet = $this->meet; /** @var Meet $m */
-        try {
-            $subtotal = 0;
-            $lTeamFee = [];
-            $mLateFee = 0;
-
-            $old = null;
-            $new = null;
-            $old_late = null;
-            $new_late = null;
-            $fee = null;
-            $fee_late = null;
-            $r = $snapshot['registration'];
-            $deposit = isset($snapshot['deposit']) ? $snapshot['deposit'] : false;
-            $coupon = isset($snapshot['coupon']) ? $snapshot['coupon'] : 0;
-
-            // late registration fee
-            $old = $r['old']['late_fee'] - $r['old']['late_refund'];
-            $new = $r['new']['late_fee'] - $r['new']['late_refund'];
-            $fee = $meet->late_registration_fee;
-
-            if ($r['new']['was_late']) { // check that the fee and flag match
-                if ($new != $fee) {
-                    throw new CustomBaseException('Calculation mismatch (late registration fee)', -1);
-                }
-
-                if ($new != $old) { // we should charge the fee
-                    $mLateFee = $is_scratch ? 0 : $fee;
-                    $subtotal += $is_scratch ? 0 : $fee;
-                    // $mLateFee = $fee;
-                    // $subtotal += $fee;
-                }
-            } else { // check if the fee should have been refunded
-                if ($new != 0) {
-                    throw new CustomBaseException('Calculation mismatch (late registration fee refund)', -1);
-                }
-
-            }
-
-            $levels = $snapshot['levels'];
-            foreach ($levels as $level_id => $l) {
-
-                $level = LevelRegistration::find($level_id); /** @var LevelRegistration $level */
-                if ($level === null) {
-                    throw new CustomBaseException('Calculation error: can\'t find level ' . $level_id, -1);
-                }
-
-                // team registration fee
-                $old = $l['old']['team_fee'] - $l['old']['team_refund'];
-                $new = $l['new']['team_fee'] - $l['new']['team_refund'];
-                $old_late = $l['old']['team_late_fee'] - $l['old']['team_late_refund'];
-                $new_late = $l['new']['team_late_fee'] - $l['new']['team_late_refund'];
-
-                $fee = $level->team_registration_fee;
-                $fee_late = $level->team_late_registration_fee;
-
-                $lTeamFee[$level->id] = [ // nothing incurred yet
-                    'fee' => 0,
-                    'late' => 0,
-                ];
-
-                if ($l['new']['has_team']) { // check the flag and fee match
-                    if ($new != $fee) {
-                        throw new CustomBaseException('Calculation mismatch (team registration fee)', -1);
-                    }
-
-                    if ($new != $old) { // we should charge the team fee
-                        $lTeamFee[$level->id]['fee'] = $fee;
-                        $subtotal += $fee;
-                    }
-                } else { // check if the fee should have been refunded
-                    if ($new != 0) {
-                        throw new CustomBaseException('Calculation mismatch (team registration fee refund)', -1);
-                    }
-
-                }
-
-                if ($l['new']['was_late']) { // check the flag and fee match
-                    if ($new_late != $fee_late) {
-                        throw new CustomBaseException('Calculation mismatch (late team registration fee)', -1);
-                    }
-
-                    if ($new_late != $old_late) { // we should charge the late team fee
-                        $lTeamFee[$level->id]['late'] = $is_scratch ? 0 : $fee_late;
-                        $subtotal += $is_scratch ? 0 : $fee_late;
-                    }
-                } else { // check if the fee should have been refunded
-                    if ($new_late != 0) {
-                        throw new CustomBaseException('Calculation mismatch (late team registration fee refund)', -1);
-                    }
-
-                }
-                $athletes = $l['athletes'];
-                foreach ($athletes as $a) {
-                        $subtotal += $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
-                }
-
-                $specialists = $l['specialists'];
-                foreach ($specialists as $specialist_events) {
-                    foreach ($specialist_events as $k => $se) {
-                        if(is_int($k)) // this is important, gettint evt-number as duplicate for some reason
-                        {
-                            $subtotal += $se['new']['fee'] + $se['new']['late_fee'] - ($se['new']['refund'] + $se['new']['late_refund']);
-                        }
-                    }
-                }
-                // echo 'after sp : '. $subtotal.'<br>';
-            }
-            $result = [
-                'level_team_fees' => $lTeamFee,
-                'registration_late_fee' => $mLateFee,
-                'subtotal' => $subtotal - $coupon + $usag_mismatch_fee - $credit_remaining,
-                'deposit_subtotal' => $deposit ? ($subtotal * $meet->deposit_ratio) / 100 : 0,
-                'coupon' => $coupon,
-            ];
-            return $result;
-        } catch (\Throwable $e) {
-            throw $e;
-        }
-    }
 
     public static function calculateFees(float $subtotal, Meet $meet, bool $is_own,
         array $chosenMethod, bool $useBalance, float $balance = 0, bool $deposit = false, float $coupon = 0, float $discount = 0) {
@@ -4326,7 +4204,7 @@ class MeetRegistration extends Model
                 DB::commit();
 
                 $attachment = $meet->registrantMeetEntryAndStoreReport($meet->id, $gym);
-
+                // Mail to registering gym
                 Mail::to($gym->user->email)->send(new GymRegistrationUpdatedMailable(
                     $meet,
                     $gym,
@@ -4338,9 +4216,14 @@ class MeetRegistration extends Model
                     null,
                     $attachment
                 ));
-                // die();
-                // process_audit_event($auditEvent);
-                Mail::to($meet->gym->user->email)->send(new RegistrationUpdateMailable(
+                // Mail to host
+                $secondary_mail = [];
+                if($meet->primary_contact_email != null) {
+                    $secondary_mail[] = $meet->primary_contact_email;
+                if($meet->secondary_contact_email != null)
+                    $secondary_mail[] = $meet->secondary_contact_email;
+                }
+                Mail::to($meet->gym->user->email)->cc($secondary_mail)->send(new RegistrationUpdateMailable(
                     $meet,
                     $gym,
                     $this->process_audit_event((object) $auditEvent),
@@ -4828,5 +4711,127 @@ class MeetRegistration extends Model
     {
         // $stripeService = resolve(StripeService::class);
         return StripeService::oneTimeACHStripe($amount);
+    }
+    public function calculateRegistrationTotalRepay(array $snapshot, bool $is_scratch = false, $usag_mismatch_fee = 0, $credit_remaining = 0)
+    {
+        $meet = $this->meet; /** @var Meet $m */
+        try {
+            $subtotal = 0;
+            $lTeamFee = [];
+            $mLateFee = 0;
+
+            $old = null;
+            $new = null;
+            $old_late = null;
+            $new_late = null;
+            $fee = null;
+            $fee_late = null;
+            $r = $snapshot['registration'];
+            $deposit = isset($snapshot['deposit']) ? $snapshot['deposit'] : false;
+            $coupon = isset($snapshot['coupon']) ? $snapshot['coupon'] : 0;
+
+            // late registration fee
+            $old = $r['old']['late_fee'] - $r['old']['late_refund'];
+            $new = $r['new']['late_fee'] - $r['new']['late_refund'];
+            $fee = $meet->late_registration_fee;
+
+            if ($r['new']['was_late']) { // check that the fee and flag match
+                if ($new != $fee) {
+                    throw new CustomBaseException('Calculation mismatch (late registration fee)', -1);
+                }
+
+                if ($new != $old) { // we should charge the fee
+                    $mLateFee = $is_scratch ? 0 : $fee;
+                    $subtotal += $is_scratch ? 0 : $fee;
+                    // $mLateFee = $fee;
+                    // $subtotal += $fee;
+                }
+            } else { // check if the fee should have been refunded
+                if ($new != 0) {
+                    throw new CustomBaseException('Calculation mismatch (late registration fee refund)', -1);
+                }
+
+            }
+
+            $levels = $snapshot['levels'];
+            foreach ($levels as $level_id => $l) {
+
+                $level = LevelRegistration::find($level_id); /** @var LevelRegistration $level */
+                if ($level === null) {
+                    throw new CustomBaseException('Calculation error: can\'t find level ' . $level_id, -1);
+                }
+
+                // team registration fee
+                $old = $l['old']['team_fee'] - $l['old']['team_refund'];
+                $new = $l['new']['team_fee'] - $l['new']['team_refund'];
+                $old_late = $l['old']['team_late_fee'] - $l['old']['team_late_refund'];
+                $new_late = $l['new']['team_late_fee'] - $l['new']['team_late_refund'];
+
+                $fee = $level->team_registration_fee;
+                $fee_late = $level->team_late_registration_fee;
+
+                $lTeamFee[$level->id] = [ // nothing incurred yet
+                    'fee' => 0,
+                    'late' => 0,
+                ];
+
+                if ($l['new']['has_team']) { // check the flag and fee match
+                    if ($new != $fee) {
+                        throw new CustomBaseException('Calculation mismatch (team registration fee)', -1);
+                    }
+
+                    if ($new != $old) { // we should charge the team fee
+                        $lTeamFee[$level->id]['fee'] = $fee;
+                        $subtotal += $fee;
+                    }
+                } else { // check if the fee should have been refunded
+                    if ($new != 0) {
+                        throw new CustomBaseException('Calculation mismatch (team registration fee refund)', -1);
+                    }
+
+                }
+
+                if ($l['new']['was_late']) { // check the flag and fee match
+                    if ($new_late != $fee_late) {
+                        throw new CustomBaseException('Calculation mismatch (late team registration fee)', -1);
+                    }
+
+                    if ($new_late != $old_late) { // we should charge the late team fee
+                        $lTeamFee[$level->id]['late'] = $is_scratch ? 0 : $fee_late;
+                        $subtotal += $is_scratch ? 0 : $fee_late;
+                    }
+                } else { // check if the fee should have been refunded
+                    if ($new_late != 0) {
+                        throw new CustomBaseException('Calculation mismatch (late team registration fee refund)', -1);
+                    }
+
+                }
+                $athletes = $l['athletes'];
+                foreach ($athletes as $a) {
+                        $subtotal += $a['new']['fee'] + $a['new']['late_fee'] - ($a['new']['refund'] + $a['new']['late_refund']);
+                }
+
+                $specialists = $l['specialists'];
+                foreach ($specialists as $specialist_events) {
+                    foreach ($specialist_events as $k => $se) {
+                        if(is_int($k)) // this is important, gettint evt-number as duplicate for some reason
+                        {
+                            $subtotal += $se['new']['fee'] + $se['new']['late_fee'] - ($se['new']['refund'] + $se['new']['late_refund']);
+                        }
+                    }
+                }
+                // echo 'after sp : '. $subtotal.'<br>';
+            }
+            $result = [
+                'level_team_fees' => $lTeamFee,
+                'registration_late_fee' => $mLateFee,
+                'subtotal' => $subtotal - $coupon + $usag_mismatch_fee - $credit_remaining,
+                'deposit_subtotal' => $deposit ? ($subtotal * $meet->deposit_ratio) / 100 : 0,
+                'coupon' => $coupon,
+            ];
+            return $result;
+        } catch (\Throwable $e) {
+            throw $e;
+        }
     }
 }
