@@ -1109,7 +1109,9 @@ class User extends Authenticatable implements MustVerifyEmail
         foreach ($meet_registrations as $meet_registration) {
             $meet_name = $meet_registration->meet->name;
             if(!isset($data[$meet_name]))
-                $data[$meet_name] = $meet_registration->where('meet_id', $meet_registration->meet->id)->count();
+                $data[$meet_name] = 1;
+            else
+                $data[$meet_name]++;
         }
         $label = [];
         $dataset = [];
@@ -1143,7 +1145,9 @@ class User extends Authenticatable implements MustVerifyEmail
         foreach ($meet_registrations as $meet_registration) {
             $gym_name = $meet_registration->gym->name;
             if(!isset($data[$gym_name]))
-                $data[$gym_name] = $meet_registration->where('gym_id', $meet_registration->gym->id)->count();
+                $data[$gym_name] = 1;
+            else
+                $data[$gym_name] += 1;
         }
         $label = [];
         $dataset = [];
