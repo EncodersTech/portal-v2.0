@@ -1126,7 +1126,8 @@ class Gym extends Model
                                 }
 
                                 $gender = trim($row[$_i['Gender']]);
-                                if (!in_array($gender, ['M', 'F'])) {
+                                $gender == "F" ? "female" : "male";
+                                if (!in_array($gender, ['male', 'female'])) {
                                     $issues[] = 'Invalid gender value `' . $row[$_i['Gender']] . '`';
                                 }
 
@@ -1139,8 +1140,8 @@ class Gym extends Model
                                 if ($level == null) {
                                     $issues[] = 'Invalid level value `' . $competitionLevel . '`';
                                 } else if ($gender != null) {
-                                    if ((($gender == 'M') && !$level->level_category->male) ||
-                                    (($gender == 'F') && !$level->level_category->female))
+                                    if ((($gender == 'male') && !$level->level_category->male) ||
+                                    (($gender == 'female') && !$level->level_category->female))
                                     $issues[] = 'Invalid Gender / USAIGC Level combination : `' .
                                     $competitionLevel . '` and `' . $gender .'`';
                                 }
