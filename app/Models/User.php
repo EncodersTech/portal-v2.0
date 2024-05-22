@@ -1022,8 +1022,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'Registration Revenue' => $registration_revenue,
             'AllGym Balance Payment' => ($registration_payment * -1),
-            'Withdrawal Cleared' => $withdrawal_cleared,
-            'Withdrawal Pending' => $withdrawal_pending
+            'Withdrawal Cleared' => ($withdrawal_cleared * -1),
+            'Withdrawal Pending' => ($withdrawal_pending * -1)
         ];
     }
     public function get_athlete_count_per_gym()
