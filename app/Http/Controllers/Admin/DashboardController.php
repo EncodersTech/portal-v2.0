@@ -302,7 +302,7 @@ class DashboardController extends AppBaseController
         }
         else
         {
-            $start_date = date('Y-m-d',strtotime('-12 month'));
+            $start_date = date('Y-m-d',strtotime('-1 month'));
             $end_date = date('Y-m-d');
         }
         // dd($start_date,$end_date);
