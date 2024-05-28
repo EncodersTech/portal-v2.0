@@ -98,16 +98,31 @@ class Gym extends Model
         'ProStatus',
     ];
 
+    // private const _USAIGC_ATHLETE_FILEDS = [
+    //     'ClubNum',
+    //     'ClubName',
+    //     'ClubState',
+    //     'LastName',
+    //     'FirstName',
+    //     'AthleteNumber',
+    //     'CompLevel',
+    //     'DOB',
+    //     'Event'
+    // ];
+
     private const _USAIGC_ATHLETE_FILEDS = [
-        'ClubNum',
-        'ClubName',
-        'ClubState',
-        'LastName',
-        'FirstName',
-        'AthleteNumber',
-        'CompLevel',
-        'DOB',
-        'Event'
+        'Select',
+        'ProfileID',
+        'Type',
+        'League',
+        'Name',
+        'Gender',
+        'BirthDate',
+        'ActivelyRegistered',
+        'LastYearRegistered',
+        'CompetitionLevel',
+        'PrimaryEmail',
+        'IsActive'
     ];
 
     public function user()
@@ -861,8 +876,16 @@ class Gym extends Model
             $rows = array_map(function ($item) use ($delimiter) {
                 return str_getcsv($item, $delimiter);
             }, $content);
+            // trim the rows
+            $rows = array_map(function ($item) {
+                return array_map('trim', $item);
+            }, $rows);
 
             $headers = array_shift($rows);
+            $headers = array_map(function ($item) {
+                return preg_replace('/[^A-Za-z0-9\-]/', '', $item);
+            }, $headers);
+            
             if ($headers === null)
                 throw new CustomBaseException('This is not a valid athlete file from USAG / USAIGC.', -1);
 
@@ -871,7 +894,6 @@ class Gym extends Model
             $_i = [];
             foreach ($headers as $index => $value)
                 $_i[$value] = $index;
-
             $body = $this->_detectAthleteCSVFileSource($headers);
             switch ($body) {
                 case SanctioningBody::USAG:
@@ -1045,9 +1067,11 @@ class Gym extends Model
                     }
                     break;
 
-                /*
                 case SanctioningBody::USAIGC:
                     foreach ($rows as $row) {
+                        if (trim($row[$_i['Type']]) != 'Athlete')
+                            continue;
+
                         $new = [
                             'first_name' => null,
                             'last_name' => null,
@@ -1058,7 +1082,6 @@ class Gym extends Model
                             'usaigc_level_id' => null,
                             'usaigc_active' => null
                         ];
-
                         try {
                             $issues = [];
                             $first_name = null;
@@ -1070,52 +1093,57 @@ class Gym extends Model
                             $level = null;
                             $active = null;
 
-                            $usaigc_no = trim($row[$_i['AthleteNumber']]);
+                            $usaigc_no = trim($row[$_i['League']]);
+                            $usaigc_no = str_replace('IGC', '', $usaigc_no);
                             $a = ['usaigc_no' => $usaigc_no];
                             try {
                                 $vv = Validator::make($a, [
                                     'usaigc_no' => Athlete::CREATE_RULES['usaigc_no']
                                 ])->validate();
                             } catch (ValidationException $ve) {
-                                $issues[] = 'Invalid USAIGC number value `' . $row[$_i['AthleteNumber']] . '`';
+                                $issues[] = 'Invalid USAIGC number value `' . $row[$_i['League']] . '`';
                             }
                             $usaigc_no = $a['usaigc_no'];
 
                             $athlete = $this->athletes()->where('usaigc_no', $usaigc_no)->first();
                             if (($athlete == null) || ($duplicates == 'overwrite') || ($duplicates == 'fail')) {
-                                $first_name = trim($row[$_i['FirstName']]);
+                                $first_name = trim($row[$_i['Name']]);
                                 $len = strlen($first_name);
                                 if (($len < 1) || ($len > 255))
-                                    $issues[] = 'Invalid first name value `' . $row[$_i['FirstName']] . '`';
-
-                                $last_name = trim($row[$_i['LastName']]);
-                                $len = strlen($last_name);
-                                if (($len < 1) || ($len > 255))
-                                    $issues[] = 'Invalid last name value `' . $row[$_i['LastName']] . '`';
-
-                                $dob = \DateTime::createFromFormat('n/j/Y', $row[$_i['DOB']]);
+                                    $issues[] = 'Invalid name value `' . $row[$_i['Name']] . '`';
+                                else
+                                {
+                                    $last_name = explode(' ', $first_name)[1];
+                                    $first_name = explode(' ', $first_name)[0];
+                                }
+                                
+                                $dob = \DateTime::createFromFormat('n/j/Y', $row[$_i['BirthDate']]);
                                 if (($dob === null) || ($dob === false)) {
                                     $dob = new \DateTime();
-                                    $issues[] = 'Invalid date value `' . $row[$_i['DOB']] . '`';
+                                    $issues[] = 'Invalid date value `' . $row[$_i['BirthDate']] . '`';
                                 } else {
                                     $dob = $dob->setTime(0, 0);
                                 }
 
-                                $gender = strtolower($row[$_i['Event']]);
+                                $gender = trim($row[$_i['Gender']]);
+                                $gender = ($gender == "F") ? "female" : "male";
                                 if (!in_array($gender, ['male', 'female'])) {
-                                    $issues[] = 'Invalid gender value `' . $row[$_i['Event']] . '`';
+                                    $issues[] = 'Invalid gender value `' . $row[$_i['Gender']] . '`';
                                 }
 
                                 $us_citizen = true;//strtolower($row[$_i['Citizen']]) == 'yes';
 
-                                $level = AthleteLevel::where('abbreviation', $row[$_i['CompLevel']])->first();
+                                $competitionLevel = trim($row[$_i['CompetitionLevel']]);
+                                // make an space between character and number
+                                $competitionLevel = preg_replace('/([a-zA-Z])([0-9])/', '$1 $2', $competitionLevel);
+                                $level = AthleteLevel::where('name', $competitionLevel)->first();
                                 if ($level == null) {
-                                    $issues[] = 'Invalid level value `' . $row[$_i['CompLevel']] . '`';
+                                    $issues[] = 'Invalid level value `' . $competitionLevel . '`';
                                 } else if ($gender != null) {
                                     if ((($gender == 'male') && !$level->level_category->male) ||
                                     (($gender == 'female') && !$level->level_category->female))
                                     $issues[] = 'Invalid Gender / USAIGC Level combination : `' .
-                                        $row[$_i['CompLevel']] . '` and `' . $gender .'`';
+                                    $competitionLevel . '` and `' . $gender .'`';
                                 }
 
                                 $active = true;//strtolower($row[$_i['AthStatus']]) == 'active';
@@ -1212,7 +1240,6 @@ class Gym extends Model
                         }
                     }
                     break;
-                    */
 
                 default:
                     throw new CustomBaseException('This is not a valid athlete file.', -1);
