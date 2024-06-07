@@ -251,7 +251,7 @@ class IntellipayService {
                     {
                         return array(
                             'status' => 200,
-                            'message' => "Card attachment successful. (Charged $1 has been refunded)"
+                            'message' => "Card attachment successful. (Refund of $1 has been initiated)"
                         );
                     }
                     else
