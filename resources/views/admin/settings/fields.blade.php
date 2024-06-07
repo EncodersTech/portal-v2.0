@@ -276,6 +276,15 @@
                         </div>
                     </div>
                 </div>
+                <div class="form-group col-sm-12 col-md-4 col-lg-3">
+                    {{ Form::label('app_name', 'CC Gateway (0:stripe,1:intellipay):') }}
+                    <div class="form-group">
+                        <div class="custom-control custom-switch">
+                            <input type="checkbox" name="cc_gateway" class="custom-control-input" value="1" id="customSwitch4" {{ ($settings['cc_gateway'] == true)?'checked':'' }}>
+                            <label class="custom-control-label" for="customSwitch4"></label>
+                        </div>
+                    </div>
+                </div>
 
             </div>
             <div class="text-right">

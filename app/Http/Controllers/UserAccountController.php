@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\StripeService;
+use App\Services\IntellipayService;
 use App\Exceptions\CustomStripeException;
 use App\Exceptions\CustomDwollaException;
 use App\Exceptions\CustomBaseException;
@@ -58,7 +59,8 @@ class UserAccountController extends Controller
     public function showPaymentOptions()
     {
         $user = auth()->user();     /** @var User $user */
-        
+        $settings = Setting::where('key','cc_gateway')->first();
+
         $cards = null;
         $bankAccounts = null;
         $stripe_error = null;
@@ -70,12 +72,22 @@ class UserAccountController extends Controller
         $dwollaAttempts = null;
         $dwollaCanVerify = null;
 
-        try {
-            $cards = $user->getCards(true);
-            $stripe_banks = $user->getStripeBankAccounts(true);
-        } catch (CustomStripeException $e) {
-            $stripe_error = $e->getMessage();
+        if($settings->value == 0) // stripe
+        {
+            try {
+                $cards = $user->getCards(true);
+                //$stripe_banks = $user->getStripeBankAccounts(true);
+            } catch (CustomStripeException $e) {
+                $stripe_error = $e->getMessage();
+            }
         }
+        else // process for intellipay
+        {
+            $intellipayService = resolve(IntellipayService::class); /** @var IntellipayService $intellipayService */
+            $cards = $intellipayService->getCards();
+            // dd($cards);
+        }
+        
         try {
             $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
             $dwollaCustomer = $dwollaService->retrieveCustomer($user->dwolla_customer_id);
@@ -131,13 +143,14 @@ class UserAccountController extends Controller
             'dwollaCanVerify' => $dwollaCanVerify,
             'dwollaAttempts' => $dwollaAttempts,
             'cards' => $cards,
-            'stripe_banks' => $bankAccounts,
+            // 'stripe_banks' => $bankAccounts,
             // 'stripe_connect' => $stripe_connect,
             'bank_accounts' => $bankAccounts,
             'stripe_error' => $stripe_error,
             'dwolla_error' => $dwolla_error,
             'current_page' => 'profile',
-            'is_error' => $is_fake
+            'is_error' => $is_fake,
+            'cc_gateway' => $settings->value
         ]);
     }
 
@@ -559,6 +572,39 @@ class UserAccountController extends Controller
         return back()->with('error', 'An error occurred while updating your password.');
     }
 
+    public function storeIntellipayCard()
+    {
+        $attr = request()->validate(IntellipayService::CARD_RULES);
+        $expiry_date = explode('/', $attr['cardexpirydate']);
+        if($expiry_date[1] < date('y'))
+            return back()->with('error', 'Your card is expired.');
+        else if($expiry_date[1] == date('y') && $expiry_date[0] <= date('m'))
+            return back()->with('error', 'Your card is expired.');
+        else if($expiry_date[0] > 12)
+            return back()->with('error', 'Invalid expiry date (month).');
+        else if($expiry_date[0] < 1 || $expiry_date[1] < 0)
+            return back()->with('error', 'Invalid expiry date.');
+
+        $card_number = str_replace(' ', '', $attr['cardnumber']);
+        if(!is_numeric($card_number))
+            return back()->with('error', 'Invalid card number.');
+
+        $attr['cardnumber'] = trim($card_number);
+        $attr['cardexpirydate'] = trim($expiry_date[0] . $expiry_date[1]);
+        try{
+            $intellipayService = resolve(IntellipayService::class);
+            $response = $intellipayService->addCard($attr);
+
+            if($response['status'] == 400)
+                return back()->with('error', $response['message']);
+            else
+                return back()->with('success', $response['message']);
+        }
+        catch(\Exception $e)
+        {
+            return back()->with('error', $e->getMessage());
+        }
+    }
     public function storeCard()
     {
         $attr = request()->validate(StripeService::CARD_TOKEN_RULES);
