@@ -372,12 +372,55 @@
 
                     <div class="mb-2 ml-3">
                         <div v-if="state.assignable_meets.length < 1">
-                            <div class="alert alert-info">
+                            <div class="alert alert-danger">
                                 <strong>
-                                    <span class="fas fa-fw fa-information-circle"></span>
-                                    This sanction cannot be assigned to any of your existing meets.<br/>
+                                    <span class="fas fa-fw fa-exclamation-triangle"></span>
+                                    This sanction cannot be assigned to any of your existing meets. Please continue with an option below.<br/>
                                 </strong>
-                                <ul>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <div class="card-group">
+                                        <div class="card">
+                                            <div class="card-header bg-primary text-light">
+                                                <span class="fas fa-calendar-alt"></span> Assign to an existing meet
+                                            </div>
+                                            <div class="card-body bg-white pb-0">
+                                                If you already created the meet you'd like to assign this sanction to,
+                                                please make sure it is published and has {{ state.category.name }} selected in Competitive Settings.
+                                            </div>
+                                            <div class="card-footer text-right border-top-0 bg-white pt-0">
+                                                <a :href="'/gyms/' + state.gym.id + '/meets'"
+                                                    class="btn btn-primary" target="_blank">
+                                                    <span class="fas fa-external-link-alt"></span>
+                                                    View Hosted Meets.
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="card">
+                                            <div class="card-header bg-dark text-light">
+                                                <span class="fas fa-dumbbell"></span> Create a Meet
+                                            </div>
+                                            <div class="card-body bg-white pb-0">
+                                                <p>
+                                                    If you have not created the meet you'd like to assign this sanction to,
+                                                    please create a meet and then refresh this page.
+                                                </p>
+                                            </div>
+                                            <div class="card-footer text-right border-top-0 bg-white pt-0">
+                                                <a :href="'/gyms/' + state.gym.id + '/meets/create'"
+                                                    class="btn btn-dark" target="_blank">
+                                                    <span class="fas fa-external-link-alt"></span>
+                                                    Create
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <!-- <ul>
                                     <li>
                                         If you already created the meet you'd like to assign this sanction to,
                                         please make sure it is published and has {{ state.category.name }} selected in Competitive Settings.
@@ -396,8 +439,8 @@
                                         </a>
                                         and refresh this page.
                                     </li>
-                                </ul>
-                            </div>
+                                </ul> -->
+
                         </div>
                         <div v-else>
                             <div class="alert alert-warning">
