@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use App\Models\MeetCredit;
+use App\Services\IntellipayService;
 
 class RegistrationController extends BaseApiController
 {
@@ -253,22 +254,31 @@ class RegistrationController extends BaseApiController
                     ],
                 ]
             ];
+            $settings = Setting::where('key','cc_gateway')->first();
+            if($settings->value == 0) // stripe
+            {
+                $cards = $request->_managed_account->getCards(false);
+                if(($cards instanceof CustomStripeException) || ($cards === null))
+                    $cards = [];
 
-            $cards = $request->_managed_account->getCards(false);
-            if(($cards instanceof CustomStripeException) || ($cards === null))
-                $cards = [];
-
-            foreach ($cards as $card) {
-                $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_CARD]['cards'][] = [
-                    'id' => $card->id,
-                    'brand' => $card->brand,
-                    'expires' => [
-                        'month' => $card->exp_month,
-                        'year' => $card->exp_year,
-                    ],
-                    'last4' => $card->last4,
-                    'image' => $card->image
-                ];
+                foreach ($cards as $card) {
+                    $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_CARD]['cards'][] = [
+                        'id' => $card->id,
+                        'brand' => $card->brand,
+                        'expires' => [
+                            'month' => $card->exp_month,
+                            'year' => $card->exp_year,
+                        ],
+                        'last4' => $card->last4,
+                        'image' => $card->image
+                    ];
+                }
+            }
+            else // process for intellipay
+            {
+                $intellipayService = resolve(IntellipayService::class); /** @var IntellipayService $intellipayService */
+                $cards = $intellipayService->getCards();
+                $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_CARD]['cards'] = $cards;
             }
 
 //            if ($meet->accept_paypal) {

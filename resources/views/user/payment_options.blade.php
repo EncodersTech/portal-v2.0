@@ -16,7 +16,11 @@
             @if($is_error)
                 <div class="alert alert-warning"><span class="fas fa-fw fa-info-circle"></span> Please contact admin to activate your payment methods.</div>
             @endif
-            @include('user.account.credit_card')
+            @if($cc_gateway == 0)
+                @include('user.account.credit_card')
+            @else
+                @include('user.account.intellipay')
+            @endif
             <!-- include('user.account.stripe_bank_account') -->
             @include('user.account.bank_account')
         </div>

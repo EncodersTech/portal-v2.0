@@ -7,12 +7,48 @@ $(document).ready(() => {
 
     let _busy = false;
 
+    $('#cardnumber').on('input', function() {
+        var cardnumber = $(this).val();
+        cardnumber = cardnumber.replace(/[^0-9\s]/g, '');
+        var length = cardnumber.length;
+        if (length == 4 || length == 9 || length == 14)
+            $(this).val(cardnumber + ' ');
+        else
+          $(this).val(cardnumber);
+    });
+
+    $("#cardexpirydate").on('input', function() {
+        var cardexpirydate = $(this).val();
+        cardexpirydate = cardexpirydate.replace(/[^0-9/]/g, '');
+
+        var length = cardexpirydate.length;
+        if (length == 2 && cardexpirydate.indexOf('/') == -1)
+            $(this).val(cardexpirydate + '/');
+        else
+            $(this).val(cardexpirydate);
+    
+    });
+    $('#cardcvv').on('input', function () {
+        var cardnumber = $(this).val();
+        cardnumber = cardnumber.replace(/[^0-9]/g, '');
+        $(this).val(cardnumber);
+      });
+
     $('.modal-why-is-my-account-unverified-close').click(e => {
         $('#modal-why-is-my-account-unverified').modal('hide');
     });
 
-    setupStripeACHLinkModal();
-    setupStripeCardLinkModal();
+    
+    var stripe_settings = '<?= json_encode($cc_gateway); ?>';
+    if(stripe_settings == 0)
+    {
+        setupStripeACHLinkModal();
+        setupStripeCardLinkModal();
+    }
+    else
+    {
+        setupIntellipayCardLinkModal();
+    }
     setupDwollaBankAccountLinkModal();
     setupBankAccountVerifyModal();
 
@@ -87,7 +123,30 @@ $(document).ready(() => {
             );
         });
     };
+    function setupIntellipayCardLinkModal() {
 
+        $('.modal-linked-credit-card-close').click(e => {
+            if (_busy)
+                return;
+            $('#modal-linked-credit-card').modal('hide');
+        });
+        $('.modal-verify-bank-close').click(e => {
+            if (_busy)
+                return;
+            $('#modal-verify-bank').modal('hide');
+        });
+
+        $('#intellipay-card-link-form').submit(e => {
+            //e.preventDefault();
+            let spinner = $('#modal-linked-credit-card-spinner');
+            if (_busy)
+                return;
+            _busy = true;
+            spinner.show();
+            $("#intellipay_submitbtn").attr("disabled", true);
+        });
+    
+    }
     function setupStripeCardLinkModal() {
         let stripe = Stripe($('#stripe-publishable-key').val());
         let elements = stripe.elements();
@@ -116,6 +175,7 @@ $(document).ready(() => {
             $('#modal-verify-bank').modal('hide');
         });
 
+        
         $('#stripe-card-link-form').submit(e => {
             e.preventDefault();
             if (_busy)
