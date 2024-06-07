@@ -48,9 +48,11 @@
                 </tr>
             </thead>
             <tbody>
+                @php $lines = 0; @endphp
                 @foreach ($gyms as $r)
                     @foreach ($r['coaches'] as $c)
                         @if($c->usaigc_no != null)
+                            @php $lines++; @endphp
                             <tr>
                                 <td>{{ $c->first_name .' '.$c->last_name }}</td>
                                 <td>{{ '  USAIGC: '.$c->usaigc_no }}</td>
@@ -62,6 +64,14 @@
                         @endif
                     @endforeach
                 @endforeach
+                @for($i = 0; $i < 99 - $lines; $i++)
+                    <tr>
+                        <td> &nbsp </td>
+                        <td> &nbsp </td>
+                        <td> &nbsp </td>
+                        <td> &nbsp </td>
+                    </tr>
+                @endfor
             </tbody>
         </table>
     @endif
