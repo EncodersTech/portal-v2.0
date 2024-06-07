@@ -5389,6 +5389,49 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'SanctionDetails',
@@ -77329,75 +77372,104 @@ var render = function() {
                       _c("div", { staticClass: "mb-2 ml-3" }, [
                         _vm.state.assignable_meets.length < 1
                           ? _c("div", [
-                              _c("div", { staticClass: "alert alert-info" }, [
-                                _vm._m(25),
-                                _vm._v(" "),
-                                _c("ul", [
-                                  _c("li", [
-                                    _vm._v(
-                                      "\n                                    If you already created the meet you'd like to assign this sanction to,\n                                    please make sure it is published and has " +
-                                        _vm._s(_vm.state.category.name) +
-                                        " selected in Competitive Settings.\n                                    "
-                                    ),
-                                    _c(
-                                      "a",
-                                      {
-                                        staticClass: "alert-link",
-                                        attrs: {
-                                          href:
-                                            "/gyms/" +
-                                            _vm.state.gym.id +
-                                            "/meets",
-                                          target: "_blank"
-                                        }
-                                      },
-                                      [
-                                        _c("span", {
+                              _vm._m(25),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "row mb-3" }, [
+                                _c("div", { staticClass: "col" }, [
+                                  _c("div", { staticClass: "card-group" }, [
+                                    _c("div", { staticClass: "card" }, [
+                                      _vm._m(26),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass: "card-body bg-white pb-0"
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                                            If you already created the meet you'd like to assign this sanction to,\n                                            please make sure it is published and has " +
+                                              _vm._s(_vm.state.category.name) +
+                                              " selected in Competitive Settings.\n                                        "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
                                           staticClass:
-                                            "fas fa-external-link-alt"
-                                        }),
-                                        _vm._v(
-                                          "\n                                        Click here to view your hosted meets.\n                                    "
-                                        )
-                                      ]
-                                    )
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("li", [
-                                    _vm._v(
-                                      "\n                                    If you have not created the meet you'd like to assign this sanction to yet, please\n                                    "
-                                    ),
-                                    _c(
-                                      "a",
-                                      {
-                                        staticClass: "alert-link",
-                                        attrs: {
-                                          href:
-                                            "/gyms/" +
-                                            _vm.state.gym.id +
-                                            "/meets/create",
-                                          target: "_blank"
-                                        }
-                                      },
-                                      [
-                                        _c("span", {
+                                            "card-footer text-right border-top-0 bg-white pt-0"
+                                        },
+                                        [
+                                          _c(
+                                            "a",
+                                            {
+                                              staticClass: "btn btn-primary",
+                                              attrs: {
+                                                href:
+                                                  "/gyms/" +
+                                                  _vm.state.gym.id +
+                                                  "/meets",
+                                                target: "_blank"
+                                              }
+                                            },
+                                            [
+                                              _c("span", {
+                                                staticClass:
+                                                  "fas fa-external-link-alt"
+                                              }),
+                                              _vm._v(
+                                                "\n                                                View Hosted Meets.\n                                            "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("div", { staticClass: "card" }, [
+                                      _vm._m(27),
+                                      _vm._v(" "),
+                                      _vm._m(28),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
                                           staticClass:
-                                            "fas fa-external-link-alt"
-                                        }),
-                                        _vm._v(
-                                          "\n                                        create a new meet\n                                    "
-                                        )
-                                      ]
-                                    ),
-                                    _vm._v(
-                                      "\n                                    and refresh this page.\n                                "
-                                    )
+                                            "card-footer text-right border-top-0 bg-white pt-0"
+                                        },
+                                        [
+                                          _c(
+                                            "a",
+                                            {
+                                              staticClass: "btn btn-dark",
+                                              attrs: {
+                                                href:
+                                                  "/gyms/" +
+                                                  _vm.state.gym.id +
+                                                  "/meets/create",
+                                                target: "_blank"
+                                              }
+                                            },
+                                            [
+                                              _c("span", {
+                                                staticClass:
+                                                  "fas fa-external-link-alt"
+                                              }),
+                                              _vm._v(
+                                                "\n                                                Create\n                                            "
+                                              )
+                                            ]
+                                          )
+                                        ]
+                                      )
+                                    ])
                                   ])
                                 ])
                               ])
                             ])
                           : _c("div", [
-                              _vm._m(26),
+                              _vm._m(29),
                               _vm._v(" "),
                               _c("div", { staticClass: "form-group" }, [
                                 _c(
@@ -77471,7 +77543,7 @@ var render = function() {
                   : _vm._e(),
                 _vm._v(" "),
                 _c("div", [
-                  _vm._m(27),
+                  _vm._m(30),
                   _vm._v(" "),
                   _c("div", { staticClass: "mb-2" }, [
                     _c("div", { staticClass: "mb-1" }, [
@@ -77543,7 +77615,7 @@ var render = function() {
                                           "table table-sm table-striped"
                                       },
                                       [
-                                        _vm._m(28),
+                                        _vm._m(31),
                                         _vm._v(" "),
                                         _c(
                                           "tbody",
@@ -77980,9 +78052,9 @@ var render = function() {
                           _vm._v(" "),
                           _vm.meetSelected
                             ? _c("div", [
-                                _vm._m(29),
+                                _vm._m(32),
                                 _vm._v(" "),
-                                _vm._m(30),
+                                _vm._m(33),
                                 _vm._v(" "),
                                 _c("div", { staticClass: "text-right mb-1" }, [
                                   _c(
@@ -78041,7 +78113,7 @@ var render = function() {
                                           "table table-sm table-striped"
                                       },
                                       [
-                                        _vm._m(31),
+                                        _vm._m(34),
                                         _vm._v(" "),
                                         _c(
                                           "tbody",
@@ -78177,7 +78249,7 @@ var render = function() {
                             : _vm._e(),
                           _vm._v(" "),
                           _c("div", [
-                            _vm._m(32),
+                            _vm._m(35),
                             _vm._v(" "),
                             _vm.state.final_count < 1
                               ? _c("div", [
@@ -78186,7 +78258,7 @@ var render = function() {
                                   )
                                 ])
                               : _c("div", [
-                                  _vm._m(33),
+                                  _vm._m(36),
                                   _vm._v(" "),
                                   _c(
                                     "div",
@@ -78363,7 +78435,7 @@ var render = function() {
                                                       [
                                                         level.allow_teams
                                                           ? _c("div", [
-                                                              _vm._m(34, true),
+                                                              _vm._m(37, true),
                                                               _vm._v(" "),
                                                               _c("div", [
                                                                 _c("strong", [
@@ -78468,7 +78540,7 @@ var render = function() {
                 ]),
                 _vm._v(" "),
                 _c("div", { staticClass: "d-flex flex-row flex-nowrap" }, [
-                  _vm._m(35),
+                  _vm._m(38),
                   _vm._v(" "),
                   _c("div", {}, [
                     _c(
@@ -78818,12 +78890,46 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("strong", [
-      _c("span", { staticClass: "fas fa-fw fa-information-circle" }),
+    return _c("div", { staticClass: "alert alert-danger" }, [
+      _c("strong", [
+        _c("span", { staticClass: "fas fa-fw fa-exclamation-triangle" }),
+        _vm._v(
+          "\n                                This sanction cannot be assigned to any of your existing meets. Please continue with an option below."
+        ),
+        _c("br")
+      ])
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header bg-primary text-light" }, [
+      _c("span", { staticClass: "fas fa-calendar-alt" }),
       _vm._v(
-        "\n                                This sanction cannot be assigned to any of your existing meets."
-      ),
-      _c("br")
+        " Assign to an existing meet\n                                        "
+      )
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-header bg-dark text-light" }, [
+      _c("span", { staticClass: "fas fa-dumbbell" }),
+      _vm._v(" Create a Meet\n                                        ")
+    ])
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "card-body bg-white pb-0" }, [
+      _c("p", [
+        _vm._v(
+          "\n                                                If you have not created the meet you'd like to assign this sanction to,\n                                                please create a meet and then refresh this page.\n                                            "
+        )
+      ])
     ])
   },
   function() {
