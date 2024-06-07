@@ -16,6 +16,10 @@
                 <form method="post" id="intellipay-card-link-form" action="{{ route('account.icard.add') }}">
                     @csrf
                     <div class="form-row">
+                        <div class="alert alert-info">
+                            <span class="fas fa-info-circle mt-2 mb-2"></span>
+                            A one time $1 charge will be added to your card to verify validity. Within 72 hours it will automatically be returned. 
+                        </div>
                         <label for="" class="text-info small">
                             <?php 
                                 if($cards != null)
