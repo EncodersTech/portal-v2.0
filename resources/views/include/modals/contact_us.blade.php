@@ -13,7 +13,24 @@
             
             <div class="modal-body">
                 <form accept="#" onsubmit="return false;" novalidate>
-
+                    <div class="row">
+                        <div class="col">
+                            <a href="#article_div" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="article_div">
+                                Helpful Articles</a>
+                        </div>
+                    </div>
+                    <div class="collapse show" id="article_div">
+                        <div class="row p-1">
+                            <div class="col-4">
+                                <i class="fas fa-file"></i>
+                                View Help Docs
+                            </div>
+                            <div class="col-8 text-right">
+                                <a href="https://allgymnastics.zendesk.com/hc/en-us/categories/115000231192-Meet-Information" target="_blank"> Click Here </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
                     <div class="row mb-3 @auth d-none @endguest">
                         <div class="col">
                             <label for="modal-contact-us-email">
