@@ -54,4 +54,33 @@ class DashboardRepository
         return PDF::loadView('admin.reports.pending_withdrawal_balance.report', $data);
         /** @var PdfWrapper $pdf */
     }
+    public function individualPendingWithdrawalBalanceReport($id): PdfWrapper
+    {
+        $data['user'] = User::find($id);
+
+        $data['revenue'] = UserBalanceTransaction::where('user_id',$id)
+                            ->where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_REVENUE)
+                            ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_CLEARED)
+                            ->sum('total');
+        $data['registration_payment'] = UserBalanceTransaction::where('user_id',$id)
+                            ->where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
+                            ->sum('total');
+        $data['dwolla_verification_fee'] = UserBalanceTransaction::where('user_id',$id)
+                            ->where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_DWOLLA_VERIFICATION_FEE)
+                            ->sum('total');
+        $data['admin_transaction'] = UserBalanceTransaction::where('user_id',$id)
+                            ->where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN)
+                            ->sum('total');
+        $data['withdrawal'] = UserBalanceTransaction::where('user_id',$id)
+                            ->where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL)
+                            ->sum('total');
+        $data['total'] = $data['revenue'] - $data['registration_payment'] - $data['dwolla_verification_fee'] - $data['admin_transaction'] - $data['withdrawal'];
+
+        $data['total_cleared_balance'] = $data['user']->cleared_balance;
+
+        // dd($data);
+
+        return PDF::loadView('admin.reports.pending_withdrawal_balance.pending_individual_report', $data);
+        /** @var PdfWrapper $pdf */
+    }
 }

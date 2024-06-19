@@ -81,6 +81,13 @@
                         <p>Gym Balance</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('pending.withdrawal.balance.report') }}"
+                        class="nav-link {{ Request::is('admin/pending-withdrawal-balance-report') ? 'active' : '' }}">
+                        <i class="fas fa-info-circle nav-icon"></i>
+                        <p>Pending W Balance</p>
+                    </a>
+                </li>
             </ul>
         </li>
 

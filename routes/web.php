@@ -268,6 +268,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
 
         Route::get('pending-withdrawal-balance-report','DashboardController@pendingWithdrawalBalance')->name('pending.withdrawal.balance.report');
         Route::get('print-pending-withdrawal-balance-report','DashboardController@printPendingWithdrawalBalance')->name('print.pending.withdrawal.balance');
+        Route::get('print-individual-balance-report/{id}','DashboardController@printIndividualPendingBalance')->name('print.individual.pending.balance');
     });
 
     Route::get('/impersonate/{userId}', 'UserAccountController@impersonate')->name('impersonate');

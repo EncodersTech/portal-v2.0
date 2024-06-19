@@ -34,9 +34,20 @@ class DashboardController extends AppBaseController
 
     public function pendingWithdrawalBalance()
     {
-        $data['users'] = User::where('cleared_balance','>',0)->where('cleared_balance','!=',0)->get();
+        $data['users'] = User::where('cleared_balance','>',0)->where('cleared_balance','>=',0.2)->get();
+        // dd("here");
 
         return view('admin.reports.pending_withdrawal_balance.index')->with($data);
+    }
+
+    public function printIndividualPendingBalance($id)
+    {
+        $pdf = $this->dashboardRepository->individualPendingWithdrawalBalanceReport($id)->setPaper('a4')
+            ->setOption('margin-top', '10mm')
+            ->setOption('margin-bottom', '10mm')
+            ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
+
+        return $pdf->stream('individual_pending_withdrawal_balace_report.'.time().'.pdf');
     }
 
     public function printPendingWithdrawalBalance()
