@@ -119,10 +119,10 @@
     </script>
     <!--End of Tawk.to Script-->
         <script>
-            // window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
+            window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
         </script>
-        <!-- <script src="//{{ Request::getHost() }}:{{env('LARAVEL_ECHO_PORT')}}/socket.io/socket.io.js"></script> -->
-        <!-- <script src="{{ mix('js/app.js') }}"></script> -->
+        <script src="//{{ Request::getHost() }}:{{env('LARAVEL_ECHO_PORT')}}/socket.io/socket.io.js"></script>
+        <script src="{{ mix('js/app.js') }}"></script>
     <!-- Scripts -->
     @section('scripts')
 

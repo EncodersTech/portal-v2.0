@@ -202,9 +202,8 @@ window.scrollToTheBottomComments = function () {
 };
 
 $(document).ready(function () {
-    console.log(gymId);
     window.Echo.private(`conversation.${gymId}`).
-        listen('ConversationSent', (e) => {
+        listen('.ConversationSent', (e) => {
             if (gymId == e.receiverGymId && e.type == 1) {
                 let data = [{
                     'date': e.date,
