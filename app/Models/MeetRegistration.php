@@ -1903,32 +1903,56 @@ class MeetRegistration extends Model
                 if (!isset($chosenMethod['id'])) {
                     throw new CustomBaseException('Invalid payment method format.', -1);
                 }
+                $settings = Setting::where('key','cc_gateway')->first();
+                $cc_fee = 0;
+                $transaction_id = null;
+                if($settings->value == 0) // stripe
+                {
+                    $transaction = StripeService::createCharge(
+                        $gym->user->stripe_customer_id,
+                        $chosenMethod['id'],
+                        $gymSummary['total'],
+                        'USD',
+                        '',
+                        [
+                            'registration' => $registration->id,
+                            'gym' => $gym->name,
+                            'meet' => $meet->name,
+                        ]
+                    );
+                    $result['payment_method_string'] = 'Card ending with ' .
+                    $transaction->payment_method_details->card->last4;
 
-                $transaction = StripeService::createCharge(
-                    $gym->user->stripe_customer_id,
-                    $chosenMethod['id'],
-                    $gymSummary['total'],
-                    'USD',
-                    '',
-                    [
-                        'registration' => $registration->id,
-                        'gym' => $gym->name,
-                        'meet' => $meet->name,
-                    ]
-                );
-                $result['payment_method_string'] = 'Card ending with ' .
-                $transaction->payment_method_details->card->last4;
+                    $calculatedFees['gym']['last4'] = $transaction->payment_method_details->card->last4;
+                    //Count Stripe fee
 
-                $calculatedFees['gym']['last4'] = $transaction->payment_method_details->card->last4;
-
-                //Count Stripe fee
-                $stripeFee = 0;
-                if ($transaction->balance_transaction['fee'] > 0) {
-                    $stripeFee = ($transaction->balance_transaction['fee'] / 100);
+                    if ($transaction->balance_transaction['fee'] > 0) {
+                        $cc_fee = ($transaction->balance_transaction['fee'] / 100);
+                    }
+                    $transaction_id = $transaction->id;
                 }
+                else
+                {
+                    $intellipayService = resolve(IntellipayService::class); /** @var IntellipayService $intellipayService */
+                    $transaction = $intellipayService->createCharge(
+                        $gymSummary['total'],
+                        [
+                            'registration' => $registration->id,
+                            'gym' => $gym->name,
+                            'meet' => $meet->name,
+                        ]
+                    );
+                    $result['payment_method_string'] = 'Card ending with ' . $transaction['last4'];
+                    if ($transaction['fee'] > 0) {
+                        $cc_fee = $transaction['fee'];
+                    }
+                    $transaction_id = $transaction['paymentid'];
+                    $calculatedFees['gym']['last4'] = $transaction['last4'];
+                }
+                
                 $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['subtotal']);
                 $transaction = $registration->transactions()->create([
-                    'processor_id' => $transaction->id,
+                    'processor_id' => $transaction_id,
                     'handling_rate' => Helper::getHandlingFee($meet),
                     'processor_rate' => $meet->cc_fee(),
                     'total' => $gymSummary['total'],
@@ -1937,7 +1961,7 @@ class MeetRegistration extends Model
                     'status' => MeetTransaction::STATUS_COMPLETED,
                     'handling_fee' => $handlingFee,
                     'processor_fee' => $processorFee,
-                    'processor_charge_fee' => $stripeFee,
+                    'processor_charge_fee' => $cc_fee,
                     'competitions_saving' => json_encode($savings)
                 ]); /** @var Meettransaction $transaction */
 

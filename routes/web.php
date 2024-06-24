@@ -77,6 +77,8 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     Route::post('/account/card', 'UserAccountController@storeCard')->name('account.card.add');
     Route::delete('/account/card/{id}', 'UserAccountController@deleteCard')->name('account.card.remove');
 
+    Route::post('/account/icard', 'UserAccountController@storeIntellipayCard')->name('account.icard.add');
+
     Route::delete('/account/bank/{id}', 'UserAccountController@deleteBankAccount')->name('account.bank.remove');
     Route::post('/account/bank/add', 'UserAccountController@addBankAccount')->name('account.bank.add');
     Route::patch('/account/bank/verify', 'UserAccountController@verifyMicroDeposits')->name('account.bank.verify');

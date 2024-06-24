@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\ErrorCodeCategory;
 use App\Models\MeetTransaction;
+use App\Models\User;
 use DwollaSwagger\Configuration;
 use DwollaSwagger\ApiException;
 use DwollaSwagger\ApiClient;
@@ -19,7 +20,7 @@ use DwollaSwagger\WebhooksubscriptionsApi;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\DB;
 
 class IntellipayService {
 
@@ -27,6 +28,21 @@ class IntellipayService {
     private $api_key;
     private $host;
     private $payment_status = ['unprocessed', 'queued', 'pending', 'declined', 'settled', 'completed', 'voided', 'refunded', 'awaiting ack'];
+    public const CARD_RULES = [
+        "cardname" => ['required', 'string'],
+        "cardnumber" => ['required', 'string', 'min:15', 'max:19'],
+        "cardexpirydate" => ['required', 'string', 'min:5', 'max:5'],
+        "cardcvv" => ['required', 'string', 'min:3', 'max:4']
+    ];
+    private static $cardBrands = [
+        'Amex' => '/img/cards/American Express.png',
+        'Disc' => '/img/cards/Discover.png',
+        'Jcb' => '/img/cards/JCB.png',
+        'Mast' => '/img/cards/MasterCard.png',
+        'UnionPay' => '/img/cards/UnionPay.png',
+        'Visa' => '/img/cards/Visa.png',
+        'Unknown' => '/img/cards/Unknown.png',
+    ];
     public function __construct()
     {
         // https=>//test.cpteller.com/api/26/webapi.cfc
@@ -177,7 +193,169 @@ class IntellipayService {
             );
         }
     }
+    public function addCard($attr)
+    {
+        $user = auth()->user();
+        $data = [
+            'method'=>'card_payment',
+            'merchantkey'=> $this->marchant_key,
+            'apikey'=> $this->api_key,
+            'amount' => 1,
+            'firstname'=> $user->first_name,
+            'lastname'=> $user->last_name,
+            'phone'=> $user->office_phone,
+            'email'=> $user->email,
+            'cardname'=> $attr['cardname'],
+            'cardnum'=> $attr['cardnumber'],
+            'expdate'=> $attr['cardexpirydate'],
+            'cvv'=> $attr['cardcvv'],
+            'comment'=> 'Card attachment payment, will be refunded'
+        ];
+        if($user->intellipay_customer_id != null)
+        {
+            $data['custid'] = $user->intellipay_customer_id;
+        }
+        $client = new Guzzle();
+        $response = $client->post($this->host, ['form_params' => $data]);
+        if ($response->getStatusCode() === 200) {
+            $responseBody = $response->getBody()->getContents();
+            $responseBody = json_decode($responseBody,true);
+            if($responseBody['status'] > 0 && $responseBody['response'] == 'A')
+            {
+                $response_data = [
+                    'custid' => $responseBody['custid'],
+                    'paymentid' => $responseBody['paymentid'],
+                    'response' => $responseBody['response']
+                ];
 
+                if($user->intellipay_customer_id == null)
+                {
+                    $user->intellipay_customer_id = $response_data['custid'];
+                    $user->save();
+                }
+
+                $refund_data = [
+                    'method'=>'payment_refund',
+                    'merchantkey'=> $this->marchant_key,
+                    'apikey'=> $this->api_key,
+                    'paymentid' => $response_data['paymentid'],
+                    'amount' => 1
+                ];
+                $client = new Guzzle();
+                $refund_response = $client->post($this->host, ['form_params' => $refund_data]);
+
+                if ($refund_response->getStatusCode() === 200) {
+                    $refund_responseBody = $refund_response->getBody()->getContents();
+                    $refund_responseBody = json_decode($refund_responseBody,true);
+                    if($refund_responseBody['status'] > 0)
+                    {
+                        return array(
+                            'status' => 200,
+                            'message' => "Card attachment successful. (Refund of $1 has been initiated)"
+                        );
+                    }
+                    else
+                    {
+                        return array(
+                            'status' => 200,
+                            'message' => "Card attachment successful, but charged $1 refund failed. Please contact admin for refund."
+                        );
+                    }
+                } else {
+                    // Handle non-200 status codes here
+                    throw new CustomBaseException("Request failed",$response->getStatusCode());
+                }
+            }
+            else
+            {
+                return array(
+                    'status' => 400,
+                    'message' => "Card attachment failed, please try again or contact admin"
+                );
+            }
+        } else {
+            throw new CustomBaseException("Request failed",$response->getStatusCode());
+        }
+    }
+    public function getCards()
+    {
+        $user = auth()->user();
+        // dd($user->intellipay_customer_id);
+        if($user->intellipay_customer_id == null)
+            return null;
+        $data = [
+            'method'=>'cust_read',
+            'merchantkey'=> $this->marchant_key,
+            'apikey'=> $this->api_key,
+            'custid' => $user->intellipay_customer_id
+        ];
+        $client = new Guzzle();
+        $response = $client->post($this->host, ['form_params' => $data]);
+        if ($response->getStatusCode() === 200) {
+            $responseBody = $response->getBody()->getContents();
+            $responseBody = json_decode($responseBody,true);
+            // dd($user->intellipay_customer_id);
+            if($responseBody['status'] > 0)
+            {
+                $card = [
+                    'id' => $user->intellipay_customer_id,
+                    'last4' => $responseBody['cardending'],
+                    'expires' => [
+                        'month' => substr($responseBody['expdate'],0,2),
+                        'year' => substr($responseBody['expdate'],2,2),
+                    ],
+                    'brand' => $responseBody['cardtype']
+                ];
+                if (key_exists($card['brand'], self::$cardBrands))
+                    $card['image'] = self::$cardBrands[$card['brand']];
+                else
+                    $card['image'] = self::$cardBrands['Unknown'];
+
+                return [$card];
+            }
+            else
+            {
+                return null;
+            }
+        } else {
+            throw new CustomBaseException("Request failed",$response->getStatusCode());
+        }
+    }
+    public function createCharge($amount, $meta_data)
+    {
+        $user = auth()->user();
+        $data = [
+            'method'=>'card_payment',
+            'merchantkey'=> $this->marchant_key,
+            'apikey'=> $this->api_key,
+            'amount' => $amount,
+            'firstname'=> $user->first_name,
+            'lastname'=> $user->last_name,
+            'custid' => $user->intellipay_customer_id,
+            'comment'=> json_encode($meta_data)
+        ];
+        $client = new Guzzle();
+        $response = $client->post($this->host, ['form_params' => $data]);
+        if ($response->getStatusCode() === 200) {
+            $responseBody = $response->getBody()->getContents();
+            $responseBody = json_decode($responseBody,true);
+            if($responseBody['status'] > 0 && $responseBody['response'] == 'A')
+            {
+                $card = self::getCards()[0];
+                return array(
+                    'paymentid' => $responseBody['paymentid'],
+                    'last4' => $card['last4'],
+                    'fee' => $responseBody['fee'],
+                );
+            }
+            else
+            {
+                throw new CustomBaseException("Payment failed, please try again or contact admin. Code ".$responseBody['status'] ,400);
+            }
+        } else {
+            throw new CustomBaseException("Request failed",$response->getStatusCode());
+        }
+    }
 }
 
 
