@@ -17,11 +17,10 @@
             <br/><br/>
             <h2 class="mb-0">
                 {{ $user->fullName() }}
-                <br/>
-                {{$user->email}}
-                <br/>
-                {{$user->office_phone}}
             </h2>
+            <b>Email: </b> {{$user->email}}
+            <br/>
+            <b>Phone: </b> {{$user->office_phone}}
         </div>
         <div class="logo-container">
             @include('PDF.host.meet.reports.common_logo_image')
