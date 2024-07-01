@@ -129,13 +129,13 @@
                             </a>
                         </div>
                         @endif
-                        <!-- <div class="sidebar-item">
+                        <div class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('gyms.conversation' , ['gym' => $gym])}}">
                                 <span class="fas fa-comments" title="Create Meet"></span>
                                 <span class="sidebar-item-text">Conversations</span>
                                 <span class="badge badge-pill badge-light small unread-count d-none"></span>
                             </a>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
             </div>
