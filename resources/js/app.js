@@ -10,7 +10,7 @@ import Echo from 'laravel-echo';
 window.io = require('socket.io-client');
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    host: window.location.hostname + ':' + window.laravel_echo_port,// this is laravel-echo-server host
+    host: window.location.hostname,// this is laravel-echo-server host
     authEndPoint: '/broadcasting/auth',
     auth: {
         headers: {

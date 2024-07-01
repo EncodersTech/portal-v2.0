@@ -121,7 +121,7 @@
         <script>
             window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
         </script>
-        <script src="https://{{ Request::getHost() }}:{{ window.laravel_echo_port }}/socket.io/socket.io.js"></script>
+        <script src="https://{{ Request::getHost() }}/socket.io/socket.io.js"></script>
         <script src="{{ mix('js/app.js') }}"></script>
     <!-- Scripts -->
     @section('scripts')
