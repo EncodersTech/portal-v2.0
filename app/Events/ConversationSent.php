@@ -8,7 +8,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-
+use Illuminate\Support\Facades\Log;
 class ConversationSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -35,7 +35,10 @@ class ConversationSent implements ShouldBroadcast
     {
         return new PrivateChannel('conversation.'.$this->gymId);
     }
-
+    public function broadcastAs()
+    {
+        return 'ConversationSent';
+    }
     /**
      * @return array
      */

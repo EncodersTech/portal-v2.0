@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 54);
+/******/ 	return __webpack_require__(__webpack_require__.s = 55);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -136,7 +136,7 @@ $(document).ready(function () {
 
 /***/ }),
 
-/***/ 54:
+/***/ 55:
 /*!**************************************************!*\
   !*** multi ./resources/js/include/nav/topbar.js ***!
   \**************************************************/

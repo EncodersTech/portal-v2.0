@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 55);
+/******/ 	return __webpack_require__(__webpack_require__.s = 56);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -3306,7 +3306,7 @@ function deleteItemAjax(url, tableId, header) {
 
 /***/ }),
 
-/***/ 55:
+/***/ 56:
 /*!***************************************************!*\
   !*** multi ./resources/assets/admin/js/custom.js ***!
   \***************************************************/

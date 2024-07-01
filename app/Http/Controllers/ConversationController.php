@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-
+use Illuminate\Support\Facades\Log;
 /**
  * Class ConversationController
  */
@@ -207,8 +207,10 @@ class ConversationController extends AppBaseController
                 'type' => Conversation::CONVERSATION,
                 'gym' => Gym::with(['user'])->where('id', $gym->id)->first()
             ];
-
+            Log::info('broadcastOn controller' . $input['toId']);
             broadcast(new ConversationSent($data, $input['toId']))->toOthers();
+            //event(new ConversationSent($data, $input['toId']));
+            
             DB::commit();
             return $this->sendResponse($input['toId'], 'User Retrieved Successfully.');
         } catch (Exception $e) {
