@@ -207,7 +207,7 @@ class ConversationController extends AppBaseController
                 'type' => Conversation::CONVERSATION,
                 'gym' => Gym::with(['user'])->where('id', $gym->id)->first()
             ];
-            Log::info('broadcastOn controller' . $input['toId']);
+            // Log::info('broadcastOn controller' . $input['toId']);
             broadcast(new ConversationSent($data, $input['toId']))->toOthers();
             //event(new ConversationSent($data, $input['toId']));
             
