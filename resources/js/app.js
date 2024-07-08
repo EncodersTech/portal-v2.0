@@ -8,9 +8,17 @@ require('./bootstrap');
 import Echo from 'laravel-echo';
 
 window.io = require('socket.io-client');
+var socket_url = '';
+if(window.server_env == 'local'){
+    socket_url = window.location.hostname + ':6001';
+}
+else{
+    socket_url = window.location.hostname;
+}
+
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    host: window.location.hostname,// this is laravel-echo-server host
+    host: socket_url,// this is laravel-echo-server host
     authEndPoint: '/broadcasting/auth',
     auth: {
         headers: {
