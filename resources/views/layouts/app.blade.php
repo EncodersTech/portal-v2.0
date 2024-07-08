@@ -121,7 +121,7 @@
         <script>
             window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
         </script>
-        <script src="//{{ Request::getHost() }}/socket.io/socket.io.js"></script>
+        <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> <!-- port is not needed in live or dev server -->
         <script src="{{ mix('js/app.js') }}"></script>
     <!-- Scripts -->
     @section('scripts')

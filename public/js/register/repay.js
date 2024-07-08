@@ -90161,7 +90161,7 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 window.io = __webpack_require__(/*! socket.io-client */ "./node_modules/socket.io-client/lib/index.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'socket.io',
-  host: window.location.hostname,
+  host: window.location.hostname + ':' + 6001,
   // this is laravel-echo-server host
   authEndPoint: '/broadcasting/auth',
   auth: {
