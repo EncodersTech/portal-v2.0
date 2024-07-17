@@ -22,6 +22,8 @@ use App\Services\USAIGCService;
 use Throwable;
 use App\Models\MeetTransaction;
 use App\Models\MeetRegistration;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\RegistrationDetailExport;
 // use App\Models\AuditEvent;
 class Meet extends Model
 {
@@ -2376,7 +2378,7 @@ class Meet extends Model
         }
         return $result;
     }
-    public function generateRegistrationDetailReport(Gym $gym = null) : PdfWrapper   {
+    public function generateRegistrationDetailReport(Gym $gym = null)  {
         try {
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
@@ -2827,8 +2829,11 @@ class Meet extends Model
             // dd($data['changes']);
             // dd($data);
             // die();
-            return PDF::loadView('PDF.host.meet.reports.registration-detail', $data);
+            // return PDF::loadView('PDF.host.meet.reports.registration-detail', $data);
+            return Excel::download(new RegistrationDetailExport($data), 'registration-detail.xlsx');
+
         } catch(\Throwable $e) {
+            dd($e->getMessage());
             throw $e;
         }
     }

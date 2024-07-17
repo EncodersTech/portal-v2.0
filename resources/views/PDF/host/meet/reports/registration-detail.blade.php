@@ -27,7 +27,7 @@
             </h4>
         </div>
         <div class="logo-container">
-            @include('PDF.host.meet.reports.common_logo_image')
+            <!-- @include('PDF.host.meet.reports.common_logo_image') -->
         </div>
     </div>
     @foreach($registrations as $index => $registration)

@@ -941,6 +941,9 @@ class MeetController extends AppBaseController
                     break;
 
                 case Meet::REPORT_TYPE_REGISTRATION_DETAIL:
+                    return $meet->generateRegistrationDetailReport($gym);
+                    die("here");
+                    // return ;
                     $pdf = $meet->generateRegistrationDetailReport($gym)->setPaper('a4')
                         ->setOption('margin-top', '10mm')
                         ->setOption('margin-bottom', '10mm')
