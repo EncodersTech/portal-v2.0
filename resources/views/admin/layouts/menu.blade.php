@@ -81,6 +81,13 @@
                         <p>Gym Balance</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('pending.withdrawal.balance.report') }}"
+                        class="nav-link {{ Request::is('admin/pending-withdrawal-balance-report') ? 'active' : '' }}">
+                        <i class="fas fa-info-circle nav-icon"></i>
+                        <p>Pending W Balance</p>
+                    </a>
+                </li>
             </ul>
         </li>
 
@@ -123,9 +130,16 @@
         </li>
         <li class="nav-item">
             <a href="{{ route('admin.onetimeach_report') }}"
-                class="nav-link {{ Request::is('admin/onetimeach_report') ? 'active' : '' }}">
+                class="nav-link {{ Request::is('admin/onetimeach/report') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-cog"></i>
                 <p>ACH Report</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.alltransaction_report') }}"
+                class="nav-link {{ Request::is('admin/alltransaction/report') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cog"></i>
+                <p>All Transaction Report</p>
             </a>
         </li>
         <li class="nav-item">

@@ -247,6 +247,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::get('onetimeach/report','DashboardController@onetimeach_report')->name('admin.onetimeach_report');
         Route::post('onetimeach/report','DashboardController@onetimeach_report')->name('admin.onetimeach_post');
 
+        Route::get('alltransaction/report','DashboardController@alltransaction_report')->name('admin.alltransaction_report');
         Route::get('major-report','DashboardController@reports_dashboard')->name('admin.dashboard_reports');
 
         Route::post('errortracing/update-usag-levels','DashboardController@usagLevelsUpdate')->name('admin.error_report.update_usag_level');
@@ -270,6 +271,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
 
         Route::get('pending-withdrawal-balance-report','DashboardController@pendingWithdrawalBalance')->name('pending.withdrawal.balance.report');
         Route::get('print-pending-withdrawal-balance-report','DashboardController@printPendingWithdrawalBalance')->name('print.pending.withdrawal.balance');
+        Route::get('print-individual-balance-report/{id}','DashboardController@printIndividualPendingBalance')->name('print.individual.pending.balance');
     });
 
     Route::get('/impersonate/{userId}', 'UserAccountController@impersonate')->name('impersonate');

@@ -9,7 +9,8 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Support\Facades\Log;
-class ConversationSent implements ShouldBroadcast
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+class ConversationSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 

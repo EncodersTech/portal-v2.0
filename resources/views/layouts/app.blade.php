@@ -118,11 +118,19 @@
         })();
     </script>
     <!--End of Tawk.to Script-->
-        <script>
-            window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
-        </script>
-        <script src="//{{ Request::getHost() }}:6001/socket.io/socket.io.js"></script> <!-- port is not needed in live or dev server -->
-        <script src="{{ mix('js/app.js') }}"></script>
+    <script>
+        window.laravel_echo_port='{{env("LARAVEL_ECHO_PORT")}}';
+        window.server_env = '{{env("APP_ENV")}}';
+    </script>
+    <?php 
+        if(env('APP_ENV') == 'local'){
+            $socket_url = 'http://'.Request::getHost().':'.env('LARAVEL_ECHO_PORT');
+        }else{
+            $socket_url = 'https://'.Request::getHost();
+        }
+    ?>
+    <script src="{{ $socket_url }}/socket.io/socket.io.js"></script>
+    <script src="{{ mix('js/app.js') }}"></script>
     <!-- Scripts -->
     @section('scripts')
 
