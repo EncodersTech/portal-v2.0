@@ -95,6 +95,7 @@
                         <th>Payment Id</th>
                         <th>From (Gym)</th>
                         <th>To (Meet)</th>
+                        <th>Meet Host</th>
                         <th>Amount</th>
                         <th>Type</th>
                         <th>Status</th>
@@ -111,6 +112,7 @@
                                 <td>'.$value['id'].'</td>
                                 <td>'.$value['gym'].'</td>
                                 <td>'.$value['meet'].'</td>
+                                <td>'.$value['host'].'</td>
                                 <td>'. number_format($value['total'],2).'</td>
                                 <td>'.$types[$value['method']].'</td>
                                 <td class="'.$status[$value['status']].'">'.strtoupper($status[$value['status']]).'</td>
@@ -130,6 +132,7 @@
                                 <td>'.$value['id'].'</td>
                                 <td>'.$value['first_name'].' '.$value['last_name'].' ('.$value['gym'].')</td>
                                 <td>'.$value['meet'].'</td>
+                                <td>'.$value['host'].'</td>
                                 <td>'. number_format($value['total'],2).'</td>
                                 <td>'.$types[$value['type']].'</td>
                                 <td class="'.$status[$value['status']].'">'.strtoupper($status[$value['status']]).'</td>
