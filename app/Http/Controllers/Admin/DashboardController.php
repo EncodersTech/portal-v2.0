@@ -15,6 +15,7 @@ use App\Models\UserBalanceTransaction;
 use Illuminate\Support\Facades\DB;
 use App\Models\MeetTransaction;
 use App\Models\MeetRegistration;
+use App\Models\Meet;
 class DashboardController extends AppBaseController
 {
     /**
@@ -159,6 +160,7 @@ class DashboardController extends AppBaseController
             'meet_transactions.method',
             'meet_transactions.created_at',
             'meets.name as meet',
+            'meets.id as meet_id',
             'gyms.name as gym'
         )
         ->join('meet_registrations', 'meet_registrations.id', '=', 'meet_transactions.meet_registration_id')
@@ -167,6 +169,11 @@ class DashboardController extends AppBaseController
         ->where('meet_transactions.created_at','>=',date('Y-m-d',strtotime($from_date)))
         ->where('meet_transactions.created_at','<=',date('Y-m-d',strtotime($to_date)))
         ->get();
+
+        foreach ($data['meet_transaction'] as $key => $value) {
+            $value["host"] = Meet::find($value->meet_id)->gym->user->fullName();
+            $data['meet_transaction'][$key] = $value;
+        }
 
         $data['user_balance_transaction'] = UserBalanceTransaction::select(
             'user_balance_transactions.id',
@@ -190,39 +197,23 @@ class DashboardController extends AppBaseController
         ->get();
 
         foreach ($data['user_balance_transaction'] as $key => $value) {
-            // if($value->type == 4)
-            // {
-            //     if($value->total < 0)
-            //     {
-            //         $meet_registration = MeetRegistration::find($value->related_id);
-            //         $value->meet = $meet_registration->meet->name;
-            //         $value->gym = $meet_registration->gym->name;
-            //         $value->total *= -1;
-            //     }
-            //     else
-            //     {
-            //         unset($data['user_balance_transaction'][$key]);
-            //         continue;
-            //     }
-            // }
             if($value->type == 2)
             {
                 $value->meet = "";
                 $value->gym = "Dwolla verification fee";
-                $value->total *= -1;
             }
             else if($value->type == 99)
             {
                 $value->meet = 'Withdrawal';
                 $value->gym = 'AllGym';
-                $value->total *= -1;
             }
             else
             {
                 $value->meet = 'Balance Transaction';
                 $value->gym = $value->description;
-                $value->total *= -1;
             }
+            $value->host = '';
+            $value->total *= -1;
             $data['user_balance_transaction'][$key] = $value;
         }
         // dd($data['user_balance_transaction']);
