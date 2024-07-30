@@ -13,6 +13,9 @@ use App\Services\USAGService;
 use App\Services\IntellipayService;
 use App\Models\UserBalanceTransaction;
 use Illuminate\Support\Facades\DB;
+use App\Models\MeetTransaction;
+use App\Models\MeetRegistration;
+use App\Models\Meet;
 class DashboardController extends AppBaseController
 {
     /**
@@ -137,6 +140,85 @@ class DashboardController extends AppBaseController
         $data['from_date'] = $from_date;
         $data['to_date'] = $to_date;
         return view('admin.error_report.index')->with($data);
+    }
+    public function alltransaction_report()
+    {
+        $from_date = date('m/d/Y',strtotime('-1 month'));
+        $to_date = date('m/d/Y');
+        if(isset($_GET['from_date']) && isset($_GET['to_date']))
+        {
+            $from_date = $_GET['from_date'];
+            $to_date = $_GET['to_date'];
+        }
+        $data = [];
+        $data['from_date'] = $from_date;
+        $data['to_date'] = $to_date;
+        $data['meet_transaction'] = MeetTransaction::select(
+            'meet_transactions.id',
+            'meet_transactions.total',
+            'meet_transactions.status',
+            'meet_transactions.method',
+            'meet_transactions.created_at',
+            'meets.name as meet',
+            'meets.id as meet_id',
+            'gyms.name as gym'
+        )
+        ->join('meet_registrations', 'meet_registrations.id', '=', 'meet_transactions.meet_registration_id')
+        ->join('meets', 'meets.id', '=', 'meet_registrations.meet_id')
+        ->join('gyms', 'gyms.id', '=', 'meet_registrations.gym_id')
+        ->where('meet_transactions.created_at','>=',date('Y-m-d',strtotime($from_date)))
+        ->where('meet_transactions.created_at','<=',date('Y-m-d',strtotime($to_date)))
+        ->get();
+
+        foreach ($data['meet_transaction'] as $key => $value) {
+            $value["host"] = Meet::find($value->meet_id)->gym->user->fullName();
+            $data['meet_transaction'][$key] = $value;
+        }
+
+        $data['user_balance_transaction'] = UserBalanceTransaction::select(
+            'user_balance_transactions.id',
+            'user_balance_transactions.total',
+            'user_balance_transactions.status',
+            'user_balance_transactions.type',
+            'user_balance_transactions.created_at',
+            'users.first_name',
+            'users.last_name',
+            'user_balance_transactions.related_id',
+            'user_balance_transactions.related_type',
+            'user_balance_transactions.description'
+        )
+        ->join('users', 'users.id', '=', 'user_balance_transactions.user_id')
+        ->where('user_balance_transactions.created_at','>=',date('Y-m-d',strtotime($from_date)))
+        ->where('user_balance_transactions.created_at','<=',date('Y-m-d',strtotime($to_date)))
+        // ->where('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
+        ->Where('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL)
+        ->orWhere('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN)
+        ->orWhere('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_DWOLLA_VERIFICATION_FEE)
+        ->get();
+
+        foreach ($data['user_balance_transaction'] as $key => $value) {
+            if($value->type == 2)
+            {
+                $value->meet = "";
+                $value->gym = "Dwolla verification fee";
+            }
+            else if($value->type == 99)
+            {
+                $value->meet = 'Withdrawal';
+                $value->gym = 'AllGym';
+            }
+            else
+            {
+                $value->meet = 'Balance Transaction';
+                $value->gym = $value->description;
+            }
+            $value->host = '';
+            $value->total *= -1;
+            $data['user_balance_transaction'][$key] = $value;
+        }
+        // dd($data['user_balance_transaction']);
+
+        return view('admin.reports.alltransaction.index')->with($data);
     }
     public function usagLevelsUpdate(Request $request)
     {
