@@ -200,6 +200,7 @@ $(document).ready(e => {
                             GymNameLabel: 'gym-name-label',
                             CoachNameLabel: 'coaches-name-label',
                             GymMailingLabel: 'gym-mailing-label',
+                            RefundAll: 'RefundsAll'
                         }
                     }
                 };
@@ -256,6 +257,7 @@ $(document).ready(e => {
                         case this.constants.reports.types.CoachNameLabel:
                         case this.constants.reports.types.GymMailingLabel:
                         
+                        case this.constants.reports.types.RefundAll:
                             break;
 
                         default:

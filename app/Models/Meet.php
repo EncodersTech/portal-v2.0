@@ -53,6 +53,8 @@ class Meet extends Model
     public const REPORT_TYPE_GYM_NAME_LABEL = 'gym-name-label';
     public const REPORT_TYPE_COACHES_NAME_LABEL ='coaches-name-label';
     public const REPORT_TYPE_GYM_MAILING_LABEL = 'gym-mailing-label';
+    public const REPORT_TYPE_REFUNDSALL = 'RefundsAll';
+
 
     protected $guarded = ['id'];
 
@@ -1917,7 +1919,7 @@ class Meet extends Model
         }
     }
 
-    public function generateRefundReport(Gym $gym = null) : PdfWrapper {
+    public function generateRefundReport(Gym $gym = null, $all = 0) : PdfWrapper {
         try {
             $base = $this->registrations()
                         ->where('status', MeetRegistration::STATUS_REGISTERED);
@@ -2041,8 +2043,14 @@ class Meet extends Model
                 'meet' => $this,
                 'registrations' => $registrations
             ];
-
-            return PDF::loadView('PDF.host.meet.reports.refund', $data); /** @var PdfWrapper $pdf */
+            if($all == 1)
+            {
+                return PDF::loadView('PDF.host.meet.reports.refund-all', $data); /** @var PdfWrapper $pdf */
+            }
+            else
+            {
+                return PDF::loadView('PDF.host.meet.reports.refund', $data); /** @var PdfWrapper $pdf */
+            }
         } catch(\Throwable $e) {
             throw $e;
         }
