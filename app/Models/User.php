@@ -25,7 +25,7 @@ use App\Mail\MemberInvitationMailable;
 use App\Mail\MemberInvitationAccepted;
 use App\Helper;
 use GuzzleHttp\Client as Guzzle;
-
+use App\Repositories\MeetRepository;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, Notifiable;
@@ -1171,4 +1171,125 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
     // Admin Dashboard Reports Function - End
+    public function hostDashboardData()
+    {
+        $active_gym_id = null;
+        if(request()->gym_id !== null)
+        {
+            $active_gym_id = request()->gym_id;;
+        }
+        $meet_summary = [];
+        $meet_data = [
+            'name' => '',
+            'id' => '',
+            'data' => ''
+        ];
+        $summary_data = [
+            'total_earn' => 0,
+            'total_ath' => 0,
+            'total_coa' => 0,
+            'total_gym' => 0,
+            'allgym_fees' => 0,
+            'team_allow' => 0,
+            'athleteLevelArr' => [],
+            'coachSummaryArr' => [],
+            'gymSummaryArr' => []
+        ];
+        $summary_data_this_year = [
+            'total_earn' => 0,
+            'total_ath' => 0,
+            'total_coa' => 0,
+            'total_gym' => 0,
+            'allgym_fees' => 0,
+            'team_allow' => 0,
+            'athleteLevelArr' => [],
+            'coachSummaryArr' => [],
+            'gymSummaryArr' => []
+        ];
+        $meetRepo = resolve(MeetRepository::class); /** @var MeetRepository $meetRepo */
+        $activeGyms =  auth()->user()->gyms()
+                            ->where('is_archived', false)
+                            ->orderBy('name', 'ASC')->get();
+
+        if($active_gym_id !== null)
+        {
+            $active_gym = $activeGyms->where('id', $active_gym_id)->first();
+        }
+        else
+        {
+            $active_gym = $activeGyms->first();
+        }
+        $meets_in_active_gym = $active_gym->meets()->get();
+        foreach ($meets_in_active_gym as $meet) {
+            $meet_summary_data = $meetRepo->getSummaryData($meet);
+            $meet_data = [
+                'name' => $meet->name,
+                'id' => $meet->id,
+                'data' => $meet_summary_data,
+                'registration' => $meet->registrations
+            ];
+            $meet_summary[] = $meet_data;
+            $summary_data = [
+                'total_earn' => $summary_data['total_earn'] + $meet_summary_data['total_earn'],
+                'total_ath' => $summary_data['total_ath'] + $meet_summary_data['total_ath'],
+                'total_coa' => $summary_data['total_coa'] + $meet_summary_data['total_coa'],
+                'total_gym' => $summary_data['total_gym'] + $meet_summary_data['total_gym'],
+                'team_allow' => $summary_data['team_allow'] + $meet_summary_data['team_allow'],
+                'allgym_fees' => $summary_data['allgym_fees'] + $meet_summary_data['allgym_fees'],
+                'athleteLevelArr' => array_merge($summary_data['athleteLevelArr'], $meet_summary_data['athleteLevelArr']),
+                'coachSummaryArr' => array_merge($summary_data['coachSummaryArr'], $meet_summary_data['coachSummaryArr']),
+                'gymSummaryArr' => array_merge($summary_data['gymSummaryArr'], $meet_summary_data['gymSummaryArr'])
+            ];
+        }
+        $today = date("Y")."-12-31";
+        $year_first = date("Y")."-01-01";
+        $meets_in_active_gym = $active_gym->meets()->where('end_date','<=',$today)->where('end_date','>=',$year_first)->get();
+        foreach ($meets_in_active_gym as $meet) {
+            $meet_summary_data = $meetRepo->getSummaryData($meet);
+            $summary_data_this_year = [
+                'total_earn' => $summary_data['total_earn'] + $meet_summary_data['total_earn'],
+                'total_ath' => $summary_data['total_ath'] + $meet_summary_data['total_ath'],
+                'total_coa' => $summary_data['total_coa'] + $meet_summary_data['total_coa'],
+                'total_gym' => $summary_data['total_gym'] + $meet_summary_data['total_gym'],
+                'team_allow' => $summary_data['team_allow'] + $meet_summary_data['team_allow'],
+                'athleteLevelArr' => array_merge($summary_data['athleteLevelArr'], $meet_summary_data['athleteLevelArr']),
+                'coachSummaryArr' => array_merge($summary_data['coachSummaryArr'], $meet_summary_data['coachSummaryArr']),
+                'gymSummaryArr' => array_merge($summary_data['gymSummaryArr'], $meet_summary_data['gymSummaryArr'])
+            ];
+        }
+
+        $gym_summary = [];
+        foreach($meet_summary as $meet)
+        {
+            foreach($meet['registration'] as $reg)
+            {
+                if(!isset($gym_summary[$reg->gym->id]))
+                {
+                    $gym_data = [
+                        'profile_image' => $reg->gym->profile_picture,
+                        'name' => $reg->gym->name,
+                        'id' => $reg->gym->id,
+                        'athlete' => count($reg->athletes),
+                        'coach' => count($reg->coaches),
+                        'meet' => [$meet['name']]
+                    ];
+                    $gym_summary[$reg->gym->id] = $gym_data;
+                }
+                else
+                {
+                    $gym_summary[$reg->gym->id]['athlete'] += count($reg->athletes);
+                    $gym_summary[$reg->gym->id]['coach'] += count($reg->coaches);
+                    $gym_summary[$reg->gym->id]['meet'] = array_merge($gym_summary[$reg->gym->id]['meet'], [$meet['name']]);
+                }
+            }
+        }
+        return [
+            'current_gym' => $active_gym,
+            'active_gyms' => $activeGyms,
+            'summaryData' => $summary_data,
+            'summaryDataThisYear' => $summary_data_this_year,
+            'meetSummary' => $meet_summary,
+            'gymSummary' => $gym_summary
+        ];
+    }
 }

@@ -166,8 +166,7 @@ class DashboardController extends AppBaseController
         ->join('meet_registrations', 'meet_registrations.id', '=', 'meet_transactions.meet_registration_id')
         ->join('meets', 'meets.id', '=', 'meet_registrations.meet_id')
         ->join('gyms', 'gyms.id', '=', 'meet_registrations.gym_id')
-        ->where('meet_transactions.created_at','>=',date('Y-m-d',strtotime($from_date)))
-        ->where('meet_transactions.created_at','<=',date('Y-m-d',strtotime($to_date)))
+        ->whereBetween('meet_transactions.created_at',[date('Y-m-d h:i:s',strtotime($from_date)),date('Y-m-d h:i:s',strtotime($to_date))])
         ->get();
 
         foreach ($data['meet_transaction'] as $key => $value) {
@@ -188,12 +187,12 @@ class DashboardController extends AppBaseController
             'user_balance_transactions.description'
         )
         ->join('users', 'users.id', '=', 'user_balance_transactions.user_id')
-        ->where('user_balance_transactions.created_at','>=',date('Y-m-d',strtotime($from_date)))
-        ->where('user_balance_transactions.created_at','<=',date('Y-m-d',strtotime($to_date)))
-        // ->where('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_PAYMENT)
-        ->Where('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL)
-        ->orWhere('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN)
-        ->orWhere('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_DWOLLA_VERIFICATION_FEE)
+        ->where(function ($query) {
+            $query->where('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL)
+            ->orWhere('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_ADMIN)
+            ->orWhere('user_balance_transactions.type',UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_DWOLLA_VERIFICATION_FEE);
+        })
+        ->whereBetween('user_balance_transactions.created_at',[date('Y-m-d h:i:s',strtotime($from_date)),date('Y-m-d h:i:s',strtotime($to_date))])
         ->get();
 
         foreach ($data['user_balance_transaction'] as $key => $value) {

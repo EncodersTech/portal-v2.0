@@ -155,7 +155,7 @@
                                     'checked' : ''
                                 }}>
                         <label class="form-check-label" for="tshirt_size_chart_checkbox">
-                            <span class="fas fa-fw fa-tshirt"></span> Require T-shirt sizes at registration
+                            <span class="fas fa-fw fa-tshirt"></span> Require T-shirt/Clothing sizes at registration
                         </label>
                     </div>
                     <select id="tshirt_size_chart_id" name="tshirt_size_chart_id" required

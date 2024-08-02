@@ -47,13 +47,12 @@ class Meet extends Model
     public const REPORT_TYPE_EVENT_SPECIALIST = 'event-specialist';
     public const REPORT_TYPE_LEO_T_SHIRT = 'leo-t-shirt';
     public const REPORT_TYPE_LEO_T_SHIRT_GYM = 'leo-t-shirt-gym';
-    public const REPORT_TYPE_GYM_MAILING_LABEL = 'gym-mailing-label';
     public const REPORT_TYPE_SPECIALISTS_BY_LEVEL = 'specialist-by-level';
     public const REPORT_TYPE_GYM_NAME_LABEL = 'gym-name-label';
     public const REPORT_TYPE_COACHES_NAME_LABEL ='coaches-name-label';
-    public const REPORT_TYPE_REGISTRATION_QR = 'marketing-qr';
-    public const REPORT_TYPE_ENTRY_TEAM = 'entry-team';
+    public const REPORT_TYPE_GYM_MAILING_LABEL = 'gym-mailing-label';
     public const REPORT_TYPE_REFUNDSALL = 'RefundsAll';
+
 
     protected $guarded = ['id'];
 
