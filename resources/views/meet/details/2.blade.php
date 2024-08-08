@@ -161,7 +161,7 @@
                             </td>
                         </tr>
 
-                        <tr>
+                        <!-- <tr>
                             <td class="align-middle font-weight-bold">
                                 <span class="fas fa-money-check"></span> Accept Mailed Checks
                             </td>
@@ -190,9 +190,9 @@
                                     @endif
                                 @endif
                             </td>
-                        </tr>
+                        </tr> -->
 
-                        @if ($is_own)
+                        <!-- @if ($is_own)
                             <tr>
                                 <td class="align-middle font-weight-bold">
                                     <span class="fas fa-check-circle"></span> Defer Handling Fees to Registering Gyms
@@ -210,7 +210,7 @@
                                     {{ $meet->defer_processor_fees ? 'Yes': 'No' }}
                                 </td>
                             </tr>
-                        @endif
+                        @endif -->
                     </tbody>
                 </table>
             </div>
