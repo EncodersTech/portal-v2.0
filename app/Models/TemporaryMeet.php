@@ -282,8 +282,9 @@ class TemporaryMeet extends Model
             $accept_deposit = isset($attr['accept_deposit']);
             $mailed_check_instructions = null;
 
-            $defer_handling_fees = isset($attr['defer_handling_fees']);
-            $defer_processor_fees = isset($attr['defer_processor_fees']);
+            // all the fees are now paid by the registring gym as per request from bill.
+            $defer_handling_fees = true; //isset($attr['defer_handling_fees']);
+            $defer_processor_fees = true; //isset($attr['defer_processor_fees']);
 
             if ($accept_mailed_check) {
                 if (!isset($attr['mailed_check_instructions']))

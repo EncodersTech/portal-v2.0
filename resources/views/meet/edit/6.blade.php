@@ -69,7 +69,7 @@
                 if($disable_1 == 0 || $card_exist == 0 || $is_checked_deposit == 0)
                     $is_disable2 = 0;
             ?>
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col mb-1">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="accept_mailed_check"
@@ -110,7 +110,7 @@
                     </span>
                     @enderror
                 </div>
-            </div>
+            </div> -->
             
             <div class="row">
                 <div class="col mb-1">
@@ -141,7 +141,7 @@
                 </div>
             </div>            
 
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col mb-2">
                     @if ($restricted_edit)
                     <input type="checkbox" class="d-none" name="defer_handling_fees"
@@ -162,9 +162,9 @@
                         account instead.
                     </div>
                 </div>
-            </div>
+            </div> -->
 
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col mb-2">
                     @if ($restricted_edit)
                     <input type="checkbox" class="d-none" name="defer_processor_fees"
@@ -184,7 +184,7 @@
                         Leave unchecked if you would like said fees to be deducted from your account instead.
                     </div>
                 </div>
-            </div>
+            </div> -->
             <div class="d-flex flex-row flex-nowrap mt-3">
                 <div class="flex-grow-1">
                     <a href="{{ route('gyms.meets.index', ['gym' => $gym]) }}"
