@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/select2.min.css') }}"  type="text/css"/>
     <link rel="stylesheet" href="{{ asset('assets/admin/css/summernote.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css" integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous" />
-        
+    <link href="{{ asset('assets/admin/css/jquery.dataTables.min.css') }}" rel="stylesheet" type="text/css"/>
     <style>
         .tableFixHead thead th { position: sticky; top: -1px; background:#eee;}
         .image__file-upload{
@@ -144,8 +144,18 @@
     </div>
 @endsection
 
-@section('scripts-main')
-    
+
+@section('scripts')
+    <script src="{{ asset('assets/admin/js/jquery.dataTables.min.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+            $('#meet_summary_table').DataTable({
+                "paging": true,
+                "responsive": true,
+                "order": [[ 0, "asc" ]],
+            });
+        });
+    </script>
 @endsection
 
 

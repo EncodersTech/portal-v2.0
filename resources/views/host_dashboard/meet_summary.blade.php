@@ -1,4 +1,4 @@
-<table class="table">
+<table class="table" id="meet_summary_table">
     <thead>
         <tr>
             <th>Meet Name</th>
