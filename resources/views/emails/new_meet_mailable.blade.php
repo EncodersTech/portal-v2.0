@@ -3,7 +3,7 @@ Hello {{ $user }},
 <br>
 
 Thank you for using AllGymnastics to host your meet.
-Your meet <b>"{{ $meet->name }}"<b> has been successfully created. 
+Your meet <b>"{{ $meet->name }}"</b> has been successfully created. 
 Once your meet is created you must publish it so it appears <b>open</b> in the browse meets tab.
 <br><br>
 AllGymnastics offers a featured meet option which will put your meet at the very top when opening Browse Meets. Currently, the meets are sorted by the dates which the competition runs. By opting for the featured meet option you will get more users to view your meet. 
