@@ -24,7 +24,7 @@
                             <tr>
                                 <td>Account Name: </td>
                                 <td>
-                                    <input type="text" class="form-control" name="account_name" placeholder="My Account" value="Test Account">
+                                    <input type="text" class="form-control" name="account_name" placeholder="My Account" value="">
                                 </td>
                             </tr>
                             <tr>
@@ -39,13 +39,13 @@
                             <tr>
                                 <td>Routing Number: </td>
                                 <td>
-                                    <input type="number" class="form-control" name="routing_number" placeholder="#########" value="222222226">
+                                    <input type="number" class="form-control" name="routing_number" placeholder="#########" value="">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Account Number: </td>
                                 <td>
-                                    <input type="text" class="form-control" name="account_number" placeholder="#########" value="123456789">
+                                    <input type="text" class="form-control" name="account_number" placeholder="#########" value="">
                                 </td>
                             </tr>
                             <tr>
