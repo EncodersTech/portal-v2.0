@@ -29,6 +29,9 @@
 @endsection
 
 @section('scripts-main')
+    <script>
+        window.stripe_settings = "<?= $cc_gateway ?>";
+    </script>
     <script src="https://js.stripe.com/v3/"></script>
     <script src="https://cdn.dwolla.com/1/dwolla.min.js"></script>
     <script src="{{ mix('js/user/account-payment-options.js') }}"></script>
