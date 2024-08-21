@@ -34,12 +34,42 @@ class DashboardController extends AppBaseController
         $managed = $request->_managed_account;
         /** @var User $managed */
         $showSanctionNotifications = $managed->isCurrentUser() || $managed->pivot->can_manage_gyms;
-        
+        $popupnotifications = DB::table('popnotificaitons')
+                                ->where('validity', '>=', Carbon::now())
+                                ->where('status', 1)
+                                ->orderBy('id', 'desc')->get();
+
+        $has_popup = false;
+        foreach ($popupnotifications as $popupnotification) {
+            if($popupnotification->selected_users == null)
+            {
+                $has_popup = true;
+                DB::table('popnotificaitons')->where('id', $popupnotification->id)
+                ->update(
+                    ['selected_users' => json_encode(array($managed->id => 1))
+                ]);
+            }
+            else
+            {
+                $selected_users = json_decode($popupnotification->selected_users, true);
+                if(!array_key_exists($managed->id, $selected_users) || $selected_users[$managed->id] == 0)
+                {
+                    $has_popup = true;
+                    $selected_users[$managed->id] = 1;
+                    DB::table('popnotificaitons')->where('id', $popupnotification->id)
+                    ->update(
+                        ['selected_users' => json_encode($selected_users)
+                    ]);
+                }
+            }
+        }
+
         return view('dashboard', [
             '_managed' => $managed,
             'current_page' => 'dashboard',
             'showSanctionNotifications' => $showSanctionNotifications,
-            
+            'generalNotifications' => $popupnotifications,
+            'has_popup' => $has_popup
         ]);
     }
 

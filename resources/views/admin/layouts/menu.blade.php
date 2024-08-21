@@ -149,5 +149,12 @@
                 <p>Major Report</p>
             </a>
         </li>
+        <li class="nav-item">
+            <a href="{{ route('admin.notification') }}"
+                class="nav-link {{ Request::is('admin/popup-notification') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-cog"></i>
+                <p>Popup Notification</p>
+            </a>
+        </li>
     </ul>
 </nav>
