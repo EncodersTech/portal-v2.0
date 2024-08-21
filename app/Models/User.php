@@ -1283,6 +1283,10 @@ class User extends Authenticatable implements MustVerifyEmail
                 }
             }
         }
+        // sort $gym_summary by name
+        usort($gym_summary, function($a, $b) {
+            return $a['name'] <=> $b['name'];
+        });
         return [
             'current_gym' => $active_gym,
             'active_gyms' => $activeGyms,
