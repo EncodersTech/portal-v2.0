@@ -418,5 +418,118 @@ class DashboardController extends AppBaseController
         // dd($data['meet_registration_statistics']);
         return view('admin.dashboard.report', $data);
     }
+    public function popup_notification()
+    {
+        $data['state'] = 0; // new
+        $data['notifications'] = DB::table('popnotificaitons')->orderBy('id','DESC')->get();
+        $data['users'] = User::where('is_disabled', false)->where('email_verified_at', '!=', null)->get();
+        return view('admin.dashboard.popup_notification', $data);
+    }
+    public function popup_notification_save(Request $request)
+    {
+        $today = date('Y-m-d h:i:s');
+        if($request->state == 0) // new
+        {
+            $validity = date('Y-m-d',strtotime($request->validity));
+            $data['title'] = $request->title;
+            $data['content'] = $request->message;
+            $data['validity'] = $validity;
+            $data['status'] = $request->status;
+            $data['created_at'] = $today;
+            $data['updated_at'] = $today;
+
+            $user_ids = [];
+            foreach($request->user_id as $key => $value)
+            {
+                $user_ids[$value] = 0;
+            }
+            $data['selected_users'] = count($request->user_id) > 0 ? json_encode($user_ids) : null;
+            $data['is_selected_users'] = count($request->user_id) > 0 ? true : false;
+            $status = DB::table('popnotificaitons')->insert($data);
+            
+            if($status)
+            {
+                return redirect()->route('admin.notification')->with('success', 'Notification added successfully');
+            }
+            else
+            {
+                return redirect()->route('admin.notification')->with('error', 'Something went wrong');
+            }
+        }
+        else
+        {
+            $validity = date('Y-m-d',strtotime($request->validity));
+            $data['title'] = $request->title;
+            $data['content'] = $request->message;
+            $data['validity'] = $validity;
+            $data['status'] = $request->status;
+            $data['updated_at'] = $today;
+            $user_ids = [];
+            foreach($request->user_id as $key => $value)
+            {
+                $user_ids[$value] = 0;
+            }
+            $data['selected_users'] = count($request->user_id) > 0 ? json_encode($user_ids) : null;
+            $data['is_selected_users'] = count($request->user_id) > 0 ? true : false;
+
+            $status = DB::table('popnotificaitons')->where('id',$request->edit_id)->update($data);
+            if($status)
+            {
+                return redirect()->route('admin.notification')->with('success', 'Notification updated successfully');
+            }
+            else
+            {
+                return redirect()->route('admin.notification')->with('error', 'Something went wrong');
+            }
+        }
+    }
+    public function popup_notification_status(Request $request)
+    {
+        $id = $request->id;
+
+        $notification = DB::table('popnotificaitons')->where('id',$id)->first();
+        if($notification->status == 1)
+        {
+            $status = 0;
+        }
+        else
+        {
+            $status = 1;
+        }
+        $data['status'] = $status;
+        $data['updated_at'] = date('Y-m-d h:i:s');
+        $status = DB::table('popnotificaitons')->where('id',$id)->update($data);
+        if($status)
+        {
+            return redirect()->route('admin.notification')->with('success', 'Notification status updated successfully');
+        }
+        else
+        {
+            return redirect()->route('admin.notification')->with('error', 'Something went wrong');
+        }
+    }
+    public function popup_notification_edit(Request $request)
+    {
+        $id = $request->id;
+        $data['state'] = 1; // edit
+        $data['edit_notification'] = DB::table('popnotificaitons')->where('id',$id)->first();
+        $data['notifications'] = DB::table('popnotificaitons')->get();
+        $data['notifications']->validity = date('m/d/Y',strtotime($data['edit_notification']->validity));
+        $data['users'] = User::where('is_disabled', false)->where('email_verified_at', '!=', null)->get();
+        return view('admin.dashboard.popup_notification', $data);
+    }
+    public function popup_notification_delete(Request $request)
+    {
+        $id = $request->id;
+        $status = DB::table('popnotificaitons')->where('id',$id)->delete();
+        if($status)
+        {
+            return redirect()->route('admin.notification')->with('success', 'Notification deleted successfully');
+        }
+        else
+        {
+            return redirect()->route('admin.notification')->with('error', 'Something went wrong');
+        }
+    }
 
 }

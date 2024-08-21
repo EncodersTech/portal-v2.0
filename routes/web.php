@@ -253,6 +253,14 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
         Route::get('onetimeach/report','DashboardController@onetimeach_report')->name('admin.onetimeach_report');
         Route::post('onetimeach/report','DashboardController@onetimeach_report')->name('admin.onetimeach_post');
 
+        Route::get('popup-notification','DashboardController@popup_notification')->name('admin.notification');
+        Route::post('popup-notification/submit','DashboardController@popup_notification_save')->name('admin.notification.submit');
+
+        Route::get('popup-notification/status/{id}','DashboardController@popup_notification_status')->name('admin.notification.status');
+        Route::get('popup-notification/edit/{id}','DashboardController@popup_notification_edit')->name('admin.notification.edit');
+        Route::get('popup-notification/delete/{id}','DashboardController@popup_notification_delete')->name('admin.notification.delete');
+        
+
         Route::get('alltransaction/report','DashboardController@alltransaction_report')->name('admin.alltransaction_report');
         Route::get('major-report','DashboardController@reports_dashboard')->name('admin.dashboard_reports');
 

@@ -39,7 +39,7 @@ $(document).ready(() => {
     });
 
     
-    var stripe_settings = '<?= json_encode($cc_gateway); ?>';
+    var stripe_settings = window.stripe_settings;
     if(stripe_settings == 0)
     {
         setupStripeACHLinkModal();

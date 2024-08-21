@@ -34,8 +34,8 @@ class ProcessEntrantVerificationRequest implements ShouldQueue
     private $usaigcService; 
     
     public $tries = 3;
-    public $retryAfter = 1200;
-    public $timeout = 10000;
+    public $retryAfter = 300;
+    public $timeout = 100;
     public $failOnTimeout = false;
 
 

@@ -64,10 +64,10 @@
                         <div class="dropdown">
                             <button class="btn btn-sm btn-success ml-1 dropdown-toggle"
                                 type="button" id="verificationDropdownMenuButton"
-                                data-toggle="dropdown">
+                               onclick="ckr()">
                                 <span class="fas fa-fw fa-user-check"></span> Verify
                             </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="verificationDropdownMenuButton">
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="verificationDropdownMenuButton" id="verificationDropdownMenu">
                                 <div v-if="r.bodies[constants.bodies.USAG]">
                                     <h6 class="dropdown-header font-weight-bold">USAG</h6>
                                     <div class="dropdown-item"
@@ -141,10 +141,10 @@
                         <div class="dropdown">
                             <button class="btn btn-sm btn-warning ml-1 dropdown-toggle"
                                 type="button" id="reportsDropdownMenuButton"
-                                data-toggle="dropdown">
+                                data-toggle="dropdown" onclick="mkr()">
                                 <span class="fas fa-fw fa-file-pdf"></span> Reports
                             </button>
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="reportsDropdownMenuButton">
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="reportsDropdownMenuButton" id="reportsDropdownMenu">
                                 <div class="dropdown-item" @click="generateReport(constants.reports.types.MeetEntry, r.gym.id)"
                                      :class="{disabled: (r.status != constants.registrations.statuses.Registered)}">
                                     <span class="fas fa-fw fa-file"></span>Meet Entry
@@ -551,3 +551,17 @@
         </div>
     </div>
 </div>
+<script>
+    ckr = function() {
+        if ($('#verificationDropdownMenu').hasClass('show'))
+            $('#verificationDropdownMenu').dropdown('hide');
+        else
+            $('#verificationDropdownMenu').dropdown('show');
+    }
+    mkr = function(){
+        if ($('#reportsDropdownMenu').hasClass('show'))
+            $('#reportsDropdownMenu').dropdown('hide');
+        else
+            $('#reportsDropdownMenu').dropdown('show');
+    }
+</script>

@@ -75711,7 +75711,7 @@ $(document).ready(function () {
   $('.modal-why-is-my-account-unverified-close').click(function (e) {
     $('#modal-why-is-my-account-unverified').modal('hide');
   });
-  var stripe_settings = '<?= json_encode($cc_gateway); ?>';
+  var stripe_settings = window.stripe_settings;
 
   if (stripe_settings == 0) {
     setupStripeACHLinkModal();
