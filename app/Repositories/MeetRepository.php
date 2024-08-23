@@ -12,7 +12,7 @@ use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 use Barryvdh\Snappy\PdfWrapper;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-
+use App\Models\MeetTransaction;
 /**
  * Class MeetRepository
  */
@@ -33,13 +33,27 @@ class MeetRepository
         $data['total_earn'] = 0;
         $data['total_ath'] = 0;
         $data['total_coa'] = 0;
+        $data['allgym_fees'] = 0;
 
         $registrations = $meet->registrations()->with(['athletes', 'coaches'])->where('status', MeetRegistration::STATUS_REGISTERED)->withCount(['athletes', 'coaches'])->get();
         $data['total_gym'] = MeetRegistration::where('meet_id', $meet->id)->count('gym_id');
         foreach ($registrations as $i => $registration) {
+            $total_earn = 0;
+            foreach($registration->transactions as $transaction) {
+                if($transaction->status != MeetTransaction::STATUS_COMPLETED){
+                    continue;
+                }
+                $breakdown = $transaction->breakdown;
+                // dd($breakdown);
+                $handling = $breakdown['host']['handling'] + $breakdown['gym']['handling'];
+                $processor = $breakdown['host']['processor'] + $breakdown['gym']['processor'];
+                $data['allgym_fees'] += $handling + $processor;
+                $total_earn += $breakdown['host']['total'];
+            }
             $data['total_ath'] += $registration->athletes_count;
             $data['total_coa'] += $registration->coaches_count;
-            $data['total_earn'] += $registration->transactions->sum('total');
+            // $data['total_earn'] += $registration->transactions->sum('total');
+            $data['total_earn'] += $total_earn;
         }
 
         $data['team_allow'] = LevelMeet::whereIn('meet_id', [$meet->id])->whereIn('allow_teams', [true])->count();

@@ -49,6 +49,12 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
     Route::post('/invite/member/{id}/resent', 'UserAccountController@resendInvite')->name('invite.member.resend');
 
     Route::get('/account/profile', 'UserAccountController@showProfile')->name('account.profile');
+    Route::get('/account/host/dashboard', 'UserAccountController@hostDashboard')->name('account.host.dashboard');
+    Route::get('/account/host/dashboard/export-csv/{gym_id}', 'UserAccountController@hostDashboardExportCSV')->name('account.host.dashboard.export.csv');
+    Route::get('/account/host/dashboard/export-xlsx/{gym_id}', 'UserAccountController@hostDashboardExportExcel')->name('account.host.dashboard.export.xlsx');
+    Route::get('/account/host/dashboard/export-pdf/{gym_id}', 'UserAccountController@hostDashboardExportPDF')->name('account.host.dashboard.export.pdf');
+    // Route::post('/account/host/gymfilter', 'UserAccountController@hostDashboardFilter')->name('account.host.dashboard.filter');
+    Route::post('/account/host/dashboard', 'UserAccountController@hostDashboard')->name('account.host.dashboard');
 
     Route::get('/account/stripebank', 'UserAccountController@stripebank')->name('account.stripebank');
     Route::post('/account/stripebank/add', 'UserAccountController@stripebankadd')->name('account.stripe.bank.add');

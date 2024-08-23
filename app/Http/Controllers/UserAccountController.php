@@ -24,7 +24,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use App\Models\MeetRegistration;
-
+use App\Repositories\MeetRepository;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\HostDashBoardReport;
+use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 class UserAccountController extends Controller
 {
     public function showProfile()
@@ -978,5 +981,46 @@ class UserAccountController extends Controller
             'active_gyms' => $activeGyms,
             'archived_gyms' => $archivedGyms
         ]);
+    }
+    public function hostDashboard()
+    {
+
+        $user = resolve(User::class);
+        $data = $user->hostDashboardData();
+        $data['current_page'] = 'Host Dashboard';
+        // $data['current_gym'] = request()->gym_id !== null ? request()->gym_id : null;
+        return view('host_dashboard.index', $data);
+    }
+    public function hostDashboardFilter()
+    {
+        $user = resolve(User::class);
+        $data = $user->hostDashboardData(request()->gym_id);
+        $data['current_page'] = 'Host Dashboard';
+        redirect(route('host.dashboard'))->with($data);
+        // return view('host_dashboard.index', $data);
+    }
+    public function hostDashboardExportCSV($gym_id)
+    {
+        request()->gym_id = $gym_id;
+        return Excel::download(new HostDashBoardReport(), 'host_dashboard_summary-'.time().'.csv');
+    }
+    public function hostDashboardExportExcel($gym_id)
+    {
+        request()->gym_id = $gym_id;
+        return Excel::download(new HostDashBoardReport(), 'host_dashboard_summary-'.time().'.xlsx');
+    }
+    public function hostDashboardExportPDF($gym_id)
+    {
+        
+        $user = resolve(User::class);
+        $data = $user->hostDashboardData();
+        $pdf = PDF::loadView('host_dashboard.exports.summary_pdf', $data);
+        $pdf->setPaper('A4', 'portrait')
+        ->setOption('margin-top', '10mm')
+        ->setOption('margin-bottom', '10mm')
+        ->setOption('footer-html', view('PDF.host.meet.reports.header_footer.common_footer')->render());
+        // return $pdf->download('host_dashboard_summary-'.time().'.pdf');
+        return $pdf->stream('host_dashboard_summary-'.time().'.pdf');
+                    
     }
 }

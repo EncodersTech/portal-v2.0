@@ -27,6 +27,12 @@
                 </span>
             </a>
         </div>
+        <div class="sidebar-item">
+            <a class="sidebar-link" href="{{ route('account.host.dashboard') }}">
+                <span class="fas fa-fw fa-user" title="Host Dashboard"></span>
+                <span class="sidebar-item-text">Host Dashboard</span>
+            </a>
+        </div>
 
         <div class="sidebar-item {{ $current_page == 'browse-meets' ? 'active' : '' }}">
             <a class="sidebar-link" href="{{ route('meets.browse') }}">
@@ -183,6 +189,7 @@
                             </span>
                         </a>
                     </div>
+
 
                     <div class="sidebar-item">
                         <a class="sidebar-link" href="{{ route('account.profile') }}">
