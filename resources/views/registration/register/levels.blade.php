@@ -1,6 +1,33 @@
 <div class="row">
     <div class="col-lg mb-3">
         <p>{{ $meet->meet_categories }}</p>
+        <div>
+            <h6 for="" class="alert alert-info" style="cursor:pointer;" onclick="toogle_size_chart()">View Sizing Charts
+                <span class="fas fa-caret fa-caret-down "></span>
+            </h6>
+            <ul id="size_chart_list">
+                <li>
+                    <a href="https://gkelite.azureedge.net/images/static/sizecharts/size-charts-inches-womens-leos.pdf" target="_blank">
+                    GK in inches</a>
+                </li>
+                <li>
+                    <a href="https://gkelite.azureedge.net/images/static/sizecharts/size-charts-centimeters-womens-leos.pdf" target="_blank">
+                    GK in metric</a>
+                </li>
+                <li>
+                    <a href="https://www.snowflakedesigns.com/sizing-information" target="_blank">
+                    SnowFlake</a>
+                </li>
+                <li>
+                    <a href="https://destira.com/pages/size-chart" target="_blank">
+                    Destira</a>
+                </li>
+                <li>
+                    <a href="https://www.higoapparel.com/sizing-chart" target="_blank">
+                    Higo</a>
+                </li>
+            </ul>
+        </div>
         <label for="gym">
             <span class="fas fa-fw fa-dumbbell"></span> Registering Gym <span class="text-danger">*</span>
         </label>
@@ -34,3 +61,19 @@
         </ag-registration-details>
     </div>
 </div>
+
+
+<script>
+    function toogle_size_chart() {
+        var x = document.getElementById("size_chart_list");
+        if (x.style.display === "none") {
+            x.style.display = "block";
+            x.previousElementSibling.children[0].classList.add('fa-caret-down');
+            x.previousElementSibling.children[0].classList.remove('fa-caret-right');
+        } else {
+            x.style.display = "none";
+            x.previousElementSibling.children[0].classList.remove('fa-caret-down');
+            x.previousElementSibling.children[0].classList.add('fa-caret-right');
+        }
+    }
+</script>
