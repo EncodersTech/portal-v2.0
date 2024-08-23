@@ -46,7 +46,7 @@
                             <input type="date" name="validity" class="form-control" value="<?= isset($edit_notification) ? $edit_notification->validity : '' ?>">
                         </div>
                         <div>
-                            <label for="name" class="mb-1">Users: <span class="text-danger">*</span></label>
+                            <label for="name" class="mb-1">Users: <span class="text-danger">*</span> <span style="color:green;">(leave blank to select all users by default)</span></label>
                             <select name="user_id[]" id="user_id" class="form-control selectpicker" data-live-search="true" multiple>
                                 @foreach($users as $user)
                                     <option value="{{ $user->id }}" <?= isset($edit_notification) && in_array($user->id,array_keys(json_decode($edit_notification->selected_users, true))) ? 'selected' : '' ?>>{{ $user->fullName() }} - {{ $user->email }}</option>
