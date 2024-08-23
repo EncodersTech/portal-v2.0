@@ -28,6 +28,34 @@
                     <span class="fas fa-info-circle"></span>
                     <strong>Note:</strong> Double click fields to edit athletes or coaches Information
                 </div>
+                <div>
+            <h6 for="" class="alert alert-success" style="cursor:pointer;" onclick="toogle_size_chart()">
+                View Sizing Charts
+                <span class="fas fa-caret fa-caret-down "></span>
+            </h6>
+            <ul id="size_chart_list">
+                <li>
+                    <a href="https://gkelite.azureedge.net/images/static/sizecharts/size-charts-inches-womens-leos.pdf" target="_blank">
+                    GK in inches</a>
+                </li>
+                <li>
+                    <a href="https://gkelite.azureedge.net/images/static/sizecharts/size-charts-centimeters-womens-leos.pdf" target="_blank">
+                    GK in metric</a>
+                </li>
+                <li>
+                    <a href="https://www.snowflakedesigns.com/sizing-information" target="_blank">
+                    SnowFlake</a>
+                </li>
+                <li>
+                    <a href="https://destira.com/pages/size-chart" target="_blank">
+                    Destira</a>
+                </li>
+                <li>
+                    <a href="https://www.higoapparel.com/sizing-chart" target="_blank">
+                    Higo</a>
+                </li>
+            </ul>
+        </div>
 
                 @if ($meet->registrationStatus() == App\Models\Meet::REGISTRATION_STATUS_LATE)
                     <div class="alert alert-warning">
@@ -74,6 +102,20 @@
         window.gymId = {{ $gym->id }};
         window.registrationId = {{ $registration->id }};
         window._managed_account = {{ $_managed->id }};
+
+        function toogle_size_chart() {
+            var x = document.getElementById("size_chart_list");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+                x.previousElementSibling.children[0].classList.add('fa-caret-down');
+                x.previousElementSibling.children[0].classList.remove('fa-caret-right');
+            } else {
+                x.style.display = "none";
+                x.previousElementSibling.children[0].classList.remove('fa-caret-down');
+                x.previousElementSibling.children[0].classList.add('fa-caret-right');
+            }
+        }
+
     </script>
     <script src="{{ mix('js/register/edit.js') }}"></script>
 @endsection
