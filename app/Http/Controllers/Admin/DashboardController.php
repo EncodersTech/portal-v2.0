@@ -439,10 +439,14 @@ class DashboardController extends AppBaseController
             $data['updated_at'] = $today;
 
             $user_ids = [];
-            foreach($request->user_id as $key => $value)
+            if(isset($request->user_id))
             {
-                $user_ids[$value] = 0;
+                foreach($request->user_id as $key => $value)
+                {
+                    $user_ids[$value] = 0;
+                }
             }
+            
             $data['selected_users'] = count($request->user_id) > 0 ? json_encode($user_ids) : null;
             $data['is_selected_users'] = count($request->user_id) > 0 ? true : false;
             $status = DB::table('popnotificaitons')->insert($data);
