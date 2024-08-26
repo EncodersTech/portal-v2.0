@@ -446,6 +446,10 @@ class DashboardController extends AppBaseController
                     $user_ids[$value] = 0;
                 }
             }
+            else
+            {
+                $request->user_id = [];
+            }
             
             $data['selected_users'] = count($request->user_id) > 0 ? json_encode($user_ids) : null;
             $data['is_selected_users'] = count($request->user_id) > 0 ? true : false;
