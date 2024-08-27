@@ -143,18 +143,49 @@ class USAGReservation extends Model
     }
     public static function pendingReservations()
     {
-        $data = DB::select('select u.*, mt.name from usag_reservations as ur
+
+        // After 1 day of reservation created_at date
+        $data1 = DB::select('select u.*, mt.name from usag_reservations as ur
         join gyms as g on g.id = ur.gym_id
         join users as u on u.id = g.user_id
         join usag_sanctions as us on us.id=ur.usag_sanction_id
         join meets as mt on mt.id = us.meet_id
-        where ur.status=1 and mt.registration_end_date >= \''. Carbon::now()->toDateString().'\' 
+        where ur.status=1 and ur.created_at::date = (NOW() - INTERVAL \'1 day\')::date
         group by u.id, mt.id');
+
+        // After 10 day of reservation created_at date
+        $data2 = DB::select('select u.*, mt.name from usag_reservations as ur
+        join gyms as g on g.id = ur.gym_id
+        join users as u on u.id = g.user_id
+        join usag_sanctions as us on us.id=ur.usag_sanction_id
+        join meets as mt on mt.id = us.meet_id
+        where ur.status=1 and ur.created_at::date = (NOW() - INTERVAL \'10 days\')::date
+        group by u.id, mt.id');
+
+        // After 15 day of reservation created_at date
+        $data3 = DB::select('select u.*, mt.name from usag_reservations as ur
+        join gyms as g on g.id = ur.gym_id
+        join users as u on u.id = g.user_id
+        join usag_sanctions as us on us.id=ur.usag_sanction_id
+        join meets as mt on mt.id = us.meet_id
+        where ur.status=1 and ur.created_at::date = (NOW() - INTERVAL \'15 days\')::date
+        group by u.id, mt.id');
+
+        $data4 = DB::select('select u.*, mt.name from usag_reservations as ur
+        join gyms as g on g.id = ur.gym_id
+        join users as u on u.id = g.user_id
+        join usag_sanctions as us on us.id=ur.usag_sanction_id
+        join meets as mt on mt.id = us.meet_id
+        where ur.status=1 and mt.registration_end_date::date = (NOW() - INTERVAL \'3 days\')::date
+        group by u.id, mt.id');
+
+        $data = array_merge($data1, $data2, $data3, $data4);
         foreach ($data as $d) {
             $user = User::find($d->id);
             dispatch(new USAGPendingReservationNotification($user, $d->name));
         }
 
+        // Three days advance notification to host
         $three_days_advance = Carbon::now()->addDays(3)->toDateString();
         $query = DB::select('select u.id,u.email,u.first_name,u.last_name,m.name from usag_reservations as ur
         join usag_sanctions as us on us.id = ur.usag_sanction_id
