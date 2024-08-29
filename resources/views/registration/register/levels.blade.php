@@ -7,6 +7,10 @@
             </h6>
             <ul id="size_chart_list">
                 <li>
+                    <a href="{{ asset('storage/files/all_leo.pdf') }}" target="_blank">
+                        LEO Size Chart</a>
+                </li>
+                <!-- <li>
                     <a href="https://gkelite.azureedge.net/images/static/sizecharts/size-charts-inches-womens-leos.pdf" target="_blank">
                     GK in inches</a>
                 </li>
@@ -25,7 +29,7 @@
                 <li>
                     <a href="https://www.higoapparel.com/sizing-chart" target="_blank">
                     Higo</a>
-                </li>
+                </li> -->
             </ul>
         </div>
         <label for="gym">
