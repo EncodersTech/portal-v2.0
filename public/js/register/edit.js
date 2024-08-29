@@ -83541,7 +83541,14 @@ var render = function() {
                                                                                             },
                                                                                             [
                                                                                               _vm._v(
-                                                                                                "\n                                                                Leo\n                                                            "
+                                                                                                "\n                                                                " +
+                                                                                                  _vm._s(
+                                                                                                    _vm
+                                                                                                      .meet
+                                                                                                      .leo_chart
+                                                                                                      .name
+                                                                                                  ) +
+                                                                                                  "\n                                                            "
                                                                                               )
                                                                                             ]
                                                                                           )
