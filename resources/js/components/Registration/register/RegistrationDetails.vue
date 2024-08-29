@@ -276,7 +276,7 @@
                                                                 T-shirt
                                                             </th>
                                                             <th v-if="meet.leo_chart != null" scope="col" class="align-middle">
-                                                                Leo
+                                                                {{meet.leo_chart.name}}
                                                             </th>
                                                             <th scope="col" class="align-middle">
                                                                 Fee
