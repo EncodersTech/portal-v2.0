@@ -215,9 +215,8 @@
                         @foreach ($leo_charts as $chart)
                             <option value="{{ $chart->id }}"
                                 {{
-                                    $meet->oldOrValue('leo_size_chart_id') ?
-                                    'selected' :
-                                    ($chart->is_default ? 'selected' : '')
+                                    $meet->oldOrValue('leo_size_chart_id')  == $chart->id ?
+                                    'selected' : ''
                                 }}>
                                 {{ $chart->name }}
                             </option>
