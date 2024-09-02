@@ -2,6 +2,12 @@
 
 @section('content-header')
     <span class="fas fa-fw fa-tachometer-alt"></span> Hello, {{ Auth::user()->first_name }} !
+
+    <span class="float-right">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#popup">
+            <span class="fas fa-fw fa-info-circle"></span> Latest Updates
+        </button>
+    </span>
 @endsection
 <style>
     .small-box {
@@ -94,6 +100,48 @@
         </h6>
     @endif
 
+    <!-- popup modal start -->
+    <div class="modal fade" id="popup" tabindex="-1" role="dialog" aria-labelledby="popup" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title">Latest Updates</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @foreach($generalNotifications as $notification)
+                        @if ($notification->is_selected_users == true && !in_array($_managed->id, array_keys(json_decode($notification->selected_users, true))))
+                            @continue
+                        @endif
+                        <div class="card mb-3">
+                            <div class="card-header bg-primary text-white">
+                                <button class="btn btn-primary" type="button" onclick="openDataDiv(<?= $notification->id ?>)">
+                                    <strong>{{ $notification->title }}  </strong>
+                                    <span class="fas fa-caret-down"></span>
+                                </button>
+                            </div>
+                            <div class="card-body" id="notificationDataDiv_<?= $notification->id ?>" style="{{ $loop->first ? '':'display:none;'  }}">
+                                <p>{!! $notification->content !!}</p>
+                            </div>
+                            <div class="card-footer text-right">
+                                <small class="text-muted">
+                                    <span class="fas fa-fw fa-calendar"></span>
+                                    {{ Carbon\Carbon::parse($notification->created_at)->format('m/d/Y')  }}
+                                </small>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- popup modal end -->
+
     <div class="content-main p-3">
         <div class="row">
             <div class="col">
@@ -160,6 +208,30 @@
 @section('scripts-main')
     <script>
         window.show_sanction_notifications = {{ $showSanctionNotifications ? 'true' : 'false' }};
+        var has_popup = {{ $has_popup }}; // true if there are notifications to show in the popup
+        $(document).ready(function() {
+            if (has_popup) {
+                // show the popup after 1 second
+                setTimeout(function() {
+                    $('#popup').modal('show');
+                }, 1200); 
+            }
+        });
+        openDataDiv = function(id){
+            var x = document.getElementById("notificationDataDiv_"+id);
+            var caret_span = x.previousElementSibling.querySelector('span');
+            console.log(caret_span);
+            if (x.style.display === "none") {
+                x.style.display = "block";
+                caret_span.classList.add('fa-caret-down');
+                caret_span.classList.remove('fa-caret-right'); 
+            } else {
+                x.style.display = "none";
+                caret_span.classList.add('fa-caret-right');
+                caret_span.classList.remove('fa-caret-down');
+            }
+        }
+
     </script>
 
     @if ($showSanctionNotifications)
