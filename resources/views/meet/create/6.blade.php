@@ -130,7 +130,7 @@
 
             
 
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col mb-2">
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="defer_handling_fees"
@@ -163,7 +163,7 @@
                         Leave unchecked if you would like said fees to be deducted from your account instead.
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <div class="d-flex flex-row flex-nowrap mt-3">
                 <div class="flex-grow-1">
