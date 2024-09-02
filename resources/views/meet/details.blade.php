@@ -11,6 +11,10 @@
         margin: 5% 0%;
         border-radius: 2%;
     }
+    a.btn.btn-default.active {
+    background: #0a7a38;
+    color: white;
+}
 </style>
 @section('content-main')
     @include('include.errors')
@@ -164,34 +168,7 @@
                     </a>
                 </div>
 
-                <ul class="nav flex-column nav-pills" role="tablist" id="view-meet-list-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#general-tab" role="tab">
-                            <span class="fas fa-fw fa-align-justify"></span> General
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#registration-tab" role="tab">
-                            <span class="fas fa-fw fa-money-check"></span> Registration &amp; Payment
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#competition-tab" role="tab">
-                            <span class="fas fa-fw fa-cogs"></span> Competition Settings
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#schedule-tab" role="tab">
-                            <span class="fas fa-fw fa-file-alt"></span> Schedule &amp; Attachments
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#contacts-tab" role="tab">
-                            <span class="fas fa-fw fa-address-book"></span> Contact
-                        </a>
-                    </li>
-                </ul>
+                
                 <div style="margin-top:10px;">
                     
                     <h6><b><span class="fas fa-fw fa-qrcode"></span> Register With QR Code</b></h6>
@@ -199,7 +176,37 @@
                     <!-- <img src="https://chart.googleapis.com/chart?cht=qr&chs=400x400&chl=https://www.allgymnastics.com//meet-details/?meet={{$meet->id}}" alt="" class="qr-code img-thumbnail img-responsive"> -->
                 </div>
                 @if ($meet->is_published)
-                    @include('include.meet.sidebar_info')
+                <div class="form-group mb-0 mt-3 border-bottom">
+                    <label for="meet-public-url" class="font-weight-bold mb-0">
+                        <span class="fas fa-link"></span> Meet's public URL
+                    </label>
+
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <span class="fas fa-link"></span>
+                            </span>
+                        </div>
+                        <input type="text" class="form-control bg-light" id="meet-public-url" readonly
+                            value="https://www.allgymnastics.com/meet-details/?meet={{$meet->id}}">
+
+                        <div class="input-group-append">
+                            <button class="btn btn-info" type="button"
+                                id="meet-public-url-copy" data-clipboard-target="#meet-public-url">
+                                <span class="fas fa-copy"></span> Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mt-1 mb-1 text-right"
+                        id="meet-public-url-copy-success-message" style="visibility: hidden">
+                        <span class="badge badge-dark">
+                            <span class="fas fa-check-circle"></span>
+                            <span id="meet-public-url-copy-success"></span>
+                        </span>
+                    </div>
+                </div>
+                    <!-- @include('include.meet.sidebar_info') -->
                 @endif
             </div>
 
@@ -207,6 +214,42 @@
                 <div class="text-info small mb-3">
                     <span class="fas fa-info-circle"></span> All dates and times are in EST.
                 </div>
+                <div>
+                    @include('include.meet.sidebar_info')
+                </div>
+                <nav class="navbar navbar-light bg-dark mb-5 mt-3" style="color:white;">
+                    <div class="container-fluid">
+                        <ul class="nav nav-default "  id="view-meet-list-tabs">
+                            <li class="nav-item">
+                                <a class="btn btn-default active" style="color:white;" data-toggle="tab" href="#general-tab" role="tab">
+                                    <span class="fas fa-fw fa-align-justify"></span> General
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="btn btn-default" style="color:white;" data-toggle="tab" href="#registration-tab" role="tab">
+                                    <span class="fas fa-fw fa-money-check"></span> Registration &amp; Payment
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-default" style="color:white;" data-toggle="tab" href="#competition-tab" role="tab">
+                                    <span class="fas fa-fw fa-cogs"></span> Competition Settings
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-default" style="color:white;" data-toggle="tab" href="#schedule-tab" role="tab">
+                                    <span class="fas fa-fw fa-file-alt"></span> Schedule &amp; Attachments
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-default" style="color:white;" data-toggle="tab" href="#contacts-tab" role="tab">
+                                    <span class="fas fa-fw fa-address-book"></span> Contact
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                
 
                 <div class="tab-content">
                     <div class="tab-pane fade show active" id="general-tab" role="tabpanel">
