@@ -195,7 +195,8 @@
                 <div style="margin-top:10px;">
                     
                     <h6><b><span class="fas fa-fw fa-qrcode"></span> Register With QR Code</b></h6>
-                    <img src="https://chart.googleapis.com/chart?cht=qr&chs=400x400&chl=https://www.allgymnastics.com//meet-details/?meet={{$meet->id}}" alt="" class="qr-code img-thumbnail img-responsive">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=https://www.allgymnastics.com/meet-details?meet={{$meet->id}}" alt="" class="qr-code img-thumbnail img-responsive">
+                    <!-- <img src="https://chart.googleapis.com/chart?cht=qr&chs=400x400&chl=https://www.allgymnastics.com//meet-details/?meet={{$meet->id}}" alt="" class="qr-code img-thumbnail img-responsive"> -->
                 </div>
                 @if ($meet->is_published)
                     @include('include.meet.sidebar_info')
