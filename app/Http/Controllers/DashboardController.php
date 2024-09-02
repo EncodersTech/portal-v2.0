@@ -69,7 +69,7 @@ class DashboardController extends AppBaseController
             'current_page' => 'dashboard',
             'showSanctionNotifications' => $showSanctionNotifications,
             'generalNotifications' => $popupnotifications,
-            'has_popup' => $has_popup
+            'has_popup' => $has_popup ? 'true' : 'false'
         ]);
     }
 
