@@ -133,6 +133,26 @@ class StripeService {
             self::_handleStripeException($e);
         }
     }
+    public static function createOneTimeCardCharge(string $source, float $amount,
+        string $currency = 'USD', string $description = null, array $metadata = null)
+    {
+        try {
+            if ($amount < 0.50)
+                throw new CustomStripeException("Amount too small. Minimum amount is 0.50 USD.", 1);
+
+            $amount = floor($amount * 100);
+            return Charge::create([
+                'amount' => $amount,
+                'currency' => $currency,
+                'source' => $source,
+                'description' => $description,
+                'metadata' => $metadata
+            ]);
+        } catch (Base $e) {
+            dd($e->getMessage());
+            self::_handleStripeException($e);
+        }
+    }
 
     public static function createCharge(string $customer, string $source, float $amount,
         string $currency = 'USD', string $description = null, array $metadata = null,$type=null)
