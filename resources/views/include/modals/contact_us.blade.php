@@ -71,7 +71,7 @@
                     
                     <div class="row">
                         <div class="col">
-                            <a href="#all_time_support" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="chat_div">24/7 Support</a>
+                            <a href="#all_time_support" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="chat_div">Monday-Friday 8AM-5PM</a>
                         </div>
                     </div>
                     <div class="collapse show" id="all_time_support">
