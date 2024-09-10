@@ -48,6 +48,8 @@ class Meet extends Model
     public const REPORT_TYPE_LEO_T_SHIRT = 'leo-t-shirt';
     public const REPORT_TYPE_LEO_T_SHIRT_GYM = 'leo-t-shirt-gym';
     public const REPORT_TYPE_SPECIALISTS_BY_LEVEL = 'specialist-by-level';
+    public const REPORT_TYPE_REGISTRATION_QR = 'marketing-qr';
+    public const REPORT_TYPE_ENTRY_TEAM = 'entry-team';
     public const REPORT_TYPE_GYM_NAME_LABEL = 'gym-name-label';
     public const REPORT_TYPE_COACHES_NAME_LABEL ='coaches-name-label';
     public const REPORT_TYPE_GYM_MAILING_LABEL = 'gym-mailing-label';
@@ -2055,63 +2057,6 @@ class Meet extends Model
             throw $e;
         }
     }
-
-    public function generateEntryReport(Gym $gym = null) : PdfWrapper {
-        try {
-            $base = $this->registrations()
-                        ->where('status', MeetRegistration::STATUS_REGISTERED);
-            /** @var Builder $base */
-
-            if ($gym !== null)
-                $base = $base->where('gym_id', $gym->id);
-
-            $registrations = $base->select([
-                    'id', 'gym_id', 'meet_id', 'late_refund', 'status'
-                ])->with([
-                    'gym' => function ($q) {
-                        $q->select([
-                            'id', 'name', 'short_name',
-                        ])->withCount('athletes');
-                    },
-                    'levels' => function ($q) {
-
-                    }
-                ])->orderBy('created_at', 'DESC')
-                ->get();
-
-            $sanctions = [];
-            $santion_class = [
-                SanctioningBody::USAG => 'usag',
-                SanctioningBody::USAIGC => 'usaigc',
-                SanctioningBody::AAU => 'aau',
-                SanctioningBody::NGA => 'nga'
-            ];
-            
-
-            // sort $this->levels by sanctioning body and sort sanctions based on it
-            $this->levels = $this->levels->sortBy(function($level) {
-                return $level->sanctioning_body_id;
-            });
-
-            foreach($this->levels as $level) {
-                $sanction = SanctioningBody::find($level->sanctioning_body_id)->initialism;
-                if(isset($sanctions[$sanction]))
-                    $sanctions[$sanction] += 1;
-                else
-                    $sanctions[$sanction] = 1;
-            }
-            $data = [
-                'meet' => $this,
-                'registrations' => $registrations,
-                'levels' => $this->levels,
-                'sanctions' => $sanctions,
-                'sanction_class' => $santion_class
-            ];
-            return PDF::loadView('PDF.host.meet.reports.team_not_athlete', $data); /** @var PdfWrapper $pdf */
-        } catch(\Throwable $e) {
-            throw $e;
-        }
-    }
     //When Meet Registrant that time call this function
     public function registrantMeetEntryAndStoreReport($meet, $gym)
     {
@@ -2893,6 +2838,62 @@ class Meet extends Model
             // dd($data);
             // die();
             return PDF::loadView('PDF.host.meet.reports.registration-detail', $data);
+        } catch(\Throwable $e) {
+            throw $e;
+        }
+    }
+    public function generateEntryReport(Gym $gym = null) : PdfWrapper {
+        try {
+            $base = $this->registrations()
+                        ->where('status', MeetRegistration::STATUS_REGISTERED);
+            /** @var Builder $base */
+
+            if ($gym !== null)
+                $base = $base->where('gym_id', $gym->id);
+
+            $registrations = $base->select([
+                    'id', 'gym_id', 'meet_id', 'late_refund', 'status'
+                ])->with([
+                    'gym' => function ($q) {
+                        $q->select([
+                            'id', 'name', 'short_name',
+                        ])->withCount('athletes');
+                    },
+                    'levels' => function ($q) {
+
+                    }
+                ])->orderBy('created_at', 'DESC')
+                ->get();
+
+            $sanctions = [];
+            $santion_class = [
+                SanctioningBody::USAG => 'usag',
+                SanctioningBody::USAIGC => 'usaigc',
+                SanctioningBody::AAU => 'aau',
+                SanctioningBody::NGA => 'nga'
+            ];
+            
+
+            // sort $this->levels by sanctioning body and sort sanctions based on it
+            $this->levels = $this->levels->sortBy(function($level) {
+                return $level->sanctioning_body_id;
+            });
+
+            foreach($this->levels as $level) {
+                $sanction = SanctioningBody::find($level->sanctioning_body_id)->initialism;
+                if(isset($sanctions[$sanction]))
+                    $sanctions[$sanction] += 1;
+                else
+                    $sanctions[$sanction] = 1;
+            }
+            $data = [
+                'meet' => $this,
+                'registrations' => $registrations,
+                'levels' => $this->levels,
+                'sanctions' => $sanctions,
+                'sanction_class' => $santion_class
+            ];
+            return PDF::loadView('PDF.host.meet.reports.team_not_athlete', $data); /** @var PdfWrapper $pdf */
         } catch(\Throwable $e) {
             throw $e;
         }
