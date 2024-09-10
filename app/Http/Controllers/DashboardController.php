@@ -8,6 +8,7 @@ use App\Exports\SanctionLevelsExport;
 use App\Models\Conversation;
 use App\Models\Gym;
 use App\Models\MeetRegistration;
+use App\Models\UserBalanceTransaction;
 use App\Models\Meet;
 use App\Models\User;
 use Carbon\Carbon;
@@ -23,6 +24,7 @@ use function foo\func;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Services\StripeService;
 use App\Jobs\UserTicketConfirmationJob;
+
 
 class DashboardController extends AppBaseController
 {
@@ -149,8 +151,8 @@ class DashboardController extends AppBaseController
 
         $fees = ($meet->cc_fee() + $meet->handling_fee() ) / 100;
         $calculated_total += $calculated_total * $fees;
-        $calculated_total = round($calculated_total, 4);
-        
+        $calculated_total = round($calculated_total, 2);
+        $total_from_form = round($total_from_form, 2);
         if($calculated_total != $total_from_form)
         {
             return redirect(route('ticket.generate', $request->meet_id))->with('error', 'Total amount is not correct '. $calculated_total . ' != ' . $total_from_form);
@@ -181,7 +183,33 @@ class DashboardController extends AppBaseController
         try{
             $card_charge = StripeService::createOneTimeCardCharge($stripe_token, $calculated_total, 'USD', 'Meet Ticket Purchase for '. $meet->name, $meta_data);
             DB::table('host_tickets')->insert($data);
-            UserTicketConfirmationJob::dispatch($user_email, $meet, $user_name, $meet_tickets_key_pairs, $ticket_id);
+            // get the id of the last inserted ticket
+            $ticket_db_id = DB::getPdo()->lastInsertId();
+            //TODO:: Add the money to the host account
+            
+            $user_model = User::find($meet->gym->user_id);
+            $user_model->pending_balance += $total_amount_before_fees;
+            $user_model->save();
+            
+            $user_balance_transaction_data = [
+                'user_id' => $meet->gym->user_id,
+                'related_id' => $ticket_db_id,
+                'related_type' => 'host_tickets',
+                'processor_id' => $card_charge->id,
+                'total' => $total_amount_before_fees,
+                'description' => "Meet Ticket Purchase for ". $meet->name,
+                'clears_on' =>  Carbon::now()->addDays(1)->toDateTimeString(),
+                'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_TICKET,
+                'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ];
+            DB::table('user_balance_transactions')->insert($user_balance_transaction_data);
+
+
+            UserTicketConfirmationJob::dispatch($user_email, $meet, $user_name, $user_phone, $meet_tickets_key_pairs, $ticket_id);
+            
+            
             return redirect(route('ticket.generate', $request->meet_id))->with('success', 'Payment Successful');
             exit();
         }

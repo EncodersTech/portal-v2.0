@@ -1,12 +1,15 @@
 @component('mail::message')
-Hello <b>{{ $user_name }}</b>,
+Hello <b>{{ $meet->gym->user->fullName() }}</b>,
 <br>
 
-Thank you for using AllGymnastics. This is to confirm that your ticket for attending meet <b>"{{ $meet->name }}"</b> has been booked <span style="color:green;"><b>SUCCESSFULLY</b></span>. 
+This is to confirm that new ticket has been booked for meet <b>"{{ $meet->name }}"</b>. 
 Ticket details can be found below. <br>
 
-
 <h2>Ticket ID: {{ $ticket_id }}</h2>
+<p>User Name: <b>{{ $user_name }}</b><br>
+User Email: <b>{{ $user_email }}</b><br>
+User Phone: <b>{{ $user_phone }}</b></p>
+<br>
 <table style="width: 100%">
     <thead>
         <tr>

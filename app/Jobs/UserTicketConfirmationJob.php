@@ -8,6 +8,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Mail\UserTicketConfirmation;
+use App\Mail\HostTicketConfirmation;
+use App\Models\Meet;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class UserTicketConfirmationJob implements ShouldQueue
 {
@@ -17,6 +21,7 @@ class UserTicketConfirmationJob implements ShouldQueue
     public $retryAfter = 300;
 
     public $user_email;
+    public $user_phone;
     public $meet;
     public $user_name;
     public $ticket;
@@ -26,9 +31,10 @@ class UserTicketConfirmationJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($user_email, Meet $meet, $user_name, $ticket, $ticket_id)
+    public function __construct($user_email, Meet $meet, $user_name, $user_phone, $ticket, $ticket_id)
     {
         $this->user_email = $user_email;
+        $this->user_phone = $user_phone;
         $this->meet = $meet;
         $this->user_name = $user_name;
         $this->ticket = $ticket;
@@ -42,6 +48,16 @@ class UserTicketConfirmationJob implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->user_email)->send(new UserTicketConfirmation($this->meet, $this->user_name, $ticket));
+        Mail::to($this->user_email)->send(new UserTicketConfirmation($this->meet, $this->user_name, $this->ticket, $this->ticket_id));
+        Mail::to($this->meet->gym->user->email)->send(new HostTicketConfirmation($this->meet, $this->user_name, $this->user_email, $this->user_phone, $this->ticket, $this->ticket_id));
+    }
+    public function failed(\Exception $e)
+    {
+        Log::critical(
+            self::class . ' job failed',
+            [
+                'exception' => $e->getMessage(),
+            ]
+        );
     }
 }

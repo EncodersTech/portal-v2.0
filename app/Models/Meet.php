@@ -54,6 +54,7 @@ class Meet extends Model
     public const REPORT_TYPE_COACHES_NAME_LABEL ='coaches-name-label';
     public const REPORT_TYPE_GYM_MAILING_LABEL = 'gym-mailing-label';
     public const REPORT_TYPE_REFUNDSALL = 'RefundsAll';
+    public const REPORT_TYPE_TICKET_PURCHASE = 'ticket-purchase';
 
 
     protected $guarded = ['id'];
@@ -3429,6 +3430,32 @@ class Meet extends Model
             ];
             
             return PDF::loadView('PDF.host.meet.reports.gym-mailing-label', $data); /** @var PdfWrapper $pdf */
+        }
+        catch(\Throwable $e)
+        {
+            throw $e;
+        }
+    }
+    public function generateTickerPuchasingReport() : PdfWrapper{
+        try{
+            $tickets = DB::select('SELECT * FROM host_tickets WHERE meet_id = '.$this->id);
+            $meet_admissions = $this->admissions()->get();
+            $general_meet_admission = [];
+            foreach($meet_admissions as $ma)
+            {
+                $general_meet_admission[$ma->id] = [
+                    'name' => $ma->name,
+                    'amount' => $ma->amount,
+                    'type' => $ma->type
+                ];
+            }
+            $data = [
+                'meet' => $this,
+                'tickets' => $tickets,
+                'meet_admissions' => $meet_admissions
+                // 'meet_admissions' => $general_meet_admission
+            ];
+            return PDF::loadView('PDF.host.meet.reports.financial-ticket-purchase', $data); /** @var PdfWrapper $pdf */
         }
         catch(\Throwable $e)
         {

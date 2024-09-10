@@ -7,8 +7,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Meet;
-
-class UserTicketConfirmation extends Mailable
+class HostTicketConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
     public $tries = 3;
@@ -16,6 +15,8 @@ class UserTicketConfirmation extends Mailable
 
     public $meet;
     public $user_name;
+    public $user_email;
+    public $user_phone;
     public $ticket;
     public $meet_admissions;
     public $ticket_id;
@@ -24,10 +25,13 @@ class UserTicketConfirmation extends Mailable
      *
      * @return void
      */
-    public function __construct(Meet $meet, $user_name, $ticket, $ticket_id)
+    public function __construct(Meet $meet, $user_name, $user_email, $user_phone, $ticket, $ticket_id)
     {
         $this->meet = $meet;
         $this->user_name = $user_name;
+        $this->user_email = $user_email;
+        $this->user_phone = $user_phone;
+
         $this->ticket = $ticket;
         $this->meet_admissions = $meet->admissions()->get();
         $this->meet_admissions = $this->meet_admissions->sortBy('amount', SORT_REGULAR, true);
@@ -42,7 +46,7 @@ class UserTicketConfirmation extends Mailable
     public function build()
     {
         return  $this->from(config('mail.from.address'))
-            ->subject('Ticket Confirmation of '. $this->meet->name)
-            ->markdown('emails.ticket.userconfirmation');
+            ->subject('HOST::Ticket Confirmation of your meet '. $this->meet->name)
+            ->markdown('emails.ticket.hostconfirmation');
     }
 }

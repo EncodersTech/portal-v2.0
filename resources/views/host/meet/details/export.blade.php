@@ -122,5 +122,10 @@
                 Gym Mailing Labels
             </button>
         </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.TicketPurchase)">
+                Financial Ticket Report
+            </button>
+        </div>
     </div>
 </div>

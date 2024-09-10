@@ -269,7 +269,7 @@ class UserController extends BaseApiController
                 'status' => $items->status,
                 'created_at' => $items->created_at,
                 'updated_at' => $items->updated_at,
-                'meet_name' => ($items->type == UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL) ? '' : ((!empty($items->related) && !empty($items->related->meet_registration)) ? $items->related->meet_registration->meet->name : ''),
+                'meet_name' => ($items->type == UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_WITHDRAWAL || $items->type == UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_TICKET) ? '' : ((!empty($items->related) && !empty($items->related->meet_registration)) ? $items->related->meet_registration->meet->name : ''),
             ];
 
             return $data;

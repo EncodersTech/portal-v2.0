@@ -1029,6 +1029,13 @@ class MeetController extends AppBaseController
 
                     return $pdf->stream($name);
                     break;
+                case Meet::REPORT_TYPE_TICKET_PURCHASE:
+                    $pdf = $meet->generateTickerPuchasingReport()->setPaper('a4')
+                        ->setOption('margin-top', '20mm')
+                        ->setOption('margin-bottom', '10mm');
+
+                    return $pdf->stream($name);
+                    break;
                 default:
                     throw new CustomBaseException("Invalid report type.", 1);
             }
@@ -1042,7 +1049,7 @@ class MeetController extends AppBaseController
             throw $e;
         } catch(\Throwable $e) {
             Log::warning(self::class . '@hostReportCreate : ' . $e->getMessage(), [
-                'Throwable' => $e
+                'Throwable' => $e->getMessage(),
             ]);
             throw new CustomBaseException('Something went wrong while generating your report.', Response::HTTP_INTERNAL_SERVER_ERROR);
         }
