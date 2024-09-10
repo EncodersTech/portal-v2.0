@@ -187,7 +187,7 @@ class DashboardController extends AppBaseController
             }
             else
             {
-                $card_charge->id = "Free";
+                $card_charge = (object) ['id' => 'free'];
             }
             DB::table('host_tickets')->insert($data);
             // get the id of the last inserted ticket
