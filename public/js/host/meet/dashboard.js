@@ -87941,7 +87941,8 @@ $(document).ready(function (e) {
               GymNameLabel: 'gym-name-label',
               CoachNameLabel: 'coaches-name-label',
               GymMailingLabel: 'gym-mailing-label',
-              RefundAll: 'RefundsAll'
+              RefundAll: 'RefundsAll',
+              TicketPurchase: 'ticket-purchase'
             }
           }
         };
@@ -88001,6 +88002,7 @@ $(document).ready(function (e) {
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.RefundAll:
+            case this.constants.reports.types.TicketPurchase:
               break;
 
             default:

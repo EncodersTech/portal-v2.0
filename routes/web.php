@@ -23,6 +23,8 @@ Auth::routes(['verify' => true]);
 //});
 
 Route::get('/privacy-policy', 'DashboardController@privacyPolicy')->name('privacy.policy');
+Route::get('/ticket/{meetId}', 'DashboardController@generateTicket')->name('ticket.generate');
+Route::post('/ticket/buy', 'DashboardController@buyTicket')->name('ticket.buy');
 Route::middleware(['guest'])->group(function () {
     Route::get('/register/member/{token}', 'Auth\RegisterController@showRegistrationForm')->name('register.member.invite');
 });

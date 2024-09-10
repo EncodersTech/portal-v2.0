@@ -47,6 +47,7 @@ class ClearPendingBalance extends Command
             $this->info('clear pending revenue balance start...');
             $now = now()->addHours(12); /** @var Carbon $now */
             UserBalanceTransaction::where('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_REVENUE)
+                ->orWhere('type', UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_TICKET)
                 ->where('status', UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING)
                 ->where('clears_on', '<=', $now) //uncomment this before pushing
                 ->chunkById(100, function ($transactions) {

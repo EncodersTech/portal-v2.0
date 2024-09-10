@@ -21,6 +21,7 @@ class UserBalanceTransaction extends Model
     public const BALANCE_TRANSACTION_TYPE_REGISTRATION_CHECK = 5;
     public const BALANCE_TRANSACTION_TYPE_WITHDRAWAL = 99;
     public const BALANCE_TRANSACTION_TYPE_ADMIN = 6;
+    public const BALANCE_TRANSACTION_TYPE_TICKET = 7;
 
     public const BALANCE_TRANSACTION_STATUS_PENDING = 1;
     public const BALANCE_TRANSACTION_STATUS_CLEARED = 2;
