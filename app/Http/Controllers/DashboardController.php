@@ -181,7 +181,14 @@ class DashboardController extends AppBaseController
         ];
         
         try{
-            $card_charge = StripeService::createOneTimeCardCharge($stripe_token, $calculated_total, 'USD', 'Meet Ticket Purchase for '. $meet->name, $meta_data);
+            if($calculated_total > 0.5)
+            {
+                $card_charge = StripeService::createOneTimeCardCharge($stripe_token, $calculated_total, 'USD', 'Meet Ticket Purchase for '. $meet->name, $meta_data);
+            }
+            else
+            {
+                $card_charge->id = "Free";
+            }
             DB::table('host_tickets')->insert($data);
             // get the id of the last inserted ticket
             $ticket_db_id = DB::getPdo()->lastInsertId();
