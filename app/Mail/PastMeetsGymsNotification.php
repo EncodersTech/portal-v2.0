@@ -33,7 +33,8 @@ class PastMeetsGymsNotification extends Mailable
      */
     public function build()
     {
-        $mail =  $this->subject($this->subject)
+        $mail = $this->from(config('mail.from.address'), config('mail.from.name'))
+            ->subject($this->subject)
             ->markdown($this->view)
             ->with($this->data);
 

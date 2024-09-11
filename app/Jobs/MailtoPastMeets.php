@@ -8,7 +8,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Mail\PastMeetsGymsNotification;
-use Illuminate\Support\Facades\Mail as Email;
+use Illuminate\Support\Facades\Mail;
 
 class MailtoPastMeets implements ShouldQueue
 {
@@ -35,6 +35,6 @@ class MailtoPastMeets implements ShouldQueue
      */
     public function handle()
     {
-        Email::to($this->email)->send(new PastMeetsGymsNotification('emails.past_meets_gym_notification',$this->data['subject'], $this->data));
+        Mail::to($this->email)->send(new PastMeetsGymsNotification('emails.past_meets_gym_notification',$this->data['subject'], $this->data));
     }
 }
