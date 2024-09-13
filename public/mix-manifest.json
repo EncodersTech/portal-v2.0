@@ -31,11 +31,7 @@
     "/js/gym/gym-edit.js": "/js/gym/gym-edit.js?id=3904f84cf0e7d1292645",
     "/js/gym/gyms.js": "/js/gym/gyms.js?id=485e3c4e351b2d5a2127",
     "/js/gym/joined.js": "/js/gym/joined.js?id=50f04d5b4ec2e5824777",
-<<<<<<< HEAD
     "/js/host/meet/dashboard.js": "/js/host/meet/dashboard.js?id=15004ea2536718f740be",
-=======
-    "/js/host/meet/dashboard.js": "/js/host/meet/dashboard.js?id=495b818f9d11b1d9887f",
->>>>>>> feature/dwolla_159
     "/js/host/meet/meet-dashboard.js": "/js/host/meet/meet-dashboard.js?id=008424e33479087dbdb1",
     "/js/host/meet/meet_summary.js": "/js/host/meet/meet_summary.js?id=f1289aac11f86b9fdedc",
     "/js/include/chat-conversion.js": "/js/include/chat-conversion.js?id=ca7b63539d77bafa13d6",
@@ -55,17 +51,10 @@
     "/js/meet/meet-edit.js": "/js/meet/meet-edit.js?id=9d6ba765c058ddf660a1",
     "/js/meet/meets.js": "/js/meet/meets.js?id=3c40808f1a6f483a3bda",
     "/js/register/details.js": "/js/register/details.js?id=81b0bf1baa400e764d38",
-<<<<<<< HEAD
-    "/js/register/edit.js": "/js/register/edit.js?id=ae131192f5fa0f48d852",
-    "/js/register/register.js": "/js/register/register.js?id=bc58cee8d539c35de1b4",
-    "/js/register/repay.js": "/js/register/repay.js?id=68efbc50bfd1247e328d",
-    "/js/usag/details.js": "/js/usag/details.js?id=3d6a79d3ddb4478231fe",
-=======
-    "/js/register/edit.js": "/js/register/edit.js?id=b548d96f98d906e14d67",
-    "/js/register/register.js": "/js/register/register.js?id=365d012a66609d706243",
+    "/js/register/edit.js": "/js/register/edit.js?id=ab530aaa5283dfca0286",
+    "/js/register/register.js": "/js/register/register.js?id=5e2e745080b64a7b038a",
     "/js/register/repay.js": "/js/register/repay.js?id=294c6e3399d9f97a29f0",
     "/js/usag/details.js": "/js/usag/details.js?id=5264c406ece1bf42c068",
->>>>>>> feature/dwolla_159
     "/js/user/account-access-management.js": "/js/user/account-access-management.js?id=12686e094adc1b80b5b8",
     "/js/user/account-balance-transactions.js": "/js/user/account-balance-transactions.js?id=24557223018ffa80675c",
     "/js/user/account-dwolla-verify.js": "/js/user/account-dwolla-verify.js?id=76addf4d91be23e40529",

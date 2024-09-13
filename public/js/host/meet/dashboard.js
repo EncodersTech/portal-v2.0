@@ -87941,12 +87941,8 @@ $(document).ready(function (e) {
               GymNameLabel: 'gym-name-label',
               CoachNameLabel: 'coaches-name-label',
               GymMailingLabel: 'gym-mailing-label',
-<<<<<<< HEAD
               RefundAll: 'RefundsAll',
               TicketPurchase: 'ticket-purchase'
-=======
-              RefundAll: 'RefundsAll'
->>>>>>> feature/dwolla_159
             }
           }
         };
@@ -87993,14 +87989,11 @@ $(document).ready(function (e) {
             case this.constants.reports.types.Scratch:
             case this.constants.reports.types.USAIGCCoachSignin:
             case this.constants.reports.types.NGACoachSignin:
-<<<<<<< HEAD
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.CoachSignin:
             case this.constants.reports.types.GymNameLabel:
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.MarketingQR:
-=======
->>>>>>> feature/dwolla_159
             case this.constants.reports.types.SpecialistsByLevel:
             case this.constants.reports.types.CoachSignin:
             case this.constants.reports.types.MarketingQR:
@@ -88009,10 +88002,7 @@ $(document).ready(function (e) {
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.RefundAll:
-<<<<<<< HEAD
             case this.constants.reports.types.TicketPurchase:
-=======
->>>>>>> feature/dwolla_159
               break;
 
             default:
