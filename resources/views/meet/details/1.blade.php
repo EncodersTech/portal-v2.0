@@ -82,7 +82,7 @@
             <div class="col-lg mb-2">
                 <table class="table table-sm table-striped table-borderless mb-0">
                     <tbody>
-                        <!-- <tr>
+                        <tr>
                             <td class="align-middle font-weight-bold">
                                 <span class="fas fa-fw fa-dumbbell"></span> Host
                             </td>
@@ -100,7 +100,7 @@
                             <td class="align-middle">
                                 {{ $meet->name }}
                             </td>
-                        </tr> -->
+                        </tr>
 
                         <tr>
                             <td class="align-middle font-weight-bold">
