@@ -12,6 +12,10 @@
             </div>
             
             <div class="modal-body">
+                <div class="alert alert-info">
+                    <span class="fas fa-info-circle"></span> 
+                    <span>Any messages received outside mentioned hours will be answered as soon as we return* </span>
+                </div>
                 <form accept="#" onsubmit="return false;" novalidate>
                     <div class="row">
                         <div class="col">
@@ -71,7 +75,7 @@
                     
                     <div class="row">
                         <div class="col">
-                            <a href="#all_time_support" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="chat_div">24/7 Support</a>
+                            <a href="#all_time_support" data-toggle="collapse" role="button" aria-expanded="false" aria-controls="chat_div">Monday-Friday 8AM-5PM</a>
                         </div>
                     </div>
                     <div class="collapse show" id="all_time_support">
@@ -115,7 +119,6 @@
                             </div>
                         </div>
                     </form>
-
                     <div class="modal-footer pb-0 pr-0">
                         <button type="submit" id="modal-contact-us-submit" class="btn btn-danger">
                             <span class="spinner-border spinner-border-sm" id="modal-contact-us-spinner"

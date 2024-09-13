@@ -43,6 +43,7 @@ use Illuminate\Support\Str;
 use Spatie\MediaLibrary\Models\Media;
 use Barryvdh\Snappy\PdfWrapper;
 use App\Jobs\SendEmailJob;
+use App\Jobs\MailtoPastMeets;
 use App\Mail\NewMeetMailable;
 use Illuminate\Support\Facades\Mail;
 
@@ -1317,8 +1318,9 @@ class MeetController extends AppBaseController
             $data['subject'] = $current_meet->name.' is now open for Registration';
             foreach ($meet->registrations as $meetRegistration) {
                 $data['meet_registration_gym'] = $meetRegistration->gym->name;
-                Email::to($meetRegistration->gym->user->email)
-                    ->send(new PastMeetsGymsNotification('emails.past_meets_gym_notification',$data['subject'], $data));
+                MailtoPastMeets::dispatch($meetRegistration->gym->user->email, $data);
+                // Email::to($meetRegistration->gym->user->email)
+                //     ->send(new PastMeetsGymsNotification('emails.past_meets_gym_notification',$data['subject'], $data));
             }
         }
 

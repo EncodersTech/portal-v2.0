@@ -2086,6 +2086,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+<<<<<<< HEAD
+=======
+//
+//
+//
+//
+>>>>>>> feature/dwolla_159
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationPayment',
   props: {
@@ -76965,6 +76972,20 @@ var render = function() {
                       _c("div", [
                         _vm._m(3),
                         _vm._v(" "),
+<<<<<<< HEAD
+=======
+                        _vm.summary != null && _vm.summary.total >= 10000
+                          ? _c("div", { staticClass: "alert alert-warning" }, [
+                              _c("span", {
+                                staticClass: "fas fa-exclamation-triangle"
+                              }),
+                              _vm._v(
+                                "\n                            We noticed your transaction is over $10k. Please utilize the one time ACH option below to proceed\n                        "
+                              )
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+>>>>>>> feature/dwolla_159
                         _vm.paymentOptions.methods.card
                           ? _c(
                               "div",
@@ -77115,7 +77136,12 @@ var render = function() {
                             )
                           : _vm._e(),
                         _vm._v(" "),
+<<<<<<< HEAD
                         _vm.paymentOptions.methods.ach
+=======
+                        _vm.paymentOptions.methods.ach &&
+                        (_vm.summary == null || _vm.summary.total < 10000)
+>>>>>>> feature/dwolla_159
                           ? _c(
                               "div",
                               {

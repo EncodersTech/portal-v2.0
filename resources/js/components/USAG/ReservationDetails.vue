@@ -807,6 +807,10 @@
                                 <h5 class="border-bottom">
                                     <span class="fas fa-fw fa-file-invoice-dollar"></span> Choose a payment method
                                 </h5>
+                                <div v-if="summary != null && summary.total >= 10000" class="alert alert-warning">
+                                    <span class="fas fa-exclamation-triangle"></span>
+                                    We noticed your transaction is over $10k. Please utilize the one time ACH option below to proceed
+                                </div>
 
                                 <div v-if="paymentOptions.methods.card"
                                     class="py-1 px-2 mb-2 border bg-white rounded">
@@ -842,7 +846,7 @@
                                     </div>
                                 </div>
 
-                                <div v-if="paymentOptions.methods.ach"
+                                <div v-if="paymentOptions.methods.ach && (summary == null || summary.total < 10000)"
                                     class="py-1 px-2 mb-2 border bg-white rounded">
 
                                     <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'ach')}"
