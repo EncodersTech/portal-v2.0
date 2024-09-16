@@ -24,6 +24,7 @@ class MeetTransaction extends Model
     public const PAYMENT_METHOD_CHECK = 4;
     public const PAYMENT_METHOD_BALANCE = 5;
     public const PAYMENT_METHOD_ONETIMEACH = 6;
+    public const PAYMENT_METHOD_ONETIMECC = 7;
 
     public const PAYMENT_METHOD_STRINGS = [
         self::PAYMENT_METHOD_CC => 'Credit Card',
@@ -31,7 +32,8 @@ class MeetTransaction extends Model
         self::PAYMENT_METHOD_ACH => 'ACH',
         self::PAYMENT_METHOD_CHECK => 'Mailed Check',
         self::PAYMENT_METHOD_BALANCE => 'Allgymnastics.com Balance',
-        self::PAYMENT_METHOD_ONETIMEACH => 'One Time ACH'
+        self::PAYMENT_METHOD_ONETIMEACH => 'One Time ACH',
+        self::PAYMENT_METHOD_ONETIMECC => 'One Time Card'
     ];
 
     public const STATUS_PENDING = 1;

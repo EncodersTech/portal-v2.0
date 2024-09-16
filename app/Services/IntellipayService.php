@@ -356,6 +356,55 @@ class IntellipayService {
             throw new CustomBaseException("Request failed",$response->getStatusCode());
         }
     }
+    public function createOneTimeCharge($amount, $cardDetails, $meta_data)
+    {
+        $user = auth()->user();
+        $data = [
+            'method'=>'card_payment',
+            'merchantkey'=> $this->marchant_key,
+            'apikey'=> $this->api_key,
+            'amount' => $amount,
+            'firstname'=> $user->first_name,
+            'lastname'=> $user->last_name,
+            'phone'=> $user->office_phone,
+            'email'=> $user->email,
+            'cardname'=> $cardDetails['card_name'],
+            'cardnum'=> str_replace(' ','',$cardDetails['card_number']),
+            'expdate'=> str_replace('/','',$cardDetails['card_expire']),
+            'cvv'=> $cardDetails['card_cvc'],
+            'comment'=> json_encode($meta_data)
+        ];
+        if($user->intellipay_customer_id != null || $user->intellipay_customer_id != '')
+        {
+            $data['custid'] = $user->intellipay_customer_id;
+        }
+
+        $client = new Guzzle();
+        $response = $client->post($this->host, ['form_params' => $data]);
+        if ($response->getStatusCode() === 200) {
+            $responseBody = $response->getBody()->getContents();
+            $responseBody = json_decode($responseBody,true);
+            if($responseBody['status'] > 0 && $responseBody['response'] == 'A')
+            {
+                if($cardDetails['save_cc_card'] && ($user->intellipay_customer_id == null || $user->intellipay_customer_id == ''))
+                {
+                    $user->intellipay_customer_id = $responseBody['custid'];
+                    $user->save();
+                }
+                return array(
+                    'paymentid' => $responseBody['paymentid'],
+                    'last4' => substr($cardDetails['card_number'],-4),
+                    'fee' => $responseBody['fee'],
+                );
+            }
+            else
+            {
+                throw new CustomBaseException("Payment failed, please try again or contact admin. Code ".$responseBody['status'] ,400);
+            }
+        } else {
+            throw new CustomBaseException("Request failed",$response->getStatusCode());
+        }
+    }
 }
 
 

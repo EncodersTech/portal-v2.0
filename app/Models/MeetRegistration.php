@@ -43,6 +43,7 @@ class MeetRegistration extends Model
     public const PAYMENT_OPTION_PAYPAL = 'paypal';
     public const PAYMENT_OPTION_ACH = 'ach';
     public const PAYMENT_OPTION_ONETIMEACH = 'onetimeach';
+    public const PAYMENT_OPTION_ONETIMECC = 'onetimecc';
     
     public const PAYMENT_OPTION_CHECK = 'check';
     public const PAYMENT_OPTION_BALANCE = 'balance';
@@ -57,6 +58,7 @@ class MeetRegistration extends Model
         self::PAYMENT_OPTION_PAYPAL => self::FEE_MODE_PERCENTAGE,
         self::PAYMENT_OPTION_ACH => self::FEE_MODE_FLAT,
         self::PAYMENT_OPTION_ONETIMEACH => self::FEE_MODE_FLAT,
+        self::PAYMENT_OPTION_ONETIMECC => self::FEE_MODE_PERCENTAGE,
         self::PAYMENT_OPTION_CHECK => self::FEE_MODE_FLAT,
         self::PAYMENT_OPTION_BALANCE => self::FEE_MODE_FLAT,
     ];
@@ -188,9 +190,9 @@ class MeetRegistration extends Model
     }
 
     public static function register(Meet $meet, Gym $gym, $inputLevels, $inputCoaches, $summary,
-        $method, bool $useBalance, $attachment = null, bool $deposit, $coupon, bool $enable_travel_arrangements, $onetimeach/*, bool $clientWaitlist*/) {
-
-        $chosenMethod = [
+        $method, bool $useBalance, $attachment = null, bool $deposit, $coupon, bool $enable_travel_arrangements, $onetimeach, $onetimecc /*, bool $clientWaitlist*/) {
+        
+            $chosenMethod = [
             'type' => $method['type'],
             'id' => '',
             'fee' => '',
@@ -252,7 +254,17 @@ class MeetRegistration extends Model
                     $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
                     $coachStatus = RegistrationCoach::STATUS_REGISTERED;
                     break;
-
+                case self::PAYMENT_OPTION_ONETIMECC:
+                    $chosenMethod = [
+                        'type' => $method['type'],
+                        'id' => $method['id'],
+                        'fee' => $meet->cc_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    $athleteStatus = RegistrationAthlete::STATUS_REGISTERED;
+                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
+                    $coachStatus = RegistrationCoach::STATUS_REGISTERED;
+                    break;
                 case self::PAYMENT_OPTION_ACH:
                     $chosenMethod = [
                         'type' => self::PAYMENT_OPTION_ACH,
@@ -1200,7 +1212,8 @@ class MeetRegistration extends Model
                         $registration,
                         $host,
                         $registrant,
-                        $onetimeach
+                        $onetimeach,
+                        $onetimecc
                     );
 
                     $transaction = $executedTransactionResult['transaction']; /** @var MeetTransaction $transaction */
@@ -1373,7 +1386,7 @@ class MeetRegistration extends Model
     }
 
     public function pay(Gym $gym, MeetTransaction $oldTx, array $summary,
-        array $method, bool $useBalance, $onetimeach = null) {
+        array $method, bool $useBalance, $onetimeach = null, $onetimecc = null) {
 
         DB::beginTransaction();
         $transaction = null;
@@ -1403,7 +1416,14 @@ class MeetRegistration extends Model
                         'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
                     ];
                     break;
-
+                case self::PAYMENT_OPTION_ONETIMECC:
+                    $chosenMethod = [
+                        'type' => self::PAYMENT_OPTION_ONETIMECC,
+                        'id' => $method['id'],
+                        'fee' => $meet->cc_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    break;
                 case self::PAYMENT_OPTION_ACH:
                     $chosenMethod = [
                         'type' => self::PAYMENT_OPTION_ACH,
@@ -1517,7 +1537,7 @@ class MeetRegistration extends Model
                 ];
             }
 
-            $result = self::executePayment($calculatedFees, $chosenMethod, $this, $host, $registrant, $onetimeach);
+            $result = self::executePayment($calculatedFees, $chosenMethod, $this, $host, $registrant, $onetimeach, $onetimecc);
             $transaction = $result['transaction']; /** @var MeetTransaction $transaction */
             $athleteStatus = $result['athlete_status'];
             $specialistStatus = $result['specialist_status'];
@@ -1865,7 +1885,7 @@ class MeetRegistration extends Model
     }
 
     public static function executePayment(array $calculatedFees, array $chosenMethod,
-        MeetRegistration $registration, User $host, User $registrant, $onetimeach = null) {
+        MeetRegistration $registration, User $host, User $registrant, $onetimeach = null, $onetimecc = null) {
             
         $dwollaService = resolve(DwollaService::class); /** @var DwollaService $dwollaService */
         $stripeService = resolve(StripeService::class); /** @var DwollaService $dwollaService */
@@ -1987,7 +2007,65 @@ class MeetRegistration extends Model
 
                 $result['message'] = 'Your payment has been successfully processed.';
                 break;
+            case self::PAYMENT_OPTION_ONETIMECC: //19643767
+                $cc_fee = 0;
+                $transaction_id = null;
 
+                $intellipayService = resolve(IntellipayService::class); /** @var IntellipayService $intellipayService */
+                $transaction = $intellipayService->createOneTimeCharge(
+                    $gymSummary['total'],
+                    $onetimecc,
+                    [
+                        'registration' => $registration->id,
+                        'gym' => $gym->name,
+                        'meet' => $meet->name,
+                    ]
+                );
+                $result['payment_method_string'] = 'Card ending with ' . $transaction['last4'];
+                if ($transaction['fee'] > 0) {
+                    $cc_fee = $transaction['fee'];
+                }
+                $transaction_id = $transaction['paymentid'];
+                $calculatedFees['gym']['last4'] = $transaction['last4'];
+
+                
+                $savings = $registration->calculateSavedCharges($handlingFee, $processorFee, $gymSummary['subtotal']);
+                $transaction = $registration->transactions()->create([
+                    'processor_id' => $transaction_id,
+                    'handling_rate' => Helper::getHandlingFee($meet),
+                    'processor_rate' => $meet->cc_fee(),
+                    'total' => $gymSummary['total'],
+                    'breakdown' => $calculatedFees,
+                    'method' => MeetTransaction::PAYMENT_METHOD_ONETIMECC,
+                    'status' => MeetTransaction::STATUS_COMPLETED,
+                    'handling_fee' => $handlingFee,
+                    'processor_fee' => $processorFee,
+                    'processor_charge_fee' => $cc_fee,
+                    'competitions_saving' => json_encode($savings)
+                ]); /** @var Meettransaction $transaction */
+
+                if ($calculatedFees['host']['total'] != 0) {
+                    $description = 'Revenue from ' . $gym->name .
+                    '\'s registration in ' . $meet->name;
+                    $transaction->host_balance_transaction()->create([
+                        'user_id' => $host->id,
+                        'total' => $transaction->breakdown['host']['total'],
+                        'description' => $description,
+                        'clears_on' => now()->addDays(Setting::userBalanceHoldDuration()),
+                        'type' => UserBalanceTransaction::BALANCE_TRANSACTION_TYPE_REGISTRATION_REVENUE,
+                        'status' => UserBalanceTransaction::BALANCE_TRANSACTION_STATUS_PENDING,
+                    ]);
+
+                    $host->pending_balance += $transaction->breakdown['host']['total'];
+                    $host->save();
+                }
+
+                $athleteStatus = RegistrationAthlete::STATUS_REGISTERED;
+                $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
+                $coachStatus = RegistrationCoach::STATUS_REGISTERED;
+
+                $result['message'] = 'Your payment has been successfully processed.';
+                break;
             case self::PAYMENT_OPTION_ACH:
                 if (!isset($chosenMethod['id'])) {
                     throw new CustomBaseException('Invalid payment method format.', -1);
@@ -2508,7 +2586,7 @@ class MeetRegistration extends Model
     }
 
     public function edit(Meet $meet, Gym $gym,
-        $inputBodies, $inputCoaches, $summary, $method, bool $useBalance, $previous_deposit_remaining_total, $coupon, $onetimeach = null, $changes_fees = 0) {
+        $inputBodies, $inputCoaches, $summary, $method, bool $useBalance, $previous_deposit_remaining_total, $coupon, $onetimeach = null, $changes_fees = 0, $onetimecc = null) {
         $chosenMethod = [
             'type' => $method['type'],
             'id' => '',
@@ -2553,7 +2631,14 @@ class MeetRegistration extends Model
                         'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
                     ];
                     break;
-
+                case self::PAYMENT_OPTION_ONETIMECC:
+                    $chosenMethod = [
+                        'type' => self::PAYMENT_OPTION_ONETIMECC,
+                        'id' => $method['id'],
+                        'fee' => $meet->cc_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[$method['type']],
+                    ];
+                    break;    
                 case self::PAYMENT_OPTION_ACH:
                     $chosenMethod = [
                         'type' => self::PAYMENT_OPTION_ACH,
@@ -4061,7 +4146,8 @@ class MeetRegistration extends Model
                         $this,
                         $host,
                         $registrant,
-                        $onetimeach
+                        $onetimeach,
+                        $onetimecc
                     );
                     // Log::channel('slack-warning')->warning($executedTransactionResult);
                     // die();

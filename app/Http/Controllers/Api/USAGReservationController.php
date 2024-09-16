@@ -28,7 +28,8 @@ class USAGReservationController extends BaseApiController
             $travel_arrangement = $request->input('enable_travel_arrangements');
             $onetimeach = $request->input('onetimeach');
             $changes_fees = $request->input('changes_fees');
-            $result = USAGReservation::merge($gym, $sanction, $data, $summary, $method, $useBalance,$coupon,$travel_arrangement, $onetimeach, $changes_fees); /** @var MeetRegistration $result */            
+            $onetimecc = $request->input('onetimecc');
+            $result = USAGReservation::merge($gym, $sanction, $data, $summary, $method, $useBalance,$coupon,$travel_arrangement, $onetimeach, $changes_fees, $onetimecc); /** @var MeetRegistration $result */            
             
             return $this->success([
                 'message' => 'Your reservation has been successfully processed.',

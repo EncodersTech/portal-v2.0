@@ -807,7 +807,39 @@
                                 <h5 class="border-bottom">
                                     <span class="fas fa-fw fa-file-invoice-dollar"></span> Choose a payment method
                                 </h5>
+                                <div v-if="paymentOptions.methods.onetimecc" class="py-1 px-2 mb-2 border bg-white rounded" @click="useOneTimeCC()">
+                                    <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'onetimecc')}"
+                                        @click="optionsExpanded = 'onetimecc'">
+                                        <span class="fas fa-fw fa-money-check-alt"></span> One Time Card Payment
+                                        <span :class="'fas fa-fw fa-caret-' + (optionsExpanded == 'onetimecc' ? 'down' : 'right')"></span>
+                                    </h6>
+                                    <div v-if="optionsExpanded == 'onetimecc'">
+                                        <div>
+                                            <div>
+                                                <label for="card_name">Name on Card:</label>
+                                                <input type="text" class="form-control" id="card_name" v-model="card_name" required>
+                                            </div>
 
+                                            <div>
+                                                <label for="card_number">Card Number:</label>
+                                                <input type="text"  class="form-control" id="card_number" v-model="card_number" maxlength="19" @input="cardNumberInput()" required>
+                                            </div>
+
+                                            <div>
+                                                <label for="card_expiry">Expiry Date:</label>
+                                                <input type="text"  class="form-control" id="card_expiry" v-model="card_expire" placeholder="mm/yy" maxlength="5" @input="cardExpiryInput()" required>
+                                            </div>
+                                            <div>
+                                                <label for="card_cvc">CVV</label>
+                                                <input type="text"  class="form-control" id="card_cvc" v-model="card_cvc" maxlength="4" required>
+                                            </div>
+                                            <div class="mt-2">
+                                                <input type="checkbox" id="save_cc_card" v-model="save_cc_card">
+                                                <label for="save_cc_card">Check - if you would like to save this Credit Card for future transactions. Please note, we can only store one Credit Card per account</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div v-if="paymentOptions.methods.card"
                                     class="py-1 px-2 mb-2 border bg-white rounded">
 
@@ -1275,6 +1307,12 @@
                 accountName: '',
                 previous_registration_credit_amount: 0,
                 changes_fees: 0,
+                card_name: '',
+                card_number: '',
+                card_expire: '',
+                card_cvc: '',
+                save_cc_card: false,
+                onetimecc: null
             }
         },
         methods: {
@@ -2092,7 +2130,14 @@
                 };
                 this.recalculateTotals();
             },
-
+            useOneTimeCC() {
+                this.chosenMethod = {
+                    fee: this.paymentOptions.methods.card.fee,
+                    mode: this.paymentOptions.methods.card.mode,
+                    type: 'onetimecc'
+                };
+                this.recalculateTotals();
+            },
             useACH(bank) {
                 this.chosenMethod = {
                     ...bank,
@@ -2256,7 +2301,16 @@
                         accountName: this.accountName
                     }
                 }
-
+                if(this.chosenMethod.type == 'onetimecc')
+                {
+                    this.onetimecc = {
+                        card_name: this.card_name,
+                        card_number: this.card_number,
+                        card_expire: this.card_expire,
+                        card_cvc: this.card_cvc,
+                        save_cc_card: this.save_cc_card
+                    }
+                }
                 this.confirmAction(
                     'Are you sure you want to proceed with the payment ?',
                     'orange',
@@ -2277,7 +2331,8 @@
                                 coupon: this.coupon.trim().toUpperCase(),
                                 enable_travel_arrangements: this.enable_travel_arrangements,
                                 onetimeach: this.onetimeach,
-                                changes_fees: this.changes_fees
+                                changes_fees: this.changes_fees,
+                                onetimecc: this.onetimecc
                             }
                         ).then(result => {
                             this.registrationUrl = result.data.url;
@@ -2336,6 +2391,27 @@
             ucfirst(s) {
                 if (typeof s !== 'string') return ''
                 return s.charAt(0).toUpperCase() + s.slice(1)
+            },
+            cardNumberInput() {
+                this.card_number = this.card_number.replace(/ /g,'');
+                this.card_number = this.card_number ? this.card_number.match(/.{1,4}/g).join(' ') : '';
+            },
+            cardExpiryInput() {
+                this.card_expire = this.card_expire.replace(/\//g,'');
+                this.card_expire = this.card_expire ? this.card_expire.match(/.{1,2}/g).join('/') : '';
+                let Nowyear = new Date().getFullYear();
+                // month cannot be greater than 12 - if it is, set it to 12
+                if (this.card_expire.length > 4) {
+                    let month = this.card_expire.slice(0, 2);
+                    let year = this.card_expire.slice(3, 5);
+                    if (parseInt(month) > 12) {
+                        month = '12';
+                    }
+                    if (parseInt(year) < parseInt(Nowyear.toString().slice(2, 4))) {
+                        year = Nowyear.toString().slice(2, 4);
+                    }
+                    this.card_expire = month +'/'+ year;
+                }
             }
         },
         beforeMount(){
