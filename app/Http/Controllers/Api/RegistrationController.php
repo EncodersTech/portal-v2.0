@@ -46,7 +46,8 @@ class RegistrationController extends BaseApiController
                 $request->input('deposit'),
                 $request->input('coupon'),
                 $request->input('enable_travel_arrangements'),
-                $request->input('onetimeach')
+                $request->input('onetimeach'),
+                $request->input('onetimecc')
             );
         } catch(CustomBaseException $e) {
             throw $e;
@@ -136,7 +137,8 @@ class RegistrationController extends BaseApiController
                 $previous_deposit_remaining_total,
                 $request->input('coupon'),
                 $request->input('onetimeach'),
-                $request->input('changes_fees')
+                $request->input('changes_fees'),
+                $request->input('onetimecc')
             );
         } catch(CustomBaseException $e) {
             throw $e;
@@ -182,7 +184,8 @@ class RegistrationController extends BaseApiController
                 $request->input('summary'),
                 $request->input('method'),
                 (bool) $request->input('use_balance'),
-                $request->input('onetimeach')
+                $request->input('onetimeach'),
+                $request->input('onetimecc')
             );
         } catch(CustomBaseException $e) {
             throw $e;
@@ -335,7 +338,9 @@ class RegistrationController extends BaseApiController
                 
             }
             $onetimeach_enabled = Setting::select('value')->where('key','one_time_ach')->first();
+            $onetimecc_enabled = Setting::select('value')->where('key','one_time_cc')->first();
             $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ONETIMEACH] = $onetimeach_enabled->value == 0 ? false : true; //env('ENABLE_ONETIMEACH');
+            $available_payment_options['methods'][MeetRegistration::PAYMENT_OPTION_ONETIMECC] = $onetimecc_enabled->value == 0 ? false : true; //env('ENABLE_ONETIMEACH');
             return $available_payment_options;
 
         } catch(CustomBaseException $e) {

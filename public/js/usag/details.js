@@ -2938,6 +2938,38 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -3076,7 +3108,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       // Default to savings
       accountName: '',
       previous_registration_credit_amount: 0,
-      changes_fees: 0
+      changes_fees: 0,
+      card_name: '',
+      card_number: '',
+      card_expire: '',
+      card_cvc: '',
+      save_cc_card: false,
+      onetimecc: null
     };
   },
   methods: {
@@ -3903,6 +3941,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
       this.recalculateTotals();
     },
+    useOneTimeCC: function useOneTimeCC() {
+      this.chosenMethod = {
+        fee: this.paymentOptions.methods.card.fee,
+        mode: this.paymentOptions.methods.card.mode,
+        type: 'onetimecc'
+      };
+      this.recalculateTotals();
+    },
     useACH: function useACH(bank) {
       this.chosenMethod = _objectSpread(_objectSpread({}, bank), {}, {
         accountType: bank.type,
@@ -4061,6 +4107,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         };
       }
 
+      if (this.chosenMethod.type == 'onetimecc') {
+        this.onetimecc = {
+          card_name: this.card_name,
+          card_number: this.card_number,
+          card_expire: this.card_expire,
+          card_cvc: this.card_cvc,
+          save_cc_card: this.save_cc_card
+        };
+      }
+
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
         _this6.isProcessingPayment = true;
         axios.post('/api/gyms/' + _this6.state.gym.id + '/reservations/usag/' + _this6.sanction_id + '/merge', {
@@ -4075,7 +4131,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           coupon: _this6.coupon.trim().toUpperCase(),
           enable_travel_arrangements: _this6.enable_travel_arrangements,
           onetimeach: _this6.onetimeach,
-          changes_fees: _this6.changes_fees
+          changes_fees: _this6.changes_fees,
+          onetimecc: _this6.onetimecc
         }).then(function (result) {
           _this6.registrationUrl = result.data.url;
           _this6.paymentProcessedMessage = result.data.message;
@@ -4129,6 +4186,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     ucfirst: function ucfirst(s) {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
+    },
+    cardNumberInput: function cardNumberInput() {
+      this.card_number = this.card_number.replace(/ /g, '');
+      this.card_number = this.card_number ? this.card_number.match(/.{1,4}/g).join(' ') : '';
+    },
+    cardExpiryInput: function cardExpiryInput() {
+      this.card_expire = this.card_expire.replace(/\//g, '');
+      this.card_expire = this.card_expire ? this.card_expire.match(/.{1,2}/g).join('/') : '';
+      var Nowyear = new Date().getFullYear(); // month cannot be greater than 12 - if it is, set it to 12
+
+      if (this.card_expire.length > 4) {
+        var month = this.card_expire.slice(0, 2);
+        var year = this.card_expire.slice(3, 5);
+
+        if (parseInt(month) > 12) {
+          month = '12';
+        }
+
+        if (parseInt(year) < parseInt(Nowyear.toString().slice(2, 4))) {
+          year = Nowyear.toString().slice(2, 4);
+        }
+
+        this.card_expire = month + '/' + year;
+      }
     }
   },
   beforeMount: function beforeMount() {
@@ -85663,6 +85744,369 @@ var render = function() {
                                             _vm._v(
                                               "\n                                We noticed your transaction is over $10k. Please utilize the one time ACH option below to proceed\n                            "
                                             )
+                                          ]
+                                        )
+                                      : _vm._e(),
+                                    _vm._v(" "),
+                                    _vm.paymentOptions.methods.onetimecc
+                                      ? _c(
+                                          "div",
+                                          {
+                                            staticClass:
+                                              "py-1 px-2 mb-2 border bg-white rounded",
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.useOneTimeCC()
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "h6",
+                                              {
+                                                staticClass:
+                                                  "clickable m-0 py-2",
+                                                class: {
+                                                  "border-bottom":
+                                                    _vm.optionsExpanded ==
+                                                    "onetimecc"
+                                                },
+                                                on: {
+                                                  click: function($event) {
+                                                    _vm.optionsExpanded =
+                                                      "onetimecc"
+                                                  }
+                                                }
+                                              },
+                                              [
+                                                _c("span", {
+                                                  staticClass:
+                                                    "fas fa-fw fa-money-check-alt"
+                                                }),
+                                                _vm._v(
+                                                  " One Time Card Payment\n                                    "
+                                                ),
+                                                _c("span", {
+                                                  class:
+                                                    "fas fa-fw fa-caret-" +
+                                                    (_vm.optionsExpanded ==
+                                                    "onetimecc"
+                                                      ? "down"
+                                                      : "right")
+                                                })
+                                              ]
+                                            ),
+                                            _vm._v(" "),
+                                            _vm.optionsExpanded == "onetimecc"
+                                              ? _c("div", [
+                                                  _c("div", [
+                                                    _c("div", [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "card_name"
+                                                          }
+                                                        },
+                                                        [
+                                                          _vm._v(
+                                                            "Name on Card:"
+                                                          )
+                                                        ]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.card_name,
+                                                            expression:
+                                                              "card_name"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "text",
+                                                          id: "card_name",
+                                                          required: ""
+                                                        },
+                                                        domProps: {
+                                                          value: _vm.card_name
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.card_name =
+                                                              $event.target.value
+                                                          }
+                                                        }
+                                                      })
+                                                    ]),
+                                                    _vm._v(" "),
+                                                    _c("div", [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "card_number"
+                                                          }
+                                                        },
+                                                        [_vm._v("Card Number:")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.card_number,
+                                                            expression:
+                                                              "card_number"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "text",
+                                                          id: "card_number",
+                                                          maxlength: "19",
+                                                          required: ""
+                                                        },
+                                                        domProps: {
+                                                          value: _vm.card_number
+                                                        },
+                                                        on: {
+                                                          input: [
+                                                            function($event) {
+                                                              if (
+                                                                $event.target
+                                                                  .composing
+                                                              ) {
+                                                                return
+                                                              }
+                                                              _vm.card_number =
+                                                                $event.target.value
+                                                            },
+                                                            function($event) {
+                                                              return _vm.cardNumberInput()
+                                                            }
+                                                          ]
+                                                        }
+                                                      })
+                                                    ]),
+                                                    _vm._v(" "),
+                                                    _c("div", [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "card_expiry"
+                                                          }
+                                                        },
+                                                        [_vm._v("Expiry Date:")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value:
+                                                              _vm.card_expire,
+                                                            expression:
+                                                              "card_expire"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "text",
+                                                          id: "card_expiry",
+                                                          placeholder: "mm/yy",
+                                                          maxlength: "5",
+                                                          required: ""
+                                                        },
+                                                        domProps: {
+                                                          value: _vm.card_expire
+                                                        },
+                                                        on: {
+                                                          input: [
+                                                            function($event) {
+                                                              if (
+                                                                $event.target
+                                                                  .composing
+                                                              ) {
+                                                                return
+                                                              }
+                                                              _vm.card_expire =
+                                                                $event.target.value
+                                                            },
+                                                            function($event) {
+                                                              return _vm.cardExpiryInput()
+                                                            }
+                                                          ]
+                                                        }
+                                                      })
+                                                    ]),
+                                                    _vm._v(" "),
+                                                    _c("div", [
+                                                      _c(
+                                                        "label",
+                                                        {
+                                                          attrs: {
+                                                            for: "card_cvc"
+                                                          }
+                                                        },
+                                                        [_vm._v("CVV")]
+                                                      ),
+                                                      _vm._v(" "),
+                                                      _c("input", {
+                                                        directives: [
+                                                          {
+                                                            name: "model",
+                                                            rawName: "v-model",
+                                                            value: _vm.card_cvc,
+                                                            expression:
+                                                              "card_cvc"
+                                                          }
+                                                        ],
+                                                        staticClass:
+                                                          "form-control",
+                                                        attrs: {
+                                                          type: "text",
+                                                          id: "card_cvc",
+                                                          maxlength: "4",
+                                                          required: ""
+                                                        },
+                                                        domProps: {
+                                                          value: _vm.card_cvc
+                                                        },
+                                                        on: {
+                                                          input: function(
+                                                            $event
+                                                          ) {
+                                                            if (
+                                                              $event.target
+                                                                .composing
+                                                            ) {
+                                                              return
+                                                            }
+                                                            _vm.card_cvc =
+                                                              $event.target.value
+                                                          }
+                                                        }
+                                                      })
+                                                    ]),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "div",
+                                                      { staticClass: "mt-2" },
+                                                      [
+                                                        _c("input", {
+                                                          directives: [
+                                                            {
+                                                              name: "model",
+                                                              rawName:
+                                                                "v-model",
+                                                              value:
+                                                                _vm.save_cc_card,
+                                                              expression:
+                                                                "save_cc_card"
+                                                            }
+                                                          ],
+                                                          attrs: {
+                                                            type: "checkbox",
+                                                            id: "save_cc_card"
+                                                          },
+                                                          domProps: {
+                                                            checked: Array.isArray(
+                                                              _vm.save_cc_card
+                                                            )
+                                                              ? _vm._i(
+                                                                  _vm.save_cc_card,
+                                                                  null
+                                                                ) > -1
+                                                              : _vm.save_cc_card
+                                                          },
+                                                          on: {
+                                                            change: function(
+                                                              $event
+                                                            ) {
+                                                              var $$a =
+                                                                  _vm.save_cc_card,
+                                                                $$el =
+                                                                  $event.target,
+                                                                $$c = $$el.checked
+                                                                  ? true
+                                                                  : false
+                                                              if (
+                                                                Array.isArray(
+                                                                  $$a
+                                                                )
+                                                              ) {
+                                                                var $$v = null,
+                                                                  $$i = _vm._i(
+                                                                    $$a,
+                                                                    $$v
+                                                                  )
+                                                                if (
+                                                                  $$el.checked
+                                                                ) {
+                                                                  $$i < 0 &&
+                                                                    (_vm.save_cc_card = $$a.concat(
+                                                                      [$$v]
+                                                                    ))
+                                                                } else {
+                                                                  $$i > -1 &&
+                                                                    (_vm.save_cc_card = $$a
+                                                                      .slice(
+                                                                        0,
+                                                                        $$i
+                                                                      )
+                                                                      .concat(
+                                                                        $$a.slice(
+                                                                          $$i +
+                                                                            1
+                                                                        )
+                                                                      ))
+                                                                }
+                                                              } else {
+                                                                _vm.save_cc_card = $$c
+                                                              }
+                                                            }
+                                                          }
+                                                        }),
+                                                        _vm._v(" "),
+                                                        _c(
+                                                          "label",
+                                                          {
+                                                            attrs: {
+                                                              for:
+                                                                "save_cc_card"
+                                                            }
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              "Check - if you would like to save this Credit Card for future transactions. Please note, we can only store one Credit Card per account"
+                                                            )
+                                                          ]
+                                                        )
+                                                      ]
+                                                    )
+                                                  ])
+                                                ])
+                                              : _vm._e()
                                           ]
                                         )
                                       : _vm._e(),

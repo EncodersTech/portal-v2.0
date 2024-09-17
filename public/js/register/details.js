@@ -87828,12 +87828,14 @@ $(document).ready(function (e) {
               4: 'Mailed Check',
               5: 'Allgymnastics.com Balance',
               6: 'One Time ACH',
+              7: 'One Time CC',
               Card: 1,
               Paypal: 2,
               Ach: 3,
               Check: 4,
               Balance: 5,
-              OneTimeAch: 6
+              OneTimeAch: 6,
+              OneTimeCC: 7
             },
             statuses: {
               1: 'Pending',
