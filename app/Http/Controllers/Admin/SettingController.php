@@ -23,7 +23,8 @@ class SettingController extends AppBaseController
         $input['audit_enabled'] = isset($input['audit_enabled']) ? 1 : 0;
         $input['is_schedule_withdraw_enabled'] = isset($input['is_schedule_withdraw_enabled']) ? 1 : 0;
         $input['enabled_feature_meet_fee'] = isset($input['enabled_feature_meet_fee']) ? 1 : 0;
-        $input['one_time_ach'] = isset($input['one_time_ach']) ? 1 : 0;
+        $input['one_time_ach'] = isset($input['one_time_ach']) ? 1 : 0; 
+        $input['one_time_cc'] = isset($input['one_time_cc']) ? 1 : 0; 
         $input['cc_gateway'] = isset($input['cc_gateway']) ? 1 : 0;
 
         DB::beginTransaction();
