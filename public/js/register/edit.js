@@ -3216,6 +3216,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   watch: {},
   methods: {
+    toggleDivView: function toggleDivView(id) {
+      var div = document.getElementById(id);
+      if (div.style.display == 'none') div.style.display = 'block';else div.style.display = 'none';
+    },
     getFilteredSpecialistEvents: function getFilteredSpecialistEvents(gender) {
       var maleEvents = [];
       var femaleEvents = [];
@@ -85348,9 +85352,41 @@ var render = function() {
                                                                                                         "btn-group dropdown"
                                                                                                     },
                                                                                                     [
-                                                                                                      _vm._m(
-                                                                                                        8,
-                                                                                                        true
+                                                                                                      _c(
+                                                                                                        "button",
+                                                                                                        {
+                                                                                                          staticClass:
+                                                                                                            "btn btm-sm btn-link",
+                                                                                                          attrs: {
+                                                                                                            type:
+                                                                                                              "button",
+                                                                                                            "data-toggle":
+                                                                                                              "dropdown",
+                                                                                                            "aria-haspopup":
+                                                                                                              "true",
+                                                                                                            "aria-expanded":
+                                                                                                              "false"
+                                                                                                          },
+                                                                                                          on: {
+                                                                                                            click: function(
+                                                                                                              $event
+                                                                                                            ) {
+                                                                                                              return _vm.toggleDivView(
+                                                                                                                "submenu_" +
+                                                                                                                  athlete.id
+                                                                                                              )
+                                                                                                            }
+                                                                                                          }
+                                                                                                        },
+                                                                                                        [
+                                                                                                          _c(
+                                                                                                            "span",
+                                                                                                            {
+                                                                                                              staticClass:
+                                                                                                                "fas fa-fw fa-ellipsis-v"
+                                                                                                            }
+                                                                                                          )
+                                                                                                        ]
                                                                                                       ),
                                                                                                       _vm._v(
                                                                                                         " "
@@ -85359,7 +85395,16 @@ var render = function() {
                                                                                                         "div",
                                                                                                         {
                                                                                                           staticClass:
-                                                                                                            "dropdown-menu dropdown-menu-right"
+                                                                                                            "dropdown-menu dropdown-menu-right",
+                                                                                                          staticStyle: {
+                                                                                                            display:
+                                                                                                              "none"
+                                                                                                          },
+                                                                                                          attrs: {
+                                                                                                            id:
+                                                                                                              "submenu_" +
+                                                                                                              athlete.id
+                                                                                                          }
                                                                                                         },
                                                                                                         [
                                                                                                           !_vm
@@ -85761,7 +85806,7 @@ var render = function() {
                                                                             "div",
                                                                             [
                                                                               _vm._m(
-                                                                                9,
+                                                                                8,
                                                                                 true
                                                                               ),
                                                                               _vm._v(
@@ -86000,7 +86045,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _vm._l(_vm.coaches, function(coach) {
                                   return _c("tr", { key: coach.id }, [
-                                    _vm._m(10, true),
+                                    _vm._m(9, true),
                                     _vm._v(" "),
                                     _c("td", { staticClass: "align-middle" }, [
                                       coach.editing.first_name
@@ -86446,7 +86491,7 @@ var render = function() {
                                                   "input-group input-group-sm"
                                               },
                                               [
-                                                _vm._m(11, true),
+                                                _vm._m(10, true),
                                                 _vm._v(" "),
                                                 _c("input", {
                                                   directives: [
@@ -86721,7 +86766,7 @@ var render = function() {
                                               : coach.status ==
                                                 _vm.constants.coaches.statuses
                                                   .Reserved
-                                              ? _c("div", [_vm._m(12, true)])
+                                              ? _c("div", [_vm._m(11, true)])
                                               : _c("div", [
                                                   _c(
                                                     "span",
@@ -86776,7 +86821,7 @@ var render = function() {
                                                   "btn-group dropdown"
                                               },
                                               [
-                                                _vm._m(13, true),
+                                                _vm._m(12, true),
                                                 _vm._v(" "),
                                                 _c(
                                                   "div",
@@ -86932,7 +86977,7 @@ var render = function() {
                   },
                   [
                     _c("div", { staticClass: "flex-grow-1 text-uppercase" }, [
-                      _vm._m(14),
+                      _vm._m(13),
                       _vm._v(" "),
                       _c(
                         "span",
@@ -86946,7 +86991,7 @@ var render = function() {
                           "div",
                           { staticClass: "flex-grow-1 text-uppercase" },
                           [
-                            _vm._m(15),
+                            _vm._m(14),
                             _vm._v(" "),
                             _c(
                               "span",
@@ -86970,7 +87015,7 @@ var render = function() {
                           "div",
                           { staticClass: "flex-grow-1 text-uppercase" },
                           [
-                            _vm._m(16),
+                            _vm._m(15),
                             _vm._v(" "),
                             _c(
                               "span",
@@ -87187,24 +87232,6 @@ var staticRenderFns = [
       _c("br"),
       _vm._v("(Reserved)")
     ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "button",
-      {
-        staticClass: "btn btm-sm btn-link",
-        attrs: {
-          type: "button",
-          "data-toggle": "dropdown",
-          "aria-haspopup": "true",
-          "aria-expanded": "false"
-        }
-      },
-      [_c("span", { staticClass: "fas fa-fw fa-ellipsis-v" })]
-    )
   },
   function() {
     var _vm = this
