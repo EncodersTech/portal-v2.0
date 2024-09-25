@@ -738,11 +738,11 @@
                                                                     class="fas fa-fw fa-exclamation-triangle text-warning">
                                                                 </span>
                                                                 <div class="btn-group dropdown" v-if="!category.locked">
-                                                                    <button type="button" class="btn btm-sm btn-link"
+                                                                    <button @click="toggleDivView('submenu_'+athlete.id)" type="button" class="btn btm-sm btn-link"
                                                                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                                                         <span class="fas fa-fw fa-ellipsis-v"></span>
                                                                     </button>
-                                                                    <div class="dropdown-menu dropdown-menu-right">
+                                                                    <div class="dropdown-menu dropdown-menu-right" :id="'submenu_'+athlete.id" style="display:none;">
                                                                         <!-- <button v-if="(registration.transactions[0].status == 6) && athlete.in_waitlist"
                                                                             class="dropdown-item text-primary" type="button"
                                                                             @click="level.pinUnpin(athlete)">
@@ -1435,6 +1435,13 @@ export default {
     watch: {
     },
     methods: {
+        toggleDivView(id){
+            var div = document.getElementById(id);
+            if(div.style.display == 'none')
+                div.style.display = 'block';
+            else
+                div.style.display = 'none';
+        },
         getFilteredSpecialistEvents(gender){
             let maleEvents = [];
             let femaleEvents = [];
