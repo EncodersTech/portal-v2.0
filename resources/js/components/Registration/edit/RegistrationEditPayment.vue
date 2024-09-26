@@ -199,7 +199,7 @@
 
                             <h6 class="clickable m-0 py-2" :class="{'border-bottom': (optionsExpanded == 'card')}"
                                 @click="optionsExpanded = 'card'">
-                                <span class="fas fa-fw fa-credit-card"></span> Credit or Debit Card
+                                <span class="fas fa-fw fa-credit-card"></span> Saved Credit or Debit Card
                                 <span :class="'fas fa-fw fa-caret-' + (optionsExpanded == 'card' ? 'down' : 'right')"></span>
                             </h6>
 
@@ -371,6 +371,9 @@
                                 <span class="fas fa-fw fa-file-invoice-dollar"></span> Chosen Method :
                             </div>
                             <div class="col">
+                                <div v-if="chosenMethod.type == 'onetimecc'">
+                                    One Time Card Payment
+                                </div>
                                 <div v-if="chosenMethod.type == 'card'">
                                     Card ending with {{ chosenMethod.last4 }}
                                 </div>
