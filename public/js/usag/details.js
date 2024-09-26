@@ -2966,6 +2966,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -86118,7 +86121,7 @@ var render = function() {
                                                     "fas fa-fw fa-credit-card"
                                                 }),
                                                 _vm._v(
-                                                  " Credit or Debit Card\n                                    "
+                                                  " Saved Credit or Debit Card\n                                    "
                                                 ),
                                                 _c("span", {
                                                   class:
@@ -86879,6 +86882,14 @@ var render = function() {
                                           _vm._m(24),
                                           _vm._v(" "),
                                           _c("div", { staticClass: "col" }, [
+                                            _vm.chosenMethod.type == "onetimecc"
+                                              ? _c("div", [
+                                                  _vm._v(
+                                                    "\n                                        One Time Card Payment\n                                    "
+                                                  )
+                                                ])
+                                              : _vm._e(),
+                                            _vm._v(" "),
                                             _vm.chosenMethod.type == "card"
                                               ? _c("div", [
                                                   _vm._v(

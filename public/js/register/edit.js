@@ -5925,6 +5925,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationEditPayment',
   props: {
@@ -87902,7 +87905,7 @@ var render = function() {
                                       staticClass: "fas fa-fw fa-credit-card"
                                     }),
                                     _vm._v(
-                                      " Credit or Debit Card\n                                "
+                                      " Saved Credit or Debit Card\n                                "
                                     ),
                                     _c("span", {
                                       class:
@@ -88616,6 +88619,14 @@ var render = function() {
                               _vm._m(17),
                               _vm._v(" "),
                               _c("div", { staticClass: "col" }, [
+                                _vm.chosenMethod.type == "onetimecc"
+                                  ? _c("div", [
+                                      _vm._v(
+                                        "\n                                    One Time Card Payment\n                                "
+                                      )
+                                    ])
+                                  : _vm._e(),
+                                _vm._v(" "),
                                 _vm.chosenMethod.type == "card"
                                   ? _c("div", [
                                       _vm._v(
