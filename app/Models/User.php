@@ -1247,14 +1247,14 @@ class User extends Authenticatable implements MustVerifyEmail
         foreach ($meets_in_active_gym as $meet) {
             $meet_summary_data = $meetRepo->getSummaryData($meet);
             $summary_data_this_year = [
-                'total_earn' => $summary_data['total_earn'] + $meet_summary_data['total_earn'],
-                'total_ath' => $summary_data['total_ath'] + $meet_summary_data['total_ath'],
-                'total_coa' => $summary_data['total_coa'] + $meet_summary_data['total_coa'],
-                'total_gym' => $summary_data['total_gym'] + $meet_summary_data['total_gym'],
-                'team_allow' => $summary_data['team_allow'] + $meet_summary_data['team_allow'],
-                'athleteLevelArr' => array_merge($summary_data['athleteLevelArr'], $meet_summary_data['athleteLevelArr']),
-                'coachSummaryArr' => array_merge($summary_data['coachSummaryArr'], $meet_summary_data['coachSummaryArr']),
-                'gymSummaryArr' => array_merge($summary_data['gymSummaryArr'], $meet_summary_data['gymSummaryArr'])
+                'total_earn' => $summary_data_this_year['total_earn'] + $meet_summary_data['total_earn'] - $meet_summary_data['allgym_fees'],
+                'total_ath' => $summary_data_this_year['total_ath'] + $meet_summary_data['total_ath'],
+                'total_coa' => $summary_data_this_year['total_coa'] + $meet_summary_data['total_coa'],
+                'total_gym' => $summary_data_this_year['total_gym'] + $meet_summary_data['total_gym'],
+                'team_allow' => $summary_data_this_year['team_allow'] + $meet_summary_data['team_allow'],
+                'athleteLevelArr' => array_merge($summary_data_this_year['athleteLevelArr'], $meet_summary_data['athleteLevelArr']),
+                'coachSummaryArr' => array_merge($summary_data_this_year['coachSummaryArr'], $meet_summary_data['coachSummaryArr']),
+                'gymSummaryArr' => array_merge($summary_data_this_year['gymSummaryArr'], $meet_summary_data['gymSummaryArr'])
             ];
         }
 

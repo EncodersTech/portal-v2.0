@@ -21,7 +21,7 @@
                 <td>{{ $meet['data']['total_gym'] }}</td>
                 <td>{{ number_format($meet['data']['total_earn'],2) }}</td>
                 <td>{{ number_format($meet['data']['allgym_fees'],2) }}</td>
-                <td>{{ number_format($meet['data']['allgym_fees'] + $meet['data']['total_earn'],2)  }}</td>
+                <td>{{ number_format($meet['data']['total_earn'] - $meet['data']['allgym_fees'],2)  }}</td>
             </tr>
         @endforeach
     </tbody>
