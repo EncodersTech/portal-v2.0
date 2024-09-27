@@ -52,6 +52,29 @@
                                     <option value="{{ $user->id }}" <?= isset($edit_notification) && in_array($user->id,array_keys(json_decode($edit_notification->selected_users, true))) ? 'selected' : '' ?>>{{ $user->fullName() }} - {{ $user->email }}</option>
                                 @endforeach
                             </select>
+                            <table class="table">
+                                <tr>
+                                    <td>
+                                        <div class="form-group">
+                                            <label for="">Select Meet Hosts</label>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" name="cc_gateway" class="custom-control-input" value="1" id="customSwitch3">
+                                                <label class="custom-control-label" for="customSwitch3"></label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <label for="">Select Meet Registrants</label>
+                                            <div class="custom-control custom-switch">
+                                                <input type="checkbox" name="cc_gateway" class="custom-control-input" value="1" id="customSwitch4" >
+                                                <label class="custom-control-label" for="customSwitch4"></label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
                         </div>
                         <div>
                             <label for="name" class="mb-1">Notification Title: <span class="text-danger">*</span></label>
@@ -121,6 +144,11 @@
 @section('scripts')
 <script>
     $(document).ready(function(){
+        var meet_host_ids = '<?= json_encode($meet_host_users) ?>';
+        var meet_registrant_ids = '<?=json_encode($meet_registrant_users) ?>';
+        meet_host_ids = JSON.parse(meet_host_ids);
+        meet_registrant_ids = JSON.parse(meet_registrant_ids);
+
         $('#messageBody').summernote({
             height: 200,
             placeholder: 'Enter your notification body here...',
@@ -129,6 +157,48 @@
         });
         $(function() {
             $('.selectpicker').select2();
+        });
+        $('#customSwitch3').click(function(){
+            console.log(meet_host_ids.length);
+            // select user_id multi select box and select all meet host users
+            if($(this).is(':checked'))
+            {
+                meet_host_ids.forEach(function(v){
+                    console.log(v);
+                    $("#user_id option[value='" + v + "']").prop("selected", true);
+                    // show
+                });
+                $('#user_id').select2().trigger('change');
+            }else{
+                meet_host_ids.forEach(function(v){
+                    console.log(v);
+                    $("#user_id option[value='" + v + "']").prop("selected", false);
+                    // show
+                });
+                $('#user_id').select2().trigger('change');
+            }
+
+        });
+        $('#customSwitch4').click(function(){
+            console.log(meet_registrant_ids.length);
+            // select user_id multi select box and select all meet host users
+            if($(this).is(':checked'))
+            {
+                meet_registrant_ids.forEach(function(v){
+                    console.log(v);
+                    $("#user_id option[value='" + v + "']").prop("selected", true);
+                    // show
+                });
+                $('#user_id').select2().trigger('change');
+            }else{
+                meet_registrant_ids.forEach(function(v){
+                    console.log(v);
+                    $("#user_id option[value='" + v + "']").prop("selected", false);
+                    // show
+                });
+                $('#user_id').select2().trigger('change');
+            }
+
         });
     });
 </script>

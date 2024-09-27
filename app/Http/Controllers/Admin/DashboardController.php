@@ -423,6 +423,22 @@ class DashboardController extends AppBaseController
         $data['state'] = 0; // new
         $data['notifications'] = DB::table('popnotificaitons')->orderBy('id','DESC')->get();
         $data['users'] = User::where('is_disabled', false)->where('email_verified_at', '!=', null)->get();
+        $data['meet_host_users'] = User::select()->where('is_disabled', false)->where('email_verified_at', '!=', null)
+                                    ->whereHas('gyms', function($q){
+                                        $q->where('is_archived', false);
+                                    })
+                                    ->whereHas('gyms.meets', function($q){
+                                        $q->where('is_archived', false);
+                                    })->get()->unique('id')->pluck('id')->toArray();
+
+        $data['meet_registrant_users'] = User::where('is_disabled', false)->where('email_verified_at', '!=', null)
+                                        ->whereHas('gyms', function($q){
+                                            $q->where('is_archived', false);
+                                        })
+                                        ->whereHas('gyms.registrations', function($q){
+                                            $q->where('status', 1);
+                                        })->get()->unique('id')->pluck('id')->toArray();
+        
         return view('admin.dashboard.popup_notification', $data);
     }
     public function popup_notification_save(Request $request)
@@ -532,6 +548,21 @@ class DashboardController extends AppBaseController
         $data['edit_notification']->selected_users = $data['edit_notification']->selected_users != null ? $data['edit_notification']->selected_users : json_encode([]);
         $data['notifications']->validity = date('m/d/Y',strtotime($data['edit_notification']->validity));
         $data['users'] = User::where('is_disabled', false)->where('email_verified_at', '!=', null)->get();
+        $data['meet_host_users'] = User::select()->where('is_disabled', false)->where('email_verified_at', '!=', null)
+                                    ->whereHas('gyms', function($q){
+                                        $q->where('is_archived', false);
+                                    })
+                                    ->whereHas('gyms.meets', function($q){
+                                        $q->where('is_archived', false);
+                                    })->get()->unique('id')->pluck('id')->toArray();
+
+        $data['meet_registrant_users'] = User::where('is_disabled', false)->where('email_verified_at', '!=', null)
+                                        ->whereHas('gyms', function($q){
+                                            $q->where('is_archived', false);
+                                        })
+                                        ->whereHas('gyms.registrations', function($q){
+                                            $q->where('status', 1);
+                                        })->get()->unique('id')->pluck('id')->toArray();
         return view('admin.dashboard.popup_notification', $data);
     }
     public function popup_notification_delete(Request $request)
