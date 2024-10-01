@@ -65,19 +65,3 @@
         </ag-registration-details>
     </div>
 </div>
-
-
-<script>
-    function toogle_size_chart() {
-        var x = document.getElementById("size_chart_list");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-            x.previousElementSibling.children[0].classList.add('fa-caret-down');
-            x.previousElementSibling.children[0].classList.remove('fa-caret-right');
-        } else {
-            x.style.display = "none";
-            x.previousElementSibling.children[0].classList.remove('fa-caret-down');
-            x.previousElementSibling.children[0].classList.add('fa-caret-right');
-        }
-    }
-</script>

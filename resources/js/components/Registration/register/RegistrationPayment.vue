@@ -559,7 +559,7 @@
     </div>
 </template>
 
-<style scoped>
+<style>
     .clickable {
         cursor: pointer;
     }
