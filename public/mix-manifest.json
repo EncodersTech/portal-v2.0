@@ -31,11 +31,7 @@
     "/js/gym/gym-edit.js": "/js/gym/gym-edit.js?id=3904f84cf0e7d1292645",
     "/js/gym/gyms.js": "/js/gym/gyms.js?id=485e3c4e351b2d5a2127",
     "/js/gym/joined.js": "/js/gym/joined.js?id=50f04d5b4ec2e5824777",
-<<<<<<< HEAD
-    "/js/host/meet/dashboard.js": "/js/host/meet/dashboard.js?id=15004ea2536718f740be",
-=======
-    "/js/host/meet/dashboard.js": "/js/host/meet/dashboard.js?id=743bd19fea29b96a9692",
->>>>>>> feature/ticket_158
+    "/js/host/meet/dashboard.js": "/js/host/meet/dashboard.js?id=399594bb5bbfa1bba648",
     "/js/host/meet/meet-dashboard.js": "/js/host/meet/meet-dashboard.js?id=008424e33479087dbdb1",
     "/js/host/meet/meet_summary.js": "/js/host/meet/meet_summary.js?id=f1289aac11f86b9fdedc",
     "/js/include/chat-conversion.js": "/js/include/chat-conversion.js?id=ca7b63539d77bafa13d6",
@@ -54,19 +50,11 @@
     "/js/meet/meet-details.js": "/js/meet/meet-details.js?id=62b3a3691851e820069e",
     "/js/meet/meet-edit.js": "/js/meet/meet-edit.js?id=9d6ba765c058ddf660a1",
     "/js/meet/meets.js": "/js/meet/meets.js?id=3c40808f1a6f483a3bda",
-<<<<<<< HEAD
     "/js/register/details.js": "/js/register/details.js?id=f474be01d03e85314c9c",
     "/js/register/edit.js": "/js/register/edit.js?id=b0f60149e09305114394",
     "/js/register/register.js": "/js/register/register.js?id=5b1e06e30fd3a9f50540",
     "/js/register/repay.js": "/js/register/repay.js?id=af28d2d7cc3101877b54",
     "/js/usag/details.js": "/js/usag/details.js?id=08ae8443be253bf1ec0f",
-=======
-    "/js/register/details.js": "/js/register/details.js?id=81b0bf1baa400e764d38",
-    "/js/register/edit.js": "/js/register/edit.js?id=8a5a19ae02141c39c39d",
-    "/js/register/register.js": "/js/register/register.js?id=ad336111ed09294eaa41",
-    "/js/register/repay.js": "/js/register/repay.js?id=68efbc50bfd1247e328d",
-    "/js/usag/details.js": "/js/usag/details.js?id=3d6a79d3ddb4478231fe",
->>>>>>> feature/ticket_158
     "/js/user/account-access-management.js": "/js/user/account-access-management.js?id=12686e094adc1b80b5b8",
     "/js/user/account-balance-transactions.js": "/js/user/account-balance-transactions.js?id=24557223018ffa80675c",
     "/js/user/account-dwolla-verify.js": "/js/user/account-dwolla-verify.js?id=76addf4d91be23e40529",

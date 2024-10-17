@@ -2934,7 +2934,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-<<<<<<< HEAD
 //
 //
 //
@@ -2974,8 +2973,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-=======
->>>>>>> feature/ticket_158
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'ReservationDetails',
   props: {
@@ -3114,7 +3111,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       // Default to savings
       accountName: '',
       previous_registration_credit_amount: 0,
-<<<<<<< HEAD
       changes_fees: 0,
       card_name: '',
       card_number: '',
@@ -3122,9 +3118,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       card_cvc: '',
       save_cc_card: false,
       onetimecc: null
-=======
-      changes_fees: 0
->>>>>>> feature/ticket_158
     };
   },
   methods: {
@@ -3951,7 +3944,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
       this.recalculateTotals();
     },
-<<<<<<< HEAD
     useOneTimeCC: function useOneTimeCC() {
       this.chosenMethod = {
         fee: this.paymentOptions.methods.card.fee,
@@ -3960,8 +3952,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
       this.recalculateTotals();
     },
-=======
->>>>>>> feature/ticket_158
     useACH: function useACH(bank) {
       this.chosenMethod = _objectSpread(_objectSpread({}, bank), {}, {
         accountType: bank.type,
@@ -4120,7 +4110,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         };
       }
 
-<<<<<<< HEAD
       if (this.chosenMethod.type == 'onetimecc') {
         this.onetimecc = {
           card_name: this.card_name,
@@ -4131,8 +4120,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         };
       }
 
-=======
->>>>>>> feature/ticket_158
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
         _this6.isProcessingPayment = true;
         axios.post('/api/gyms/' + _this6.state.gym.id + '/reservations/usag/' + _this6.sanction_id + '/merge', {
@@ -4147,12 +4134,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           coupon: _this6.coupon.trim().toUpperCase(),
           enable_travel_arrangements: _this6.enable_travel_arrangements,
           onetimeach: _this6.onetimeach,
-<<<<<<< HEAD
           changes_fees: _this6.changes_fees,
           onetimecc: _this6.onetimecc
-=======
-          changes_fees: _this6.changes_fees
->>>>>>> feature/ticket_158
         }).then(function (result) {
           _this6.registrationUrl = result.data.url;
           _this6.paymentProcessedMessage = result.data.message;
@@ -4206,7 +4189,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     ucfirst: function ucfirst(s) {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
-<<<<<<< HEAD
     },
     cardNumberInput: function cardNumberInput() {
       this.card_number = this.card_number.replace(/ /g, '');
@@ -4231,8 +4213,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
         this.card_expire = month + '/' + year;
       }
-=======
->>>>>>> feature/ticket_158
     }
   },
   beforeMount: function beforeMount() {
@@ -85752,7 +85732,6 @@ var render = function() {
                                   _c("div", [
                                     _vm._m(20),
                                     _vm._v(" "),
-<<<<<<< HEAD
                                     _vm.summary != null &&
                                     _vm.summary.total >= 10000
                                       ? _c(
@@ -86135,8 +86114,6 @@ var render = function() {
                                         )
                                       : _vm._e(),
                                     _vm._v(" "),
-=======
->>>>>>> feature/ticket_158
                                     _vm.paymentOptions.methods.card
                                       ? _c(
                                           "div",
@@ -86167,11 +86144,7 @@ var render = function() {
                                                     "fas fa-fw fa-credit-card"
                                                 }),
                                                 _vm._v(
-<<<<<<< HEAD
                                                   " Saved Credit or Debit Card\n                                    "
-=======
-                                                  " Credit or Debit Card\n                                    "
->>>>>>> feature/ticket_158
                                                 ),
                                                 _c("span", {
                                                   class:
@@ -86314,13 +86287,9 @@ var render = function() {
                                         )
                                       : _vm._e(),
                                     _vm._v(" "),
-<<<<<<< HEAD
                                     _vm.paymentOptions.methods.ach &&
                                     (_vm.summary == null ||
                                       _vm.summary.total < 10000)
-=======
-                                    _vm.paymentOptions.methods.ach
->>>>>>> feature/ticket_158
                                       ? _c(
                                           "div",
                                           {
@@ -86938,7 +86907,6 @@ var render = function() {
                                           _vm._m(24),
                                           _vm._v(" "),
                                           _c("div", { staticClass: "col" }, [
-<<<<<<< HEAD
                                             _vm.chosenMethod.type == "onetimecc"
                                               ? _c("div", [
                                                   _vm._v(
@@ -86947,8 +86915,6 @@ var render = function() {
                                                 ])
                                               : _vm._e(),
                                             _vm._v(" "),
-=======
->>>>>>> feature/ticket_158
                                             _vm.chosenMethod.type == "card"
                                               ? _c("div", [
                                                   _vm._v(
