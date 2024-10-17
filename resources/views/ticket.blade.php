@@ -17,6 +17,7 @@
     @section('styles')
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/select2.min.css') }}"  type="text/css"/>
     @show
     <style>
         .allgymlogo{
@@ -56,6 +57,15 @@
                     <div class="form-row">
                         <label for="phone">Phone <span style="color:red">*</span></label>
                         <input type="text" name="phone" class="form-control" required>
+                    </div>
+                    <div class="form-row mb-2">
+                        <label for="gym">Athlete Gym <span style="color:red">*</span></label>
+                        <select name="gym" id="gym" class="form-control">
+                            <option value="">Select Gym</option>
+                            @foreach ($gyms as $key=>$name)
+                                <option value="{{ $key }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-row">
                         <label for="stripe-card-link-card-element">
@@ -198,6 +208,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="{{ asset('assets/admin/js/select2.min.js') }}"></script>
     <script type="text/javascript">
         var tickets = [];
         let stripe = Stripe('{{ env('STRIPE_PUBLIC_KEY') }}');
@@ -347,5 +358,15 @@
         setTimeout(function(){
             $('.alert').fadeOut('slow');
         }, 5000);
+
+        $(document).ready(function(){
+            $('#gym').select2({
+            width: '100%',
+            dropdownParent: $('#payment_modal')
+        });
+        });
+        
+
     </script>
+
 @show

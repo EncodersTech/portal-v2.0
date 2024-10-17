@@ -111,12 +111,18 @@ class DashboardController extends AppBaseController
         $meet = Meet::find($request->meetId);
         $meet_admissions = $meet->admissions()->get();
         $meet_admissions = $meet_admissions->sortBy('amount', SORT_REGULAR, true);
+        // $gyms = Gym::all()->pluck('name', 'id');
+        // registered gyms
+        $gyms = $meet->registrations()->get()->pluck('gym_id')->toArray();
+        $gyms = Gym::whereIn('id', $gyms)->get()->pluck('name', 'id');
+        // dd($gyms);
         return View('ticket', [
             'current_page' => 'ticket',
             'meet' => $meet,
             'meet_admissions' => $meet_admissions,
             'processing_fee' => $meet->cc_fee(),
-            'handling_fee' => $meet->handling_fee()
+            'handling_fee' => $meet->handling_fee(),
+            'gyms' => $gyms
         ]);
     }
     public function buyTicket(Request $request)
@@ -134,6 +140,7 @@ class DashboardController extends AppBaseController
         $user_name = $request->name;
         $user_email = $request->email;
         $user_phone = $request->phone;
+        $user_gym = $request->gym;
         
         $meet_tickets_key_pairs = [];
         foreach ($meet_tickets as $key => $value) {
@@ -172,6 +179,7 @@ class DashboardController extends AppBaseController
             'customer_name' => $user_name,
             'customer_email' => $user_email,
             'customer_phone' => $user_phone,
+            'customer_gym' => $user_gym,
             'tickets' => json_encode($meet_tickets_key_pairs),
             'total_amount' => $total_amount_before_fees,
             'handling_fee' => round($total_amount_before_fees * ($meet->handling_fee() / 100) ,4),

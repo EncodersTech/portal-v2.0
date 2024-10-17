@@ -3969,6 +3969,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+<<<<<<< HEAD
 //
 //
 //
@@ -4012,6 +4013,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+=======
+>>>>>>> feature/ticket_158
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationPayment',
   props: {
@@ -4076,6 +4079,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       accountNumber: '',
       accountType: 's',
       // Default to savings
+<<<<<<< HEAD
       accountName: '',
       card_name: '',
       card_number: '',
@@ -4083,6 +4087,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       card_cvc: '',
       save_cc_card: false,
       onetimecc: null
+=======
+      accountName: ''
+>>>>>>> feature/ticket_158
     };
   },
   watch: {
@@ -4219,6 +4226,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       this.recalculateTotals();
     },
+<<<<<<< HEAD
     useOneTimeCC: function useOneTimeCC() {
       this.chosenMethod = {
         fee: this.paymentOptions.methods.card.fee,
@@ -4227,6 +4235,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
       this.recalculateTotals();
     },
+=======
+>>>>>>> feature/ticket_158
     useACH: function useACH(bank) {
       this.chosenMethod = _objectSpread(_objectSpread({}, bank), {}, {
         accountType: bank.type,
@@ -4333,6 +4343,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
       }
 
+<<<<<<< HEAD
       if (this.chosenMethod.type == 'onetimecc') {
         this.onetimecc = {
           card_name: this.card_name,
@@ -4343,6 +4354,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
       }
 
+=======
+>>>>>>> feature/ticket_158
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
         _this4.isProcessingPayment = true;
         axios.post('/api/registration/register/' + _this4.registrationData.meet.id + '/' + _this4.registrationData.gym, {
@@ -4358,8 +4371,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           deposit: _this4.deposit,
           coupon: _this4.coupon.trim().toUpperCase(),
           enable_travel_arrangements: _this4.enable_travel_arrangements,
+<<<<<<< HEAD
           onetimeach: _this4.onetimeach,
           onetimecc: _this4.onetimecc //waitlist: this.waitlist,
+=======
+          onetimeach: _this4.onetimeach //waitlist: this.waitlist,
+>>>>>>> feature/ticket_158
 
         }).then(function (result) {
           _this4.paymentProcessedMessage = result.data.message;
@@ -4422,6 +4439,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     capitalize: function capitalize(s) {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
+<<<<<<< HEAD
     },
     cardNumberInput: function cardNumberInput() {
       this.card_number = this.card_number.replace(/ /g, '');
@@ -4446,6 +4464,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.card_expire = month + '/' + year;
       }
+=======
+>>>>>>> feature/ticket_158
     }
   },
   beforeMount: function beforeMount() {
@@ -12103,10 +12123,17 @@ exports.push([module.i, "\n.clickable[data-v-36c317f8] {\n    cursor: pointer;\n
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css&":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--12-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--12-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css& ***!
   \*************************************************************************************************************************************************************************************************************************************************************************************************************/
+=======
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css&":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--12-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--12-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css& ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+>>>>>>> feature/ticket_158
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12115,7 +12142,11 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
+<<<<<<< HEAD
 exports.push([module.i, "\n.clickable {\n    cursor: pointer;\n}\n.hoverable:hover {\n    background-color: var(--light) !important;\n}\n", ""]);
+=======
+exports.push([module.i, "\n.clickable[data-v-5418d5bc] {\n    cursor: pointer;\n}\n.hoverable[data-v-5418d5bc]:hover {\n    background-color: var(--light) !important;\n}\n", ""]);
+>>>>>>> feature/ticket_158
 
 // exports
 
@@ -74384,15 +74415,26 @@ if(false) {}
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css&":
 /*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--12-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--12-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css& ***!
   \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+=======
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css&":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--12-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--12-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css& ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+>>>>>>> feature/ticket_158
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 
+<<<<<<< HEAD
 var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--12-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--12-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./RegistrationPayment.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css&");
+=======
+var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--12-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--12-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css&");
+>>>>>>> feature/ticket_158
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -80401,6 +80443,7 @@ var render = function() {
                                                                                             },
                                                                                             [
                                                                                               _vm._v(
+<<<<<<< HEAD
                                                                                                 "\n                                                            " +
                                                                                                   _vm._s(
                                                                                                     _vm
@@ -80409,6 +80452,9 @@ var render = function() {
                                                                                                       .name
                                                                                                   ) +
                                                                                                   "\n                                                        "
+=======
+                                                                                                "\n                                                            Leo\n                                                        "
+>>>>>>> feature/ticket_158
                                                                                               )
                                                                                             ]
                                                                                           )
@@ -82232,10 +82278,17 @@ render._withStripped = true
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&":
 /*!********************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc& ***!
   \********************************************************************************************************************************************************************************************************************************************/
+=======
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true&":
+/*!********************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true& ***!
+  \********************************************************************************************************************************************************************************************************************************************************/
+>>>>>>> feature/ticket_158
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -82558,6 +82611,7 @@ var render = function() {
                       _c("div", [
                         _vm._m(12),
                         _vm._v(" "),
+<<<<<<< HEAD
                         _vm.summary != null && _vm.summary.total >= 10000
                           ? _c("div", { staticClass: "alert alert-warning" }, [
                               _c("span", {
@@ -82846,6 +82900,8 @@ var render = function() {
                             )
                           : _vm._e(),
                         _vm._v(" "),
+=======
+>>>>>>> feature/ticket_158
                         _vm.paymentOptions.methods.card
                           ? _c(
                               "div",
@@ -82873,7 +82929,11 @@ var render = function() {
                                       staticClass: "fas fa-fw fa-credit-card"
                                     }),
                                     _vm._v(
+<<<<<<< HEAD
                                       " Saved Credit or Debit Card\n                                "
+=======
+                                      " Credit or Debit Card\n                                "
+>>>>>>> feature/ticket_158
                                     ),
                                     _c("span", {
                                       class:
@@ -82996,8 +83056,12 @@ var render = function() {
                             )
                           : _vm._e(),
                         _vm._v(" "),
+<<<<<<< HEAD
                         _vm.paymentOptions.methods.ach &&
                         (_vm.summary == null || _vm.summary.total < 10000)
+=======
+                        _vm.paymentOptions.methods.ach
+>>>>>>> feature/ticket_158
                           ? _c(
                               "div",
                               {
@@ -83706,6 +83770,7 @@ var render = function() {
                               _vm._m(18),
                               _vm._v(" "),
                               _c("div", { staticClass: "col" }, [
+<<<<<<< HEAD
                                 _vm.chosenMethod.type == "onetimecc"
                                   ? _c("div", [
                                       _vm._v(
@@ -83714,6 +83779,8 @@ var render = function() {
                                     ])
                                   : _vm._e(),
                                 _vm._v(" "),
+=======
+>>>>>>> feature/ticket_158
                                 _vm.chosenMethod.type == "card"
                                   ? _c("div", [
                                       _vm._v(
@@ -96717,9 +96784,15 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+<<<<<<< HEAD
 /* harmony import */ var _RegistrationPayment_vue_vue_type_template_id_5418d5bc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RegistrationPayment.vue?vue&type=template&id=5418d5bc& */ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&");
 /* harmony import */ var _RegistrationPayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RegistrationPayment.vue?vue&type=script&lang=js& */ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _RegistrationPayment_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./RegistrationPayment.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css&");
+=======
+/* harmony import */ var _RegistrationPayment_vue_vue_type_template_id_5418d5bc_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true& */ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true&");
+/* harmony import */ var _RegistrationPayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./RegistrationPayment.vue?vue&type=script&lang=js& */ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _RegistrationPayment_vue_vue_type_style_index_0_id_5418d5bc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css& */ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css&");
+>>>>>>> feature/ticket_158
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -96731,11 +96804,19 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _RegistrationPayment_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+<<<<<<< HEAD
   _RegistrationPayment_vue_vue_type_template_id_5418d5bc___WEBPACK_IMPORTED_MODULE_0__["render"],
   _RegistrationPayment_vue_vue_type_template_id_5418d5bc___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
   null,
+=======
+  _RegistrationPayment_vue_vue_type_template_id_5418d5bc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _RegistrationPayment_vue_vue_type_template_id_5418d5bc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  "5418d5bc",
+>>>>>>> feature/ticket_158
   null
   
 )
@@ -96761,35 +96842,62 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css&":
 /*!****************************************************************************************************************!*\
   !*** ./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css& ***!
   \****************************************************************************************************************/
+=======
+/***/ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css&":
+/*!****************************************************************************************************************************************!*\
+  !*** ./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css& ***!
+  \****************************************************************************************************************************************/
+>>>>>>> feature/ticket_158
 /*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+<<<<<<< HEAD
 /* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--12-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--12-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./RegistrationPayment.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&lang=css&");
 /* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+=======
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_id_5418d5bc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--12-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--12-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=style&index=0&id=5418d5bc&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_id_5418d5bc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_id_5418d5bc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_id_5418d5bc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_12_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_12_2_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_style_index_0_id_5418d5bc_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+>>>>>>> feature/ticket_158
 
 
 /***/ }),
 
+<<<<<<< HEAD
 /***/ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&":
 /*!**************************************************************************************************************!*\
   !*** ./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc& ***!
   \**************************************************************************************************************/
+=======
+/***/ "./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true&":
+/*!**************************************************************************************************************************!*\
+  !*** ./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true& ***!
+  \**************************************************************************************************************************/
+>>>>>>> feature/ticket_158
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+<<<<<<< HEAD
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_template_id_5418d5bc___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./RegistrationPayment.vue?vue&type=template&id=5418d5bc& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_template_id_5418d5bc___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_template_id_5418d5bc___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+=======
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_template_id_5418d5bc_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../../node_modules/vue-loader/lib??vue-loader-options!./RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Registration/register/RegistrationPayment.vue?vue&type=template&id=5418d5bc&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_template_id_5418d5bc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RegistrationPayment_vue_vue_type_template_id_5418d5bc_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+>>>>>>> feature/ticket_158
 
 
 

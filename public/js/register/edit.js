@@ -3216,10 +3216,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   watch: {},
   methods: {
+<<<<<<< HEAD
     toggleDivView: function toggleDivView(id) {
       var div = document.getElementById(id);
       if (div.style.display == 'none') div.style.display = 'block';else div.style.display = 'none';
     },
+=======
+>>>>>>> feature/ticket_158
     getFilteredSpecialistEvents: function getFilteredSpecialistEvents(gender) {
       var maleEvents = [];
       var femaleEvents = [];
@@ -5895,6 +5898,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+<<<<<<< HEAD
 //
 //
 //
@@ -5936,6 +5940,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+=======
+>>>>>>> feature/ticket_158
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: 'RegistrationEditPayment',
   props: {
@@ -6003,6 +6009,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       accountNumber: '',
       accountType: 's',
       // Default to savings
+<<<<<<< HEAD
       accountName: '',
       card_name: '',
       card_number: '',
@@ -6010,6 +6017,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       card_cvc: '',
       save_cc_card: false,
       onetimecc: null
+=======
+      accountName: ''
+>>>>>>> feature/ticket_158
     };
   },
   watch: {
@@ -6142,6 +6152,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       this.recalculateTotals();
     },
+<<<<<<< HEAD
     useOneTimeCC: function useOneTimeCC() {
       this.chosenMethod = {
         fee: this.paymentOptions.methods.card.fee,
@@ -6150,6 +6161,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
       this.recalculateTotals();
     },
+=======
+>>>>>>> feature/ticket_158
     useACH: function useACH(bank) {
       this.chosenMethod = _objectSpread(_objectSpread({}, bank), {}, {
         accountType: bank.type,
@@ -6251,6 +6264,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
       }
 
+<<<<<<< HEAD
       if (this.chosenMethod.type == 'onetimecc') {
         this.onetimecc = {
           card_name: this.card_name,
@@ -6261,6 +6275,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
       }
 
+=======
+>>>>>>> feature/ticket_158
       this.confirmAction('Are you sure you want to proceed with the payment ?', 'orange', 'fas fa-question-circle', function () {
         _this4.isProcessingPayment = true;
         axios.post('/api/gym/' + _this4.gymId + '/registration/' + _this4.registrationId + '/edit/pay', {
@@ -6275,8 +6291,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           use_balance: _this4.useBalance,
           coupon: _this4.coupon.trim().toUpperCase(),
           onetimeach: _this4.onetimeach,
+<<<<<<< HEAD
           changes_fees: _this4.registrationData.changes_fees,
           onetimecc: _this4.onetimecc
+=======
+          changes_fees: _this4.registrationData.changes_fees
+>>>>>>> feature/ticket_158
         }).then(function (result) {
           _this4.paymentProcessedMessage = result.data.message;
         })["catch"](function (error) {
@@ -6337,6 +6357,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     capitalize: function capitalize(s) {
       if (typeof s !== 'string') return '';
       return s.charAt(0).toUpperCase() + s.slice(1);
+<<<<<<< HEAD
     },
     cardNumberInput: function cardNumberInput() {
       this.card_number = this.card_number.replace(/ /g, '');
@@ -6361,6 +6382,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         this.card_expire = month + '/' + year;
       }
+=======
+>>>>>>> feature/ticket_158
     }
   },
   beforeMount: function beforeMount() {
@@ -83635,6 +83658,7 @@ var render = function() {
                                                                                             },
                                                                                             [
                                                                                               _vm._v(
+<<<<<<< HEAD
                                                                                                 "\n                                                                " +
                                                                                                   _vm._s(
                                                                                                     _vm
@@ -83643,6 +83667,9 @@ var render = function() {
                                                                                                       .name
                                                                                                   ) +
                                                                                                   "\n                                                            "
+=======
+                                                                                                "\n                                                                Leo\n                                                            "
+>>>>>>> feature/ticket_158
                                                                                               )
                                                                                             ]
                                                                                           )
@@ -85355,6 +85382,7 @@ var render = function() {
                                                                                                         "btn-group dropdown"
                                                                                                     },
                                                                                                     [
+<<<<<<< HEAD
                                                                                                       _c(
                                                                                                         "button",
                                                                                                         {
@@ -85390,6 +85418,11 @@ var render = function() {
                                                                                                             }
                                                                                                           )
                                                                                                         ]
+=======
+                                                                                                      _vm._m(
+                                                                                                        8,
+                                                                                                        true
+>>>>>>> feature/ticket_158
                                                                                                       ),
                                                                                                       _vm._v(
                                                                                                         " "
@@ -85398,6 +85431,7 @@ var render = function() {
                                                                                                         "div",
                                                                                                         {
                                                                                                           staticClass:
+<<<<<<< HEAD
                                                                                                             "dropdown-menu dropdown-menu-right",
                                                                                                           staticStyle: {
                                                                                                             display:
@@ -85408,6 +85442,9 @@ var render = function() {
                                                                                                               "submenu_" +
                                                                                                               athlete.id
                                                                                                           }
+=======
+                                                                                                            "dropdown-menu dropdown-menu-right"
+>>>>>>> feature/ticket_158
                                                                                                         },
                                                                                                         [
                                                                                                           !_vm
@@ -85809,7 +85846,11 @@ var render = function() {
                                                                             "div",
                                                                             [
                                                                               _vm._m(
+<<<<<<< HEAD
                                                                                 8,
+=======
+                                                                                9,
+>>>>>>> feature/ticket_158
                                                                                 true
                                                                               ),
                                                                               _vm._v(
@@ -86048,7 +86089,11 @@ var render = function() {
                                 _vm._v(" "),
                                 _vm._l(_vm.coaches, function(coach) {
                                   return _c("tr", { key: coach.id }, [
+<<<<<<< HEAD
                                     _vm._m(9, true),
+=======
+                                    _vm._m(10, true),
+>>>>>>> feature/ticket_158
                                     _vm._v(" "),
                                     _c("td", { staticClass: "align-middle" }, [
                                       coach.editing.first_name
@@ -86494,7 +86539,11 @@ var render = function() {
                                                   "input-group input-group-sm"
                                               },
                                               [
+<<<<<<< HEAD
                                                 _vm._m(10, true),
+=======
+                                                _vm._m(11, true),
+>>>>>>> feature/ticket_158
                                                 _vm._v(" "),
                                                 _c("input", {
                                                   directives: [
@@ -86769,7 +86818,11 @@ var render = function() {
                                               : coach.status ==
                                                 _vm.constants.coaches.statuses
                                                   .Reserved
+<<<<<<< HEAD
                                               ? _c("div", [_vm._m(11, true)])
+=======
+                                              ? _c("div", [_vm._m(12, true)])
+>>>>>>> feature/ticket_158
                                               : _c("div", [
                                                   _c(
                                                     "span",
@@ -86824,7 +86877,11 @@ var render = function() {
                                                   "btn-group dropdown"
                                               },
                                               [
+<<<<<<< HEAD
                                                 _vm._m(12, true),
+=======
+                                                _vm._m(13, true),
+>>>>>>> feature/ticket_158
                                                 _vm._v(" "),
                                                 _c(
                                                   "div",
@@ -86980,7 +87037,11 @@ var render = function() {
                   },
                   [
                     _c("div", { staticClass: "flex-grow-1 text-uppercase" }, [
+<<<<<<< HEAD
                       _vm._m(13),
+=======
+                      _vm._m(14),
+>>>>>>> feature/ticket_158
                       _vm._v(" "),
                       _c(
                         "span",
@@ -86994,7 +87055,11 @@ var render = function() {
                           "div",
                           { staticClass: "flex-grow-1 text-uppercase" },
                           [
+<<<<<<< HEAD
                             _vm._m(14),
+=======
+                            _vm._m(15),
+>>>>>>> feature/ticket_158
                             _vm._v(" "),
                             _c(
                               "span",
@@ -87018,7 +87083,11 @@ var render = function() {
                           "div",
                           { staticClass: "flex-grow-1 text-uppercase" },
                           [
+<<<<<<< HEAD
                             _vm._m(15),
+=======
+                            _vm._m(16),
+>>>>>>> feature/ticket_158
                             _vm._v(" "),
                             _c(
                               "span",
@@ -87240,6 +87309,27 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+<<<<<<< HEAD
+=======
+    return _c(
+      "button",
+      {
+        staticClass: "btn btm-sm btn-link",
+        attrs: {
+          type: "button",
+          "data-toggle": "dropdown",
+          "aria-haspopup": "true",
+          "aria-expanded": "false"
+        }
+      },
+      [_c("span", { staticClass: "fas fa-fw fa-ellipsis-v" })]
+    )
+  },
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+>>>>>>> feature/ticket_158
     return _c("span", { staticClass: "text-grat-500 mr-1" }, [
       _c("span", { staticClass: "fas fa-coins" }),
       _vm._v(
@@ -87639,6 +87729,7 @@ var render = function() {
                       _c("div", [
                         _vm._m(12),
                         _vm._v(" "),
+<<<<<<< HEAD
                         _vm.summary != null && _vm.summary.total >= 10000
                           ? _c("div", { staticClass: "alert alert-warning" }, [
                               _c("span", {
@@ -87927,6 +88018,8 @@ var render = function() {
                             )
                           : _vm._e(),
                         _vm._v(" "),
+=======
+>>>>>>> feature/ticket_158
                         _vm.paymentOptions.methods.card
                           ? _c(
                               "div",
@@ -87954,7 +88047,11 @@ var render = function() {
                                       staticClass: "fas fa-fw fa-credit-card"
                                     }),
                                     _vm._v(
+<<<<<<< HEAD
                                       " Saved Credit or Debit Card\n                                "
+=======
+                                      " Credit or Debit Card\n                                "
+>>>>>>> feature/ticket_158
                                     ),
                                     _c("span", {
                                       class:
@@ -88077,8 +88174,12 @@ var render = function() {
                             )
                           : _vm._e(),
                         _vm._v(" "),
+<<<<<<< HEAD
                         _vm.paymentOptions.methods.ach &&
                         (_vm.summary == null || _vm.summary.total < 10000)
+=======
+                        _vm.paymentOptions.methods.ach
+>>>>>>> feature/ticket_158
                           ? _c(
                               "div",
                               {
@@ -88669,6 +88770,7 @@ var render = function() {
                               _vm._m(17),
                               _vm._v(" "),
                               _c("div", { staticClass: "col" }, [
+<<<<<<< HEAD
                                 _vm.chosenMethod.type == "onetimecc"
                                   ? _c("div", [
                                       _vm._v(
@@ -88677,6 +88779,8 @@ var render = function() {
                                     ])
                                   : _vm._e(),
                                 _vm._v(" "),
+=======
+>>>>>>> feature/ticket_158
                                 _vm.chosenMethod.type == "card"
                                   ? _c("div", [
                                       _vm._v(

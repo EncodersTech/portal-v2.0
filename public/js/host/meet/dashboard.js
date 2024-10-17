@@ -87942,7 +87942,13 @@ $(document).ready(function (e) {
               CoachNameLabel: 'coaches-name-label',
               GymMailingLabel: 'gym-mailing-label',
               RefundAll: 'RefundsAll',
+<<<<<<< HEAD
               TicketPurchase: 'ticket-purchase'
+=======
+              TicketPurchase: 'ticket-purchase',
+              TicketCheckIn: 'ticket-checkin',
+              TicketSummary: 'ticket-summary'
+>>>>>>> feature/ticket_158
             }
           }
         };
@@ -87989,11 +87995,14 @@ $(document).ready(function (e) {
             case this.constants.reports.types.Scratch:
             case this.constants.reports.types.USAIGCCoachSignin:
             case this.constants.reports.types.NGACoachSignin:
+<<<<<<< HEAD
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.CoachSignin:
             case this.constants.reports.types.GymNameLabel:
             case this.constants.reports.types.CoachNameLabel:
             case this.constants.reports.types.MarketingQR:
+=======
+>>>>>>> feature/ticket_158
             case this.constants.reports.types.SpecialistsByLevel:
             case this.constants.reports.types.CoachSignin:
             case this.constants.reports.types.MarketingQR:
@@ -88003,6 +88012,11 @@ $(document).ready(function (e) {
             case this.constants.reports.types.GymMailingLabel:
             case this.constants.reports.types.RefundAll:
             case this.constants.reports.types.TicketPurchase:
+<<<<<<< HEAD
+=======
+            case this.constants.reports.types.TicketCheckIn:
+            case this.constants.reports.types.TicketSummary:
+>>>>>>> feature/ticket_158
               break;
 
             default:
