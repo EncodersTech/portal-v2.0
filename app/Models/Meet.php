@@ -55,6 +55,8 @@ class Meet extends Model
     public const REPORT_TYPE_GYM_MAILING_LABEL = 'gym-mailing-label';
     public const REPORT_TYPE_REFUNDSALL = 'RefundsAll';
     public const REPORT_TYPE_TICKET_PURCHASE = 'ticket-purchase';
+    public const REPORT_TYPE_TICKET_CHECKIN = 'ticket-checkin';
+    public const REPORT_TYPE_TICKET_SUMMARY = 'ticket-summary';
 
 
     protected $guarded = ['id'];
@@ -3456,6 +3458,84 @@ class Meet extends Model
                 // 'meet_admissions' => $general_meet_admission
             ];
             return PDF::loadView('PDF.host.meet.reports.financial-ticket-purchase', $data); /** @var PdfWrapper $pdf */
+        }
+        catch(\Throwable $e)
+        {
+            throw $e;
+        }
+    }
+    public function generateTicketCheckinReport() : PdfWrapper{
+        try{
+            $tickets = DB::select('SELECT * FROM host_tickets WHERE meet_id = '.$this->id);
+            $meet_admissions = $this->admissions()->get();
+            $general_meet_admission = [];
+            foreach($meet_admissions as $ma)
+            {
+                $general_meet_admission[$ma->id] = [
+                    'name' => $ma->name,
+                    'amount' => $ma->amount,
+                    'type' => $ma->type
+                ];
+            }
+
+            $data = [
+                'meet' => $this,
+                'tickets' => $tickets,
+                'meet_admissions' => $meet_admissions,
+                'gyms' => Gym::all()->pluck('name', 'id')
+            ];
+            return PDF::loadView('PDF.host.meet.reports.checkin-ticket', $data); /** @var PdfWrapper $pdf */
+        }
+        catch(\Throwable $e)
+        {
+            throw $e;
+        }
+    }
+    public function generateTicketSummaryReport() : PdfWrapper{
+        try{
+            $tickets = DB::select('SELECT * FROM host_tickets WHERE meet_id = '.$this->id);
+            $meet_admissions = $this->admissions()->get();
+            $general_meet_admission = [];
+            $ticket_summary = [];
+            $gyms = Gym::all()->pluck('name', 'id');
+            foreach($meet_admissions as $ma)
+            {
+                $general_meet_admission[$ma->id] = [
+                    'name' => $ma->name,
+                    'amount' => $ma->amount,
+                    'type' => $ma->type
+                ];
+            }
+            
+            foreach ($tickets as $key => $value) {
+                $gym_name = $gyms[$value->customer_gym];
+                $ticket_count = json_decode($value->tickets, true);
+                foreach ($general_meet_admission as $k => $v) {
+                    if(isset($ticket_summary[$gym_name]) && isset($ticket_summary[$gym_name][$k]))
+                    {
+                        $ticket_summary[$gym_name][$k] += isset($ticket_count[$k]) ? $ticket_count[$k] : 0;
+                    }
+                    else
+                    {
+                        $ticket_summary[$gym_name][$k] = isset($ticket_count[$k]) ? $ticket_count[$k] : 0;
+                    }
+                }
+            }
+            // meet admission wise ticket summary
+            foreach ($general_meet_admission as $k => $v) {
+                $ticket_summary['Total'][$k] = 0;
+                foreach ($ticket_summary as $key => $value) {
+                    if($key == 'Total')
+                        continue;
+                    $ticket_summary['Total'][$k] += isset($value[$k]) ? $value[$k] : 0;
+                }
+            }
+            $data = [
+                'meet' => $this,
+                'tickets' => $ticket_summary,
+                'meet_admissions' => $general_meet_admission
+            ];
+            return PDF::loadView('PDF.host.meet.reports.summary-ticket', $data); /** @var PdfWrapper $pdf */
         }
         catch(\Throwable $e)
         {

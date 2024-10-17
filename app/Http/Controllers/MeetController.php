@@ -1036,6 +1036,20 @@ class MeetController extends AppBaseController
 
                     return $pdf->stream($name);
                     break;
+                case Meet::REPORT_TYPE_TICKET_CHECKIN:
+                    $pdf = $meet->generateTicketCheckinReport()->setPaper('a4')
+                        ->setOption('margin-top', '20mm')
+                        ->setOption('margin-bottom', '10mm');
+
+                    return $pdf->stream($name);
+                    break;
+                case Meet::REPORT_TYPE_TICKET_SUMMARY:
+                    $pdf = $meet->generateTicketSummaryReport()->setPaper('a4')
+                        ->setOption('margin-top', '20mm')
+                        ->setOption('margin-bottom', '10mm');
+
+                    return $pdf->stream($name);
+                    break;   
                 default:
                     throw new CustomBaseException("Invalid report type.", 1);
             }

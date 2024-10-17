@@ -202,6 +202,8 @@ $(document).ready(e => {
                             GymMailingLabel: 'gym-mailing-label',
                             RefundAll: 'RefundsAll',
                             TicketPurchase: 'ticket-purchase',
+                            TicketCheckIn: 'ticket-checkin',
+                            TicketSummary: 'ticket-summary',
                         }
                     }
                 };
@@ -259,6 +261,8 @@ $(document).ready(e => {
                         case this.constants.reports.types.GymMailingLabel:
                         case this.constants.reports.types.RefundAll:
                         case this.constants.reports.types.TicketPurchase:
+                        case this.constants.reports.types.TicketCheckIn:
+                        case this.constants.reports.types.TicketSummary:
 
                             break;
 

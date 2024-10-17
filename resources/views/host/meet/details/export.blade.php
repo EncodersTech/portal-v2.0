@@ -95,6 +95,24 @@
             </button>
         </div>
     </div>
+    <h5><b>TICKETS</b></h5><hr>
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.TicketCheckIn)">
+                Check in List
+            </button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.TicketPurchase)">
+                Financial Ticket Report
+            </button>
+        </div>
+        <div class="col-md-3 mb-3">
+            <button class="btn btn-block btn-secondary" @click="generateReport(constants.reports.types.TicketSummary)">
+                Ticket Summary
+            </button>
+        </div>
+    </div>
     <h5><b>PRE & POST MEET</b></h5><hr>
     <div class="row">
         <div class="col-md-3 mb-3">
@@ -120,11 +138,6 @@
         <div class="col-md-3 mb-3">
             <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.GymMailingLabel)">
                 Gym Mailing Labels
-            </button>
-        </div>
-        <div class="col-md-3 mb-3">
-            <button class="btn btn-block btn-success" @click="generateReport(constants.reports.types.TicketPurchase)">
-                Financial Ticket Report
             </button>
         </div>
     </div>
