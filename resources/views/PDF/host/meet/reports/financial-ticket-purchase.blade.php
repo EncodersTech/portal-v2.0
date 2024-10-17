@@ -40,6 +40,7 @@
                     <th class="col-2">Name</th>
                     <th class="col-2">Email</th>
                     <th class="col-2">Phone</th>
+                    <th class="col-2">Gym</th>
                     <th class="col-2">Ticket For</th>
                     <th class="col-2">Price per Ticker</th>
                     <th class="col-2">Number of Tickets</th>
@@ -62,6 +63,7 @@
                     <td rowspan="{{$rowspannumber}}">{{ $t->customer_name }}</td>
                     <td rowspan="{{$rowspannumber}}">{{ $t->customer_email }}</td>
                     <td rowspan="{{$rowspannumber}}">{{ $t->customer_phone }}</td>
+                    <td rowspan="{{$rowspannumber}}">{{ $t->customer_gym != null ? $gyms[$t->customer_gym] : '' }}</td>
                     @foreach($meet_admissions as $admission)
                         @if(isset($t->ticket[$admission->id]))
                             @php
@@ -92,7 +94,7 @@
                 @endphp
             @endforeach
             <tr>
-                <td colspan="5" style="text-align: right"><b>Net Total</b></td>
+                <td colspan="6" style="text-align: right"><b>Net Total</b></td>
                 <td style="text-align: center"><b>{{ $nettotal_tickets }}</b></td>
                 <td style="text-align: center"><b>{{ number_format($nettotal, 2) }}</b></td>
             </tr>

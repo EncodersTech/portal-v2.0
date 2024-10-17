@@ -3443,6 +3443,7 @@ class Meet extends Model
             $tickets = DB::select('SELECT * FROM host_tickets WHERE meet_id = '.$this->id);
             $meet_admissions = $this->admissions()->get();
             $general_meet_admission = [];
+            $gyms = Gym::all()->pluck('name', 'id');
             foreach($meet_admissions as $ma)
             {
                 $general_meet_admission[$ma->id] = [
@@ -3454,8 +3455,8 @@ class Meet extends Model
             $data = [
                 'meet' => $this,
                 'tickets' => $tickets,
-                'meet_admissions' => $meet_admissions
-                // 'meet_admissions' => $general_meet_admission
+                'meet_admissions' => $meet_admissions,
+                'gyms' => $gyms
             ];
             return PDF::loadView('PDF.host.meet.reports.financial-ticket-purchase', $data); /** @var PdfWrapper $pdf */
         }
