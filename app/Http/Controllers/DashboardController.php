@@ -111,7 +111,11 @@ class DashboardController extends AppBaseController
         $meet = Meet::find($request->meetId);
         $meet_admissions = $meet->admissions()->get();
         $meet_admissions = $meet_admissions->sortBy('amount', SORT_REGULAR, true);
-        $gyms = Gym::all()->pluck('name', 'id');
+        // $gyms = Gym::all()->pluck('name', 'id');
+        // registered gyms
+        $gyms = $meet->registrations()->get()->pluck('gym_id')->toArray();
+        $gyms = Gym::whereIn('id', $gyms)->get()->pluck('name', 'id');
+        // dd($gyms);
         return View('ticket', [
             'current_page' => 'ticket',
             'meet' => $meet,
