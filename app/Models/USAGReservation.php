@@ -1935,7 +1935,7 @@ class USAGReservation extends Model
             if ($registrant == null)
                 throw new CustomBaseException('No such registrant');
 
-            $calculatedFees = MeetRegistration::calculateFees($subtotal, $meet, $is_own, $chosenMethod, $useBalance, $registrant->cleared_balance,false,$couponAmount);
+            $calculatedFees = MeetRegistration::calculateFees($subtotal + $couponAmount, $meet, $is_own, $chosenMethod, $useBalance, $registrant->cleared_balance,false,$couponAmount);
 
             $calculatedFees += $incurredFees;
 
@@ -1993,7 +1993,18 @@ class USAGReservation extends Model
                     $athleteStatus = RegistrationAthlete::STATUS_REGISTERED;
                     $coachStatus = RegistrationCoach::STATUS_REGISTERED;
                 }
+                if ($gymSummary['total'] == 0 && $couponAmount > 0) {
+                    $chosenMethod = [
+                        'type' => self::PAYMENT_OPTION_BALANCE,
+                        'id' => null,
+                        'fee' => $meet->balance_fee(),
+                        'mode' => self::PAYMENT_OPTION_FEE_MODE[self::PAYMENT_OPTION_BALANCE],
+                    ];
 
+                    $athleteStatus = RegistrationAthlete::STATUS_REGISTERED;
+                    $specialistStatus = RegistrationSpecialistEvent::STATUS_SPECIALIST_REGISTERED;
+                    $coachStatus = RegistrationCoach::STATUS_REGISTERED;
+                }
                 $executedTransactionResult = MeetRegistration::executePayment(
                     $calculatedFees,
                     $chosenMethod,
