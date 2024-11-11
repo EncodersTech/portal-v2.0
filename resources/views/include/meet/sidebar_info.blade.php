@@ -28,7 +28,36 @@
         </span>
     </div>
 </div>
+<div class="form-group mb-0 mt-3 border-bottom">
+    <label for="meet-ticket-url" class="font-weight-bold mb-0">
+        <span class="fas fa-link"></span> Meet's Ticket URL
+    </label>
 
+    <div class="input-group input-group-sm">
+        <div class="input-group-prepend">
+            <span class="input-group-text">
+                <span class="fas fa-link"></span>
+            </span>
+        </div>
+        <input type="text" class="form-control bg-light" id="meet-ticket-url" readonly
+            value="{{env('APP_URL')}}/ticket/{{$meet->id}}">
+
+        <div class="input-group-append">
+            <button class="btn btn-info" type="button"
+                id="meet-ticket-url-copy" data-clipboard-target="#meet-ticket-url">
+                <span class="fas fa-copy"></span> Copy
+            </button>
+        </div>
+    </div>
+
+    <div class="mt-1 mb-1 text-right"
+        id="meet-ticket-url-copy-success-message" style="visibility: hidden">
+        <span class="badge badge-dark">
+            <span class="fas fa-check-circle"></span>
+            <span id="meet-ticket-url-copy-success"></span>
+        </span>
+    </div>
+</div>
 <div class="mt-1 border-bottom">
     <div class="row">
         <div class="col-auto font-weight-bold">

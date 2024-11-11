@@ -89451,7 +89451,7 @@ $(document).ready(function (e) {
   });
 
   if ($('#meet-public-url-copy').length > 0) {
-    var switchCopySuccessMessage = function switchCopySuccessMessage(shown, msg) {
+    var _switchCopySuccessMessage = function _switchCopySuccessMessage(shown, msg) {
       var text = $('#meet-public-url-copy-success');
       var elem = $('#meet-public-url-copy-success-message');
       text.html(msg);
@@ -89459,6 +89459,29 @@ $(document).ready(function (e) {
     };
 
     var meetUrl = new ClipboardJS('#meet-public-url-copy');
+    meetUrl.on('success', function (e) {
+      _switchCopySuccessMessage(true, 'Copied !');
+
+      e.clearSelection();
+
+      _.debounce(_switchCopySuccessMessage, 1500)(false, '');
+    });
+    meetUrl.on('error', function (e) {
+      _switchCopySuccessMessage(true, 'Ctrl+C to copy !');
+
+      _.debounce(_switchCopySuccessMessage, 2500)(false, '');
+    });
+  }
+
+  if ($('#meet-ticket-url-copy').length > 0) {
+    var switchCopySuccessMessage = function switchCopySuccessMessage(shown, msg) {
+      var text = $('#meet-ticket-url-copy-success');
+      var elem = $('#meet-ticket-url-copy-success-message');
+      text.html(msg);
+      elem.css('visibility', shown ? 'visible' : 'hidden');
+    };
+
+    var meetUrl = new ClipboardJS('#meet-ticket-url-copy');
     meetUrl.on('success', function (e) {
       switchCopySuccessMessage(true, 'Copied !');
       e.clearSelection();
