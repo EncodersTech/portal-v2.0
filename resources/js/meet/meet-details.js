@@ -32,4 +32,25 @@ $(document).ready(e => {
             elem.css('visibility', shown ? 'visible' : 'hidden');
         }
     }
+    if ($('#meet-ticket-url-copy').length > 0) {
+        var switchCopySuccessMessage = function switchCopySuccessMessage(shown, msg) {
+          var text = $('#meet-ticket-url-copy-success');
+          var elem = $('#meet-ticket-url-copy-success-message');
+          text.html(msg);
+          elem.css('visibility', shown ? 'visible' : 'hidden');
+        };
+    
+        var meetUrl = new ClipboardJS('#meet-ticket-url-copy');
+        meetUrl.on('success', function (e) {
+          switchCopySuccessMessage(true, 'Copied !');
+          e.clearSelection();
+    
+          _.debounce(switchCopySuccessMessage, 1500)(false, '');
+        });
+        meetUrl.on('error', function (e) {
+          switchCopySuccessMessage(true, 'Ctrl+C to copy !');
+    
+          _.debounce(switchCopySuccessMessage, 2500)(false, '');
+        });
+      }
 });
