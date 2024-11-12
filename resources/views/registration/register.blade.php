@@ -93,8 +93,6 @@
         window._managed_account = {{ $_managed->id }};
     </script>
     <script src="{{ mix('js/register/register.js') }}"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     <script>
         function toogle_size_chart() {
         var x = document.getElementById("size_chart_list");
