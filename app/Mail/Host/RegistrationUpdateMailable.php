@@ -43,7 +43,7 @@ class RegistrationUpdateMailable extends Mailable implements ShouldQueue
             ->subject('Update of '. $this->meet->name .' Registration.')
             ->markdown('emails.host.registrationupdate')
             ->attach($this->attachment, [
-                'as' => 'meet_entry_report.pdf',
+                'as' => 'meet_entry_report_for_' . $this->meet->name . '.pdf',
                 'mime' => 'application/pdf',
             ]);
     }
