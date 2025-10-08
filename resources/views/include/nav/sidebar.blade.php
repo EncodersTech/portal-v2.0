@@ -127,7 +127,7 @@
                         </div>
                         @endif
 
-                        @if ($_managed->isCurrentUser() || $_managed->pivot->can_create_meet)
+                        @if ($_managed->id == 6)
                         <div class="sidebar-item">
                             <a class="sidebar-link" href="{{ route('gyms.meets.create' , ['gym' => $gym])}}">
                                 <span class="fas fa-fw fa-calendar-plus" title="Add Hosted Meet"></span>

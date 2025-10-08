@@ -9,7 +9,7 @@
         Instead, you can archive them.
     </p>
 
-    @if ($_managed->isCurrentUser() || $_managed->pivot->can_create_meet)
+    @if ($_managed->id == 6)
         <div class="text-right">
             <a href="{{ route('gyms.meets.create', ['gym' => $gym]) }}" class="btn btn-success">
                 <span class="fas fa-plus"></span> Add a New Meet

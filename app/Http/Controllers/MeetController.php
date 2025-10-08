@@ -163,6 +163,11 @@ class MeetController extends AppBaseController
     }
     public function create(Request $request, string $gym)
     {
+        if ($request->_managed_account->id != 6)
+        {
+            return redirect(route('gyms.meets.index', ['gym' => $gym]))->with('error', 'You do not have permission to create a meet.');
+        }
+
         $gym = $request->_managed_account->retrieveGym($gym); /** @var Gym $gym */
 
         if (($gym->meets()->count() < 1) && ($gym->temporary_meets()->where('step', '>', '1')->count() < 1))

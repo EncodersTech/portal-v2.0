@@ -68,20 +68,17 @@
                 @endforeach
             </div>
         @endif
-        @if($meet->id == 168)
-        <div class="alert alert-info">
+        @if(true)
+        <div class="alert alert-danger">
             <div class="d-flex flex-row flex-nowrap">
                 <div class="flex-grow-1">
                     <span class="fas fa-info-circle"></span>
-                    Having trouble registering event specialists in a level different from their AA level? 
-                    <a class="btn btn-success" href="https://allgymnastics.zendesk.com/hc/en-us/articles/17671901030937-Registering-USAIGC-Event-Specialists">
-                        Click here for instructions
-                    </a>
+                    Registration has been disabled for this meet. 
                 </div>
             </div>
         </div>
         @endif
-        <div class="alert alert-primary">
+        <!-- <div class="alert alert-primary">
             <div class="d-flex flex-row flex-nowrap">
                 <div class="flex-grow-1">
                     <span class="fas fa-info-circle"></span>
@@ -151,7 +148,7 @@
                     </div>
                 </div>
             </div>            
-        </div>
+        </div> -->
     </div>
 
     <div class="content-main p-3">

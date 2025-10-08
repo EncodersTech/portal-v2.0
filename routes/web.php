@@ -130,6 +130,7 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
 
     Route::middleware(['permission:create_meet'])->group(function () {
         Route::get('/gyms/{gym}/meets/create', 'MeetController@create')->name('gyms.meets.create');
+        // Route::get('/gyms/{gym}/meets/create', 'MeetController@index')->name('gyms.meets.create');
         Route::get('/gyms/{gym}/meets/create/scratch', 'MeetController@createFromScratch')->name('gyms.meets.create.scratch');
         Route::post('/gyms/{gym}/meets/create/copy', 'MeetController@createFromCopy')->name('gyms.meets.create.copy');
         Route::get('/gyms/{gym}/meets/create/{step}/entry/{temporary}', 'MeetController@stepView')->name('gyms.meets.create.step.view');
@@ -178,7 +179,8 @@ Route::middleware(['auth', 'verified','checkUserActive'])->group(function () {
 
     Route::middleware(['permission:register'])->group(function () {
         Route::get('/test', 'MeetRegistrationController@test');
-        Route::get('/meets/{meet}/register', 'MeetRegistrationController@index')->name('gyms.meets.register');
+        Route::get('/meets/{meet}', 'MeetController@details')->name('gyms.meets.register');
+        // Route::get('/meets/{meet}/register', 'MeetRegistrationController@index')->name('gyms.meets.register');
         Route::post('/gym/{gym}/registration/{registration}/remaining-payment', 'MeetRegistrationController@remainingPayment')->name('gyms.registration.remaining.payment');
         Route::get('/gym/{gym}/registration/{registration}/pay/{transaction}', 'MeetRegistrationController@pay')->name('gyms.registration.pay');
         Route::get('/gyms/{gym}/joined', 'GymController@joinedMeets')->name('gyms.meets.joined');
